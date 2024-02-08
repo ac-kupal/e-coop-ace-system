@@ -10,8 +10,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user{
+// IMPORTANT NOTE
+// If possible apply these following property to the models
+//
+//    createdAt DateTime @default(now())
+//    createdBy Int?
+//    updatedAt DateTime @updatedAt
+//    updatedBy Int?
+//    deletedAt DateTime?
+//    deletedBy Int?
+
+enum Role {
+    root
+    admin
+    staff
+}
+
+model User{
     id Int @id @default(autoincrement())
 
-    name String @db.Text
+    email String
+    password String
+
+    dateVerified DateTime?
+    verified Boolean
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    deletedAt DateTime?
+
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
+
+    deleted Boolean @default(false)
+}
+
+model RoleMap{
+    id Int @id @default(autoincrement())
+
+    userId Int
+    role Role
+
+    @@unique([userId, role])
 }
