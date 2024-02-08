@@ -35,6 +35,8 @@ model User{
     dateVerified DateTime?
     verified Boolean
 
+    roles UserRoleAssigned[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     deletedAt DateTime?
@@ -46,11 +48,13 @@ model User{
     deleted Boolean @default(false)
 }
 
-model RoleMap{
+model UserRoleAssigned{
     id Int @id @default(autoincrement())
 
     userId Int
     role Role
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([userId, role])
 }
