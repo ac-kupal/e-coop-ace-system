@@ -30,14 +30,12 @@ model User {
 
     email        String
     password     String
-    enterpriseId Int // TODO: verify zalven about this relation
-    branchId     Int // TODO: verify zalven about this relation
+    branchId     Int
 
     dateVerified DateTime?
     verified     Boolean
 
     roles UserRoleAssigned[]
-    // attatch enterprise or branch if ideal
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -50,6 +48,23 @@ model User {
     deleted Boolean @default(false)
 }
 
+model Branch {
+    id Int @id @default(autoincrement())
+
+    branchName        String
+    branchDescription String
+    branchAddress     String
+    branchPicture     String?
+
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+}
+
 model UserRoleAssigned {
     id Int @id @default(autoincrement())
 
@@ -59,43 +74,4 @@ model UserRoleAssigned {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([userId, role])
-}
-
-model Enterprise {
-    id Int @id @default(autoincrement())
-
-    enterpriseName        String
-    enterpriseDescription String
-    enterpriseLogo        String?
-
-    branches Branch[]
-
-    createdBy Int?
-    updatedBy Int?
-    deletedBy Int?
-
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-}
-
-model Branch {
-    id Int @id @default(autoincrement())
-
-    branchName        String
-    branchDescription String
-    branchAddress     String
-    branchPicture     String?
-
-    enterpriseId Int
-    
-    enterprise Enterprise @relation(fields: [enterpriseId], references: [id], onDelete: Cascade)
-
-    createdBy Int?
-    updatedBy Int?
-    deletedBy Int?
-
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
 }
