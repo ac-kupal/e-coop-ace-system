@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 
 import QueryClientProviderWrapper from "@/providers/query-client-provider-wrapper";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] , variable : "--font-inter"});
 
 export const metadata: Metadata = {
     title: "ACE System",
@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{children: React.ReactNode;}>) {
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body className={inter.variable}>
                 <QueryClientProviderWrapper>
-                    <div>{children}</div>
+                    <div className="font-inter">{children}</div>
                 </QueryClientProviderWrapper>
             </body>
         </html>
