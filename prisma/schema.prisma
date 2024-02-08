@@ -28,13 +28,15 @@ enum Role {
 model User {
     id Int @id @default(autoincrement())
 
-    email        String
-    password     String
-    branchId     Int
+    name     String
+    email    String @unique
+    password String
+    branchId Int
 
     dateVerified DateTime?
     verified     Boolean
 
+    branch Branch @relation(fields: [branchId], references: [id])
     roles UserRoleAssigned[]
 
     createdAt DateTime  @default(now())
@@ -55,6 +57,8 @@ model Branch {
     branchDescription String
     branchAddress     String
     branchPicture     String?
+
+    users User[]
 
     createdBy Int?
     updatedBy Int?
