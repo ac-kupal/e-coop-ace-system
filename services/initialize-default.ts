@@ -11,7 +11,7 @@ export const INIT_ROOT_ACCOUNT = async () => {
                 create : {
                     branchName : "initial branch",
                     branchAddress : "initial address",
-                    branchPicture : "/picture/default.png",
+                    branchPicture : "/images/default.png",
                     branchDescription : "this is just an initial branch"
                 }
             },
