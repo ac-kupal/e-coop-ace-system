@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
+import { ThemeProvider } from "@/components/theme/theme-provider"
 import QueryClientProviderWrapper from "@/providers/query-client-provider-wrapper";
 
 const inter = Inter({ subsets: ["latin"] , variable : "--font-inter"});
@@ -17,6 +17,13 @@ export default function RootLayout({ children }: Readonly<{children: React.React
             <body className={inter.variable}>
                 <QueryClientProviderWrapper>
                     <div className="font-inter">{children}</div>
+                    <ThemeProvider
+                     attribute="class"
+                     defaultTheme="system"
+                     enableSystem
+                    >
+                    <div>{children}</div>
+                    </ThemeProvider>
                 </QueryClientProviderWrapper>
             </body>
         </html>
