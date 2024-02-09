@@ -116,7 +116,6 @@ model Election {
     startDate  DateTime
     endDate    DateTime
     status     ElectionStatus
-    totalVotes Int
 
     canditates Candidate[]
     positions  Position[]
