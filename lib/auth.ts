@@ -24,14 +24,14 @@ export const authOptions: NextAuthOptions = {
                 },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials, req) {
-                const user = login(credentials as any)
+            async authorize(credentials) {
+                const user = await login(credentials as any);
                 return user as {} as DefaultUser;
             },
         }),
     ],
-    pages : {
-        signIn : "/auth"
+    pages: {
+        signIn: "/auth",
     },
     session: {
         strategy: "jwt",
@@ -42,17 +42,15 @@ export const authOptions: NextAuthOptions = {
     },
     callbacks: {
         async signIn({ user }) {
-            // TODO: After prisma model created
-            
+            const fetchUserData = getUserWithoutPassword(user.email as string);
+            if (!fetchUserData) return false;
             return true;
         },
-        async jwt({ token }) {
-            // TODO: After prisma model created
+        async session({ session, token}) {
+            console.log("user-> ",session.user)
+            const fetchUserData = await getUserWithoutPassword(session.user.email);
 
-            return token;
-        },
-        async session({ session, token }) {
-            // TODO: After prisma model created
+            if(fetchUserData) session.user = fetchUserData
 
             return session;
         },

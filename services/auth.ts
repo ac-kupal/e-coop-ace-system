@@ -17,11 +17,11 @@ export const login = async( credentials : z.infer<typeof loginSchema>) => {
     
     if(!user) throw new Error("User doesn't exist")
 
-    const isPasswordCorrect = await matchPassword(user?.password, password)
+    const isPasswordCorrect = await matchPassword(password, user?.password )
 
-    if(isPasswordCorrect) throw new Error("Invalid credentials")
+    if(!isPasswordCorrect) throw new Error("Invalid credentials")
 
-    const userData = await getUserWithoutPassword(user.id)
+    const userData = await getUserWithoutPassword(user.email)
 
     return userData
 }

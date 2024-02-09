@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic"
 
 import React from "react";
-import LoginForm from "./_components/login-form";
 import { hasRoot } from "@/services/user";
+import LoginForm from "./_components/login-form";
 import { INIT_ROOT_ACCOUNT } from "@/services/initialize-default";
 
 type Props = {
