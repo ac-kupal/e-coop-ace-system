@@ -18,3 +18,7 @@ export const hasRoot = async () => {
 export const findUserByEmail = async ( email : z.infer<typeof emailSchema>) => {
     return db.user.findUnique({ where : { email }})
 }
+
+export const getUserWithoutPassword = async ( id : number ) => {
+    return db.user.findUnique({ where : { id }})
+}

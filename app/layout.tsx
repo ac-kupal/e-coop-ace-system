@@ -16,13 +16,12 @@ export default function RootLayout({ children }: Readonly<{children: React.React
         <html lang="en">
             <body className={inter.variable}>
                 <QueryClientProviderWrapper>
-                    <div className="font-inter">{children}</div>
                     <ThemeProvider
                      attribute="class"
                      defaultTheme="system"
                      enableSystem
                     >
-                    <div>{children}</div>
+                        <div className="font-inter">{children}</div>
                     </ThemeProvider>
                 </QueryClientProviderWrapper>
             </body>
