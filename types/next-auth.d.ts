@@ -5,6 +5,7 @@ import NextAuth, { DefaultSession } from "next-auth";
 declare module "next-auth" {
     interface user {
         id: number;
+        picture: string | null;
         name: string;
         email: string;
         branchId: number;

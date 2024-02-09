@@ -26,18 +26,22 @@ export const getUserWithoutPassword = async (email : string) => {
         where: { email },
         select: {
             id: true,
+            name: true,
+            picture : true,
             email: true,
-            verified: true,
-            branch: true,
+            roles: true,
+            
             branchId: true,
+            branch: true,
+
+            verified: true,
+            dateVerified: true,
+
             createdAt: true,
             createdBy: true,
-            dateVerified: true,
             deleted: true,
             deletedAt: true,
             deletedBy: true,
-            name: true,
-            roles: true,
             updatedAt: true,
             updatedBy: true,
         },

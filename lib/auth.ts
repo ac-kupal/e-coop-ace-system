@@ -1,20 +1,12 @@
 import type { GetServerSidePropsContext } from "next";
-// import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { DefaultUser, getServerSession, type NextAuthOptions } from "next-auth";
 
-import { matchPassword } from "./server-utils";
-import { findUserByEmail, getUserWithoutPassword } from "@/services/user";
-import { loginSchema } from "@/validation-schema/auth";
+import { getUserWithoutPassword } from "@/services/user";
 import { login } from "@/services/auth";
 
 export const authOptions: NextAuthOptions = {
     providers: [
-        // GoogleProvider({
-        // TODO: Gmail account from tita
-        //     clientId: process.env.GOOGLE_ID as string,
-        //     clientSecret: process.env.GOOGLE_SECRET as string,
-        // }),
         CredentialsProvider({
             credentials: {
                 email: {
@@ -47,11 +39,8 @@ export const authOptions: NextAuthOptions = {
             return true;
         },
         async session({ session, token}) {
-            console.log("user-> ",session.user)
             const fetchUserData = await getUserWithoutPassword(session.user.email);
-
             if(fetchUserData) session.user = fetchUserData
-
             return session;
         },
     },
