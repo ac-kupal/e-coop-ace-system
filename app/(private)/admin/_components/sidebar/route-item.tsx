@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { routeType } from "@/types";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 type Props = {
     currentUser: user;
@@ -29,9 +30,14 @@ const RouteItem = ({ currentUser, route }: Props) => {
     return (
         <Link
             href={path}
-            className="flex px-6 py-2 bg-foreground rounded-full text-background items-center gap-x-3"
+            className={cn(
+                "duration-200 group flex px-6 py-2 rounded-full items-center gap-x-3 hover:bg-secondary text-foreground",
+                isCurrentPath && "text-background bg-foreground hover:bg-foreground"
+            )}
         >
-            {icon}
+            <div className="w-fit h-fit text-indigo-400">
+                {icon}
+            </div>
             <p>{name}</p>
         </Link>
     );

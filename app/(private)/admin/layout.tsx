@@ -7,7 +7,7 @@ type Props = { children?: ReactNode };
 const AdminLayout = ({ children }: Props) => {
     return (
         <SessionProviderWrapper>
-            <div className="min-h-screen flex">
+            <div className="min-h-screen flex bg-secondary">
                 <SideBar />
                 <main className="">{children}</main>
             </div>

@@ -1,9 +1,10 @@
-import { redirect } from "next/navigation"
-
 type Props = {}
 
 const AdminPage = (props: Props) => {
-  return redirect("/admin/dashboard")
+
+  return (
+    <div>Dashboard</div>
+  )
 }
 
 export default AdminPage

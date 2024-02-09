@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import QueryClientProviderWrapper from "@/providers/query-client-provider-wrapper";
+import ConfirmModalProvider from "@/providers/confirm-modal-provider";
 
 const inter = Inter({ subsets: ["latin"] , variable : "--font-inter"});
 
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                      defaultTheme="system"
                      enableSystem
                     >
+                        <ConfirmModalProvider />
                         <div className="font-inter">{children}</div>
                     </ThemeProvider>
                 </QueryClientProviderWrapper>

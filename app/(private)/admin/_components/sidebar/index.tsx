@@ -11,7 +11,7 @@ const SideBar = async (props: Props) => {
 
     if (!session?.user)
         return (
-            <div className="w-60 p-4 flex flex-col items-center">
+            <div className="w-60 p-4 bg-background flex flex-col gap-y-8 items-center rounded-r-2xl">
                 <p>You are not signed in</p>
                 <Link className="underline" href="/auth">
                     Sign in
@@ -20,7 +20,7 @@ const SideBar = async (props: Props) => {
         );
 
     return (
-        <div className="w-60 p-4 flex flex-col gap-y-8 items-center rounded-r-xl">
+        <div className="w-60 p-4 bg-background flex flex-col gap-y-8 items-center rounded-r-2xl">
             <div className="flex flex-col items-center">
                 <p className="text-xl">ACE System v1</p>
                 <Avatar className="h-16 w-16 mt-8">
