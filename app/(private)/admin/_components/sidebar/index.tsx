@@ -20,7 +20,7 @@ const SideBar = async (props: Props) => {
         );
 
     return (
-        <div className="w-60 p-4 bg-background flex flex-col gap-y-8 items-center rounded-r-2xl">
+        <div className="w-60 h-screen p-4 bg-background flex flex-col gap-y-8 items-center rounded-r-2xl">
             <div className="flex flex-col items-center">
                 <p className="text-xl">ACE System v1</p>
                 <Avatar className="h-16 w-16 mt-8">

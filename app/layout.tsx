@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import QueryClientProviderWrapper from "@/providers/query-client-provider-wrapper";
 import ConfirmModalProvider from "@/providers/confirm-modal-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] , variable : "--font-inter"});
 
@@ -21,9 +22,10 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                      attribute="class"
                      defaultTheme="system"
                      enableSystem
-                    >
+                    >   
                         <ConfirmModalProvider />
                         <div className="font-inter">{children}</div>
+                        <Toaster richColors />
                     </ThemeProvider>
                 </QueryClientProviderWrapper>
             </body>
