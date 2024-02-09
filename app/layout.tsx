@@ -25,7 +25,7 @@ export default function RootLayout({ children }: Readonly<{children: React.React
                     >   
                         <ConfirmModalProvider />
                         <div className="font-inter">{children}</div>
-                        <Toaster richColors />
+                        <Toaster richColors closeButton />
                     </ThemeProvider>
                 </QueryClientProviderWrapper>
             </body>

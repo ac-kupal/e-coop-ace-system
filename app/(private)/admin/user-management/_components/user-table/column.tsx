@@ -18,9 +18,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { userType } from "@/types/user";
+import { userTypeWithBranchAndRoles } from "@/types/user";
 
-const Actions = ({ user }: { user: userType }) => {
+const Actions = ({ user }: { user: userTypeWithBranchAndRoles }) => {
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     if (false)
@@ -39,7 +39,10 @@ const Actions = ({ user }: { user: userType }) => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     className="px-2 gap-x-2"
-                    onClick={() => navigator.clipboard.writeText(`${user.id}`)}
+                    onClick={() => {
+                        navigator.clipboard.writeText(`${user.id}`)
+                        toast.success("coppied")
+                    }}
                 >
                     {" "}
                     <Copy strokeWidth={2} className="h-4" />
@@ -73,7 +76,7 @@ const Actions = ({ user }: { user: userType }) => {
     );
 };
 
-const columns: ColumnDef<userType>[] = [
+const columns: ColumnDef<userTypeWithBranchAndRoles>[] = [
     {
         accessorKey: "id",
         header: ({ column }) => (
@@ -101,6 +104,25 @@ const columns: ColumnDef<userType>[] = [
         ),
         cell: ({ row }) => (
             <div className=""> {row.original.email}</div>
+        ),
+    },
+    {
+        accessorKey: "roles",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Roles" />
+        ),
+        cell: ({ row }) => (
+            <div className="space-x-1"> {row.original.roles.map(({ role })=> <span className="bg-secondary text-foreground/70 p-1 rounded-md">{role}</span> )}</div>
+        ),
+        enableSorting : false
+    },
+    {
+        accessorKey: "branch",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Branch" />
+        ),
+        cell: ({ row }) => (
+            <div className="">{ row.original.branch.branchName }</div>
         ),
     },
     {

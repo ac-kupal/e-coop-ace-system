@@ -1,28 +1,24 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
+import { Plus, SearchIcon } from "lucide-react";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
+import DataTablePagination from "@/components/data-table/data-table-pagination";
+import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import columns from "./column";
 import {
-    ColumnFiltersState,
-    SortingState,
     getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
 
-import { userType } from "@/types/user";
 import { handleAxiosErrorMessage } from "@/utils";
-import { Plus, SearchIcon } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import { Button } from "@/components/ui/button";
-import DataTablePagination from "@/components/data-table/data-table-pagination";
+import { userTypeWithBranchAndRoles } from "@/types/user";
 
 type Props = {};
 
@@ -30,7 +26,7 @@ const UserTable = (props: Props) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-    const { data, isFetching, isLoading, isError, refetch } = useQuery<userType[], string>({
+    const { data, isFetching, isLoading, isError, refetch } = useQuery<userTypeWithBranchAndRoles[], string>({
         queryKey: ["user-list-query"],
         queryFn: async () => {
             try {
@@ -38,15 +34,17 @@ const UserTable = (props: Props) => {
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
-                console.log(e);
-                toast.error(errorMessage);
+                toast.error(errorMessage, {
+                    action : {
+                        label : "try agian",
+                        onClick : () => refetch()
+                    }
+                });
                 throw handleAxiosErrorMessage(e);
             }
         },
         initialData: [],
     });
-
-    console.log(isFetching, isLoading)
 
     const table = useReactTable({
         data,
@@ -76,7 +74,7 @@ const UserTable = (props: Props) => {
             <div className="flex flex-wrap items-center justify-between p-3 rounded-lg gap-y-2 bg-background">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
                     <div className="relative">
-                        <SearchIcon className="absolute w-5 h-auto top-2 left-2" />
+                        <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                         <Input
                             ref={onFocusSearch}
                             placeholder="Search..."
@@ -84,7 +82,7 @@ const UserTable = (props: Props) => {
                             onChange={(event) =>
                                 setGlobalFilter(event.target.value)
                             }
-                            className="w-full pl-10 text-sm md:text-base"
+                            className="w-full pl-8 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
                 </div>
