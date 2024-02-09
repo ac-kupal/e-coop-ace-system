@@ -36,8 +36,8 @@ model User {
     dateVerified DateTime?
     verified     Boolean
 
-    branch Branch @relation(fields: [branchId], references: [id])
-    roles UserRoleAssigned[]
+    branch Branch             @relation(fields: [branchId], references: [id])
+    roles  UserRoleAssigned[]
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -78,4 +78,86 @@ model UserRoleAssigned {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([userId, role])
+}
+
+enum EventType {
+    election
+    gathering
+}
+
+model Event {
+    id          Int       @id @default(autoincrement())
+    title       String
+    description String
+    date        DateTime
+    location    String
+    category    EventType
+    deleted     Boolean
+    election    Election?
+
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum ElectionStatus {
+    pending
+    live
+    done
+}
+
+model Election {
+    id         Int            @id @default(autoincrement())
+    e_name     String
+    startDate  DateTime
+    endDate    DateTime
+    status     ElectionStatus
+    totalVotes Int
+
+    canditates Candidate[]
+    position   Position[]
+
+    event   Event? @relation(fields: [eventId], references: [id] ,onDelete: Cascade, onUpdate: Cascade)
+    eventId Int?   @unique
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Candidate {
+    id        Int    @id @default(autoincrement())
+    firstName String
+    lastName  String
+    accountNo Int
+    picture String
+    votes Int?
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    electionId Int
+
+    position Position?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Position {
+    id           Int    @id @default(autoincrement())
+    positionName String
+    allowedVotes Int
+
+    election   Election @relation(fields: [electionId], references: [id])
+    electionId Int
+
+    candidate   Candidate? @relation(fields: [candidateId], references: [id])
+    candidateId Int?       @unique
+}
+
+model Votes {
+    id Int @id @default(autoincrement())
+    candidateId Int
+    accountId Int
 }
