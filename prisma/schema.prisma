@@ -58,7 +58,7 @@ model Branch {
     branchName        String
     branchDescription String
     branchAddress     String
-    branchPicture     String?
+    branchPicture     String? @default("/images/default.png")
 
     users User[]
 
