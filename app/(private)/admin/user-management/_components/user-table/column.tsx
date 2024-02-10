@@ -112,7 +112,7 @@ const columns: ColumnDef<userTypeWithBranchAndRoles>[] = [
             <DataTableColHeader column={column} title="Roles" />
         ),
         cell: ({ row }) => (
-            <div className="space-x-1"> {row.original.roles.map(({ role })=> <span className="bg-secondary text-foreground/70 p-1 rounded-md">{role}</span> )}</div>
+            <div className="space-x-1"> {row.original.roles.map(({ role })=> <span key={role} className="bg-secondary text-foreground/70 p-1 rounded-md">{role}</span> )}</div>
         ),
         enableSorting : false
     },

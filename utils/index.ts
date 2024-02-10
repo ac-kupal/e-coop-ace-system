@@ -17,6 +17,6 @@ export const handleAxiosErrorMessage = (error: unknown) => {
     if (!isApiErr(error.response.data)) {
         return error.message;
     }
-
+    
     return error.response.data.message;
 };
