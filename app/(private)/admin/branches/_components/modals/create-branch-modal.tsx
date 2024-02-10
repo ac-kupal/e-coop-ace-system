@@ -1,16 +1,18 @@
 "use client"
 import z from "zod";
-import axios, { AxiosError } from "axios";
+import { v4 } from "uuid"
+import axios from "axios";
 import { toast } from "sonner";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { v4 } from "uuid"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import UserAvatar from "@/components/user-avatar";
 import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -26,12 +28,11 @@ import {
 } from "@/components/ui/form";
 
 import { branchType } from "@/types";
+import  { createClient } from "@/lib/supabase";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createBranchSchema } from "@/validation-schema/branch";
-import  { createClient } from "@/lib/supabase";
-import { useState } from "react";
-import UserAvatar from "@/components/user-avatar";
-import imageCompression from "browser-image-compression";
+import useImagePick from "@/hooks/use-image-pick";
+import useUploadBucket from "@/hooks/use-upload-bucket";
 
 
 type Props = {
@@ -45,8 +46,8 @@ type createBranchType = z.infer<typeof createBranchSchema>;
 
 const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
     const queryClient = useQueryClient();
-    const [file, setFile] = useState<File | null>(null);
-    const [uploading, setUploading] = useState(false);
+    const { imageFile, imageURL, onSelectImage, resetPicker } = useImagePick({ maxOptimizedSizeMB : 0.5, fileType : "image/jpeg", maxWidthOrHeight : 300 });
+    const { uploading, handleUpload } = useUploadBucket({ imageFile, bucket : "branch-logos" })
 
     const form = useForm<createBranchType>({
         resolver: zodResolver(createBranchSchema),
@@ -58,74 +59,42 @@ const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
         },
     });
 
+    const reset = () => {
+        form.reset();
+        resetPicker();
+        onClose(false);
+    }
+
     const createBranch = useMutation<branchType, string, createBranchType>({
         mutationKey: ["create-branch"],
         mutationFn: async (data) => {
             try {
-                if (file) {
-                    setUploading(true);
-                    const fileExtension = file.name.match(/\.([^.]+)$/)?.[1];
-
-                    let uploadResult = await createClient().storage
-                        .from("branch-logos")
-                        .upload(`${v4()}.${fileExtension}`, file, {
-                            cacheControl: "3600",
-                        });
-
-                    if (uploadResult.error) throw new Error("");
-                    
-                    data.branchPicture = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/branch-logos/${uploadResult.data.path}`;
-                }
-
+                data.branchPicture = await handleUpload()
                 const response = await axios.post("/api/v1/branch", { data });
-                queryClient.invalidateQueries({
-                    queryKey: ["branch-list-query"],
-                });
 
+                queryClient.invalidateQueries({ queryKey: ["branch-list-query"] });
                 if (onCreate !== undefined) onCreate(response.data);
-                onClose(false);
+                reset();
+                
                 return response.data;
             } catch (e) {
                 let errorMessage = "";
                 
-                if (e instanceof Error)
-                    errorMessage = e.message;
-                else
-                    errorMessage =  handleAxiosErrorMessage(e);
+                if (e instanceof Error) errorMessage = e.message;
+                else errorMessage =  handleAxiosErrorMessage(e);
 
                 toast.error(errorMessage);
                 throw errorMessage
-            }finally{
-                setUploading(false);
             }
         },
     });
-
-    const handleOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0) return;
-
-        const imageFile = e.target.files[0];
-
-        const options = {
-            maxSizeMB: 0.5,
-            maxWidthOrHeight: 200,
-            FileType: "image/jpeg",
-            useWebWorker: true,
-        };
-        try {
-            const compressedFile = await imageCompression(imageFile, options);
-            setFile(compressedFile);
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     const isLoading = createBranch.isPending || uploading;
 
     console.log('rerender')
 
     return (
-        <Dialog open={state} onOpenChange={onClose}>
+        <Dialog open={state} onOpenChange={(state)=> reset() }>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
                 <ModalHead
                     title="Create Branch"
@@ -140,19 +109,15 @@ const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
                     >
                         <FormItem className="flex flex-col items-center">
                             <UserAvatar
-                                className="size-36"
+                                className="size-36 mb-2"
                                 fallback="📷"
-                                src={
-                                    file
-                                        ? URL.createObjectURL(file)
-                                        : "/images/default.png"
-                                }
+                                src={ imageURL }
                             />
                             <FormLabel>Branch Logo</FormLabel>
                             <Input
                                 type="file"
                                 accept="image/*"
-                                onChange={handleOnChange}
+                                onChange={onSelectImage}
                             />
                         </FormItem>
                         <FormField
@@ -211,10 +176,8 @@ const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
                             <Button
                                 disabled={isLoading}
                                 onClick={(e) => {
-                                    if (onCancel) onCancel();
-                                    form.reset();
-                                    onClose(false);
                                     e.preventDefault();
+                                    reset();                                    
                                 }}
                                 variant={"ghost"}
                                 className="bg-muted/60 hover:bg-muted"
