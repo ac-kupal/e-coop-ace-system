@@ -78,7 +78,7 @@ const Actions = ({ user }: { user: userTypeWithBranchAndRoles }) => {
 
 const columns: ColumnDef<userTypeWithBranchAndRoles>[] = [
     {
-        accessorKey: "id",
+        accessorKey: "ID",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="id" />
         ),

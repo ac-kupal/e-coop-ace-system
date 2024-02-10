@@ -18,8 +18,9 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { branchType } from "@/types";
+import UserAvatar from "@/components/user-avatar";
 
-const Actions = ({ branch }: { branch : branchType }) => {
+const Actions = ({ branch }: { branch: branchType }) => {
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     if (false)
@@ -39,8 +40,8 @@ const Actions = ({ branch }: { branch : branchType }) => {
                 <DropdownMenuItem
                     className="px-2 gap-x-2"
                     onClick={() => {
-                        navigator.clipboard.writeText(`${branch.id}`)
-                        toast.success("coppied")
+                        navigator.clipboard.writeText(`${branch.id}`);
+                        toast.success("coppied");
                     }}
                 >
                     <Copy strokeWidth={2} className="h-4" />
@@ -78,21 +79,33 @@ const columns: ColumnDef<branchType>[] = [
     {
         accessorKey: "id",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="id" />
+            <DataTableColHeader column={column} title="ID" />
         ),
         cell: ({ row }) => (
             <div className="font-medium uppercase">{row.original.id}</div>
         ),
-        enableSorting : false,
+        enableSorting: false,
         enableHiding: false,
     },
     {
         accessorKey: "name",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="name" />
+            <DataTableColHeader column={column} title="Branch Name" />
         ),
         cell: ({ row }) => (
-            <div className="flex gap-x-2 items-center">{row.original.branchName}</div>
+            <div className="flex gap-x-2 items-center">
+                <UserAvatar
+                    className="h-10 w-10"
+                    src={row.original.branchPicture ?? "/images/default.png"}
+                    fallback={row.original.branchName.substring(
+                        0,
+                        row.original.branchName.length >= 2
+                            ? 2
+                            : row.original.branchName.length
+                    )}
+                />
+                {row.original.branchName}
+            </div>
         ),
     },
     {
@@ -110,7 +123,10 @@ const columns: ColumnDef<branchType>[] = [
             <DataTableColHeader column={column} title="Date joined" />
         ),
         cell: ({ row }) => (
-            <div className=""> {format(new Date(row.original.createdAt), "MMM dd, y")}</div>
+            <div className="">
+                {" "}
+                {format(new Date(row.original.createdAt), "MMM dd, y")}
+            </div>
         ),
     },
     {

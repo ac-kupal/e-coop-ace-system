@@ -3,6 +3,16 @@ import axios from "axios";
 import { toast } from "sonner";
 import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+    ColumnFiltersState,
+    SortingState,
+    VisibilityState,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
+} from "@tanstack/react-table";
 
 import { Plus, SearchIcon } from "lucide-react";
 
@@ -12,10 +22,6 @@ import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import columns from "./column";
-import {
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
 
 import { handleAxiosErrorMessage } from "@/utils";
 import { branchType } from "@/types";
@@ -25,8 +31,14 @@ type Props = {};
 
 const BranchesTable = (props: Props) => {
     const [createModal, setCreateModal] = useState(false)
-    const [globalFilter, setGlobalFilter] = useState("");
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+        {}
+    );
+    const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
+    const [rowSelection, setRowSelection] = useState({});
+
 
     const { data, isFetching, isLoading, isError, refetch } = useQuery<branchType[], string>({
         queryKey: ["branch-list-query"],
@@ -51,7 +63,20 @@ const BranchesTable = (props: Props) => {
     const table = useReactTable({
         data,
         columns,
+        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
+        state: {
+            sorting,
+            columnVisibility,
+            rowSelection,
+            globalFilter,
+        },
+        onGlobalFilterChange: setGlobalFilter,
     });
 
     useEffect(() => {
