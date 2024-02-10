@@ -1,0 +1,1 @@
+export type TBuckets = "branch-logos" | "member-profile" | "user-profile"
