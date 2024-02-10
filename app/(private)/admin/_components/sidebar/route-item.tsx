@@ -3,13 +3,13 @@ import React from "react";
 import { user } from "next-auth";
 import { usePathname } from "next/navigation";
 
-import { routeType } from "@/types";
+import { TRoute } from "@/types";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type Props = {
     currentUser: user;
-    route: routeType;
+    route: TRoute;
 };
 
 const RouteItem = ({ currentUser, route }: Props) => {

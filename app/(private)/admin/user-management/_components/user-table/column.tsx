@@ -18,9 +18,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { userTypeWithBranchAndRoles } from "@/types/user";
+import { TUserWithBranchAndRoles } from "@/types";
 
-const Actions = ({ user }: { user: userTypeWithBranchAndRoles }) => {
+const Actions = ({ user }: { user: TUserWithBranchAndRoles }) => {
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     if (false)
@@ -76,7 +76,7 @@ const Actions = ({ user }: { user: userTypeWithBranchAndRoles }) => {
     );
 };
 
-const columns: ColumnDef<userTypeWithBranchAndRoles>[] = [
+const columns: ColumnDef<TUserWithBranchAndRoles>[] = [
     {
         accessorKey: "ID",
         header: ({ column }) => (

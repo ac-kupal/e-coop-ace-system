@@ -3,10 +3,10 @@ import { user } from "next-auth";
 
 import { GitBranch, Home, PartyPopper, User } from "lucide-react";
 
-import { routeType } from "@/types";
+import { TRoute } from "@/types";
 import RouteItem from "./route-item";
 
-const routes: routeType[] = [
+const routes: TRoute[] = [
     {
         icon: <Home className="h-5 w-5" />,
         name: "Dashboard",

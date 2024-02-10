@@ -1,14 +1,14 @@
 "use client";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button";
-import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
 import { Copy, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
-import { toast } from "sonner";
-import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { Button } from "@/components/ui/button";
+import UserAvatar from "@/components/user-avatar";
+import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -17,10 +17,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { branchType } from "@/types";
-import UserAvatar from "@/components/user-avatar";
 
-const Actions = ({ branch }: { branch: branchType }) => {
+import { TBranch } from "@/types";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+
+const Actions = ({ branch }: { branch: TBranch }) => {
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     if (false)
@@ -75,7 +76,7 @@ const Actions = ({ branch }: { branch: branchType }) => {
     );
 };
 
-const columns: ColumnDef<branchType>[] = [
+const columns: ColumnDef<TBranch>[] = [
     {
         accessorKey: "id",
         header: ({ column }) => (

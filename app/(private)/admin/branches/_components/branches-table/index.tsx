@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-    ColumnFiltersState,
     SortingState,
     VisibilityState,
     getCoreRowModel,
@@ -19,13 +18,13 @@ import { Plus, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
+import CreateBranchModal from "../modals/create-branch-modal";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import columns from "./column";
 
+import { TBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { branchType } from "@/types";
-import CreateBranchModal from "../modals/create-branch-modal";
 
 type Props = {};
 
@@ -40,7 +39,7 @@ const BranchesTable = (props: Props) => {
     const [rowSelection, setRowSelection] = useState({});
 
 
-    const { data, isFetching, isLoading, isError, refetch } = useQuery<branchType[], string>({
+    const { data, isFetching, isLoading, isError, refetch } = useQuery<TBranch[], string>({
         queryKey: ["branch-list-query"],
         queryFn: async () => {
             try {

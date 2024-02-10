@@ -1,12 +1,13 @@
 import { Role } from "@prisma/client";
 import { ReactElement, ReactNode } from "react";
 
-export * from "./user"
-export * from "./branch"
+export * from "./user.types"
+export * from "./branch.types"
+export * from "./bucket.types"
 
-export type ApiErr = { message: string };
+export type TApiError = { message: string };
 
-export type routeType = {
+export type TRoute = {
     icon : ReactNode | ReactElement ;
     name: string;
     path : string;

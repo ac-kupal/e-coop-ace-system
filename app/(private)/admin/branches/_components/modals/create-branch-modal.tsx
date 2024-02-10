@@ -1,9 +1,7 @@
 "use client"
 import z from "zod";
-import { v4 } from "uuid"
 import axios from "axios";
 import { toast } from "sonner";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -27,8 +25,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-import { branchType } from "@/types";
-import  { createClient } from "@/lib/supabase";
+import { TBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createBranchSchema } from "@/validation-schema/branch";
 import useImagePick from "@/hooks/use-image-pick";
@@ -39,17 +36,17 @@ type Props = {
     state: boolean;
     onClose: (state: boolean) => void;
     onCancel?: () => void;
-    onCreate?: (newBranch: branchType) => void;
+    onCreate?: (newBranch: TBranch) => void;
 };
 
-type createBranchType = z.infer<typeof createBranchSchema>;
+type createTBranch = z.infer<typeof createBranchSchema>;
 
 const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
     const queryClient = useQueryClient();
     const { imageFile, imageURL, onSelectImage, resetPicker } = useImagePick({ maxOptimizedSizeMB : 0.5, fileType : "image/jpeg", maxWidthOrHeight : 300 });
     const { uploading, handleUpload } = useUploadBucket({ imageFile, bucket : "branch-logos" })
 
-    const form = useForm<createBranchType>({
+    const form = useForm<createTBranch>({
         resolver: zodResolver(createBranchSchema),
         defaultValues: {
             branchPicture: undefined,
@@ -65,7 +62,7 @@ const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
         onClose(false);
     }
 
-    const createBranch = useMutation<branchType, string, createBranchType>({
+    const createBranch = useMutation<TBranch, string, createTBranch>({
         mutationKey: ["create-branch"],
         mutationFn: async (data) => {
             try {

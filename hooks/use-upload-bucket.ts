@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 import { useState } from "react";
 
-import { TBuckets } from "@/types/bucket";
+import { TBuckets } from "@/types";
 import { createClient } from "@/lib/supabase";
 
 type UploadBucketProps = {

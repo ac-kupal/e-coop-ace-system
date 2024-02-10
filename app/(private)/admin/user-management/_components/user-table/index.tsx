@@ -18,7 +18,7 @@ import {
 } from "@tanstack/react-table";
 
 import { handleAxiosErrorMessage } from "@/utils";
-import { userTypeWithBranchAndRoles } from "@/types/user";
+import { TUserWithBranchAndRoles } from "@/types";
 
 type Props = {};
 
@@ -26,7 +26,7 @@ const UserTable = (props: Props) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-    const { data, isFetching, isLoading, isError, refetch } = useQuery<userTypeWithBranchAndRoles[], string>({
+    const { data, isFetching, isLoading, isError, refetch } = useQuery<TUserWithBranchAndRoles[], string>({
         queryKey: ["user-list-query"],
         queryFn: async () => {
             try {

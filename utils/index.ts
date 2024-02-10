@@ -1,7 +1,7 @@
 import axios from "axios";
-import { ApiErr } from "@/types";
+import { TApiError } from "@/types";
 
-const isApiErr = (data: any): data is ApiErr => {
+const isTApiError = (data: any): data is TApiError => {
     return data && typeof data.message === "string";
 };
 
@@ -14,7 +14,7 @@ export const handleAxiosErrorMessage = (error: unknown) => {
         return error.message;
     }
 
-    if (!isApiErr(error.response.data)) {
+    if (!isTApiError(error.response.data)) {
         return error.message;
     }
     
