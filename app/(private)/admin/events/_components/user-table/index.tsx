@@ -91,7 +91,7 @@ const UserTable = (props: Props) => {
                     <Button
                         size="sm"
                         className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                        // onClick={() => onOpen("createUser")}
+                        // onClick={() => onOpen("createEvent")}
                     >
                         Add Event
                         <Plus className="w-4 h-4" />

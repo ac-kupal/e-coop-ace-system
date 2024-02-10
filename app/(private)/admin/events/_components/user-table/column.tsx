@@ -18,12 +18,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TEvent } from "@/types/event/TCreateEvent";
+import { TEvent, TEventWithElection } from "@/types/event/TCreateEvent";
 import moment from "moment"
 
-const Actions = ({ event }: { event: TEvent }) => {
+const Actions = ({ event }: { event: TEventWithElection }) => {
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
-    console.log(event)
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -94,8 +93,7 @@ const columns: ColumnDef<TEvent>[] = [
             console.log(row.original.title)
             return <div className=""> {row.original.title}</div>
 
-        }
-        ,
+        },
     },
     {
         accessorKey: "description",
@@ -125,11 +123,30 @@ const columns: ColumnDef<TEvent>[] = [
         ),
     },
     {
+        accessorKey: "type",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="type" />
+        ),
+        cell: ({ row }) => (
+            <div className="">{ row.original.category }</div>
+        ),
+    },
+      // will fix tom
+    // {
+    //     id: "actions",
+    //     enableHiding: false,
+    //     cell: ({ row }) =>{
+    //         return row.original.election ? <Button variant={"outline"}>add Election</Button>:""
+    //     }
+    // },
+
+
+    {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => (
             <div className="flex justify-end">
-                <Actions event={row.original} />
+                {/* <Actions event={row.original} /> */}
             </div>
         ),
     },
