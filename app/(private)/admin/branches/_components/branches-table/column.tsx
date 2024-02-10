@@ -88,7 +88,7 @@ const columns: ColumnDef<branchType>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "name",
+        accessorKey: "branchName",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Branch Name" />
         ),
