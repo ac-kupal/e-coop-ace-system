@@ -8,8 +8,8 @@ type Props = {};
 
 const SideBar = async (props: Props) => {
     const session = await currentUser();
-
-    if (!session?.user)
+    
+    if (!session?.user || session?.user.id === undefined)
         return (
             <div className="w-60 p-4 bg-background flex flex-col gap-y-8 items-center rounded-r-2xl">
                 <p>You are not signed in</p>

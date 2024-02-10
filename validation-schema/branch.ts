@@ -1,6 +1,6 @@
 import z from "zod";
 
-const createBranchSchema = z.object({
+export const createBranchSchema = z.object({
     branchName: z
         .string({ required_error: "branch name is required" })
         .min(1, "branch name is required"),
@@ -12,5 +12,5 @@ const createBranchSchema = z.object({
         .min(1, "branch address is required"),
     branchPicture: z
         .string({ required_error: "branch picture is required" })
-        .optional(),
+        .optional()
 });

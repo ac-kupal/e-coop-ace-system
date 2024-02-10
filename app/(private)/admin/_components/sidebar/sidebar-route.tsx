@@ -1,7 +1,7 @@
 import React from "react";
 import { user } from "next-auth";
 
-import { Home, PartyPopper, User } from "lucide-react";
+import { GitBranch, Home, PartyPopper, User } from "lucide-react";
 
 import { routeType } from "@/types";
 import RouteItem from "./route-item";
@@ -12,6 +12,12 @@ const routes: routeType[] = [
         name: "Dashboard",
         path: "/admin/dashboard",
         allowedRole: ["root", "admin", "staff"],
+    },
+    {
+        icon: <GitBranch className="h-5 w-5" />,
+        name: "Branches",
+        path: "/admin/branches",
+        allowedRole: ["root", "admin"],
     },
     {
         icon: <User className="h-5 w-5" />,

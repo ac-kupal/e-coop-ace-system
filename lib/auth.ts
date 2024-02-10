@@ -41,6 +41,7 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token}) {
             const fetchUserData = await getUserWithoutPassword(session.user.email);
             if(fetchUserData) session.user = fetchUserData
+
             return session;
         },
     },
