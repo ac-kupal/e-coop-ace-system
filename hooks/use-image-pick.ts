@@ -7,10 +7,11 @@ type ImagePickOption = {
     maxOptimizedSizeMB : 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1,
     maxWidthOrHeight : 100 | 200 | 300 | 800,
     fileType? : "image/jpeg",
+    initialImageURL? : string,
     useWebWorker? : boolean
 }
 
-const useImagePick = ( { maxPickSize = 2, maxOptimizedSizeMB = 0.5, maxWidthOrHeight = 300, fileType = "image/jpeg", useWebWorker = false } : ImagePickOption ) => {
+const useImagePick = ( { maxPickSize = 2, maxOptimizedSizeMB = 0.5, initialImageURL = "/images/default.png", maxWidthOrHeight = 300, fileType = "image/jpeg", useWebWorker = false } : ImagePickOption ) => {
     const [imageFile, setImageFile] = useState<File | null>(null)
 
     const onSelectImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +60,7 @@ const useImagePick = ( { maxPickSize = 2, maxOptimizedSizeMB = 0.5, maxWidthOrHe
 
     const imageURL = useMemo(()=>{
         if(imageFile) return URL.createObjectURL(imageFile) 
-        else  return "/images/default.png"
+        else  return initialImageURL
     }, [imageFile])
 
     return { imageFile, imageURL, imageSize, onSelectImage, resetPicker }

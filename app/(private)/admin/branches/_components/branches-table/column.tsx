@@ -1,8 +1,8 @@
 "use client";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-
 
 import { Copy, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
@@ -19,60 +19,74 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { TBranch } from "@/types";
+import UpdateBranchModal from "../modals/update-branch-modal";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { deleteBranch } from "../branch-api-hooks";
 
 const Actions = ({ branch }: { branch: TBranch }) => {
+    const [modal, setModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
-    if (false)
+    const deleteOperation = deleteBranch(branch);
+
+    if (deleteOperation.isPending)
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-8 h-8 p-0">
-                    <span className="sr-only">Open menu</span>
-                    <MoreHorizontal className="w-4 h-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="border-none shadow-2" align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                    className="px-2 gap-x-2"
-                    onClick={() => {
-                        navigator.clipboard.writeText(`${branch.id}`);
-                        toast.success("coppied");
-                    }}
+        <>
+            <UpdateBranchModal
+                branch={branch}
+                state={modal}
+                close={() => setModal(false)}
+            />
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="w-8 h-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                    className="border-none shadow-2"
+                    align="end"
                 >
-                    <Copy strokeWidth={2} className="h-4" />
-                    Copy Branch ID
-                </DropdownMenuItem>
-                <DropdownMenuItem className="px-2 gap-x-2">
-                    <Pencil strokeWidth={2} className="h-4" /> Edit Branch
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                    onClick={() =>
-                        onOpenConfirmModal({
-                            title: branch.deleted
-                                ? "Permanently Delete 🗑️"
-                                : "Delete Branch 🗑️",
-                            description: branch.deleted
-                                ? "Are you sure to delete this branch permanently? This cannot be undone."
-                                : "Are you sure to delete this branch?",
-                            onConfirm: () => {
-                                toast.success("deleted");
-                            },
-                        })
-                    }
-                    className="px-2 gap-x-2 text-destructive"
-                >
-                    <Trash strokeWidth={2} className="h-4" />{" "}
-                    {branch.deleted ? "Permanent Delete" : "Delete"}
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        className="px-2 gap-x-2"
+                        onClick={() => {
+                            navigator.clipboard.writeText(`${branch.id}`);
+                            toast.success("coppied");
+                        }}
+                    >
+                        <Copy strokeWidth={2} className="h-4" />
+                        Copy Branch ID
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => setModal(true)}
+                        className="px-2 gap-x-2"
+                    >
+                        <Pencil strokeWidth={2} className="h-4" /> Edit Branch
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        onClick={() =>
+                            onOpenConfirmModal({
+                                title: "Delete Branch 🗑️",
+                                description:
+                                    "Are you sure to delete this branch?",
+                                onConfirm: () => {
+                                    deleteOperation.mutate();
+                                },
+                            })
+                        }
+                        className="px-2 gap-x-2 text-destructive"
+                    >
+                        <Trash strokeWidth={2} className="h-4" /> Delete branch
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </>
     );
 };
 
@@ -85,7 +99,6 @@ const columns: ColumnDef<TBranch>[] = [
         cell: ({ row }) => (
             <div className="font-medium uppercase">{row.original.id}</div>
         ),
-        enableSorting: false,
         enableHiding: false,
     },
     {
@@ -133,6 +146,13 @@ const columns: ColumnDef<TBranch>[] = [
     {
         id: "actions",
         enableHiding: false,
+        header: ({ column }) => (
+            <DataTableColHeader
+                className="text-right"
+                column={column}
+                title="Actions"
+            />
+        ),
         cell: ({ row }) => (
             <div className="flex justify-end">
                 <Actions branch={row.original} />

@@ -4,7 +4,6 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Loader2 } from "lucide-react";
@@ -24,48 +23,49 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
+import { useEffect } from "react";
 import { TBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createBranchSchema } from "@/validation-schema/branch";
 
-
-type Props = {
-    state: boolean;
-    onClose: (state: boolean) => void;
-    onCancel?: () => void;
-    onCreate?: (newBranch: TBranch) => void;
+type Props = { 
+    branch : TBranch,
+    state : boolean,
+    close : () => void;
 };
 
-type createTBranch = z.infer<typeof createBranchSchema>;
+type TUpdateBranch = z.infer<typeof createBranchSchema>;
 
-const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
+const UpdateBranchModal = ({ state, branch, close }: Props) => {
     const queryClient = useQueryClient();
 
-    const form = useForm<createTBranch>({
-        resolver: zodResolver(createBranchSchema),
-        defaultValues: {
-            branchPicture: undefined,
-            branchName: "",
-            branchDescription: "",
-            branchAddress: "",
-        },
-    });
+    const form = useForm<TUpdateBranch>({ resolver: zodResolver(createBranchSchema) });
+
+    const setDefaults = () => {
+        form.setValue("branchName", branch.branchName)
+        form.setValue("branchAddress", branch.branchAddress)
+        form.setValue("branchDescription", branch.branchDescription)
+        form.setValue("branchPicture", branch.branchPicture ?? "/images/default.png")
+    }
 
     const reset = () => {
         form.reset();
-        onClose(false);
+        close();
     }
 
-    const createBranch = useMutation<TBranch, string, createTBranch>({
-        mutationKey: ["create-branch"],
+    useEffect(()=>{
+        setDefaults()
+    }, [branch, state])
+
+    const updateBranch = useMutation<TBranch, string, TUpdateBranch>({
+        mutationKey: ["update-branch"],
         mutationFn: async (data) => {
             try {
-                const response = await axios.post("/api/v1/branch", { data });
+                const response = await axios.patch(`/api/v1/branch/${branch.id}`, { data });
 
                 queryClient.invalidateQueries({ queryKey: ["branch-list-query"] });
-                if (onCreate !== undefined) onCreate(response.data);
                 reset();
-                toast.success("Branch created successfully")
+                
                 return response.data;
             } catch (e) {
                 let errorMessage = "";
@@ -79,20 +79,19 @@ const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
         },
     });
 
-    const isLoading = createBranch.isPending;
-
+    const isLoading = updateBranch.isPending // || uploading;
 
     return (
-        <Dialog open={state} onOpenChange={(state)=> reset() }>
+        <Dialog open={state} onOpenChange={reset}>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
                 <ModalHead
-                    title="Create Branch"
-                    description="By creating a branch, you will be able to reference other records to the branch."
+                    title="Update Branch"
+                    description="Modify branch information"
                 />
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit((formValues) =>
-                            createBranch.mutate(formValues)
+                            updateBranch.mutate(formValues)
                         )}
                         className="space-y-4"
                     >
@@ -178,4 +177,4 @@ const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
     );
 };
 
-export default CreateBranchModal;
+export default UpdateBranchModal;

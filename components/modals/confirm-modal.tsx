@@ -1,4 +1,4 @@
-import React from "react";
+"use client"
 import {
     Dialog,
     DialogContent,
@@ -10,9 +10,7 @@ import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-type Props = {};
-
-const ConfirmModal = (props: Props) => {
+const ConfirmModal = () => {
     const { isOpen, onClose, onCancel, onConfirm, confirmDatas } = useConfirmModal();
 
     return (

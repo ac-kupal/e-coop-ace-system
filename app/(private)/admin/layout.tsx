@@ -1,12 +1,8 @@
 import { ReactNode } from "react";
 import SideBar from "./_components/sidebar";
 import SessionProviderWrapper from "@/providers/session-provider-wrapper";
-import { currentUser } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { signOut } from "next-auth/react";
 
 type Props = { children?: ReactNode };
-
 const AdminLayout = async ({ children }: Props) => {
     return (
         <SessionProviderWrapper>

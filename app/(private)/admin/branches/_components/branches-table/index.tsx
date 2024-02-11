@@ -1,9 +1,7 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
 import React, { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
+    PaginationState,
     SortingState,
     VisibilityState,
     getCoreRowModel,
@@ -15,49 +13,25 @@ import {
 
 import { Plus, SearchIcon } from "lucide-react";
 
+import columns from "./column";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { branchTableList } from "../branch-api-hooks";
 import DataTable from "@/components/data-table/data-table";
 import CreateBranchModal from "../modals/create-branch-modal";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import columns from "./column";
 
-import { TBranch } from "@/types";
-import { handleAxiosErrorMessage } from "@/utils";
-
-type Props = {};
-
-const BranchesTable = (props: Props) => {
+const BranchesTable = () => {
     const [createModal, setCreateModal] = useState(false)
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-        {}
-    );
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 })
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
     const [rowSelection, setRowSelection] = useState({});
 
-
-    const { data, isFetching, isLoading, isError, refetch } = useQuery<TBranch[], string>({
-        queryKey: ["branch-list-query"],
-        queryFn: async () => {
-            try {
-                const response = await axios.get("/api/v1/branch");
-                return response.data;
-            } catch (e) {
-                const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage, {
-                    action : {
-                        label : "try agian",
-                        onClick : () => refetch()
-                    }
-                });
-                throw handleAxiosErrorMessage(e);
-            }
-        },
-        initialData: [],
-    });
+    const { data, isFetching, isLoading, isError } = branchTableList();
 
     const table = useReactTable({
         data,
@@ -69,11 +43,13 @@ const BranchesTable = (props: Props) => {
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
+        onPaginationChange : setPagination,
         state: {
             sorting,
             columnVisibility,
             rowSelection,
             globalFilter,
+            pagination
         },
         onGlobalFilterChange: setGlobalFilter,
     });
@@ -126,7 +102,7 @@ const BranchesTable = (props: Props) => {
                 </div>
             </div>
             <DataTable className="flex-1" isError={isError} isLoading={isLoading || isFetching} table={table} />
-            <DataTablePagination  table={table}/>
+            <DataTablePagination pageSizes={[20,40,60,80,100]} table={table}/>
         </div>
     );
 };

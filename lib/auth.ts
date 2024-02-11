@@ -52,8 +52,4 @@ export const getServerAuthSession = (ctx: {
     res: GetServerSidePropsContext["res"];
 }) => getServerSession(ctx.req, ctx.res, authOptions);
 
-export const currentUser = async () => {
-    const session = await getServerSession(authOptions);
-    if (!session) return null;
-    return session;
-};
+export const currentUser = async () => await getServerSession(authOptions);

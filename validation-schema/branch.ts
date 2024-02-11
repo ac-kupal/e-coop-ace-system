@@ -14,3 +14,5 @@ export const createBranchSchema = z.object({
         .string({ required_error: "branch picture is required" })
         .optional()
 });
+
+export const updateBranchSchema = createBranchSchema;
