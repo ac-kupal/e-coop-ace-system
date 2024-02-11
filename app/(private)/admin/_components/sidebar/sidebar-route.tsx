@@ -30,7 +30,7 @@ const routes: TRoute[] = [
         name: "Events",
         path: "/admin/events",
         allowedRole: ["root", "admin", "staff"],
-    },
+    }
 ];
 
 type Props = {
@@ -39,7 +39,7 @@ type Props = {
 
 const SideBarRoute = ({ currentUser }: Props) => {
     return (
-        <div className="flex-1 flex flex-col gap-y-2 w-full">
+        <div className="flex-1 flex flex-col gap-y-2 px-2 w-full">
             {routes.map((route, i) => (
                 <RouteItem currentUser={currentUser} route={route} key={i} />
             ))}
