@@ -3,7 +3,10 @@ import { NextResponse } from "next/server"
 
 export const GET = async () => {
     try{
-        const users = await db.user.findMany({ include : { roles : true , branch : true }});
+        const users = await db.user.findMany({ 
+            where : { deleted : false },
+            orderBy : { createdAt : "desc"},
+            include : { roles : true , branch : true }});
         return NextResponse.json(users)
     }catch(e){
         console.error(`ERROR - [GET] - /api/v1/user : ${e}`)
