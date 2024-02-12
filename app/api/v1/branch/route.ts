@@ -1,7 +1,7 @@
-import { currentUser } from "@/lib/auth";
 import db from "@/lib/database"
-import { createBranchSchema } from "@/validation-schema/branch";
 import { NextRequest, NextResponse } from "next/server";
+import { createBranchSchema } from "@/validation-schema/branch";
+import { currentUserOrThrowAuthError } from "@/lib/server-utils";
 
 export const GET = async () => {
     try{
@@ -16,10 +16,7 @@ export const GET = async () => {
 export const POST = async (req : NextRequest) => {
     try{
         const { data } = await req.json();
-
-        const session = await currentUser()
-        if(session === null) return NextResponse.json({ message : "You are not allowed!"}, { status : 403 })
-        const user = session.user
+        const user = await currentUserOrThrowAuthError()
 
         const validation = createBranchSchema.safeParse(data);
         if(!validation.success) 
@@ -31,6 +28,8 @@ export const POST = async (req : NextRequest) => {
 
         return NextResponse.json(newBranch)
     }catch(e){
+        if (e instanceof AuthenticationError) return NextResponse.json({ message: e.message }, { status : 403 });
+
         console.error(`ERROR - [POST] - /api/v1/branch : ${e}`)
         return NextResponse.json({ message : "Internal Error : 500"}, { status : 500 })
     }

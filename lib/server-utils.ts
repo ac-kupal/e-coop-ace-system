@@ -1,5 +1,18 @@
 // This contains utils/helpers that ONLY & ONLY SHOULD run on server
 import { hash, compare } from "bcrypt";
+import { NextResponse } from "next/server";
+import { currentUser } from "./auth";
+
+/**
+ * Senpai Dev Docs 2024
+ * Function to check the current user and return the user if found, or send an 403 not allowed response if not found.
+ * @returns The current user if found.
+ */
+export const currentUserOrThrowAuthError = async() => {
+    const session = await currentUser()
+    if(session === null) throw new AuthenticationError("You are not authorized!")
+    return session.user
+}
 
 export const hashPassword = async (data: string) => {
     return await hash(data, 10);
