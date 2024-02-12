@@ -5,13 +5,13 @@ import { TBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
 
-export const deleteBranch = ( branch : TBranch ) => {
+export const deleteBranch = ( ) => {
     const queryClient = useQueryClient();
-    const deleteOperation = useMutation<any, string>({
+    const deleteOperation = useMutation<any, string, number>({
         mutationKey : ["delete-branch"],
-        mutationFn : async () => {
+        mutationFn : async (branchId) => {
             try{
-                const deleted = await axios.delete(`/api/v1/branch/${branch.id}`);
+                const deleted = await axios.delete(`/api/v1/branch/${branchId}`);
                 toast.success("Branch deleted successfully");
                 queryClient.invalidateQueries({ queryKey: ["branch-list-query"] })
                 return deleted.data;
@@ -20,7 +20,7 @@ export const deleteBranch = ( branch : TBranch ) => {
                 toast.error(errorMessage, {
                     action : {
                         label : "try agian",
-                        onClick : () => deleteOperation.mutate()
+                        onClick : () => deleteOperation.mutate(branchId)
                     }
                 });
                 throw errorMessage

@@ -21,13 +21,13 @@ import {
 import { TBranch } from "@/types";
 import UpdateBranchModal from "../modals/update-branch-modal";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { deleteBranch } from "../../../../../../hooks/api-hooks/branch-api-hooks";
+import { deleteBranch } from "@/hooks/api-hooks/branch-api-hooks";
 
 const Actions = ({ branch }: { branch: TBranch }) => {
     const [modal, setModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
-    const deleteOperation = deleteBranch(branch);
+    const deleteOperation = deleteBranch();
 
     if (deleteOperation.isPending)
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
@@ -76,7 +76,7 @@ const Actions = ({ branch }: { branch: TBranch }) => {
                                 description:
                                     "Are you sure to delete this branch?",
                                 onConfirm: () => {
-                                    deleteOperation.mutate();
+                                    deleteOperation.mutate(branch.id);
                                 },
                             })
                         }
