@@ -1,6 +1,11 @@
+import { Role } from "@prisma/client";
 import z from "zod";
 
-const createRootUserSchema = z.object({
+export const roleEnum = z.nativeEnum(Role)
+
+export const roleAssigned = z.object({ role : roleEnum })
+
+export const createUserSchema = z.object({
     name: z
         .string({
             required_error: "name is required",
@@ -21,4 +26,7 @@ const createRootUserSchema = z.object({
         })
         .min(8, "minimum password is 8 character")
         .max(15, "maximum password size is 15 character"),
+    branchId : z.coerce.number({ required_error : "branch is required", invalid_type_error : "invalid branch"}).min(1, "Please select a branch")
 });
+
+export const updateUserSchema = createUserSchema;

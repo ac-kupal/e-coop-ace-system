@@ -1,8 +1,5 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
-import React, { useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Plus, SearchIcon } from "lucide-react";
 
@@ -14,42 +11,36 @@ import DataTableViewOptions from "@/components/data-table/data-table-view-option
 import columns from "./column";
 import {
     getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
 
-import { handleAxiosErrorMessage } from "@/utils";
-import { TUserWithBranchAndRoles } from "@/types";
+import CreateUserModal from "../modals/create-user-modal";
+import { userList } from "@/hooks/api-hooks/user-api-hooks";
 
-type Props = {};
-
-const UserTable = (props: Props) => {
+const UserTable = () => {
+    const [createModal, setCreateModal] = useState(false)
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-    const { data, isFetching, isLoading, isError, refetch } = useQuery<TUserWithBranchAndRoles[], string>({
-        queryKey: ["user-list-query"],
-        queryFn: async () => {
-            try {
-                const response = await axios.get("/api/v1/user");
-                return response.data;
-            } catch (e) {
-                const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage, {
-                    action : {
-                        label : "try agian",
-                        onClick : () => refetch()
-                    }
-                });
-                throw handleAxiosErrorMessage(e);
-            }
-        },
-        initialData: [],
-    });
+    const { data, isFetching, isLoading, isError, refetch } = userList();
 
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        state: {
+            globalFilter,
+        },
+        initialState : {
+            pagination : { pageIndex : 0, pageSize : 20 }
+        },
+        onGlobalFilterChange: setGlobalFilter,
     });
 
     useEffect(() => {
@@ -71,6 +62,7 @@ const UserTable = (props: Props) => {
 
     return (
         <div className="flex flex-1 flex-col gap-y-2 ">
+            <CreateUserModal state={createModal} onClose={(state) => setCreateModal(state)} />
             <div className="flex flex-wrap items-center justify-between p-3 rounded-lg gap-y-2 bg-background">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
                     <div className="relative">
@@ -91,7 +83,7 @@ const UserTable = (props: Props) => {
                     <Button
                         size="sm"
                         className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                        // onClick={() => onOpen("createUser")}
+                        onClick={()=>setCreateModal(true)}
                     >
                         Add Admin
                         <Plus className="w-4 h-4" />

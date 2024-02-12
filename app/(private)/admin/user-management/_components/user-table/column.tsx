@@ -112,7 +112,10 @@ const columns: ColumnDef<TUserWithBranchAndRoles>[] = [
             <DataTableColHeader column={column} title="Roles" />
         ),
         cell: ({ row }) => (
-            <div className="space-x-1"> {row.original.roles.map(({ role })=> <span key={role} className="bg-secondary text-foreground/70 p-1 rounded-md">{role}</span> )}</div>
+            <div className="space-x-1"> 
+                {row.original.roles.length === 0 && <span className="text-sm text-foreground/40 italic">no role assigned</span>}
+                {row.original.roles.map(({ role })=> <span key={role} className="bg-secondary text-foreground/70 p-1 rounded-md">{role}</span> )}
+            </div>
         ),
         enableSorting : false
     },
