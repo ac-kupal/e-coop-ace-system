@@ -21,7 +21,7 @@ import {
 import { TBranch } from "@/types";
 import UpdateBranchModal from "../modals/update-branch-modal";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { deleteBranch } from "../branch-api-hooks";
+import { deleteBranch } from "../../../../../../hooks/api-hooks/branch-api-hooks";
 
 const Actions = ({ branch }: { branch: TBranch }) => {
     const [modal, setModal] = useState(false);

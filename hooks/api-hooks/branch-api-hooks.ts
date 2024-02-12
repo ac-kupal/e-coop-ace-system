@@ -31,7 +31,7 @@ export const deleteBranch = ( branch : TBranch ) => {
     return deleteOperation;
 }
 
-export const branchTableList = () => {
+export const branchList = () => {
     const branchListQuery = useQuery<TBranch[], string>({
         queryKey: ["branch-list-query"],
         queryFn: async () => {

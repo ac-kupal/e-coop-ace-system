@@ -13,7 +13,7 @@ import { Plus, SearchIcon } from "lucide-react";
 import columns from "./column";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { branchTableList } from "../branch-api-hooks";
+import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
 import DataTable from "@/components/data-table/data-table";
 import CreateBranchModal from "../modals/create-branch-modal";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
@@ -24,7 +24,7 @@ const BranchesTable = () => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-    const { data, isFetching, isLoading, isError } = branchTableList();
+    const { data, isFetching, isLoading, isError } = branchList();
 
     const table = useReactTable({
         data,
