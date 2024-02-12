@@ -1,9 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    PaginationState,
-    SortingState,
-    VisibilityState,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
@@ -24,32 +21,23 @@ import DataTableViewOptions from "@/components/data-table/data-table-view-option
 
 const BranchesTable = () => {
     const [createModal, setCreateModal] = useState(false)
-    const [sorting, setSorting] = useState<SortingState>([]);
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-    const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 })
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
-    const [rowSelection, setRowSelection] = useState({});
 
     const { data, isFetching, isLoading, isError } = branchTableList();
 
     const table = useReactTable({
         data,
         columns,
-        onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        onPaginationChange : setPagination,
         state: {
-            sorting,
-            columnVisibility,
-            rowSelection,
             globalFilter,
-            pagination
+        },
+        initialState : {
+            pagination : { pageIndex : 0, pageSize : 20 }
         },
         onGlobalFilterChange: setGlobalFilter,
     });
