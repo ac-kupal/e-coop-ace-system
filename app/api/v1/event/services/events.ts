@@ -27,20 +27,20 @@ export const createEvent = async (event: TCreateEventWithElection, withElection 
 
 export const getAllEvent = async () => {
    try {
-      return await db.event.findMany({});
+      return await db.event.findMany({where : { deleted : false }, orderBy : { createdAt : "desc" }});
    } catch (error) {
       console.log(error);
    }
 };
 
-//NOT SO FINAL
-export const deleteEvent = async (eventId: number,isPermanentDelete = false) => {
+export const deleteEvent = async (userId:number,eventId: number,isPermanentDelete = false) => {
    try {
       if (isPermanentDelete) await db.event.delete({ where: { id: eventId } });
       return await db.event.update({
          where: { id: eventId },
          data: {
             deleted: true,
+            deletedBy:userId
          },
       });
    } catch (error) {

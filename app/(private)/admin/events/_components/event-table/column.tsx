@@ -1,5 +1,4 @@
 "use client";
-import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,6 @@ import { DataTableColHeader } from "@/components/data-table/data-table-col-heade
 import { Copy, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 import { toast } from "sonner";
-import UserAvatar from "@/components/user-avatar";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import {
     DropdownMenu,
@@ -20,9 +18,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TEvent, TEventWithElection } from "@/types/event/TCreateEvent";
 import moment from "moment"
+import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
+import { useState } from "react";
 
-const Actions = ({ event }: { event: TEventWithElection }) => {
+const Actions = ({ event }: { event: TEvent }) => {
+
+    const deleteOperation = deleteEvent();
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
+
+    if (deleteOperation.isPending)
+        return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -55,10 +60,9 @@ const Actions = ({ event }: { event: TEventWithElection }) => {
                             title: event.deleted
                                 ? "Permanent Delete 🗑️"
                                 : "Delete Event 🗑️",
-                            description: event.deleted
-                            + "Are you sure to delete this event permanently? This cannot be undone.",
+                            description:"Are you sure to delete this event permanently? This cannot be undone.",
                             onConfirm: () => {
-                                toast.success("deleted");
+                                deleteOperation.mutate(event.id);
                             },
                         })
                     }
@@ -90,9 +94,7 @@ const columns: ColumnDef<TEvent>[] = [
             <DataTableColHeader column={column} title="title" />
         ),
         cell: ({ row }) => {
-            console.log(row.original.title)
             return <div className=""> {row.original.title}</div>
-
         },
     },
     {
@@ -131,22 +133,12 @@ const columns: ColumnDef<TEvent>[] = [
             <div className="">{ row.original.category }</div>
         ),
     },
-      // will fix tom
-    // {
-    //     id: "actions",
-    //     enableHiding: false,
-    //     cell: ({ row }) =>{
-    //         return row.original.election ? <Button variant={"outline"}>add Election</Button>:""
-    //     }
-    // },
-
-
     {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => (
             <div className="flex justify-end">
-                {/* <Actions event={row.original} /> */}
+                <Actions event={row.original} />
             </div>
         ),
     },
