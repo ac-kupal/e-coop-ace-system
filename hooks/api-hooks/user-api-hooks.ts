@@ -1,0 +1,112 @@
+import z from "zod"
+import axios from "axios";
+import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { TBranch, TUser, TUserWithBranchAndRoles } from "@/types";
+import { handleAxiosErrorMessage } from "@/utils";
+import { createUserSchema, updateUserSchema } from "@/validation-schema/user";
+
+export const userList = () => {
+    const branchListQuery = useQuery<TUserWithBranchAndRoles[], string>({
+        queryKey: ["user-list-query"],
+        queryFn: async () => {
+            try {
+                const response = await axios.get("/api/v1/user");
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action : {
+                        label : "try agian",
+                        onClick : () => branchListQuery.refetch()
+                    }
+                });
+                throw handleAxiosErrorMessage(e);
+            }
+        },
+        initialData: [],
+    });
+
+    return branchListQuery;
+}
+
+export const createUser = ( onCreate : (newUser : TUser) => void ) => {
+    const queryClient = useQueryClient();
+    const createOperation = useMutation<TBranch, string, z.infer<typeof createUserSchema>>({
+        mutationKey: ["create-user"],
+        mutationFn: async (data) => {
+            try {
+                const response = await axios.post("/api/v1/user", { data });
+                queryClient.invalidateQueries({ queryKey: ["user-list-query"] });
+                toast.success("User created successfully")
+                onCreate(response.data)
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action : {
+                        label : "try agian",
+                        onClick : () => createOperation.mutate(data)
+                    }
+                });
+                throw handleAxiosErrorMessage(e);
+            }
+        },
+    });
+
+    return createOperation;
+}
+
+export const updateUser = ( userId : number, onUpdate : (updatedUser : TUser) => void ) => {
+    const queryClient = useQueryClient();
+    const updateOperation = useMutation<TBranch, string, z.infer<typeof updateUserSchema>>({
+        mutationKey: ["update-user"],
+        mutationFn: async (data) => {
+            try {
+                const response = await axios.patch(`/api/v1/user/${userId}`, { data });
+                queryClient.invalidateQueries({ queryKey: ["user-list-query"] });
+                toast.success("User updated successfully")
+                onUpdate(response.data)
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action : {
+                        label : "try agian",
+                        onClick : () => updateOperation.mutate(data)
+                    }
+                });
+                throw handleAxiosErrorMessage(e);
+            }
+        },
+    });
+
+    return updateOperation;
+}
+
+export const deleteUser = () => {
+    const queryClient = useQueryClient();
+    const deleteOperation = useMutation<any, string, number>({
+        mutationKey : ["delete-user"],
+        mutationFn : async (userId) => {
+            try{
+                const deleted = await axios.delete(`/api/v1/user/${userId}`);
+                toast.success("User deleted successfully");
+                queryClient.invalidateQueries({ queryKey: ["user-list-query"] })
+                return deleted.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action : {
+                        label : "try agian",
+                        onClick : () => deleteOperation.mutate()
+                    }
+                });
+                throw errorMessage
+            }
+        }
+    })
+
+    return deleteOperation;
+}

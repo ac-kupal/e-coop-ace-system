@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "db": "prisma studio",
+    "db-gen": "prisma generate",
     "push-gen": "prisma db push && prisma generate",
     "push-reset": "prisma db push --force-reset",
     "push-gen-dev": "prisma db push && prisma generate && next dev",

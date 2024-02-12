@@ -1,4 +1,6 @@
 "use client";
+import { toast } from "sonner";
+import { useState } from "react";
 import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -7,7 +9,6 @@ import { DataTableColHeader } from "@/components/data-table/data-table-col-heade
 
 import { Copy, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
-import { toast } from "sonner";
 import UserAvatar from "@/components/user-avatar";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import {
@@ -19,15 +20,21 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TUserWithBranchAndRoles } from "@/types";
+import { deleteUser } from "@/hooks/api-hooks/user-api-hooks";
+import UpdateUserModal from "../modals/update-user-modal";
 
 const Actions = ({ user }: { user: TUserWithBranchAndRoles }) => {
+    const [modal, setModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
-    if (false)
+    const deleteOperation = deleteUser();
+
+    if (deleteOperation.isPending)
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
 
     return (
         <DropdownMenu>
+            <UpdateUserModal user={user} state={modal} close={()=> setModal(false)}  />
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
                     <span className="sr-only">Open menu</span>
@@ -44,32 +51,25 @@ const Actions = ({ user }: { user: TUserWithBranchAndRoles }) => {
                         toast.success("coppied")
                     }}
                 >
-                    {" "}
-                    <Copy strokeWidth={2} className="h-4" />
-                    Copy user ID
+                    <Copy strokeWidth={2} className="h-4" /> Copy user ID
                 </DropdownMenuItem>
-                <DropdownMenuItem className="px-2 gap-x-2">
-                    <Pencil strokeWidth={2} className="h-4" /> Edit Account
+                <DropdownMenuItem onClick={()=>setModal(true)} className="px-2 gap-x-2">
+                    <Pencil strokeWidth={2} className="h-4" /> Edit User
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={() =>
                         onOpenConfirmModal({
-                            title: user.deleted
-                                ? "Permanent Delete 🗑️"
-                                : "Delete User 🗑️",
-                            description: user.deleted
-                                ? "Are you sure to delete this account permanently? This cannot be undone."
-                                : "Are you sure to delete this account? The user will not be able to login.",
+                            title: "Delete User 🗑️",
+                            description: "Are you sure to delete this account? The user will not be able to login.",
                             onConfirm: () => {
-                                toast.success("deleted");
+                                deleteOperation.mutate(user.id)
                             },
                         })
                     }
                     className="px-2 gap-x-2 text-destructive"
                 >
-                    <Trash strokeWidth={2} className="h-4" />{" "}
-                    {user.deleted ? "Permanent Delete" : "Delete"}
+                    <Trash strokeWidth={2} className="h-4" /> Delete User
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
