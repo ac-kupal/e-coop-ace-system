@@ -100,7 +100,7 @@ export const deleteUser = () => {
                 toast.error(errorMessage, {
                     action : {
                         label : "try agian",
-                        onClick : () => deleteOperation.mutate()
+                        onClick : () => deleteOperation.mutate(userId)
                     }
                 });
                 throw errorMessage
