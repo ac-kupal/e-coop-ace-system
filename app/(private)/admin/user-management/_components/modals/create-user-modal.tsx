@@ -25,6 +25,7 @@ import { createUserSchema } from "@/validation-schema/user";
 import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createUser } from "@/hooks/api-hooks/user-api-hooks";
+import { Role } from "@prisma/client";
 
 
 type Props = {
@@ -42,6 +43,7 @@ const CreateUserModal = ({ state, onClose, onCreate }: Props) => {
             email : "",
             name : "",
             password : "",
+            role : "staff",
             branchId : -1
         },
     });
@@ -124,25 +126,47 @@ const CreateUserModal = ({ state, onClose, onCreate }: Props) => {
                             )}
                         />
                         <FormField
+                            control={form.control}
+                            name="role"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Role 🛡️</FormLabel>
+                                    <Select disabled={branchLoading} onValueChange={field.onChange} defaultValue={field.value.toString()}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a role" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value={Role.root}>{Role.root}</SelectItem>
+                                            <SelectItem value={Role.admin}>{Role.admin}</SelectItem>
+                                            <SelectItem value={Role.staff}>{Role.staff}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
                         control={form.control}
                         name="branchId"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Branch</FormLabel>
-                                    <Select disabled={branchLoading} onValueChange={field.onChange} defaultValue={field.value.toString()}>
-                                        <FormControl>
+                                <Select disabled={branchLoading} onValueChange={field.onChange} defaultValue={field.value.toString()}>
+                                    <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a branch" />
                                         </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {
-                                                branches.map((branch)=> 
-                                                    <SelectItem key={branch.id} value={branch.id.toString()}>{branch.branchName}</SelectItem>
-                                                )
-                                            }
-                                        </SelectContent>
-                                    </Select>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {
+                                            branches.map((branch)=> 
+                                                <SelectItem key={branch.id} value={branch.id.toString()}>{branch.branchName}</SelectItem>
+                                            )
+                                        }
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}

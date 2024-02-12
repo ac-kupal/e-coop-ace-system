@@ -85,7 +85,7 @@ const UserTable = () => {
                         className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                         onClick={()=>setCreateModal(true)}
                     >
-                        Add Admin
+                        Add 
                         <Plus className="w-4 h-4" />
                     </Button>
                 </div>

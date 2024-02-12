@@ -25,17 +25,20 @@ import { TUser } from "@/types";
 import { updateUserSchema } from "@/validation-schema/user";
 import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
 import { updateUser } from "@/hooks/api-hooks/user-api-hooks";
+import { Role } from "@prisma/client";
+import { user } from "next-auth";
 
 
 type Props = {
     user : TUser;
+    editor : user;
     state : boolean,
     close : () => void;
 };
 
 type updateTUser = z.infer<typeof updateUserSchema>;
 
-const UpdateUserModal = ({ state, user, close }: Props) => {
+const UpdateUserModal = ({ state, user, editor, close }: Props) => {
     const form = useForm<updateTUser>({
         resolver: zodResolver(updateUserSchema),
         defaultValues: {
@@ -53,6 +56,7 @@ const UpdateUserModal = ({ state, user, close }: Props) => {
         form.setValue("name", user.name)
         form.setValue("password", undefined)
         form.setValue("branchId", user.branchId)
+        form.setValue("role", user.role)
     }
 
     const reset = () => {
@@ -67,6 +71,13 @@ const UpdateUserModal = ({ state, user, close }: Props) => {
     const update = updateUser(user.id, (updatedUser) => { reset() })
 
     const isLoading = update.isPending || branchLoading;
+
+    const userRole = user.role;
+    const editorRole = editor.role
+
+    const roleDisabled = userRole === "root" 
+    || editorRole === "staff" 
+    || (editorRole === userRole && editorRole === "admin")
 
     return (
         <Dialog open={state} onOpenChange={(state)=> reset() }>
@@ -102,6 +113,7 @@ const UpdateUserModal = ({ state, user, close }: Props) => {
                         <FormField
                             control={form.control}
                             name="email"
+                            disabled={editorRole !== "root" && editor.id !== user.id}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
@@ -119,6 +131,7 @@ const UpdateUserModal = ({ state, user, close }: Props) => {
                         <FormField
                             control={form.control}
                             name="password"
+                            disabled={userRole === "root" || ( editorRole === "admin" && user.id !== editor.id)}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
@@ -130,6 +143,28 @@ const UpdateUserModal = ({ state, user, close }: Props) => {
                                             {...field}
                                         />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="role"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Role 🛡️</FormLabel>
+                                    <Select disabled={branchLoading || roleDisabled} onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a role" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            { userRole === "root" && <SelectItem value={Role.root}>{Role.root}</SelectItem> }
+                                            { (userRole === "admin") && <SelectItem value={Role.admin}>{Role.admin}</SelectItem>}
+                                            { userRole === "staff" && <SelectItem value={Role.staff}>{Role.staff}</SelectItem>}
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}

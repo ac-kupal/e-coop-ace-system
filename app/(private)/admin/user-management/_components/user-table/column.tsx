@@ -19,22 +19,26 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TUserWithBranchAndRoles } from "@/types";
+import { TUserWithBranch } from "@/types";
 import { deleteUser } from "@/hooks/api-hooks/user-api-hooks";
 import UpdateUserModal from "../modals/update-user-modal";
+import { useSession } from "next-auth/react";
 
-const Actions = ({ user }: { user: TUserWithBranchAndRoles }) => {
+const Actions = ({ user }: { user: TUserWithBranch }) => {
+    const session = useSession();
     const [modal, setModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     const deleteOperation = deleteUser();
 
-    if (deleteOperation.isPending)
+    if (deleteOperation.isPending || session.status === "loading")
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
+
+    if(session.status === "unauthenticated" || !session.data?.user || session.data.user.role === "staff" || (user.role === "root" && session.data.user.role !== "root")) return <span className="text-xs text-foreground/40 italic">not allowed</span>;
 
     return (
         <DropdownMenu>
-            <UpdateUserModal user={user} state={modal} close={()=> setModal(false)}  />
+            <UpdateUserModal user={user} editor={session.data?.user} state={modal} close={()=> setModal(false)}  />
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
                     <span className="sr-only">Open menu</span>
@@ -76,7 +80,7 @@ const Actions = ({ user }: { user: TUserWithBranchAndRoles }) => {
     );
 };
 
-const columns: ColumnDef<TUserWithBranchAndRoles>[] = [
+const columns: ColumnDef<TUserWithBranch>[] = [
     {
         accessorKey: "ID",
         header: ({ column }) => (
@@ -107,14 +111,13 @@ const columns: ColumnDef<TUserWithBranchAndRoles>[] = [
         ),
     },
     {
-        accessorKey: "roles",
+        accessorKey: "role",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Roles" />
+            <DataTableColHeader column={column} title="Role" />
         ),
         cell: ({ row }) => (
             <div className="space-x-1"> 
-                {row.original.roles.length === 0 && <span className="text-sm text-foreground/40 italic">no role assigned</span>}
-                {row.original.roles.map(({ role })=> <span key={role} className="bg-secondary text-foreground/70 p-1 rounded-md">{role}</span> )}
+                <span className="bg-secondary text-foreground/70 p-1 rounded-md">{row.original.role ?? <i>no role assigned</i>}</span>
             </div>
         ),
         enableSorting : false
@@ -140,6 +143,9 @@ const columns: ColumnDef<TUserWithBranchAndRoles>[] = [
     {
         id: "actions",
         enableHiding: false,
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Actions" className="text-right" />
+        ),
         cell: ({ row }) => (
             <div className="flex justify-end">
                 <Actions user={row.original} />
