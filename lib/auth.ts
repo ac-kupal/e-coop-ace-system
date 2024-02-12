@@ -2,8 +2,9 @@ import type { GetServerSidePropsContext } from "next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { DefaultUser, getServerSession, type NextAuthOptions } from "next-auth";
 
-import { getUserWithoutPassword } from "@/services/user";
 import { login } from "@/services/auth";
+import { getUserWithoutPassword } from "@/services/user";
+import { AuthenticationError } from "@/errors/auth-error";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -53,3 +54,13 @@ export const getServerAuthSession = (ctx: {
 }) => getServerSession(ctx.req, ctx.res, authOptions);
 
 export const currentUser = async () => await getServerSession(authOptions);
+
+/**
+ * Senpai Dev Docs 2024 : Function to check the current user and return the user if found, or send an 403 not allowed response if not found.
+ * @returns The current user if found.
+ */
+export const currentUserOrThrowAuthError = async() => {
+    const session = await currentUser()
+    if(session === null) throw new AuthenticationError("You are not authorized!")
+    return session.user
+}

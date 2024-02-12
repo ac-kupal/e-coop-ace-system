@@ -1,7 +1,9 @@
 import db from "@/lib/database"
 import { NextRequest, NextResponse } from "next/server";
+
+import { AuthenticationError } from "@/errors/auth-error";
 import { createBranchSchema } from "@/validation-schema/branch";
-import { currentUserOrThrowAuthError } from "@/lib/server-utils";
+import { currentUserOrThrowAuthError } from "@/lib/auth";
 
 export const GET = async () => {
     try{

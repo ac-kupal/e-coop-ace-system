@@ -1,19 +1,16 @@
 import db from "@/lib/database"
 import { NextRequest, NextResponse } from "next/server";
 
-import { currentUser } from "@/lib/auth";
 import { updateBranchSchema } from "@/validation-schema/branch";
+import { currentUserOrThrowAuthError } from "@/lib/auth";
 
 type TParams = { params: { id : number } }
 
 export const PATCH = async ( req : NextRequest, { params }: TParams ) =>{
     try{
+        const user = await currentUserOrThrowAuthError();
         const id = Number(params.id); 
         const { data } = await req.json();
-
-        const session = await currentUser()
-        if(session === null) return NextResponse.json({ message : "You are not allowed!"}, { status : 403 })
-        const user = session.user
 
         if(!params.id && isNaN(Number(id))) 
             return NextResponse.json({ message : "missing/invalid id on request"}, { status : 400 })
@@ -37,11 +34,8 @@ export const PATCH = async ( req : NextRequest, { params }: TParams ) =>{
 
 export const DELETE = async ( req : NextRequest, { params } : TParams ) => {
     try{
+        const user = await currentUserOrThrowAuthError();
         const id = Number(params.id); 
-        const session = await currentUser()
-
-        if(session === null) return NextResponse.json({ message : "You are not allowed!"}, { status : 403 })
-        const user = session.user
 
         if(!params.id && isNaN(Number(id))) 
             return NextResponse.json({ message : "missing/invalid id on request"}, { status : 400 })

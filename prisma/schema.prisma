@@ -36,7 +36,7 @@ model User {
     branchId Int
 
     dateVerified DateTime?
-    verified     Boolean
+    verified     Boolean?  @default(false)
 
     branch Branch             @relation(fields: [branchId], references: [id])
     roles  UserRoleAssigned[]
@@ -69,7 +69,7 @@ model Branch {
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
-    deleted Boolean? @default(false)
+    deleted   Boolean?  @default(false)
 }
 
 model UserRoleAssigned {
@@ -113,11 +113,11 @@ enum ElectionStatus {
 }
 
 model Election {
-    id         Int            @id @default(autoincrement())
-    e_name     String
-    startDate  DateTime
-    endDate    DateTime
-    status     ElectionStatus
+    id        Int            @id @default(autoincrement())
+    e_name    String
+    startDate DateTime
+    endDate   DateTime
+    status    ElectionStatus
 
     canditates Candidate[]
     positions  Position[]
@@ -162,12 +162,12 @@ model Position {
 }
 
 model Votes {
-    id          Int @id @default(autoincrement())
-    accountNo   Int // NOTE: Idk about this though, san to marereference
+    id        Int @id @default(autoincrement())
+    accountNo Int // NOTE: Idk about this though, san to marereference
 
     electionId  Int
     candidateId Int
 
     candidate Candidate @relation(fields: [candidateId], references: [id])
-    election Election @relation(fields: [electionId], references: [id])
+    election  Election  @relation(fields: [electionId], references: [id])
 }
