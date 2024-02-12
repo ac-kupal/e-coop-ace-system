@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { updateBranchSchema } from "@/validation-schema/branch";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { AuthenticationError } from "@/errors/auth-error";
 
 type TParams = { params: { id : number } }
 
@@ -27,6 +28,8 @@ export const PATCH = async ( req : NextRequest, { params }: TParams ) =>{
 
         return NextResponse.json(updatedBranch)
     }catch(e){
+        if (e instanceof AuthenticationError) return NextResponse.json({ message: e.message }, { status : 403 });
+
         console.error(`ERROR - [PATCH] - /api/v1/branch/[id] : ${e}`)
         return NextResponse.json({ message : "Internal Error : 500"}, { status : 500 })
     }
@@ -50,6 +53,8 @@ export const DELETE = async ( req : NextRequest, { params } : TParams ) => {
 
         return NextResponse.json(deletedBranch)
     }catch(e){
+        if (e instanceof AuthenticationError) return NextResponse.json({ message: e.message }, { status : 403 });
+
         console.error(`ERROR - [PATCH] - /api/v1/branch/[id] : ${e}`)
         return NextResponse.json({ message : "Internal Error : 500"}, { status : 500 })
     }
