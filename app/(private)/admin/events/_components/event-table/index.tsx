@@ -61,7 +61,7 @@ const EventTable = (props: Props) => {
         },
         onGlobalFilterChange: setGlobalFilter,
     });
-  
+    
 
     return (
         <div className="flex flex-1 flex-col gap-y-2 ">

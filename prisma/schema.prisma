@@ -96,8 +96,8 @@ model Event {
     location    String
     category    EventType
     deleted     Boolean
-    election    Election?
-
+    election    Election? @relation(fields: [electionId],references: [id])
+    electionId Int? @unique
     createdBy Int?
     updatedBy Int?
     deletedBy Int?
@@ -123,8 +123,7 @@ model Election {
     positions  Position[]
     votes      Votes[]
 
-    event   Event? @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    eventId Int?   @unique
+    event   Event? 
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

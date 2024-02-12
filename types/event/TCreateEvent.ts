@@ -9,6 +9,7 @@ export type TCreateEvent = {
    location: string;
    category: EventType;
    deleted: boolean;
+   electionId:number;
 };
 
 export type TEvent = Event;
