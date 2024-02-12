@@ -5,13 +5,15 @@ import { hashPassword } from "@/lib/server-utils";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { AuthenticationError } from "@/errors/auth-error";
 import { createUserSchema } from "@/validation-schema/user";
+import { USER_SELECTS_WITH_NO_PASSWORD } from "@/services/user";
 
 export const GET = async () => {
     try{
         const users = await db.user.findMany({ 
             where : { deleted : false },
             orderBy : { createdAt : "desc"},
-            include : { roles : true , branch : true }});
+            select : USER_SELECTS_WITH_NO_PASSWORD
+        })
         return NextResponse.json(users)
     }catch(e){
         console.error(`ERROR - [GET] - /api/v1/user : ${e}`)

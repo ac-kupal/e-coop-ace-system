@@ -18,12 +18,7 @@ const RouteItem = ({ currentUser, route }: Props) => {
     const pathname = usePathname();
     const isCurrentPath = pathname.startsWith(path);
 
-    const authorized = () => {
-        for (const role of currentUser.roles) {
-            if (allowedRole.includes(role.role)) return true;
-        }
-        return false;
-    };
+    const authorized = () => allowedRole.includes(currentUser.role);
 
     if (!authorized()) return null;
 

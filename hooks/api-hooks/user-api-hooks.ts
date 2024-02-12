@@ -3,12 +3,34 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TBranch, TUser, TUserWithBranchAndRoles } from "@/types";
+import { TUser, TUserWithBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createUserSchema, updateUserSchema } from "@/validation-schema/user";
 
+export const userQuery = ( userId : number ) => {
+    const branchListQuery = useQuery<TUserWithBranch, string>({
+        queryKey: [`query-user-${userId}`],
+        queryFn: async () => {
+            try {
+                const response = await axios.get(`/api/v1/user/${userId}`);
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action : {
+                        label : "try agian",
+                        onClick : () => branchListQuery.refetch()
+                    }
+                });
+                throw handleAxiosErrorMessage(e);
+            }
+        }
+    });
+    return branchListQuery;
+}
+
 export const userList = () => {
-    const branchListQuery = useQuery<TUserWithBranchAndRoles[], string>({
+    const branchListQuery = useQuery<TUserWithBranch[], string>({
         queryKey: ["user-list-query"],
         queryFn: async () => {
             try {
@@ -33,7 +55,7 @@ export const userList = () => {
 
 export const createUser = ( onCreate : (newUser : TUser) => void ) => {
     const queryClient = useQueryClient();
-    const createOperation = useMutation<TBranch, string, z.infer<typeof createUserSchema>>({
+    const createOperation = useMutation<TUser, string, z.infer<typeof createUserSchema>>({
         mutationKey: ["create-user"],
         mutationFn: async (data) => {
             try {
@@ -60,7 +82,7 @@ export const createUser = ( onCreate : (newUser : TUser) => void ) => {
 
 export const updateUser = ( userId : number, onUpdate : (updatedUser : TUser) => void ) => {
     const queryClient = useQueryClient();
-    const updateOperation = useMutation<TBranch, string, z.infer<typeof updateUserSchema>>({
+    const updateOperation = useMutation<TUser, string, z.infer<typeof updateUserSchema>>({
         mutationKey: ["update-user"],
         mutationFn: async (data) => {
             try {

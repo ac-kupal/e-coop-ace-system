@@ -38,8 +38,8 @@ model User {
     dateVerified DateTime?
     verified     Boolean?  @default(false)
 
-    branch Branch             @relation(fields: [branchId], references: [id])
-    roles  UserRoleAssigned[]
+    branch Branch @relation(fields: [branchId], references: [id])
+    role   Role  @default(staff)
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -72,17 +72,6 @@ model Branch {
     deleted   Boolean?  @default(false)
 }
 
-model UserRoleAssigned {
-    id Int @id @default(autoincrement())
-
-    userId Int
-    role   Role
-
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([userId, role])
-}
-
 enum EventType {
     election
     gathering
@@ -96,11 +85,11 @@ model Event {
     location    String
     category    EventType
     deleted     Boolean
-    election    Election? @relation(fields: [electionId],references: [id])
-    electionId Int? @unique
-    createdBy Int?
-    updatedBy Int?
-    deletedBy Int?
+    election    Election? @relation(fields: [electionId], references: [id])
+    electionId  Int?      @unique
+    createdBy   Int?
+    updatedBy   Int?
+    deletedBy   Int?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -123,7 +112,7 @@ model Election {
     positions  Position[]
     votes      Votes[]
 
-    event   Event? 
+    event Event?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

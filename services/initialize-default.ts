@@ -7,6 +7,7 @@ export const INIT_ROOT_ACCOUNT = async () => {
             name : "Coop Cloud",
             password : "$2a$10$iJFu3JszgpMfmDuqrSoD/e7XzVJdpEJRMQaPJFnAvAYo6xBLTiOeC",
             verified : true,
+            role : "root",
             branch : {
                 create : {
                     branchName : "main branch",
@@ -15,19 +16,6 @@ export const INIT_ROOT_ACCOUNT = async () => {
                     branchDescription : "this is just an dummy branch"
                 }
             },
-            roles : {
-                create : [
-                    { 
-                        role : "root"
-                    },
-                    { 
-                        role : "admin"
-                    },
-                    { 
-                        role : "staff"
-                    }
-                ]
-            }
         }
     })
 }

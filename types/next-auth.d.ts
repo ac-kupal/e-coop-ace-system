@@ -1,4 +1,4 @@
-import { Branch, User, UserRoleAssigned } from "@prisma/client";
+import { Branch, Role, User } from "@prisma/client";
 import { JWT } from "next-auth/jwt";
 import NextAuth, { DefaultSession } from "next-auth";
 
@@ -11,7 +11,7 @@ declare module "next-auth" {
         branchId: number;
         verified: boolean | null;
         branch : Branch;
-        roles : UserRoleAssigned[];
+        role : Role;
         deleted: boolean;
     }
 

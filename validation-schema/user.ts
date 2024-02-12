@@ -1,9 +1,7 @@
 import { Role } from "@prisma/client";
 import z from "zod";
 
-export const roleEnum = z.nativeEnum(Role)
-
-export const roleAssigned = z.object({ role : roleEnum })
+export const roleEnum = z.nativeEnum(Role, { invalid_type_error : "invalid role" })
 
 export const createUserSchema = z.object({
     name: z
@@ -26,6 +24,7 @@ export const createUserSchema = z.object({
         })
         .min(8, "minimum password is 8 character")
         .max(15, "maximum password size is 15 character"),
+    role : roleEnum,
     branchId : z.coerce.number({ required_error : "branch is required", invalid_type_error : "invalid branch"}).min(1, "Please select a branch")
 });
 
@@ -50,5 +49,6 @@ export const updateUserSchema = z.object({
         })
         .min(8, "minimum password is 8 character")
         .max(15, "maximum password size is 15 character").optional(),
+    role : roleEnum,
     branchId : z.coerce.number({ required_error : "branch is required", invalid_type_error : "invalid branch"}).min(1, "Please select a branch")
 });

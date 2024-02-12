@@ -1,9 +1,5 @@
-import { Branch, User, UserRoleAssigned } from "@prisma/client";
+import { Branch, User } from "@prisma/client";
 
-export type TUser = User
+export type TUser = Omit<User, 'password'>
 
 export type TUserWithBranch = TUser & { branch : Branch }
-
-export type TUserWithRoles = TUser & { roles : UserRoleAssigned[] }
-
-export type TUserWithBranchAndRoles = TUserWithBranch & TUserWithRoles;
