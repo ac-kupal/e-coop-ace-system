@@ -5,12 +5,12 @@ import axios from "axios";
 
 export const deleteEvent = ( ) => {
     const queryClient = useQueryClient();
-    const deleteOperation = useMutation<any, string, number>({
-        mutationKey : ["delete-branch"],
+    const deleteEventMutation = useMutation<any, string, number>({
+        mutationKey : ["delete-event"],
         mutationFn : async (eventId) => {
             try{
                 const deleted = await axios.delete(`/api/v1/event/${eventId}`);
-                toast.success("Branch deleted successfully");
+                toast.success("Event deleted successfully");
                 queryClient.invalidateQueries({ queryKey: ["event-list-query"] })
                 return deleted.data;
             }catch(e){
@@ -18,13 +18,12 @@ export const deleteEvent = ( ) => {
                 toast.error(errorMessage, {
                     action : {
                         label : "try agian",
-                        onClick : () => deleteOperation.mutate(eventId)
+                        onClick : () => deleteEventMutation.mutate(eventId)
                     }
                 });
                 throw errorMessage
             }
         }
     })
-
-    return deleteOperation;
+    return deleteEventMutation;
 }
