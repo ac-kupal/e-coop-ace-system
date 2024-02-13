@@ -1,5 +1,7 @@
 // This contains utils/helpers that ONLY & ONLY SHOULD run on server
 import { hash, compare } from "bcrypt";
+import { headers } from "next/headers";
+import { z } from "zod";
 
 export const hashPassword = async (data: string) => {
     return await hash(data, 10);
@@ -49,3 +51,14 @@ export const isQueryParamValEqualTo = (url : string, paramKey : string, expected
 export const getQueryParamValue = (url : string, paramKey : string) => {
     return new URL(url).searchParams.get(paramKey)
 }
+
+export const validateId =(id:number)=>{
+   z.coerce.number({required_error: "id is required", invalid_type_error:"params id type is invalid"}).int().parse(id);
+ }
+
+ export const pathName = (): string => {
+    const headersList = headers();
+    const url = new URL(headersList.get("referer") || "");
+    return url.pathname;
+ };
+ 

@@ -1,32 +1,46 @@
-// TODO: GET get specific event
-
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { deleteEvent } from "../services/events";
+import { deleteEvent, getEvent, updateEvent } from "../services/events";
+import { createEventSchema } from "@/validation-schema/event";
+import { validateId, pathName } from "@/lib/server-utils";
+import { routeErrorHandler } from "@/errors/route-error-handler";
 
 type TParams = { params: { id: number } };
-export const GET = () => {
-   return NextResponse.json("ok");
+
+export const GET = async (req: NextRequest, { params }: TParams) => {
+   try {
+      const id = Number(params.id);
+      validateId(id);
+      const getUniqueEvent = await getEvent(id);
+      return NextResponse.json(getUniqueEvent);
+   } catch (e) {
+      console.log(e);
+      return routeErrorHandler(e, req.method, pathName());
+   }
 };
-// TODO: PATCH update specific event
+
+export const PATCH = async (req: NextRequest, { params }: TParams) => {
+   try {
+      const id = Number(params.id);
+      validateId(id);
+      const data = await req.json();
+      const user = await currentUserOrThrowAuthError();
+      createEventSchema.parse(data);
+      const UpdateEvent = await updateEvent(data, id, user.id);
+      return NextResponse.json(UpdateEvent);
+   } catch (e) {
+      return routeErrorHandler(e, req.method, pathName());
+   }
+};
 
 export const DELETE = async (req: NextRequest, { params }: TParams) => {
    try {
       const id = Number(params.id);
+      validateId(id);
       const user = await currentUserOrThrowAuthError();
-      if (!params.id && isNaN(Number(id)))
-         return NextResponse.json(
-            { message: "missing/invalid id on request" },
-            { status: 400 }
-         );
-
       const softDeleleteEvent = await deleteEvent(user.id, id);
       return NextResponse.json(softDeleleteEvent);
-   } catch (error) {
-      console.error(`ERROR : /api/v1/[id] - [DELETE]: ${error}`);
-      return NextResponse.json(
-         { message: "Internal Server Error" },
-         { status: 500 }
-      );
+   } catch (e) {
+      return routeErrorHandler(e, req.method, pathName());
    }
 };
