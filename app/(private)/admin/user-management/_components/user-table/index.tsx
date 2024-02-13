@@ -19,11 +19,14 @@ import {
 
 import CreateUserModal from "../modals/create-user-modal";
 import { userList } from "@/hooks/api-hooks/user-api-hooks";
+import { user } from "next-auth";
 
-const UserTable = () => {
+const UserTable = ({ currentUser } : { currentUser : user}) => {
     const [createModal, setCreateModal] = useState(false)
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
+
+    const allowedToCreate = currentUser && ( currentUser.role === "admin" || currentUser.role === "root" )
 
     const { data, isFetching, isLoading, isError, refetch } = userList();
 
@@ -62,7 +65,7 @@ const UserTable = () => {
 
     return (
         <div className="flex flex-1 flex-col gap-y-2 ">
-            <CreateUserModal state={createModal} onClose={(state) => setCreateModal(state)} />
+            { allowedToCreate && <CreateUserModal state={createModal} editor={currentUser} onClose={(state) => setCreateModal(state)} /> }
             <div className="flex flex-wrap items-center justify-between p-3 rounded-lg gap-y-2 bg-background">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
                     <div className="relative">
@@ -81,6 +84,7 @@ const UserTable = () => {
                 <div className="flex items-center gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />
                     <Button
+                        disabled={currentUser.role === "staff"}
                         size="sm"
                         className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                         onClick={()=>setCreateModal(true)}

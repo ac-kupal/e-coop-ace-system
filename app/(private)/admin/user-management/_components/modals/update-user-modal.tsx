@@ -75,9 +75,8 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
     const userRole = user.role;
     const editorRole = editor.role
 
-    const roleDisabled = userRole === "root" 
-    || editorRole === "staff" 
-    || (editorRole === userRole && editorRole === "admin")
+    const roleDisabled = userRole === "root" || editorRole === userRole
+    const disableEmailPassword =  ( userRole === "root" || userRole === "admin") && editor.role === "staff" && user.id !== editor.id 
 
     return (
         <Dialog open={state} onOpenChange={(state)=> reset() }>
@@ -113,7 +112,7 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
                         <FormField
                             control={form.control}
                             name="email"
-                            disabled={editorRole !== "root" && editor.id !== user.id}
+                            disabled={ disableEmailPassword }
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
@@ -131,7 +130,7 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
                         <FormField
                             control={form.control}
                             name="password"
-                            disabled={userRole === "root" || ( editorRole === "admin" && user.id !== editor.id)}
+                            disabled={ disableEmailPassword }
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
@@ -161,8 +160,8 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
                                         </FormControl>
                                         <SelectContent>
                                             { userRole === "root" && <SelectItem value={Role.root}>{Role.root}</SelectItem> }
-                                            { (userRole === "admin") && <SelectItem value={Role.admin}>{Role.admin}</SelectItem>}
-                                            { userRole === "staff" && <SelectItem value={Role.staff}>{Role.staff}</SelectItem>}
+                                            { (userRole === "admin" || userRole === "root") && <SelectItem value={Role.admin}>{Role.admin}</SelectItem>}
+                                            <SelectItem value={Role.staff}>{Role.staff}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />

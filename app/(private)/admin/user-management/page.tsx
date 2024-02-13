@@ -1,14 +1,26 @@
-import React from 'react'
-import UserTable from './_components/user-table'
+import React from "react";
+import UserTable from "./_components/user-table";
+import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { Role } from "@prisma/client";
+import { allowed } from "@/lib/utils";
 
-type Props = {}
+type Props = {};
 
-const UserManagementPage = (props: Props) => {  
-  return (
-    <div className="flex p-2 min-h-screen flex-col w-full">
-        <UserTable />
-    </div>
-  )
-}
+const UserManagementPage = async (props: Props) => {
+    const user = await currentUserOrThrowAuthError();
 
-export default UserManagementPage
+    if (!allowed(["root", "admin"], user.role))
+        return (
+            <div className="flex p-2 h-dvh flex-col items-center justify-center w-full">
+                <p>You are not allowed in this page</p>
+            </div>
+        );
+
+    return (
+        <div className="flex p-2 min-h-screen flex-col w-full">
+            <UserTable currentUser={user} />
+        </div>
+    );
+};
+
+export default UserManagementPage;

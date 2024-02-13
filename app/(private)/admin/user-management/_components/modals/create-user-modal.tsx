@@ -26,17 +26,18 @@ import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createUser } from "@/hooks/api-hooks/user-api-hooks";
 import { Role } from "@prisma/client";
-
+import { user } from "next-auth";
 
 type Props = {
     state: boolean;
     onClose: (state: boolean) => void;
+    editor : user;
     onCreate?: (newUser : TUser) => void;
 };
 
 type createTUser = z.infer<typeof createUserSchema>;
 
-const CreateUserModal = ({ state, onClose, onCreate }: Props) => {
+const CreateUserModal = ({ state, onClose, editor, onCreate }: Props) => {
     const form = useForm<createTUser>({
         resolver: zodResolver(createUserSchema),
         defaultValues: {
@@ -138,8 +139,8 @@ const CreateUserModal = ({ state, onClose, onCreate }: Props) => {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value={Role.root}>{Role.root}</SelectItem>
-                                            <SelectItem value={Role.admin}>{Role.admin}</SelectItem>
+                                            { editor.role === "root" && <SelectItem value={Role.root}>{Role.root}</SelectItem> }
+                                            { editor.role === "root" && <SelectItem value={Role.admin}>{Role.admin}</SelectItem>}
                                             <SelectItem value={Role.staff}>{Role.staff}</SelectItem>
                                         </SelectContent>
                                     </Select>

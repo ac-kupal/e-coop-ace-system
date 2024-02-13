@@ -34,11 +34,12 @@ const Actions = ({ user }: { user: TUserWithBranch }) => {
     if (deleteOperation.isPending || session.status === "loading")
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
 
-    if(session.status === "unauthenticated" || !session.data?.user || session.data.user.role === "staff" || (user.role === "root" && session.data.user.role !== "root")) return <span className="text-xs text-foreground/40 italic">not allowed</span>;
+    if((session.status === "unauthenticated" || session.data === null || session.data.user.role === user.role || user.role === "root") && user.id !== session.data?.user.id) 
+        return <span className="text-xs text-foreground/40 italic">not allowed</span>;
 
     return (
         <DropdownMenu>
-            <UpdateUserModal user={user} editor={session.data?.user} state={modal} close={()=> setModal(false)}  />
+            <UpdateUserModal user={user} editor={session.data.user} state={modal} close={()=> setModal(false)}  />
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
                     <span className="sr-only">Open menu</span>
