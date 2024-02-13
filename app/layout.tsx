@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{children: React.ReactNode;}>) {
     return (
         <html lang="en">
-            <body className={inter.variable}>
+            <body className={`${inter.variable} bg-orange-400`}>
                 <QueryClientProviderWrapper>
                     <ThemeProvider
                      attribute="class"

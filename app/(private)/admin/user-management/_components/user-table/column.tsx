@@ -83,9 +83,9 @@ const Actions = ({ user }: { user: TUserWithBranch }) => {
 
 const columns: ColumnDef<TUserWithBranch>[] = [
     {
-        accessorKey: "ID",
+        accessorKey: "id",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="id" />
+            <DataTableColHeader column={column} title="ID" />
         ),
         cell: ({ row }) => (
             <div className="font-medium uppercase">{row.original.id}</div>

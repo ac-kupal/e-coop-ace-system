@@ -10,7 +10,7 @@ const AdminLayout = async ({ children }: Props) => {
                 <div className="hidden bg-background lg:flex h-fill w-[240px] rounded-r-3xl z-30 flex-col fixed inset-y-0 print:hidden">
                     <SideBar />
                 </div>
-                <main className="ml-[240px] flex-1">{children}</main>
+                <main className="ml-0 lg:ml-[240px] overflow-x-hidden flex-1">{children}</main>
             </div>
         </SessionProviderWrapper>
     );

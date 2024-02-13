@@ -159,7 +159,7 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            { userRole === "root" && <SelectItem value={Role.root}>{Role.root}</SelectItem> }
+                                            {/* { userRole === "root" && <SelectItem value={Role.root}>{Role.root}</SelectItem> } */}
                                             { (userRole === "admin" || userRole === "root") && <SelectItem value={Role.admin}>{Role.admin}</SelectItem>}
                                             <SelectItem value={Role.staff}>{Role.staff}</SelectItem>
                                         </SelectContent>

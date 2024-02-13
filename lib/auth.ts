@@ -64,3 +64,9 @@ export const currentUserOrThrowAuthError = async() => {
     if(session === null) throw new AuthenticationError("You are not authorized!")
     return session.user
 }
+
+export const currentUserOrFalse = async() => {
+    const session = await currentUser()
+    if(session === null) return false;
+    return session.user
+}
