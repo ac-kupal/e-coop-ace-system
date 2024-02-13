@@ -1,7 +1,9 @@
 "use client";
 import * as z from "zod";
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
@@ -18,16 +20,15 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { loginSchema } from "@/validation-schema/auth";
-import { useRouter } from "next/navigation";
 
 type Props = {
-    callbackUrl? : string
-}
+    callbackUrl?: string;
+};
 
-const LoginForm = ({ callbackUrl } : Props) => {
+const LoginForm = ({ callbackUrl }: Props) => {
     const router = useRouter();
     const [viewPassword, setViewPassword] = useState(false);
-    const [error, setError] = useState('')
+    const [error, setError] = useState("");
 
     const form = useForm({
         resolver: zodResolver(loginSchema),
@@ -38,19 +39,19 @@ const LoginForm = ({ callbackUrl } : Props) => {
     });
 
     const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-        setError('')
+        setError("");
 
         const result = await signIn("credentials", {
             email: values.email,
             password: values.password,
-            redirect: false
+            redirect: false,
         });
 
-        if(result?.error){
-            setError(result.error)
+        if (result?.error) {
+            setError(result.error);
         }
 
-        router.push(callbackUrl ?? "/admin")
+        router.push(callbackUrl ?? "/admin");
     };
 
     const isLoading = form.formState.isSubmitting;
@@ -145,7 +146,7 @@ const LoginForm = ({ callbackUrl } : Props) => {
                                     )}
                                 />
                             </div>
-                            <p className="text-sm text-center">{ error }</p>
+                            <p className="text-sm text-center">{error}</p>
                             <Button
                                 disabled={isLoading}
                                 className="w-full space-x-2"
@@ -158,6 +159,14 @@ const LoginForm = ({ callbackUrl } : Props) => {
                             </Button>
                         </form>
                     </Form>
+                </div>
+                <div className="w-full flex justify-center">
+                    <Link
+                        href="/"
+                        className="text-foreground/70 mt-2 text-sm underline"
+                    >
+                        back to main page
+                    </Link>
                 </div>
             </div>
         </div>

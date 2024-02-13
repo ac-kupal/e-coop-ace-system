@@ -11,7 +11,7 @@ const Branches = async(props: Props) => {
     if (!allowed(["root", "admin"], user.role)) throw new Error("You don't have access to this page")
 
   return (
-    <div className="flex p-2 min-h-screen flex-col w-full">
+    <div className="flex p-4 min-h-screen flex-col w-full">
         <BranchesTable />
     </div>
   )

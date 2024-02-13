@@ -17,7 +17,7 @@ const UserManagementPage = async (props: Props) => {
         );
 
     return (
-        <div className="flex p-2 min-h-screen flex-col w-full">
+        <div className="flex p-4 min-h-screen flex-col w-full">
             <UserTable currentUser={user} />
         </div>
     );
