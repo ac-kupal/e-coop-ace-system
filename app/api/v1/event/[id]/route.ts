@@ -15,7 +15,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
       return NextResponse.json(getUniqueEvent);
    } catch (e) {
       console.log(e);
-      return routeErrorHandler(e, req.method, pathName());
+      return routeErrorHandler(e, req.method);
    }
 };
 
@@ -29,7 +29,7 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
       const UpdateEvent = await updateEvent(data, id, user.id);
       return NextResponse.json(UpdateEvent);
    } catch (e) {
-      return routeErrorHandler(e, req.method, pathName());
+      return routeErrorHandler(e, req.method);
    }
 };
 
@@ -41,6 +41,6 @@ export const DELETE = async (req: NextRequest, { params }: TParams) => {
       const softDeleleteEvent = await deleteEvent(user.id, id);
       return NextResponse.json(softDeleleteEvent);
    } catch (e) {
-      return routeErrorHandler(e, req.method, pathName());
+      return routeErrorHandler(e, req.method);
    }
 };
