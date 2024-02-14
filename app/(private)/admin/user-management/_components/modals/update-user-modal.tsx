@@ -1,6 +1,6 @@
 "use client"
 import z from "zod";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -51,13 +51,13 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
 
     const { data : branches, isLoading : branchLoading } = branchList();
 
-    const setDefaults = () => {
+    const setDefaults = useCallback(() => {
         form.setValue("email", user.email)
         form.setValue("name", user.name)
         form.setValue("password", undefined)
         form.setValue("branchId", user.branchId)
         form.setValue("role", user.role)
-    }
+    }, [form, user])
 
     const reset = () => {
         form.reset();
@@ -66,7 +66,7 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
 
     useEffect(()=>{
         setDefaults()
-    }, [user, state])
+    }, [user, state, setDefaults])
 
     const update = updateUser(user.id, (updatedUser) => { reset() })
 

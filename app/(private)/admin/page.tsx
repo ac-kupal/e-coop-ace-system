@@ -23,7 +23,7 @@ const AdminPage = async (props: Props) => {
     if (allowedPages.length === 0)
         return (
             <div className="flex justify-center items-center h-dvh">
-                <p>Your account role doesn't have access to any page</p>
+                <p>Your account role doesn&#39;t have access to any page</p>
             </div>
         );
 

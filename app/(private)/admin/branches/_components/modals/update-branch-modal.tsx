@@ -23,7 +23,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { TBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createBranchSchema } from "@/validation-schema/branch";
@@ -41,12 +41,12 @@ const UpdateBranchModal = ({ state, branch, close }: Props) => {
 
     const form = useForm<TUpdateBranch>({ resolver: zodResolver(createBranchSchema) });
 
-    const setDefaults = () => {
+    const setDefaults = useCallback(() => {
         form.setValue("branchName", branch.branchName)
         form.setValue("branchAddress", branch.branchAddress)
         form.setValue("branchDescription", branch.branchDescription)
         form.setValue("branchPicture", branch.branchPicture ?? "/images/default.png")
-    }
+    }, [form, branch])
 
     const reset = () => {
         form.reset();
@@ -55,7 +55,7 @@ const UpdateBranchModal = ({ state, branch, close }: Props) => {
 
     useEffect(()=>{
         setDefaults()
-    }, [branch, state])
+    }, [branch, state, setDefaults])
 
     const updateBranch = useMutation<TBranch, string, TUpdateBranch>({
         mutationKey: ["update-branch"],
