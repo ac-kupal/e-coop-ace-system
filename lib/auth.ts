@@ -65,6 +65,10 @@ export const currentUserOrThrowAuthError = async() => {
     return session.user
 }
 
+/**
+ * Senpai Dev Docs 2024 : Function to get current user and return the user if found, or return false if not found.
+ * @returns The current user if found.
+ */
 export const currentUserOrFalse = async() => {
     const session = await currentUser()
     if(session === null) return false;

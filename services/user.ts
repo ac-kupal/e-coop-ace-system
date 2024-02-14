@@ -28,18 +28,19 @@ export const USER_SELECTS_WITH_NO_PASSWORD = {
 export const hasRoot = async () => {
     return db.user.findFirst({
         where: {
-            role : "root"
+            role : "root",
+            deleted : false
         },
     });
 };
 
 export const findUserByEmail = async (email: z.infer<typeof emailSchema>) => {
-    return db.user.findUnique({ where: { email } });
+    return db.user.findUnique({ where: { email, deleted : false } });
 };
     
 export const getUserWithoutPassword = async (email : string) => {
     return db.user.findUnique({
-        where: { email },
+        where: { email, deleted : false },
         select: USER_SELECTS_WITH_NO_PASSWORD,
     });
 };

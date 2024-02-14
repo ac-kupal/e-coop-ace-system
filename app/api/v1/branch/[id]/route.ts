@@ -2,8 +2,8 @@ import db from "@/lib/database"
 import { NextRequest, NextResponse } from "next/server";
 
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { routeErrorHandler } from "@/errors/route-error-handler";
 import { updateBranchSchema } from "@/validation-schema/branch";
+import { routeErrorHandler } from "@/errors/route-error-handler";
 
 type TParams = { params: { id : number } }
 

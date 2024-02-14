@@ -9,13 +9,13 @@ export const login = async( credentials : z.infer<typeof loginSchema>) => {
 
     const validated = loginSchema.safeParse(credentials);
 
-    if(!validated.success) return null;
+    if(!validated.success) throw new Error(validated.error.issues[0].message);
 
     const { email, password } = validated.data; 
     
     const user = await findUserByEmail(email)
     
-    if(!user) throw new Error("User doesn't exist")
+    if(!user) throw new Error("User doesn't exist or has been deleted")
 
     const isPasswordCorrect = await matchPassword(password, user?.password )
 
