@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createEvent, getAllEvent } from "./services/events";
 import { createEventSchema } from "@/validation-schema/event";
-import { z } from "zod";
-import { pathName } from "@/lib/server-utils";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 
 export const POST = async (req: NextRequest) => {
@@ -12,7 +10,7 @@ export const POST = async (req: NextRequest) => {
       const CreateEvent = await createEvent(data);
       return NextResponse.json(CreateEvent);
    } catch (e) {
-      return routeErrorHandler(e, req.method, pathName());
+      return routeErrorHandler(e, req.method);
    }
 };
 
@@ -21,6 +19,6 @@ export const GET = async (req: NextRequest) => {
       const getAllEvents = await getAllEvent();
       return NextResponse.json(getAllEvents);
    } catch (e) {
-      return routeErrorHandler(e, req.method, pathName());
+      return routeErrorHandler(e, req.method);
    }
 };

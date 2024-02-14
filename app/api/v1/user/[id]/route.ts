@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { hashPassword } from "@/lib/server-utils"
 import { currentUserOrThrowAuthError } from "@/lib/auth"
-import { AuthenticationError } from "@/errors/auth-error"
 import { updateUserSchema } from "@/validation-schema/user"
 import { USER_SELECTS_WITH_NO_PASSWORD } from "@/services/user"
+import { routeErrorHandler } from "@/errors/route-error-handler"
 
 type TParams = { params: { id : number } }
 
@@ -27,10 +27,7 @@ export const GET = async(req : NextRequest, { params } : TParams) => {
 
         return NextResponse.json(foundUser)
     }catch(e){
-        if (e instanceof AuthenticationError) return NextResponse.json({ message: e.message }, { status : 403 });
-
-        console.error(`ERROR - [PATCH] - /api/v1/user/[id] : ${e}`)
-        return NextResponse.json({ message : "Internal Error : 500"}, { status : 500 })
+        return routeErrorHandler(e, req.method)
     }
 }
 
@@ -44,25 +41,19 @@ export const PATCH = async ( req : NextRequest, { params }: TParams ) =>{
         if(!params.id && isNaN(Number(id))) 
             return NextResponse.json({ message : "missing/invalid id on request"}, { status : 400 })
 
-        const validation = updateUserSchema.safeParse(data)
+        const validatedData = updateUserSchema.parse(data)
 
-        if(!validation.success) 
-            return NextResponse.json({ message : validation.error.issues[0].message }, { status : 400 })
-
-        if(validation.data.password) 
-            validation.data.password = await hashPassword(validation.data.password)
+        if(validatedData.password) 
+            validatedData.password = await hashPassword(validatedData.password)
 
         const updatedBranch = await db.user.update({ 
             where : { id }, 
-            data : {...validation.data, updatedBy : user.id } 
+            data : {...validatedData, updatedBy : user.id } 
         })
 
         return NextResponse.json(updatedBranch)
     }catch(e){
-        if (e instanceof AuthenticationError) return NextResponse.json({ message: e.message }, { status : 403 });
-
-        console.error(`ERROR - [PATCH] - /api/v1/user/[id] : ${e}`)
-        return NextResponse.json({ message : "Internal Error : 500"}, { status : 500 })
+        return routeErrorHandler(e, req.method)
     }
 }
 
@@ -81,9 +72,6 @@ export const DELETE = async ( req : NextRequest, { params }: TParams ) =>{
         })
         return NextResponse.json(updatedBranch)
     }catch(e){
-        if (e instanceof AuthenticationError) return NextResponse.json({ message: e.message }, { status : 403 });
-
-        console.error(`ERROR - [DELETE] - /api/v1/user/[id] : ${e}`)
-        return NextResponse.json({ message : "Internal Error : 500"}, { status : 500 })
+        return routeErrorHandler(e, req.method)
     }
 }
