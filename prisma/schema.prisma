@@ -39,7 +39,7 @@ model User {
     verified     Boolean?  @default(false)
 
     branch Branch @relation(fields: [branchId], references: [id])
-    role   Role  @default(staff)
+    role   Role   @default(staff)
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -74,7 +74,6 @@ model Branch {
 
 enum EventType {
     election
-    gathering
 }
 
 model Event {
@@ -85,14 +84,33 @@ model Event {
     location    String
     category    EventType
     deleted     Boolean
-    election    Election? @relation(fields: [electionId], references: [id])
-    electionId  Int?      @unique
-    createdBy   Int?
-    updatedBy   Int?
-    deletedBy   Int?
+
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
+
+    election Election?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    attendees EventAttendees[]
+}
+
+model EventAttendees {
+    id             String @id @default(uuid())
+    passbookNumber String
+
+    // TODO: Excel
+
+    eventId Int
+    event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+    registered Boolean @default(false)
+
+    votes Votes[]
+
+    @@unique([eventId, passbookNumber])
 }
 
 enum ElectionStatus {
@@ -102,60 +120,64 @@ enum ElectionStatus {
 }
 
 model Election {
-    id        Int            @id @default(autoincrement())
-    e_name    String
-    startDate DateTime
-    endDate   DateTime
-    status    ElectionStatus
+    id           Int            @id @default(autoincrement())
+    electionName String
+    status       ElectionStatus
 
-    canditates Candidate[]
-    positions  Position[]
+    positions  Position[] // 1st to create
+    canditates Candidate[] // 2nd
     votes      Votes[]
 
-    event Event?
+    eventId Int   @unique
+    event   Event @relation(fields: [eventId], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
+    deleted Boolean @default(false)
 
-model Candidate {
-    id        Int    @id @default(autoincrement())
-    firstName String
-    lastName  String
-    accountNo Int
-    picture   String
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
 
-    electionId Int
-    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-    pisitonId Int
-    position  Position @relation(fields: [pisitonId], references: [id])
-    votes     Votes[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@unique([accountNo])
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
 }
 
 model Position {
-    id           Int    @id @default(autoincrement())
-    positionName String
-    allowedVotes Int
+    id                Int    @id @default(autoincrement())
+    positionName      String
+    numberOfSelection Int
 
     electionId Int
-    election   Election @relation(fields: [electionId], references: [id])
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
 
     candidates Candidate[]
 }
 
+model Candidate {
+    id             Int    @id @default(autoincrement())
+    firstName      String
+    lastName       String
+    passbookNumber Int
+    picture        String
+
+    electionId Int
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+
+    pisitonId Int
+    position  Position @relation(fields: [pisitonId], references: [id], onDelete: Cascade)
+    votes     Votes[]
+
+    @@unique([electionId, passbookNumber])
+}
+
 model Votes {
     id        Int @id @default(autoincrement())
-    accountNo Int // NOTE: Idk about this though, san to marereference
 
+    attendeeId String
     electionId  Int
     candidateId Int
 
+    attendee EventAttendees @relation(fields: [attendeeId], references: [id])
     candidate Candidate @relation(fields: [candidateId], references: [id])
     election  Election  @relation(fields: [electionId], references: [id])
 }
