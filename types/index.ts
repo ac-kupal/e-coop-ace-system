@@ -3,7 +3,6 @@ import { ReactElement, ReactNode } from "react";
 
 export * from "./user.types"
 export * from "./branch.types"
-export * from "./bucket.types"
 
 export type TApiError = { message: string };
 
