@@ -23,10 +23,4 @@ export const createEventSchema = z.object({
       })
       .nullable()
       .optional(),
-   electionId: z.coerce
-      .number({
-         invalid_type_error: "Age must be a number",
-      })
-      .nullable()
-      .optional(),
 });

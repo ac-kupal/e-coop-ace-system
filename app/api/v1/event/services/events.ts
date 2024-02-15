@@ -15,7 +15,6 @@ export const createEvent = async (
             location: event.location,
             category: event.category,
             deleted: false,
-            electionId: event.electionId,
          },
       });
    } catch (error) {

@@ -134,15 +134,6 @@ const columns: ColumnDef<TEvent>[] = [
         ),
     },
     {
-        accessorKey: "electionId",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="election ID" />
-        ),
-        cell: ({ row }) => {
-            return( <div className="">{ row.original.electionId || "?"}</div>)
-        },
-    },
-    {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => (
