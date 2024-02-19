@@ -11,19 +11,8 @@ const SideBar = async (props: Props) => {
     const user = await currentUserOrThrowAuthError();
 
     return (
-        <div className="w-60 h-screen overflow-clip bg-background flex flex-col gap-y-8 items-center rounded-r-2xl">
+        <div className="w-60 h-screen py-5 overflow-clip bg-background flex flex-col gap-y-8 items-center rounded-r-2xl">
             <ScrollArea className="flex-1 px-4 w-full text-left">
-                <div className="flex flex-col p-4 mb-4 items-center">
-                    <p className="text-xl">ACE System</p>
-                    <Avatar className="h-16 w-16 mt-8">
-                        <AvatarImage src={user.picture as string} />
-                        <AvatarFallback>
-                            {user.name.substring(0, 1)}
-                        </AvatarFallback>
-                    </Avatar>
-                    <p>{user.name}</p>
-                    <LogOut className="gap-x-2 mt-4"/>
-                </div>
                 <SideBarRoute currentUser={user} />
             </ScrollArea>
         </div>

@@ -1,34 +1,44 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { signOut } from "next-auth/react";
-
-import { CornerDownLeft } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 
 type Props = { className?: string };
 
 const LogOut = ({ className }: Props) => {
-    const { onOpen } = useConfirmModal();
+   useEffect(() => {
+      window.addEventListener("keydown", (event) => {
+         if (
+            (event.ctrlKey && event.key === "q") ||
+            (event.altKey && event.key === "q") ||
+            (event.metaKey && event.key === "q")
+         ) {
+            event.preventDefault();
+            onOpen({
+               title: "Sign Out",
+               description: "You are about to sign out, Are you sure?",
+               onConfirm: () => signOut(),
+            });
+         }
+      });
+   }, []);
+   const { onOpen } = useConfirmModal();
 
-    return (
-        <Button
-            size="sm"
-            onClick={() =>
-                onOpen({
-                    title: "Sign Out",
-                    description: "You are about to sign out, Are you sure?",
-                    onConfirm : () => signOut()
-                })
-            }
-            variant="ghost"
-            className={cn("rounded-0", className)}
-        >
-            <CornerDownLeft className="size-4" /> Log Out
-        </Button>
-    );
+   return (
+      <p
+         onClick={() =>
+            onOpen({
+               title: "Sign Out",
+               description: "You are about to sign out, Are you sure?",
+               onConfirm: () => signOut(),
+            })
+         }
+         className={cn("rounded-0", className)}
+      >
+         Log Out
+      </p>
+   );
 };
 
 export default LogOut;

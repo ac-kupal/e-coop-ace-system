@@ -21,16 +21,15 @@ const RouteItem = ({ currentUser, route }: Props) => {
     const authorized = () => allowedRole.includes(currentUser.role);
 
     if (!authorized()) return null;
-
     return (
         <Link
             href={path}
             className={cn(
-                "duration-200 group flex px-6 py-2 rounded-full items-center gap-x-3 hover:bg-secondary text-foreground",
-                isCurrentPath && "text-background bg-foreground hover:bg-foreground"
+                "duration-200 group flex px-6 py-2 rounded-xl items-center gap-x-3 hover:bg-secondary text-foreground",
+                isCurrentPath && "text-background bg-primary/90 dark:text-white hover:bg-primary/70"
             )}
         >
-            <div className="w-fit h-fit text-indigo-400">
+            <div className={`w-fit h-fit ${isCurrentPath ? "text-accent dark:text-white": "text-accent-foreground"} `}>
                 {icon}
             </div>
             <p>{name}</p>
