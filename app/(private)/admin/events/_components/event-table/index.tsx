@@ -19,8 +19,14 @@ import {
 
 import { handleAxiosErrorMessage } from "@/utils";
 import { TEvent } from "@/types/event/TCreateEvent";
-import SearchInput from "./search-input";
-
+import SearchInput from "@/components/data-table/table-search-input";
+import { cn } from "@/lib/utils";
+import {
+   Tabs,
+   TabsContent,
+   TabsList,
+   TabsTrigger,
+ } from "@/components/ui/tabs"
 const EventTable = () => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
 
@@ -65,10 +71,10 @@ const EventTable = () => {
 
    return (
       <div className="flex flex-1 flex-col gap-y-2 ">
-         <div className="flex flex-wrap items-center justify-between p-3 rounded-lg gap-y-2 bg-background">
+         <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-[#3D7663]">
             <div className="flex items-center gap-x-4 text-muted-foreground">
                <div className="relative">
-                  <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
+                  <SearchIcon className="absolute text-accent w-4 h-auto top-3 left-2" />
                   <SearchInput
                      setGlobalFilter={(e) => setGlobalFilter(e)}
                      globalFilter={globalFilter}
@@ -79,7 +85,7 @@ const EventTable = () => {
                <DataTableViewOptions table={table} />
                <Button
                   size="sm"
-                  className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                  className={cn("flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]")}
                   // onClick={() => onOpen("createEvent")}
                >
                   Add Event

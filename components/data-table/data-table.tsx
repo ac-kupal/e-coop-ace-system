@@ -81,7 +81,12 @@ export default function DataTable<TData>({
                             >
                                 {isLoading ? <p className="text-center text-xs text-foreground/60">loading</p> : (
                                     <p className={cn("text-foreground/40 text-xs text-center", isError && "text-rose-400")}>
-                                        {isError ? "something went wrong" : "no result found" }
+                                        {isError ? "something went wrong" : 
+                                        <div>
+                                        <p className="text-2xl">🍃</p>
+                                        no result found
+                                        </div>
+                                         }
                                     </p>
                                 )}
                             </TableCell>

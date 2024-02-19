@@ -1,7 +1,4 @@
 import SideBarRoute from "./sidebar-route";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-import LogOut from "./log-out";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 

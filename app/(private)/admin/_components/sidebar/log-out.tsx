@@ -7,6 +7,8 @@ import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 type Props = { className?: string };
 
 const LogOut = ({ className }: Props) => {
+   const { onOpen } = useConfirmModal();
+
    useEffect(() => {
       window.addEventListener("keydown", (event) => {
          if (
@@ -23,7 +25,6 @@ const LogOut = ({ className }: Props) => {
          }
       });
    }, []);
-   const { onOpen } = useConfirmModal();
 
    return (
       <p

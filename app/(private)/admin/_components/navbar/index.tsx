@@ -53,7 +53,7 @@ const NavBar = async (props: Props) => {
                      <LogOut className=" font-semibold" />
                      <DropdownMenuShortcut>
                      ⇧⌘Q
-                        <CornerDownLeft className="w-4" />
+                        {/* <CornerDownLeft className="w-4" /> */}
                      </DropdownMenuShortcut>
                   </DropdownMenuItem>
                </DropdownMenuContent>
