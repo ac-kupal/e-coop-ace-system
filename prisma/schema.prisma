@@ -97,11 +97,20 @@ model Event {
     attendees EventAttendees[]
 }
 
-model EventAttendees {
-    id             String @id @default(uuid())
-    passbookNumber String
+enum gender {
+    Male
+    Female
+}
 
-    // TODO: Excel
+model EventAttendees {
+    id             String   @id @default(uuid())
+    passbookNumber String
+    firstName      String
+    middleName     String
+    lastName       String
+    gender         gender
+    birthday       DateTime
+    contact        String
 
     eventId Int
     event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -171,13 +180,13 @@ model Candidate {
 }
 
 model Votes {
-    id        Int @id @default(autoincrement())
+    id Int @id @default(autoincrement())
 
-    attendeeId String
+    attendeeId  String
     electionId  Int
     candidateId Int
 
-    attendee EventAttendees @relation(fields: [attendeeId], references: [id])
-    candidate Candidate @relation(fields: [candidateId], references: [id])
-    election  Election  @relation(fields: [electionId], references: [id])
+    attendee  EventAttendees @relation(fields: [attendeeId], references: [id])
+    candidate Candidate      @relation(fields: [candidateId], references: [id])
+    election  Election       @relation(fields: [electionId], references: [id])
 }
