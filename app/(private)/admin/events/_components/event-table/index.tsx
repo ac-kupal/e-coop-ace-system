@@ -69,6 +69,8 @@ const EventTable = () => {
       onGlobalFilterChange: setGlobalFilter,
    });
 
+   
+
    return (
       <div className="flex flex-1 flex-col gap-y-2 ">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-[#3D7663]">
