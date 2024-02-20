@@ -79,15 +79,15 @@ export default function DataTable<TData>({
                                 colSpan={table.getAllColumns().length}
                                 className="h-24 text-center"
                             >
-                                {isLoading ? <p className="text-center text-xs text-foreground/60">loading</p> : (
-                                    <p className={cn("text-foreground/40 text-xs text-center", isError && "text-rose-400")}>
+                                {isLoading ? <p className="text-center text-xs text-foreground/60 animate-pulse ">loading..</p> : (
+                                    <div className={cn("text-foreground/40 text-xs text-center", isError && "text-rose-400")}>
                                         {isError ? "something went wrong" : 
                                         <div>
                                         <p className="text-2xl">🍃</p>
                                         no result found
                                         </div>
                                          }
-                                    </p>
+                                    </div>
                                 )}
                             </TableCell>
                         </TableRow>
