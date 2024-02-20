@@ -15,4 +15,12 @@ export type TRoute = {
     allowedRole: Role[];
 };
 
+export type TElectionRoute = {
+    icon : ReactNode | ReactElement ;
+    name: string;
+    path : string;
+};
+
+
+
 export type TFolderUploadGroups = z.infer<typeof folderGroupSchema>
