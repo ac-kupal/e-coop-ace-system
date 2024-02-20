@@ -9,7 +9,6 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import { TBranch } from "@/types";
 import useImagePick from "@/hooks/use-image-pick";
-import { updateUser } from "@/hooks/api-hooks/user-api-hooks";
 import { uploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import { updateBranch } from "@/hooks/api-hooks/branch-api-hooks";
 
@@ -44,6 +43,8 @@ const UpdateBranchImageModal = ({ state, branch, close }: Props) => {
 
     const isLoading = isUploading || isSaving;
 
+    const disabled = isLoading || !imageFile
+
     return (
         <Dialog open={state} onOpenChange={(state)=> reset() }>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
@@ -65,7 +66,7 @@ const UpdateBranchImageModal = ({ state, branch, close }: Props) => {
                     >
                         Cancel
                     </Button>
-                    <Button disabled={isLoading} onClick={()=> {
+                    <Button disabled={disabled} onClick={()=> {
                             startUpload({
                                 fileName : `branch-${branch.id}`,
                                 folderGroup : "branch",

@@ -44,6 +44,9 @@ const UpdateUserPictureModal = ({ state, user, close }: Props) => {
 
     const isLoading = isUploading || isSaving;
 
+    const disabled = isLoading || !imageFile
+
+
     return (
         <Dialog open={state} onOpenChange={(state)=> reset() }>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
@@ -65,7 +68,7 @@ const UpdateUserPictureModal = ({ state, user, close }: Props) => {
                     >
                         Cancel
                     </Button>
-                    <Button disabled={isLoading} onClick={()=> {
+                    <Button disabled={disabled} onClick={()=> {
                             startUpload({
                                 fileName : `user-${user.id}`,
                                 folderGroup : "user",
