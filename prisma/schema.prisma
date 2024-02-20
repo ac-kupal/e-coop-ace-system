@@ -129,10 +129,20 @@ enum ElectionStatus {
     done
 }
 
+enum VotingEligibility{
+    REGISTERED
+    MIGS
+    MARKED_ALLOWED
+}
+
 model Election {
     id           Int            @id @default(autoincrement())
     electionName String
     status       ElectionStatus
+
+    // settings - add other settings here
+    // who can vote
+    voteEligibility VotingEligibility
 
     positions  Position[] // 1st to create
     canditates Candidate[] // 2nd
@@ -168,7 +178,7 @@ model Candidate {
     firstName      String
     lastName       String
     passbookNumber Int
-    picture        String
+    picture        String? @default("/images/default.png")
 
     electionId Int
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
@@ -179,6 +189,7 @@ model Candidate {
 
     @@unique([electionId, passbookNumber])
 }
+
 
 model Votes {
     id Int @id @default(autoincrement())
