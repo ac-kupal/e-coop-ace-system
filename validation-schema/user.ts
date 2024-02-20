@@ -4,6 +4,7 @@ import z from "zod";
 export const roleEnum = z.nativeEnum(Role, { invalid_type_error : "invalid role" })
 
 export const createUserSchema = z.object({
+    // picture : z.string().min(5, "invalid image URL").optional(),
     name: z
         .string({
             required_error: "name is required",
@@ -29,6 +30,7 @@ export const createUserSchema = z.object({
 });
 
 export const updateUserSchema = z.object({
+    picture : z.string().min(5, "invalid image URL").optional(),
     name: z
         .string({
             required_error: "name is required",

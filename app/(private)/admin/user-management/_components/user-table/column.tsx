@@ -7,7 +7,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
-import { Copy, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { Copy, Image, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 import UserAvatar from "@/components/user-avatar";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
@@ -23,10 +23,13 @@ import { TUserWithBranch } from "@/types";
 import { deleteUser } from "@/hooks/api-hooks/user-api-hooks";
 import UpdateUserModal from "../modals/update-user-modal";
 import { useSession } from "next-auth/react";
+import UpdateUserPictureModal from "../modals/update-user-image-modal";
 
 const Actions = ({ user }: { user: TUserWithBranch }) => {
     const session = useSession();
     const [modal, setModal] = useState(false);
+    const [modalPicture, setModalPicture] = useState(false);
+
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     const deleteOperation = deleteUser();
@@ -40,6 +43,7 @@ const Actions = ({ user }: { user: TUserWithBranch }) => {
     return (
         <DropdownMenu>
             <UpdateUserModal user={user} editor={session.data.user} state={modal} close={()=> setModal(false)}  />
+            <UpdateUserPictureModal user={user} state={modalPicture} close={()=> setModalPicture(false)} />
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
                     <span className="sr-only">Open menu</span>
@@ -60,6 +64,9 @@ const Actions = ({ user }: { user: TUserWithBranch }) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={()=>setModal(true)} className="px-2 gap-x-2">
                     <Pencil strokeWidth={2} className="h-4" /> Edit User
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={()=>setModalPicture(true)} className="px-2 gap-x-2">
+                    <Image strokeWidth={2} className="h-4" /> Change Image
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

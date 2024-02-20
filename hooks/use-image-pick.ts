@@ -1,6 +1,8 @@
 import { toast } from "sonner";
 import { useMemo, useState } from "react";
 import imageCompression from "browser-image-compression";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 type ImagePickOption = {
     maxPictureSizeMb? : number,
@@ -62,6 +64,8 @@ const useImagePick = ( { maxPictureSizeMb = 2, maxOptimizedSizeMB = 0.5, initial
         if(imageFile) return URL.createObjectURL(imageFile) 
         else  return initialImageURL
     }, [imageFile])
+
+    
 
     return { imageFile, imageURL, imageSize, onSelectImage, resetPicker }
 }
