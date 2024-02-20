@@ -5,7 +5,7 @@ import { updateEventSchema } from "@/validation-schema/event";
 import { validateId} from "@/lib/server-utils";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { ZodError, z } from "zod";
-import { TUpdateEvent } from "@/types/event/TCreateEvent";
+import { TUpdateEvent } from "@/types";
 
 type TParams = { params: { id: number } };
 

@@ -23,13 +23,13 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TEventWithElection } from "@/types/event/TCreateEvent";
 import moment from "moment";
 import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import UpdateEventModal from "../modals/update-event-modal";
+import { TEventWithElection } from "@/types";
 const Actions = ({ event }: { event: TEventWithElection }) => {
    
    const router = useRouter()

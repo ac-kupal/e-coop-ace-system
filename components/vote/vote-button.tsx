@@ -3,8 +3,8 @@ import Link from "next/link";
 import db from "@/lib/database";
 
 import { Button } from "../ui/button";
+import { TEvent } from "@/types";
 
-import { TEvent } from "@/types/event/TCreateEvent";
 
 type Props = {
     Event: TEvent;

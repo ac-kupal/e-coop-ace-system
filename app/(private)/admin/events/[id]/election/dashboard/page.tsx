@@ -1,11 +1,11 @@
 "use client"
 import { mutationErrorHandler } from '@/errors/mutation-error-handler';
-import { TEventWithElection } from '@/types/event/TCreateEvent';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React from 'react'
 import Election from '../_components/election';
 import NotFound from '../_components/not-found';
+import { TEventWithElection } from '@/types';
 
 const page = ({ params }: { params: { id: number } }) => {
 
@@ -27,7 +27,6 @@ const page = ({ params }: { params: { id: number } }) => {
          {data?.election ? (
             <>
                <Election
-                  isLoading={isLoading}
                   election={data.election}
                ></Election>
             </>

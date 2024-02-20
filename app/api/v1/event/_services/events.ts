@@ -1,5 +1,5 @@
 import db from "@/lib/database";
-import { TCreateElection } from "@/types/election/TCreateElection";
+import { TCreateElection } from "@/types";
 import { createEventSchema, updateEventSchema } from "@/validation-schema/event";
 import { z } from "zod";
 

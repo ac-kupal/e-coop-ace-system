@@ -23,7 +23,6 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 
-import { handleAxiosErrorMessage } from "@/utils";
 import { createEventWithElectionSchema } from "@/validation-schema/event";
 import {
    Popover,
@@ -41,11 +40,11 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { EventType } from "@prisma/client";
-import { TCreateEventWithElection, TEventWithElection } from "@/types/event/TCreateEvent";
 import { useState } from "react";
 import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import { useRouter } from 'next/navigation'
-import { z } from "zod";
+import { TCreateEventWithElection, TEventWithElection } from "@/types";
+
 type Props = {
    state: boolean;
    onClose: (state: boolean) => void;

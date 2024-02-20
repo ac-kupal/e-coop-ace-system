@@ -1,7 +1,6 @@
-import {  $Enums, ElectionStatus, Event } from "@prisma/client";
+import { Event } from "@prisma/client";
 import { EventType } from "@prisma/client";
-import {  Election as election } from "@prisma/client";
-import { TElection } from "../election/TCreateElection";
+import { TElection } from "./election.types";
 
 export type TCreateEvent = {
    title: string;
@@ -14,7 +13,6 @@ export type TCreateEvent = {
 export type Election = {
    title: string;
    description: string;
-  
 };
 export type TCreateEventWithElection = {
    title: string;
@@ -22,17 +20,16 @@ export type TCreateEventWithElection = {
    date: Date;
    location: string;
    category?: EventType;
-   electionName?:string;
+   electionName?: string;
 };
 
 export type TUpdateEvent = {
-   title:string,
+   title: string;
    description: string;
    date: Date;
    location: string;
-}
+};
 
-export type TEvent = Event
+export type TEvent = Event;
 
-export type TEventWithElection = Event & { election : TElection }
-
+export type TEventWithElection = Event & { election: TElection };

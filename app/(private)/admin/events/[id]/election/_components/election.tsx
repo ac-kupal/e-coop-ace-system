@@ -1,21 +1,13 @@
 "use client";
-import { TElection } from "@/types/election/TCreateElection";
-import {
-   LayoutDashboard,
-   Loader2,
-   Medal,
-   Settings2,
-   Users,
-} from "lucide-react";
 import React from "react";
 import NotFound from "./not-found";
+import { TElection } from "@/types";
 
 type Props = {
    election: TElection;
-   isLoading: boolean;
 };
 
-const Election = ({ election, isLoading }: Props) => {
+const Election = ({ election}: Props) => {
 
    if (!election) return <NotFound></NotFound>;
      

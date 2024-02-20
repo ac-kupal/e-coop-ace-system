@@ -36,9 +36,9 @@ import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import {
    updateEventSchema,
 } from "@/validation-schema/event";
-import { TEventWithElection } from "@/types/event/TCreateEvent";
 import { z } from "zod";
 import { useCallback, useEffect } from "react";
+import { TEventWithElection } from "@/types";
 
 type Props = {
    event: TEventWithElection;

@@ -1,7 +1,6 @@
 import { TElectionRoute } from "@/types";
 import React from "react";
 import Link from "next/link";
-import { pathName } from "@/lib/server-utils";
 import { usePathname } from "next/navigation";
 
 type Props = {
