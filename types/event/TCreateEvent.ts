@@ -1,6 +1,7 @@
 import {  $Enums, ElectionStatus, Event } from "@prisma/client";
 import { EventType } from "@prisma/client";
 import {  Election as election } from "@prisma/client";
+import { TElection } from "../election/TCreateElection";
 
 export type TCreateEvent = {
    title: string;
@@ -31,5 +32,7 @@ export type TUpdateEvent = {
    location: string;
 }
 
-export type TEvent = Event&{election:election}
+export type TEvent = Event
+
+export type TEventWithElection = Event & { election : TElection }
 
