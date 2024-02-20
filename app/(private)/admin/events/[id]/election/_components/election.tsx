@@ -1,19 +1,35 @@
 "use client";
-import React from "react";
-import NotFound from "./not-found";
-import { TElection } from "@/types";
+import React, { useEffect } from "react";
+import {TEventWithElection } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import { mutationErrorHandler } from "@/errors/mutation-error-handler";
+import axios from "axios";
 
 type Props = {
-   election: TElection;
+   id:number
 };
 
-const Election = ({ election}: Props) => {
+const Election = ({id}: Props) => {
 
-   if (!election) return <NotFound></NotFound>;
+   const { data, isLoading } = useQuery<TEventWithElection>({
+      queryKey: ["get-event-key"],
+      queryFn: async () => {
+         try {
+            const response = await axios.get(`/api/v1/event/${id}`);
+            return response.data;
+         } catch (error) {
+            mutationErrorHandler(error);
+         }
+      },
+   });
+
+   if (isLoading) {
+      return <div>Loading...</div>;
+   }
      
    return (
       <div className="w-full h-screen overflow-hidden bg-background rounded-2xl">
-         {election.electionName}
+         {data?.election.electionName}
       </div>
    );
 };

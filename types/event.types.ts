@@ -1,6 +1,6 @@
 import { Event } from "@prisma/client";
 import { EventType } from "@prisma/client";
-import { TElection } from "./election.types";
+import { TElection } from ".";
 
 export type TCreateEvent = {
    title: string;
