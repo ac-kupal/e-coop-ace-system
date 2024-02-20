@@ -5,9 +5,9 @@ type Props = { children : ReactNode};
 
 const PublicLayout = ( { children }: Props) => {
     return (
-        <div className="bg-secondary font-poppins">
+        <div className="bg-secondary/40 font-poppins">
             <NavBar />
-            <main className="ml-0 lg:ml-[240px] overflow-x-hidden flex-1">
+            <main className="ml-0 overflow-x-hidden flex-1">
                 {children}
             </main>
         </div>
