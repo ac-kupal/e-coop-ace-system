@@ -1,5 +1,7 @@
+import z from "zod"
 import { Role } from "@prisma/client";
 import { ReactElement, ReactNode } from "react";
+import { folderGroupSchema } from "@/validation-schema/upload";
 
 export * from "./user.types"
 export * from "./branch.types"
@@ -12,3 +14,5 @@ export type TRoute = {
     path : string;
     allowedRole: Role[];
 };
+
+export type TFolderUploadGroups = z.infer<typeof folderGroupSchema>

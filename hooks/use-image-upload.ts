@@ -16,7 +16,7 @@ const useUploadImage = ({ imageFile }: Props) => {
                     return
                 }
                 const formData = new FormData();
-                formData.set("imageFile", imageFile)
+                formData.set("file", imageFile)
 
                 const response = await axios.post("/api/v1/image-upload", formData)
 
