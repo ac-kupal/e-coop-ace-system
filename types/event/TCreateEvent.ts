@@ -22,5 +22,14 @@ export type TCreateEventWithElection = {
    category?: EventType;
    electionName?:string;
 };
+
+export type TUpdateEvent = {
+   title:string,
+   description: string;
+   date: Date;
+   location: string;
+}
+
 export type TEvent = Event;
+
 

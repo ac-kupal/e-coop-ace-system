@@ -24,6 +24,18 @@ export const createEventSchema = z.object({
       .optional(),
 });
 
+export const updateEventSchema = z.object({
+   title: z
+      .string({ invalid_type_error: "event title type is invalid" })
+      .min(1, "event title is required"),
+   description: z
+      .string({ invalid_type_error: "event description type is invalid" })
+      .min(1, "event description is required"),
+   date: z.coerce.date({ invalid_type_error: "event date type is invalid" }),
+   location: z
+      .string({ invalid_type_error: "event location type is invalid" })
+      .min(1, "event location is required"),
+});
 
 export const createEventWithElectionSchema = (isElection:boolean)=>{
    return z.object({

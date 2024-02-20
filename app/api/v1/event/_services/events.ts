@@ -1,6 +1,6 @@
 import db from "@/lib/database";
 import { TCreateElection } from "@/types/election/TCreateElection";
-import { createEventSchema } from "@/validation-schema/event";
+import { createEventSchema, updateEventSchema } from "@/validation-schema/event";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
@@ -66,7 +66,7 @@ export const getAllEvent = async (includeElection = false) => {
 };
 
 export const updateEvent = async (
-   event: z.infer<typeof createEventSchema>,
+   event: z.infer<typeof updateEventSchema>,
    eventId: number,
    userId?: number
 ) => {

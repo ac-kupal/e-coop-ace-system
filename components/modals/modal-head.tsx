@@ -8,7 +8,7 @@ const ModalHead = ({ title, description }: Props) => {
     return (
         <>
             <DialogHeader>
-                <DialogTitle className="font-medium">{ title }</DialogTitle>
+                <DialogTitle className="font-medium text-2xl">{ title }</DialogTitle>
             </DialogHeader>
             <DialogDescription className="my-2">
                 { description }

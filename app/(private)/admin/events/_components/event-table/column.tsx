@@ -20,8 +20,10 @@ import { TEvent } from "@/types/event/TCreateEvent";
 import moment from "moment"
 import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { useState } from "react";
-
+import UpdateEventModal from "../modals/update-event-modal";
 const Actions = ({ event }: { event: TEvent }) => {
+
+    const [onOpenModal, setOnOpenModal] = useState(false)
 
     const deleteOperation = deleteEvent();
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
@@ -30,6 +32,7 @@ const Actions = ({ event }: { event: TEvent }) => {
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
     return (
         <DropdownMenu>
+            <UpdateEventModal event={event} state={onOpenModal} onClose={()=> setOnOpenModal(false)}  ></UpdateEventModal>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
                     <span className="sr-only">Open menu</span>
@@ -50,7 +53,12 @@ const Actions = ({ event }: { event: TEvent }) => {
                     <Copy strokeWidth={2} className="h-4" />
                     Copy event ID
                 </DropdownMenuItem>
-                <DropdownMenuItem className="px-2 gap-x-2">
+                <DropdownMenuItem 
+                    onClick={()=>{
+                        setOnOpenModal(true)
+                    }}
+                    
+                className="px-2 gap-x-2">
                     <Pencil strokeWidth={2} className="h-4" /> Edit Event
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
