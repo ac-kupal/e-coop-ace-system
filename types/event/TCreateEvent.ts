@@ -31,5 +31,5 @@ export type TUpdateEvent = {
    location: string;
 }
 
-export type TEvent = Event & {election:election}
+export type TEvent = Event&{election:election}
 
