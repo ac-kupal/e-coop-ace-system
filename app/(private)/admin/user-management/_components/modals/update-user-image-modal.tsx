@@ -1,37 +1,15 @@
 "use client"
-import z from "zod";
-import { useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Loader2 } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
 
 import { TUser } from "@/types";
-import { updateUserSchema } from "@/validation-schema/user";
-import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
 import { updateUser } from "@/hooks/api-hooks/user-api-hooks";
-import { Role } from "@prisma/client";
-import { user } from "next-auth";
 import useImagePick from "@/hooks/use-image-pick";
 import ImagePick from "@/components/image-pick";
-import useUploadImage from "@/hooks/use-image-upload";
 import { uploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
-import { v4 } from "uuid";
 
 
 type Props = {
@@ -41,7 +19,7 @@ type Props = {
 };
 
 const UpdateUserPictureModal = ({ state, user, close }: Props) => {
-    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({ initialImageURL : user.picture, maxOptimizedSizeMB : 0.5, maxWidthOrHeight : 300})
+    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({ initialImageURL : user.picture ?? "/images/default.png", maxOptimizedSizeMB : 0.5, maxWidthOrHeight : 300})
 
     const reset = () => {
         resetPicker();
@@ -87,7 +65,7 @@ const UpdateUserPictureModal = ({ state, user, close }: Props) => {
                     </Button>
                     <Button disabled={isLoading} onClick={()=> {
                             startUpload({
-                                fileName : user.id,
+                                fileName : `user-${user.id}`,
                                 folderGroup : "user",
                                 file : imageFile
                             })
