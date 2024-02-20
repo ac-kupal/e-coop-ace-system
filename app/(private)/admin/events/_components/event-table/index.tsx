@@ -27,7 +27,7 @@ import {
    TabsList,
    TabsTrigger,
  } from "@/components/ui/tabs"
-import CreateEventModal from "../../modals/create-event-modal";
+import CreateEventModal from "../modals/create-event-modal";
 const EventTable = () => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createEvent, setCreateEvent] = useState(false)

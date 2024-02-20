@@ -1,13 +1,12 @@
 import db from "@/lib/database";
 import { TCreateElection } from "@/types/election/TCreateElection";
 import { createEventSchema, updateEventSchema } from "@/validation-schema/event";
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export const createEvent = async (
    event: z.infer<typeof createEventSchema>,election:TCreateElection, includeElection = false) => {
       try {
-      return await db.event.create({
+      const CreateEvent = await db.event.create({
          data: includeElection ?  {
             title: event.title,
             description: event.description,
@@ -29,7 +28,12 @@ export const createEvent = async (
             category: event.category,
             deleted: false,
          },
+         include:{
+            election:true
+         }
       });
+      console.log(CreateEvent)
+      return CreateEvent
    } catch (error) {
       console.log(error);
    }

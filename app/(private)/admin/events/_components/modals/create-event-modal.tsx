@@ -41,9 +41,11 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { EventType } from "@prisma/client";
-import { TCreateEventWithElection } from "@/types/event/TCreateEvent";
+import { TCreateEventWithElection, TEvent } from "@/types/event/TCreateEvent";
 import { useState } from "react";
 import { mutationErrorHandler } from "@/errors/mutation-error-handler";
+import { useRouter } from 'next/navigation'
+import { z } from "zod";
 type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
@@ -52,6 +54,8 @@ type Props = {
 
 const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
    
+   const router = useRouter()
+
    const queryClient = useQueryClient();
    const [isElection, setIsElection] = useState(false);
    
@@ -79,10 +83,9 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
       onClose(false);
    };
 
-   
-   const createEvent = useMutation<typeof EventSchema, string, unknown>({
+   const createEvent = useMutation<TEvent, string, unknown>({
       mutationKey: ["create-event"],
-      mutationFn: async (data: any) => {
+      mutationFn: async (data) => {
          try {
             const response = await axios.post("/api/v1/event", { data });
             return response.data;
@@ -90,15 +93,18 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
             mutationErrorHandler(e);
          }
       },
-      onSuccess: () => {
+      onSuccess:(data:TEvent) => {
          queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
          onCancelandReset();
          toast.success("Event created successfully");
+         if(data.election){
+            router.push(`/admin/events/${data.id}/election/${data.election.id}`)
+         }
       },
    });
 
    const isLoading = createEvent.isPending;
-   const onSubmitEvent = async (formValues: TCreateEventWithElection) => createEvent.mutate(formValues);
+   const onSubmitEvent = async (formValues: TCreateEventWithElection) => createEvent.mutateAsync(formValues);
 
    return (
       <Dialog
