@@ -62,9 +62,9 @@ const BranchesTable = () => {
     return (
         <div className="flex flex-1 flex-col gap-y-2 ">
             <CreateBranchModal state={createModal} onClose={(state) => setCreateModal(state)} />
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-lg gap-y-2 bg-background">
+            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-[#4e7563]">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
-                    <div className="relative">
+                    <div className="relative text-white">
                         <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                         <Input
                             ref={onFocusSearch}
@@ -73,7 +73,7 @@ const BranchesTable = () => {
                             onChange={(event) =>
                                 setGlobalFilter(event.target.value)
                             }
-                            className="w-full pl-8 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
                 </div>
@@ -81,7 +81,7 @@ const BranchesTable = () => {
                     <DataTableViewOptions table={table} />
                     <Button
                         size="sm"
-                        className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                        className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem] bg-[#5B9381] hover:bg-[#5B9381]/70 "
                         onClick={() => setCreateModal(true)}
                     >
                         Add Branch

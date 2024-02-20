@@ -12,13 +12,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
 
 interface DataTableViewOptionsProps<TData> {
+    className? : string,
   table: Table<TData>
 }
 
 export default function DataTableViewOptions<TData>({
   table,
+  className
 }: DataTableViewOptionsProps<TData>) {
   return (
     <DropdownMenu>
@@ -26,7 +29,7 @@ export default function DataTableViewOptions<TData>({
         <Button
           variant="outline"
           size="sm"
-          className="flex h-8 ml-auto gap-x-2"
+          className={cn("flex h-8 ml-auto gap-x-2", className)}
         >
           <Settings2 className="w-4 h-4" />
           <span className="hidden md:block">View</span>
