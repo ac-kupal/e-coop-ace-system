@@ -23,14 +23,14 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TEvent } from "@/types/event/TCreateEvent";
+import { TEventWithElection } from "@/types/event/TCreateEvent";
 import moment from "moment";
 import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import UpdateEventModal from "../modals/update-event-modal";
-const Actions = ({ event }: { event: TEvent }) => {
+const Actions = ({ event }: { event: TEventWithElection }) => {
    
    const router = useRouter()
     
@@ -71,7 +71,7 @@ const Actions = ({ event }: { event: TEvent }) => {
             {event.election && (
                <DropdownMenuItem 
                onClick={()=>{
-                  router.push(`/admin/events/${event.id}/election/${event.election.id}`)
+                  router.push(`/admin/events/${event.id}/election/dashboard`)
                }}
                 
                className="px-2 gap-x-2">
@@ -111,7 +111,7 @@ const Actions = ({ event }: { event: TEvent }) => {
    );
 };
 
-const columns: ColumnDef<TEvent>[] = [
+const columns: ColumnDef<TEventWithElection>[] = [
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,

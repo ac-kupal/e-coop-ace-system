@@ -41,7 +41,7 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { EventType } from "@prisma/client";
-import { TCreateEventWithElection, TEvent } from "@/types/event/TCreateEvent";
+import { TCreateEventWithElection, TEventWithElection } from "@/types/event/TCreateEvent";
 import { useState } from "react";
 import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import { useRouter } from 'next/navigation'
@@ -83,7 +83,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
       onClose(false);
    };
 
-   const createEvent = useMutation<TEvent, string, unknown>({
+   const createEvent = useMutation<TEventWithElection, string, unknown>({
       mutationKey: ["create-event"],
       mutationFn: async (data) => {
          try {
@@ -93,12 +93,12 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
             mutationErrorHandler(e);
          }
       },
-      onSuccess:(data:TEvent) => {
+      onSuccess:(data:TEventWithElection) => {
          queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
          onCancelandReset();
          toast.success("Event created successfully");
          if(data.election){
-            router.push(`/admin/events/${data.id}/election/${data.election.id}`)
+            router.push(`/admin/events/${data.id}/election/${data.election.id}/dashboard`)
          }
       },
    });

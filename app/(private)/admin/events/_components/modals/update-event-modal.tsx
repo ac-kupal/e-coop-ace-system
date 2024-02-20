@@ -36,12 +36,12 @@ import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import {
    updateEventSchema,
 } from "@/validation-schema/event";
-import { TCreateEvent, TEvent } from "@/types/event/TCreateEvent";
+import { TEventWithElection } from "@/types/event/TCreateEvent";
 import { z } from "zod";
 import { useCallback, useEffect } from "react";
 
 type Props = {
-   event: TEvent;
+   event: TEventWithElection;
    state: boolean;
    onClose: (state: boolean) => void;
 };
