@@ -24,7 +24,6 @@ const useImagePick = ( { maxPictureSizeMb = 2, maxOptimizedSizeMB = 0.5, initial
 
         let uploadedImage = e.target.files[0];
         const unoptimizedSize = uploadedImage.size / 1024 / 1024
-        console.log(`unoptimize image size of ${maxPictureSizeMb} MB. Your image ${unoptimizedSize} MB`)
 
         try {
             if( unoptimizedSize > maxPictureSizeMb){
@@ -40,7 +39,6 @@ const useImagePick = ( { maxPictureSizeMb = 2, maxOptimizedSizeMB = 0.5, initial
             });
 
             const optimizedSize = uploadedImage.size / 1024 / 1024;
-            console.log(`Optimization size of ${maxOptimizedSizeMB} MB. Your image size ${optimizedSize} MB`)
 
             if(optimizedSize > maxOptimizedSizeMB){
                 toast.error(`Image exceed optimization size of ${maxOptimizedSizeMB} MB. Your image size ${optimizedSize} MB`)
