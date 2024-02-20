@@ -16,7 +16,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TEvent, TEventWithElection } from "@/types/event/TCreateEvent";
+import { TEvent } from "@/types/event/TCreateEvent";
 import moment from "moment"
 import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { useState } from "react";

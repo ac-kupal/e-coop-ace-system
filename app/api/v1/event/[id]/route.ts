@@ -1,8 +1,8 @@
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { deleteEvent, getEvent, updateEvent } from "../services/events";
+import { deleteEvent, getEvent, updateEvent } from "../_services/events";
 import { createEventSchema } from "@/validation-schema/event";
-import { validateId, pathName } from "@/lib/server-utils";
+import { validateId} from "@/lib/server-utils";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 
 type TParams = { params: { id: number } };
@@ -26,7 +26,7 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
       const data = await req.json();
       const user = await currentUserOrThrowAuthError();
       createEventSchema.parse(data);
-      const UpdateEvent = await updateEvent(data, id, user.id);
+      const UpdateEvent = await updateEvent(data, id,user.id);
       return NextResponse.json(UpdateEvent);
    } catch (e) {
       return routeErrorHandler(e, req.method);

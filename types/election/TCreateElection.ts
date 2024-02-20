@@ -1,9 +1,5 @@
-import { $Enums, Election } from "@prisma/client"
-export type TElection = {
-     id: number;
-     e_name: string;
-     startDate: Date;
-     endDate: Date;
+import { $Enums } from "@prisma/client"
+export type TCreateElection = {
+     electionName: string;
      status: $Enums.ElectionStatus;
-     eventId: number | null;
 }
