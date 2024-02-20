@@ -112,6 +112,9 @@ model EventAttendees {
     gender         gender
     birthday       DateTime
     contact        String
+    
+    isMIGS         Boolean? @default(false)
+    canVote        Boolean? @default(false)
 
     eventId Int
     event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -132,7 +135,7 @@ enum ElectionStatus {
 enum VotingEligibility{
     REGISTERED
     MIGS
-    MARKED_ALLOWED
+    MARKED_CANVOTE
 }
 
 model Election {
