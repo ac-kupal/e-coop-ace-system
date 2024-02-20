@@ -27,6 +27,7 @@ import { useCallback, useEffect } from "react";
 import { TBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createBranchSchema } from "@/validation-schema/branch";
+import { updateBranch } from "@/hooks/api-hooks/branch-api-hooks";
 
 type Props = { 
     branch : TBranch,
@@ -57,29 +58,9 @@ const UpdateBranchModal = ({ state, branch, close }: Props) => {
         setDefaults()
     }, [branch, state, setDefaults])
 
-    const updateBranch = useMutation<TBranch, string, TUpdateBranch>({
-        mutationKey: ["update-branch"],
-        mutationFn: async (data) => {
-            try {
-                const response = await axios.patch(`/api/v1/branch/${branch.id}`, { data });
+    const { isPending, mutate } = updateBranch({ branchId : branch.id, onUpdate : () => {} });
 
-                queryClient.invalidateQueries({ queryKey: ["branch-list-query"] });
-                reset();
-                
-                return response.data;
-            } catch (e) {
-                let errorMessage = "";
-                
-                if (e instanceof Error) errorMessage = e.message;
-                else errorMessage =  handleAxiosErrorMessage(e);
-
-                toast.error(errorMessage);
-                throw errorMessage
-            }
-        },
-    });
-
-    const isLoading = updateBranch.isPending // || uploading;
+    const isLoading = isPending // || uploading;
 
     return (
         <Dialog open={state} onOpenChange={reset}>
@@ -91,7 +72,7 @@ const UpdateBranchModal = ({ state, branch, close }: Props) => {
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit((formValues) =>
-                            updateBranch.mutate(formValues)
+                            mutate(formValues)
                         )}
                         className="space-y-4"
                     >

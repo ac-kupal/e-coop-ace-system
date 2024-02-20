@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Copy, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { Copy, Image, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
@@ -22,9 +22,11 @@ import { TBranch } from "@/types";
 import UpdateBranchModal from "../modals/update-branch-modal";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { deleteBranch } from "@/hooks/api-hooks/branch-api-hooks";
+import UpdateBranchImageModal from "../modals/update-branch-image-modal";
 
 const Actions = ({ branch }: { branch: TBranch }) => {
     const [modal, setModal] = useState(false);
+    const [branchPictureModal, setBranchPictureModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     const deleteOperation = deleteBranch();
@@ -34,12 +36,9 @@ const Actions = ({ branch }: { branch: TBranch }) => {
 
     return (
         <>
-            <UpdateBranchModal
-                branch={branch}
-                state={modal}
-                close={() => setModal(false)}
-            />
-            <DropdownMenu>
+            <UpdateBranchModal branch={branch} state={modal} close={() => setModal(false)}/>
+            <UpdateBranchImageModal branch={branch} state={branchPictureModal} close={()=> setBranchPictureModal(false)}/>
+            <DropdownMenu> 
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="w-8 h-8 p-0">
                         <span className="sr-only">Open menu</span>
@@ -67,6 +66,12 @@ const Actions = ({ branch }: { branch: TBranch }) => {
                         className="px-2 gap-x-2"
                     >
                         <Pencil strokeWidth={2} className="h-4" /> Edit Branch
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => setBranchPictureModal(true)}
+                        className="px-2 gap-x-2"
+                    >
+                        <Image strokeWidth={2} className="h-4" /> Branch Logo
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem

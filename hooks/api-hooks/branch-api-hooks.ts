@@ -1,9 +1,11 @@
+import z from "zod"
 import { toast } from "sonner";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { TBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
+import { createBranchSchema } from "@/validation-schema/branch";
 
 export const deleteBranch = ( ) => {
     const queryClient = useQueryClient();
@@ -53,4 +55,32 @@ export const branchList = () => {
     });
 
     return branchListQuery;
+}
+
+type TUpdateBranch = z.infer<typeof createBranchSchema>;
+
+export const updateBranch = ({ branchId, onUpdate } : { branchId : number, onUpdate : (newBranch : TBranch) => void }) => {
+    const queryClient = useQueryClient();
+    const update = useMutation<TBranch, string, TUpdateBranch>({
+        mutationKey: ["update-branch"],
+        mutationFn: async (data) => {
+            try {
+                const response = await axios.patch(`/api/v1/branch/${branchId}`, { data });
+
+                queryClient.invalidateQueries({ queryKey: ["branch-list-query"] });
+                
+                return response.data;
+            } catch (e) {
+                let errorMessage = "";
+                
+                if (e instanceof Error) errorMessage = e.message;
+                else errorMessage =  handleAxiosErrorMessage(e);
+
+                toast.error(errorMessage);
+                throw errorMessage
+            }
+        },
+    });
+
+    return update
 }

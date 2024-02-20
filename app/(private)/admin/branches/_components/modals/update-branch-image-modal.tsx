@@ -7,35 +7,35 @@ import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
-import { TUser } from "@/types";
+import { TBranch } from "@/types";
 import useImagePick from "@/hooks/use-image-pick";
 import { updateUser } from "@/hooks/api-hooks/user-api-hooks";
 import { uploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
+import { updateBranch } from "@/hooks/api-hooks/branch-api-hooks";
 
 
 type Props = {
-    user : TUser;
+    branch : TBranch;
     state : boolean,
     close : () => void;
 };
 
-const UpdateUserPictureModal = ({ state, user, close }: Props) => {
-    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({ initialImageURL : user.picture ?? "/images/default.png", maxOptimizedSizeMB : 0.5, maxWidthOrHeight : 300})
+const UpdateBranchImageModal = ({ state, branch, close }: Props) => {
+    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({ initialImageURL : branch.branchPicture ?? "/images/default.png", maxOptimizedSizeMB : 0.5, maxWidthOrHeight : 300})
 
     const reset = () => {
         resetPicker();
         close();
     }
     
-    const { isPending : isSaving, mutate } = updateUser(user.id, (updatedUser) => {  })
+    const { mutate, isPending : isSaving } = updateBranch({ branchId : branch.id, onUpdate : () => {} });
 
     const onUploadComplete = (imageURL : string) => {
         mutate({
-            branchId : user.branchId,
-            email : user.email,
-            name : user.name,
-            role : user.role,
-            picture : imageURL
+            branchName : branch.branchName,
+            branchAddress : branch.branchAddress,
+            branchDescription : branch.branchDescription,
+            branchPicture : imageURL
         })
         reset();
     }
@@ -48,8 +48,8 @@ const UpdateUserPictureModal = ({ state, user, close }: Props) => {
         <Dialog open={state} onOpenChange={(state)=> reset() }>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
                 <ModalHead
-                    title="Update User Picture"
-                    description="Update user profile picture."
+                    title="Update Branch Logo"
+                    description="Update branch logo."
                 />
                 <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL} onChange={onSelectImage} />
                 <Separator className="bg-muted/70" />
@@ -67,8 +67,8 @@ const UpdateUserPictureModal = ({ state, user, close }: Props) => {
                     </Button>
                     <Button disabled={isLoading} onClick={()=> {
                             startUpload({
-                                fileName : `user-${user.id}`,
-                                folderGroup : "user",
+                                fileName : `branch-${branch.id}`,
+                                folderGroup : "branch",
                                 file : imageFile
                             })
                         }}>
@@ -85,4 +85,4 @@ const UpdateUserPictureModal = ({ state, user, close }: Props) => {
     );
 };
 
-export default UpdateUserPictureModal;
+export default UpdateBranchImageModal;
