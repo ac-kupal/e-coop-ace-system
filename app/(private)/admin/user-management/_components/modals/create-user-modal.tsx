@@ -27,6 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createUser } from "@/hooks/api-hooks/user-api-hooks";
 import { Role } from "@prisma/client";
 import { user } from "next-auth";
+import useImagePick from "@/hooks/use-image-pick";
 
 type Props = {
     state: boolean;
@@ -38,6 +39,8 @@ type Props = {
 type createTUser = z.infer<typeof createUserSchema>;
 
 const CreateUserModal = ({ state, onClose, editor, onCreate }: Props) => {
+    const { imageFile, imageURL, onSelectImage } = useImagePick({ maxWidthOrHeight : 300, maxOptimizedSizeMB : 0.5 });
+    
     const form = useForm<createTUser>({
         resolver: zodResolver(createUserSchema),
         defaultValues: {

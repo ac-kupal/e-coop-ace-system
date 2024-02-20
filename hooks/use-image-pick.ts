@@ -1,9 +1,9 @@
+import { toast } from "sonner";
 import { useMemo, useState } from "react";
 import imageCompression from "browser-image-compression";
-import { toast } from "sonner";
 
 type ImagePickOption = {
-    maxPickSize? : number,
+    maxPictureSizeMb? : number,
     maxOptimizedSizeMB : 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1,
     maxWidthOrHeight : 100 | 200 | 300 | 800,
     fileType? : "image/jpeg",
@@ -11,7 +11,7 @@ type ImagePickOption = {
     useWebWorker? : boolean
 }
 
-const useImagePick = ( { maxPickSize = 2, maxOptimizedSizeMB = 0.5, initialImageURL = "/images/default.png", maxWidthOrHeight = 300, fileType = "image/jpeg", useWebWorker = false } : ImagePickOption ) => {
+const useImagePick = ( { maxPictureSizeMb = 2, maxOptimizedSizeMB = 0.5, initialImageURL = "/images/default.png", maxWidthOrHeight = 300, fileType = "image/jpeg", useWebWorker = false } : ImagePickOption ) => {
     const [imageFile, setImageFile] = useState<File | null>(null)
 
     const onSelectImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,11 +22,11 @@ const useImagePick = ( { maxPickSize = 2, maxOptimizedSizeMB = 0.5, initialImage
 
         let uploadedImage = e.target.files[0];
         const unoptimizedSize = uploadedImage.size / 1024 / 1024
-        console.log(`unoptimize image size of ${maxPickSize} MB. Your image ${unoptimizedSize} MB`)
+        console.log(`unoptimize image size of ${maxPictureSizeMb} MB. Your image ${unoptimizedSize} MB`)
 
         try {
-            if( unoptimizedSize > maxPickSize){
-                toast.error(`Image exceed allowed image size of ${maxPickSize} MB. Your image ${unoptimizedSize} MB`)
+            if( unoptimizedSize > maxPictureSizeMb){
+                toast.error(`Image exceed allowed image size of ${maxPictureSizeMb} MB. Your image ${unoptimizedSize} MB`)
                 return false;
             }
 

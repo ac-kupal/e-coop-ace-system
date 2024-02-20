@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import imageCompression from "browser-image-compression";
 import UserAvatar from "./user-avatar";
-import { url } from "inspector";
-import { FileType } from "lucide-react";
 
-type Props = {};
+type Props = {
+    className? : string
+};
 
-const ImagePick = (props: Props) => {
+const ImagePick = ({ className }: Props) => {
     const [file, setFile] = useState<File | null>();
 
     const handleOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,14 +30,14 @@ const ImagePick = (props: Props) => {
     };
 
     return (
-        <>
+        <div className={className}>
             <UserAvatar
                 className="size-36"
                 fallback="📷"
                 src={file ? URL.createObjectURL(file) : "/images/default.png"}
             />
             <Input type="file" accept="image/*" onChange={handleOnChange} />
-        </>
+        </div>
     );
 };
 
