@@ -1,8 +1,6 @@
 import React from 'react'
 import ElectionNavItems from './election-nav-item'
 import { TElectionRoute } from '@/types'
-import { useSearchParams } from 'next/navigation'
-import { TEvent } from '@/types/event/TCreateEvent'
 import { LayoutDashboard, Users, Medal, Settings2 } from 'lucide-react'
 
 

@@ -7,11 +7,11 @@ import React from "react";
 import Election from "./_components/election";
 import NotFound from "./_components/not-found";
 
-
 const page = ({ params }: { params: { id: number } }) => {
+
    const { data, isLoading } = useQuery<TEventWithElection>({
       queryKey: ["get-event-key"],
-      queryFn: async (id) => {
+      queryFn: async () => {
          try {
             const response = await axios.get(`/api/v1/event/${params.id}`);
             return response.data;

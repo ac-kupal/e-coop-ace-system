@@ -9,9 +9,6 @@ import {
 } from "lucide-react";
 import React from "react";
 import NotFound from "./not-found";
-import { TElectionRoute } from "@/types";
-import ElectionNavItems from "./election-nav-item";
-import ElectionSideBar from "./election-sidebar";
 
 type Props = {
    election: TElection;
@@ -24,6 +21,7 @@ const Election = ({ election, isLoading }: Props) => {
      
    return (
       <div className="w-full h-screen overflow-hidden bg-background rounded-2xl">
+         {election.electionName}
       </div>
    );
 };

@@ -98,7 +98,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
          onCancelandReset();
          toast.success("Event created successfully");
          if(data.election){
-            router.push(`/admin/events/${data.id}/election/${data.election.id}/dashboard`)
+            router.push(`/admin/events/${data.id}/election/dashboard`)
          }
       },
    });
