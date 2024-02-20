@@ -1,10 +1,10 @@
 import z from "zod"
 import axios from "axios";
-import { v4 } from "uuid";
 import { useMutation } from "@tanstack/react-query"
 
 import { uploadSchema } from "@/validation-schema/upload";
 import { toast } from "sonner";
+import { extname } from "path";
 
 export const uploadImage = ({ onUploadComplete } : { onUploadComplete : (imageURL : string) => void }) => { 
     const upload = useMutation<string, string, z.infer<typeof uploadSchema>>({
@@ -12,12 +12,10 @@ export const uploadImage = ({ onUploadComplete } : { onUploadComplete : (imageUR
             try{
                 const upload = await axios.postForm("/api/v1/upload/image", {
                     file : data.file,
-                    fileName : data.fileName,
+                    fileName : `${data.fileName}${extname(data.file.name)}`,
                     folderGroup : data.folderGroup
                 })
-                
                 onUploadComplete(upload.data)
-
                 return upload.data;
             }catch(e){
                 toast.error(`Failed to upload image : ${e}`)
