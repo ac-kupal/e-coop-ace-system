@@ -84,7 +84,9 @@ model Event {
     date        DateTime
     location    String
     category    EventType
+    coverImage  String? @default("/images/default.png")
     deleted     Boolean
+
 
     createdBy Int?
     updatedBy Int?
@@ -192,7 +194,6 @@ model Candidate {
 
     @@unique([electionId, passbookNumber])
 }
-
 
 model Votes {
     id Int @id @default(autoincrement())
