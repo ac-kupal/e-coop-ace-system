@@ -41,7 +41,7 @@ export const getEvent = async (eventId: number) => {
    try {
       return await db.event.findUnique({
          where: { id: eventId, deleted: false },
-         include: { election: true },
+         include: { election: true, },
       });
    } catch (error) {
       console.log(error);
