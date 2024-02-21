@@ -1,15 +1,14 @@
 import React from 'react'
 import PositionTable from './_components/position-table'
-import { TPosition } from '@/types';
-import axios from 'axios';
-import { mutationErrorHandler } from '@/errors/mutation-error-handler';
-import { useQuery } from '@tanstack/react-query';
+import { getEvent } from '@/app/api/v1/event/_services/events';
 
-const PositionPage = ({params}:{params:{id:number}}) => {
+const PositionPage = async({params}:{params:{id:number}}) => {
+  
+  const getUniqueEvent = await getEvent(params.id);
 
   return (
     <div className='p-5'>
-      <PositionTable id={params.id}></PositionTable>
+      <PositionTable electionId={getUniqueEvent?.election?.id}></PositionTable>
     </div>
   )
 }    

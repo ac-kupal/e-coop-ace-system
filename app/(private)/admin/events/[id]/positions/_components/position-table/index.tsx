@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,30 +20,16 @@ import {
 import { handleAxiosErrorMessage } from "@/utils";
 import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
-import { TEvent, TEventWithElection, TPosition } from "@/types";
+import { TPosition } from "@/types";
 import CreatePostionModal from "../modals/create-position-modal";
-import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 
 type Props = {
-   id: number | undefined;
+   electionId: number | undefined;
 };
 
-const PositionTable = ({ id }: Props) => {
+const PositionTable = ({ electionId }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
-
-   const getElectionId = useQuery<TEventWithElection>({
-      queryKey: ["get-position-id-key"],
-      queryFn: async () => {
-         try {
-            const eventId = Number(id);
-            const response = await axios.get(`/api/v1/event/${eventId}`);
-            return response.data
-         } catch (error) {
-            mutationErrorHandler(error);
-         }
-      },
-   });
 
    const { data, isFetching, isLoading, isError, refetch } = useQuery<
       TPosition[],
@@ -52,7 +38,7 @@ const PositionTable = ({ id }: Props) => {
       queryKey: ["position-list-query"],
       queryFn: async () => {
          try {
-            const response = await axios.get("/api/v1/position");
+            const response = await axios.get(`/api/v1/position/${electionId}`);
             return response.data;
          } catch (e) {
             const errorMessage = handleAxiosErrorMessage(e);
@@ -84,7 +70,6 @@ const PositionTable = ({ id }: Props) => {
       onGlobalFilterChange: setGlobalFilter,
    });
 
-   const electionId = getElectionId.data?.election.id
    return (
       <div className="flex flex-1 flex-col gap-y-2 ">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">

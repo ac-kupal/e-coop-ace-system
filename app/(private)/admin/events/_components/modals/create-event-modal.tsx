@@ -54,7 +54,6 @@ type Props = {
 const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
    
    const router = useRouter()
-
    const queryClient = useQueryClient();
    const [isElection, setIsElection] = useState(false);
    
@@ -96,9 +95,9 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
          queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
          onCancelandReset();
          toast.success("Event created successfully");
-         if(data.election){
-            router.push(`/admin/events/${data.id}/election/dashboard`)
-         }
+         console.log(data.election)
+         if(!data.election) return
+         router.push(`/admin/events/${data.id}/election`)
       },
    });
 

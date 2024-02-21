@@ -19,6 +19,14 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
 
 //get Specific Position
 export const GET = async function name(req:NextRequest,{params}:TParams) {
+  try {
+    const electionId = Number(params.id)
+    validateId(electionId)
+    const getAllPosition = await db.position.findMany({where:{electionId:electionId}});
+    return NextResponse.json(getAllPosition);
+ } catch (error) {
+    return routeErrorHandler(error, req.method);
+ }
      
 }
 //update specific Position

@@ -1,13 +1,17 @@
 import React from 'react'
-import Election from '../_components/election'
+import { getEvent } from '@/app/api/v1/event/_services/events'
+import ManageElection from './manage-election/election'
 
-const page = ({ params }: { params: { id: number } }) => {
+const ElectionPage = async({ params }: { params: { id: number } }) => {
+  
+  const getElection = await getEvent(params.id)
+  const election = getElection?.election === undefined  ? null : getElection?.election
   return (
     <div>
         <h1 className="text-2xl font-semibold">Manage Election</h1>
-         <Election id={params.id}></Election>
+        <ManageElection election={election}></ManageElection>
     </div>
   )
 }
 
-export default page
+export default ElectionPage

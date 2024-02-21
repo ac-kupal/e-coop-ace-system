@@ -32,7 +32,6 @@ import UpdatePositionModal from "../modals/update-position-modal";
 
 const Actions = ({ position }: { position: TPosition }) => {
 
-   const router = useRouter();
    const [onOpenModal, setOnOpenModal] = useState(false);
    const deleteOperation = deletePosition();
    const { onOpen: onOpenConfirmModal } = useConfirmModal();

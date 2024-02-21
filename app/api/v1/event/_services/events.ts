@@ -29,6 +29,9 @@ export const createEvent = async (
             location: event.location,
             category: event.category,
             deleted: false,
+         },
+         include:{
+            election:true
          }
       })
       return CreateEvent
@@ -39,8 +42,9 @@ export const createEvent = async (
 
 export const getEvent = async (eventId: number) => {
    try {
+      const id = Number(eventId)
       return await db.event.findUnique({
-         where: { id: eventId, deleted: false },
+         where: { id: id, deleted: false },
          include: { election: true, },
       });
    } catch (error) {
