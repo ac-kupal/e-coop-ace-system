@@ -85,6 +85,9 @@ model Event {
     location    String
     category    EventType
     coverImage  String? @default("/images/default.png")
+    
+    registrationOnEvent Boolean? @default(true)
+
     deleted     Boolean
 
 
