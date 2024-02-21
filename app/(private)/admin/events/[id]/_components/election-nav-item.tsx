@@ -13,7 +13,7 @@ const ElectionNavItems = ({ route}: Props) => {
    const isCurrentPath = pathname.includes(path);
 
     return (
-      <Link href={path} className="flex px-5 cursor-pointer justify-start space-x-2">
+      <Link href={`${path}`} className="flex px-5 cursor-pointer justify-start space-x-2">
          <div className={`flex space-x-2 ${isCurrentPath ? "bg-white text-[#099065]":" text-muted-foreground"} px-5  hover:bg-white shadow-sm p-2 rounded-xl`}>
             <div className="">
             {icon}

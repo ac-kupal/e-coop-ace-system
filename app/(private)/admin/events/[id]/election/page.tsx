@@ -1,5 +1,5 @@
 import React from 'react'
-import Election from '../_components/election';
+import Election from '../_components/election'
 
 const page = ({ params }: { params: { id: number } }) => {
   return (

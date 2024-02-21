@@ -1,16 +1,19 @@
 import React from 'react'
 import ElectionNavItems from './election-nav-item'
 import { TElectionRoute } from '@/types'
-import { LayoutDashboard, Users, Medal, Settings2 } from 'lucide-react'
-
-
+import { LayoutDashboard, Users, Medal, Settings2, Combine } from 'lucide-react'
 
 export const ElectionRoutes: TElectionRoute[] = [
-  {
-     icon: <LayoutDashboard className="h-5 w-5" />,
-     name: "DashBoard",
-     path: "dashboard",
-  },
+   {
+      icon: <LayoutDashboard className="h-5 w-5" />,
+      name: "DashBoard",
+      path: "dashboard",
+   },
+   {
+      icon: <Combine className="h-5 w-5" />,
+      name: "election",
+      path: "election",
+   },
   {
      icon: <Users className="h-5 w-5" />,
      name: "Candidates",

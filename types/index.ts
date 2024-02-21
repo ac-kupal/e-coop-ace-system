@@ -7,6 +7,7 @@ export * from "./user.types"
 export * from "./branch.types"
 export * from './event.types'
 export * from './election.types'
+export * from './position.types'
 
 export type TApiError = { message: string };
 

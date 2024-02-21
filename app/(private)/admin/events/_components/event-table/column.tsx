@@ -71,7 +71,7 @@ const Actions = ({ event }: { event: TEventWithElection }) => {
             {event.election && (
                <DropdownMenuItem 
                onClick={()=>{
-                  router.push(`/admin/events/${event.id}/election/dashboard`)
+                  router.push(`/admin/events/${event.id}/election/`)
                }}
                 
                className="px-2 gap-x-2">
