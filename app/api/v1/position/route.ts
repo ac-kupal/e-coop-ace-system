@@ -14,8 +14,6 @@ export const POST = async (req: NextRequest) => {
      } catch (error) {
      return routeErrorHandler(error, req.method);
    }
-
-   return NextResponse.json({ message: "POST - ok" });
 };
 
 export const GET = async (req: NextRequest) => {

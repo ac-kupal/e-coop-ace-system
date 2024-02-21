@@ -80,7 +80,7 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
       onSuccess: () => {
         onClose(false)
         queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
-         toast.success("Event created successfully");
+         toast.success("event updated successfully");
       },
    });
 

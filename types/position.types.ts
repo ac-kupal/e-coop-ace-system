@@ -6,4 +6,10 @@ export type TCreatePosition = {
      electionId:number,
 }
 
+export type TUpdatePosition = {
+     positionName:string,
+     numberOfSelection:number,
+     electionId:number,
+}
+
 export type TPosition = Position

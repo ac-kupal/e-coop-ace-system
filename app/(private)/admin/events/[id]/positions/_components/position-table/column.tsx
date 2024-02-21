@@ -24,28 +24,28 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import moment from "moment";
-import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { TPosition } from "@/types";
-const Actions = ({ event }: { event: TPosition }) => {
+import { deletePosition } from "@/hooks/api-hooks/position-api-hooks";
+import UpdatePositionModal from "../modals/update-position-modal";
+
+const Actions = ({ position }: { position: TPosition }) => {
+
    const router = useRouter();
-
    const [onOpenModal, setOnOpenModal] = useState(false);
-
-   const deleteOperation = deleteEvent();
+   const deleteOperation = deletePosition();
    const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
    if (deleteOperation.isPending)
       return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
    return (
       <DropdownMenu>
-         {/* <UpdateEventModal
-            event={event}
+         <UpdatePositionModal
+            position={position}
             state={onOpenModal}
             onClose={() => setOnOpenModal(false)}
-         ></UpdateEventModal> */}
+         ></UpdatePositionModal>
          <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="w-8 h-8 p-0">
                <span className="sr-only">Open menu</span>
@@ -58,7 +58,7 @@ const Actions = ({ event }: { event: TPosition }) => {
             <DropdownMenuItem
                className="px-2 gap-x-2"
                onClick={() => {
-                  navigator.clipboard.writeText(`${event.id}`);
+                  navigator.clipboard.writeText(`${position.id}`);
                   toast.success("coppied");
                }}
             >
@@ -76,9 +76,20 @@ const Actions = ({ event }: { event: TPosition }) => {
                <Pencil strokeWidth={2} className="h-4" /> Edit Position
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="px-2 gap-x-2 text-destructive">
-               <Trash strokeWidth={2} className="h-4" />{" "}
-               delete
+            <DropdownMenuItem
+              onClick={() =>
+               onOpenConfirmModal({
+                  title:"Delete Position 🗑️",
+                  description:
+                     "Are you sure to delete this position permanently? This cannot be undone.",
+                  onConfirm: () => {
+                     deleteOperation.mutate(position.id);
+                  },
+               })
+            }
+            
+            className="px-2 gap-x-2 text-destructive">
+               <Trash strokeWidth={2} className="h-4" /> delete
             </DropdownMenuItem>
          </DropdownMenuContent>
       </DropdownMenu>
@@ -109,17 +120,23 @@ const columns: ColumnDef<TPosition>[] = [
       header: ({ column }) => (
          <DataTableColHeader column={column} title="number of Seats" />
       ),
-      cell: ({ row }) => <div className=""> {row.original.numberOfSelection}</div>,
+      cell: ({ row }) => (
+         <div className=""> {row.original.numberOfSelection}</div>
+      ),
    },
    {
       header: ({ column }) => (
-         <DataTableColHeader column={column} className="text-end" title="action" />
-      ),   
+         <DataTableColHeader
+            column={column}
+            className="text-end"
+            title="action"
+         />
+      ),
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => (
          <div className="flex justify-end">
-            <Actions event={row.original} />
+            <Actions position={row.original} />
          </div>
       ),
    },
