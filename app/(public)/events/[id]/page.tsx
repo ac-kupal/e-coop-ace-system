@@ -5,17 +5,10 @@ import db from "@/lib/database";
 import { Button } from "@/components/ui/button";
 import VoteButton from "@/components/vote/vote-button";
 import DisplayEventQRLink from "./_components/displayed-qr";
+import InvalidEvent from "./_components/invalid-event";
 
 type Props = {
     params: { id: string };
-};
-
-export const InvalidEvent = () => {
-    return (
-        <div className="h-dvh w-dvw flex items-center justify-center">
-            <p>Sorry, but this is an invalid event</p>
-        </div>
-    );
 };
 
 const ElectionPage = async ({ params }: Props) => {
@@ -42,11 +35,14 @@ const ElectionPage = async ({ params }: Props) => {
                 />
                 <div className="px-0 md:px-16 xl:px-24 flex flex-col gap-y-4">
                     <div className="flex gap-x-4 mb-4">
-                        <Button className="bg-gradient-to-tr from-[#9175DF] rounded-lg w-full to-[#BA7D81] hover:from-[#7f68c0] hover:to-[#8d6265] text-xl">
-                            <Link href={`/events/${params.id}/register`}>
+                        <Link
+                            href={`/events/${event.id}/register`}
+                            className="w-full"
+                        >
+                            <Button className="bg-gradient-to-tr from-[#9175DF] rounded-lg w-full to-[#BA7D81] hover:from-[#7f68c0] hover:to-[#8d6265] text-xl w-full text-xl">
                                 Register
-                            </Link>
-                        </Button>
+                            </Button>
+                        </Link>
                         <VoteButton Event={event} />
                     </div>
                     <div className="flex gap-x-4 items-center">
