@@ -65,6 +65,7 @@ const CreatePostionModal = ({
       mutationKey: ["create-position-key"],
       mutationFn: async (data) => {
          try {
+            console.log(data)
             const response = await axios.post("/api/v1/position", data);
             return response.data;
          } catch (e) {

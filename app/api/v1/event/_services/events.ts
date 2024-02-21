@@ -1,4 +1,5 @@
 import db from "@/lib/database";
+import { validateId } from "@/lib/server-utils";
 import { TCreateElection } from "@/types";
 import { createEventSchema, updateEventSchema } from "@/validation-schema/event";
 import { VotingEligibility } from "@prisma/client";
@@ -110,6 +111,19 @@ export const deleteEvent = async (
             deletedBy: userId,
          },
       });
+   } catch (error) {
+      console.log(error);
+   }
+};
+
+export const getElectionId = async (eventId: number) => {
+   try {
+      const id = Number(eventId)
+      const event = await db.event.findUnique({
+         where: { id: id, deleted: false },
+         include: { election: true, },
+      });
+      return event?.election?.id 
    } catch (error) {
       console.log(error);
    }

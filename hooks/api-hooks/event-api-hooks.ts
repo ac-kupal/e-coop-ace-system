@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
+import { TEvent, TEventWithElection } from "@/types";
 
 export const deleteEvent = () => {
    const queryClient = useQueryClient();
@@ -28,4 +29,19 @@ export const deleteEvent = () => {
    return deleteEventMutation;
 };
 
-
+export const getEvent = (id:number) => {
+  const eventId = Number(id)
+  const getEvent = useQuery<TEventWithElection, string>({
+      queryKey: ["position-list-query"],
+      queryFn: async () => {
+         try {
+            const response = await axios.get(`/api/v1/event/${eventId}`);
+            return response.data;
+         } catch (e) {
+            const errorMessage = handleAxiosErrorMessage(e);
+            throw errorMessage;
+         }
+      },
+   });
+   return getEvent
+};

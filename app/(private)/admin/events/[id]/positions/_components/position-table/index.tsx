@@ -16,7 +16,6 @@ import {
    getSortedRowModel,
    useReactTable,
 } from "@tanstack/react-table";
-
 import { handleAxiosErrorMessage } from "@/utils";
 import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";

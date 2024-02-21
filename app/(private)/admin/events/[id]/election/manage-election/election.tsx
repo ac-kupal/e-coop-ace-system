@@ -1,17 +1,23 @@
-"use client"
-import { TElection } from '@/types'
-import React from 'react'
+"use client";
+import ElectionDetails from "./election-details";
+import { getEvent } from "@/hooks/api-hooks/event-api-hooks";
 
-type Props={
-   election:TElection | null
-}
+type Props = {
+   id: number;
+};
 
-const ManageElection = ({election}:Props) => {
-return (
-    <div>
-     <h1>{election?.electionName}</h1>
-    </div>
-  )
-}
+const ManageElection = ({ id }: Props) => {
 
-export default ManageElection
+   const Election = getEvent(id)
+   if(Election.isLoading){
+    return<h1 className=" animate-pulse">Loading...</h1>
+   }
+
+   return (
+      <div>
+       <ElectionDetails election={Election.data?.election}></ElectionDetails>
+      </div>
+   );
+};
+
+export default ManageElection;

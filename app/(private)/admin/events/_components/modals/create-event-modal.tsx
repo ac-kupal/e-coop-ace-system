@@ -95,7 +95,6 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
          queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
          onCancelandReset();
          toast.success("Event created successfully");
-         console.log(data.election)
          if(!data.election) return
          router.push(`/admin/events/${data.id}/election`)
       },
