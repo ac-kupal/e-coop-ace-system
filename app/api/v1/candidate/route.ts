@@ -34,7 +34,7 @@ export const POST = async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
    try {
-      const getAllCandidate = await db.candidate.findMany({});
+      const getAllCandidate = await db.candidate.findMany({include:{position:true}});
       return NextResponse.json(getAllCandidate);
    } catch (error) {
       return routeErrorHandler(error, req.method);

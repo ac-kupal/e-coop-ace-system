@@ -32,7 +32,6 @@ import { TPosition } from "@/types";
 
 type Props = {
    electionId: number | undefined;
-   positionId: number | undefined;
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;

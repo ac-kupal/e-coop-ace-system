@@ -103,3 +103,21 @@ export const useUpdateCandidate =({candidateId, onCancelandReset}:UpdateCandidat
 
    return updateCandidate
 }
+
+
+export const getAllCandidates = () => {
+   const getCandidates = useQuery<TCandidatewithPosition[], string>({
+      queryKey: ["candidate-list-query"],
+      queryFn: async () => {
+         try {
+            const response = await axios.get(`/api/v1/candidate`);
+            return response.data;
+         } catch (e) {
+            handleAxiosErrorMessage(e);
+         }
+      },
+      initialData: [],
+   });
+
+   return getCandidates;
+};

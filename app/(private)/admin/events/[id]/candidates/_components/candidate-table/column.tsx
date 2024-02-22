@@ -25,6 +25,7 @@ import { getAllPosition } from "@/hooks/api-hooks/position-api-hooks";
 
 
 const Actions = ({ candidate }: { candidate: TCandidatewithPosition }) => {
+   
    const [onOpenModal, setOnOpenModal] = useState(false);
    const deleteOperation = deleteCandidate();
    const getPositions = getAllPosition()

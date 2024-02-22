@@ -6,7 +6,7 @@ import EventNavItems from "./event-nav-items";
 export const EventRoutes: TElectionRoute[] = [
    {
       icon: <GanttChartSquare className="size-5" />,
-      name: "Election",
+      name: "Manage-election",
       path: "election",
    },
    {

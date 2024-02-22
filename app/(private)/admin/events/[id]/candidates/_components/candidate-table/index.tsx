@@ -1,8 +1,5 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Plus, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
@@ -15,21 +12,18 @@ import {
    getSortedRowModel,
    useReactTable,
 } from "@tanstack/react-table";
-import { handleAxiosErrorMessage } from "@/utils";
 import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
-import { TCandidatewithPosition} from "@/types";
 import columns from "./column";
 import CreateCandidateModal from "../modals/create-candidate-modal";
 import { getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
 import { getAllPosition } from "@/hooks/api-hooks/position-api-hooks";
 type Props = {
    electionId: number | undefined;
-   positionId: number | undefined;
 
 };
 
-const CandidateTable = ({ electionId , positionId}: Props) => {
+const CandidateTable = ({electionId}: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
 
@@ -57,7 +51,6 @@ const CandidateTable = ({ electionId , positionId}: Props) => {
             <CreateCandidateModal
                positions={getPositions}
                electionId={electionId}
-               positionId={positionId}
                state={createPosition}
                onClose={(state) => setCreatePosition(state)}
             />

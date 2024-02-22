@@ -1,14 +1,12 @@
-import React from 'react'
-import { getEvent } from '@/app/api/v1/event/_services/events'
-import ManageElection from './manage-election/election'
+import React from "react";
+import ManageElection from "./manage-election/_components/election";
 
-const ElectionPage = async({ params }: { params: { id: number } }) => {
-  return (
-    <div>
-        <h1 className="text-2xl font-semibold">Manage Election</h1>
-        <ManageElection id={params.id}></ManageElection>
-    </div>
-  )
-}
+const ElectionPage = async ({ params }: { params: { id: number } }) => {
+   return (
+      <>
+         <ManageElection id={params.id}></ManageElection>
+      </>
+   );
+};
 
-export default ElectionPage
+export default ElectionPage;
