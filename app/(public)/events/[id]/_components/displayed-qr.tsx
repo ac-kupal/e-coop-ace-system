@@ -19,7 +19,7 @@ const DisplayEventQRLink = ({ Event }: Props) => {
     return (
         <div className="flex gap-y-4 flex-col items-center pt-6">
             <p className="text-foreground/80 text-sm">Share this event attendance</p>
-            <QrCode themeResponsive value={url}/>
+            <QrCode themeResponsive={false} value={url}/>
             { url.length > 0 && (
                 <CopyUrl url={url} />
             )}

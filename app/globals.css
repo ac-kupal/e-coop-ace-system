@@ -59,3 +59,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+#html5qr-code-full-region{
+    border : 0px !important;
+    @apply flex-1
+}
+
+#html5qr-code-full-region__scan_region{
+    @apply flex justify-center
+}

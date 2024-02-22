@@ -2,6 +2,7 @@ import React from "react";
 import db from "@/lib/database";
 import { isSameDay } from "date-fns";
 
+import Attendance from "./_components/attendance";
 import InvalidEvent from "../_components/invalid-event";
 
 type Props = {
@@ -16,8 +17,6 @@ const RegisterPage = async ({ params }: Props) => {
 
     if (!event) return <InvalidEvent />;
 
-    // todo if registration is allowed na
-
     const today = new Date();
 
     if (event.registrationOnEvent === true && !isSameDay(today, event.date))
@@ -30,8 +29,12 @@ const RegisterPage = async ({ params }: Props) => {
         );
 
     return (
-        <div className="flex flex-col py-20 lg:flex-row min-h-screen w-full justify-center">
-            <p>{event.title}</p>
+        <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
+            <p className="text-2xl lg:text-4xl uppercase text-center">{event.title}</p>
+            <div className="w-5 h-2 bg-orange-400 rounded-full"/>
+            <div className="py-16">
+                <Attendance params={params} />
+            </div>
         </div>
     );
 };
