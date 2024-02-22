@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import columns from "./column";
 import {
    getCoreRowModel,
    getFilteredRowModel,
@@ -19,20 +18,23 @@ import {
 import { handleAxiosErrorMessage } from "@/utils";
 import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
-import { TPosition } from "@/types";
-import CreatePostionModal from "../modals/create-position-modal";
-import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
-
+import { TCandidatewithPosition} from "@/types";
+import columns from "./column";
+import CreateCandidateModal from "../modals/create-candidate-modal";
+import { getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
+import { getAllPosition } from "@/hooks/api-hooks/position-api-hooks";
 type Props = {
    electionId: number | undefined;
+   positionId: number | undefined;
+
 };
 
-const PositionTable = ({ electionId }: Props) => {
+const CandidateTable = ({ electionId , positionId}: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
 
-   const { data, isFetching, isLoading, isError, refetch } = getPosition(electionId)
-
+   const { data, isFetching, isLoading, isError, refetch } = getCandidates(electionId)
+   const { data:getPositions  } = getAllPosition()
    const table = useReactTable({
       data,
       columns,
@@ -52,8 +54,10 @@ const PositionTable = ({ electionId }: Props) => {
    return (
       <div className="flex flex-1 flex-col gap-y-2 ">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
-            <CreatePostionModal
+            <CreateCandidateModal
+               positions={getPositions}
                electionId={electionId}
+               positionId={positionId}
                state={createPosition}
                onClose={(state) => setCreatePosition(state)}
             />
@@ -77,7 +81,7 @@ const PositionTable = ({ electionId }: Props) => {
                      "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                   )}
                >
-                  Add Position
+                  Add Candidate
                   <Plus className="w-4 h-4" />
                </Button>
             </div>
@@ -93,4 +97,4 @@ const PositionTable = ({ electionId }: Props) => {
    );
 };
 
-export default PositionTable;
+export default CandidateTable;

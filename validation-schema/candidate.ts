@@ -63,7 +63,7 @@ export const updateCandidateSchema = z.object({
          .string({
             required_error: "candidate picture is required",
             invalid_type_error: "candidate picture type must be string",
-         }),
+         }).nullable(),
          electionId: z.coerce.number({
             required_error: "election ID is required",
             invalid_type_error: "election ID type must be number",

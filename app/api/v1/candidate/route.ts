@@ -1,9 +1,7 @@
 import db from "@/lib/database";
-import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { TCreateCandidate } from "@/types";
-import { createPositionSchema } from "@/validation-schema/position";
 import { createCandidateSchema } from "@/validation-schema/candidate";
 
 export const POST = async (req: NextRequest) => {

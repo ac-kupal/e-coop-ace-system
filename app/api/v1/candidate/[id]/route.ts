@@ -2,8 +2,6 @@ import { validateId } from "@/lib/server-utils";
 import { NextRequest, NextResponse } from "next/server";
 import db from '@/lib/database'
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { createPositionSchema, updatePositionSchema } from "@/validation-schema/position";
-import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { createCandidateSchema } from "@/validation-schema/candidate";
 import { handlePrivateRoute } from "../../hadle-private-route";
 type TParams = { params: { id: number } };
@@ -27,7 +25,16 @@ export const GET = async function name(req:NextRequest,{params}:TParams) {
     await handlePrivateRoute()
     const electionId = Number(params.id)
     validateId(electionId)
-    const getAllCandidate = await db.candidate.findMany({where:{electionId:electionId}});
+    const getAllCandidate = await db.candidate.findMany(
+      {where:
+         {
+            electionId:electionId
+         },
+         include:{
+            position:true
+         }
+      }
+   );
     return NextResponse.json(getAllCandidate);
  } catch (error) {
     return routeErrorHandler(error, req.method);

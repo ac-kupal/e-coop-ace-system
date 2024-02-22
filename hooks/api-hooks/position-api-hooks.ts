@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
-
+import { TPosition } from "@/types";
 
 export const deletePosition = () => {
    const queryClient = useQueryClient();
@@ -10,9 +10,13 @@ export const deletePosition = () => {
       mutationKey: ["delete-position"],
       mutationFn: async (positionId) => {
          try {
-            const deleted = await axios.delete(`/api/v1/position/${positionId}`);
+            const deleted = await axios.delete(
+               `/api/v1/position/${positionId}`
+            );
             toast.success("Position deleted successfully");
-            queryClient.invalidateQueries({ queryKey: ["position-list-query"] });
+            queryClient.invalidateQueries({
+               queryKey: ["position-list-query"],
+            });
             return deleted.data;
          } catch (e) {
             const errorMessage = handleAxiosErrorMessage(e);
@@ -28,4 +32,36 @@ export const deletePosition = () => {
    });
    return deletePositionMutation;
 };
+//get all filtered Position
+export const getPosition = (id:number| undefined) => {
+   const positions = useQuery<TPosition[], string>({
+      queryKey: ["position-list-query"],
+      queryFn: async () => {
+         try {
+            const response = await axios.get(`/api/v1/position/${id}`);
+            return response.data;
+         } catch (e) {
+            throw handleAxiosErrorMessage(e);
+         }
+      },
+      initialData: [],
+   });
+   return positions
+};
 
+//get all Position
+export const getAllPosition = () => {
+   const positions = useQuery<TPosition[], string>({
+      queryKey: ["position-list-query"],
+      queryFn: async () => {
+         try {
+            const response = await axios.get(`/api/v1/position/`);
+            return response.data;
+         } catch (e) {
+            throw handleAxiosErrorMessage(e);
+         }
+      },
+      initialData: [],
+   });
+   return positions
+};

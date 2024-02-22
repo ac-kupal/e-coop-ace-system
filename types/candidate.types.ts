@@ -1,5 +1,5 @@
 
-import { Candidate } from "@prisma/client"
+import { Candidate, Position } from "@prisma/client"
 
 export type TCreateCandidate = {
     firstName:string,
@@ -11,3 +11,5 @@ export type TCreateCandidate = {
 }
 
 export type TCandidate = Candidate
+
+export type TCandidatewithPosition = Candidate & {position:Position} 
