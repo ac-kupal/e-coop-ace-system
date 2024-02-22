@@ -1,19 +1,32 @@
-"use client";
+"use client"
 import React, { ReactNode } from "react";
-import ElectionSideBar from "./_components/election-sidebar";
+import EventNavBar, { EventRoutes } from "./_components/event-nav/event-nav";
+import ElectionSideBar, { ElectionRoutes } from "./_components/election-sidebar";
+import { usePathname } from "next/navigation";
 
-interface Props {
-   children?: ReactNode;
-   params: { id: number }
-}
+type Props = { children : ReactNode};
 
-const layout = ({ children,params }: Props) => {
-   return (
-      <div className="flex p-5 shadow-md rounded-xl">
-         <ElectionSideBar id={params.id} />
-         <div className="border w-full bg-background ">{children}</div>
-      </div>
-   );
+const EventLayout = ( { children }: Props) => {
+    const pathname = usePathname();
+    const pathSegments = pathname.split('/');
+    const lastPath = pathSegments[pathSegments.length - 1];
+    const isCurrentPath = EventRoutes.find((e)=> e.path === lastPath && e.path !== "election" )
+    console.log()
+    return (
+        <div className="bg-secondary/40 font-poppins p-7 h-screen">
+            <div className="p-5 w-full">
+            <EventNavBar />
+            </div>
+            <div className="flex bg-white rounded-[2rem] overflow-x-hidden p-8 w-full ">
+               <div className="flex w-full">
+                {!isCurrentPath &&  <ElectionSideBar/>}
+                <div className="p-5 w-full">
+                {children}
+                </div>
+               </div>
+            </div>
+        </div>
+    );
 };
 
-export default layout;
+export default EventLayout;

@@ -8,16 +8,15 @@ type Props = {
    route: TElectionRoute;
 };
 
-const ElectionNavItems = ({ route}: Props) => {
+const EventNavItems = ({ route}: Props) => {
    const { icon, path, name } = route;
    const pathname = usePathname();
    const isCurrentPath = pathname.includes(path);
 
    return (
-      <Link href={`${path}`} className="flex px-5 cursor-pointer justify-start space-x-2">
-         <div className={`flex space-x-2 duration-300 ease-in-out ${isCurrentPath ? "bg-white text-[#099065] font-bold":" text-muted-foreground"} px-5  hover:bg-white shadow-sm p-2 rounded-xl`}>
+      <Link href={`${path}`} className="flex cursor-pointer justify-start space-x-2">
+         <div className={`flex space-x-2 duration-300  ease-in-out ${isCurrentPath ? "bg-white text-[#099065] font-bold":"text-foreground/90 "} px-5  hover:bg-white shadow-sm p-2 rounded-xl`}>
             <div className="">
-            {icon}
             </div>
             <h1 className="">{name}</h1>
          </div>
@@ -25,4 +24,4 @@ const ElectionNavItems = ({ route}: Props) => {
    );
 };
 
-export default ElectionNavItems;
+export default EventNavItems;

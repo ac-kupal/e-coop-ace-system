@@ -3,7 +3,7 @@ import CandidateTable from './_components/candidate-table'
 
 const page = () => {
   return (
-    <div className='p-5'>
+    <div className='w-full'>
       <CandidateTable positionId={1} electionId={1}></CandidateTable>
     </div>
   )

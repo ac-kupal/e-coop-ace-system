@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 
 import UpdateEventModal from "../modals/update-event-modal";
 import { TEventWithElection } from "@/types";
+import Link from "next/link";
 const Actions = ({ event }: { event: TEventWithElection }) => {
    
    const router = useRouter()
@@ -159,6 +160,15 @@ const columns: ColumnDef<TEventWithElection>[] = [
          <DataTableColHeader column={column} title="type" />
       ),
       cell: ({ row }) => <div className="">{row.original.category}</div>,
+   },
+   {
+      id: "button",
+      enableHiding: false,
+      cell: ({ row }) => (
+         <div className="">
+            {row.original.election && <Link href={`/admin/events/${row.original.id}/election/`}><Button className=" rounded-xl h-8">View Election</Button></Link> }
+         </div>
+      ),
    },
    {
       id: "actions",
