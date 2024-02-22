@@ -26,12 +26,12 @@ const ElectionPage = async ({ params }: Props) => {
                 <img
                     alt="cover image blur"
                     className="z-0 rounded-xl h-[63vh] opacity-20 absolute blur-md left-0 w-full object-cover"
-                    src="https://media.discordapp.net/attachments/955281529481883729/1209463734758809640/Blue__Purple_Gradient_Music_Event_Facebook_Post.jpg?ex=65e703e1&is=65d48ee1&hm=21beacdba6b6c7f167dbbbe425cf93d6b1deeae7dfa75e38d3bdbe45c2201c92&=&format=webp&width=740&height=621"
+                    src={event.coverImage as ''}
                 />
                 <img
                     alt="event cover image"
                     className="z-10 rounded-xl h-[60vh] dark:drop-shadow-sm dark:drop-shadow-foreground w-full object-cover"
-                    src="https://media.discordapp.net/attachments/955281529481883729/1209463734758809640/Blue__Purple_Gradient_Music_Event_Facebook_Post.jpg?ex=65e703e1&is=65d48ee1&hm=21beacdba6b6c7f167dbbbe425cf93d6b1deeae7dfa75e38d3bdbe45c2201c92&=&format=webp&width=740&height=621"
+                    src={event.coverImage as ''}
                 />
                 <div className="px-0 md:px-16 xl:px-24 flex flex-col gap-y-4">
                     <div className="flex gap-x-4 mb-4">

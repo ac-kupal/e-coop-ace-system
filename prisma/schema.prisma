@@ -117,7 +117,7 @@ model EventAttendees {
     gender         gender
     birthday       DateTime
     contact        String
-    picture        String? @default("/images/default-avatar.png")
+    picture        String? @default("/images/default-event.png")
     
     isMIGS         Boolean? @default(false)
     canVote        Boolean? @default(false)
