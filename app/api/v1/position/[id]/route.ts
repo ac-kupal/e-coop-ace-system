@@ -3,11 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import db from '@/lib/database'
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { createPositionSchema, updatePositionSchema } from "@/validation-schema/position";
+import { handlePrivateRoute } from "../../hadle-private-route";
 type TParams = { params: { id: number } };
 
 //delete Position
 export const DELETE = async function name(req:NextRequest,{params}:TParams) {
     try {
+     await handlePrivateRoute()
      const positionId = Number(params.id)
      validateId(positionId)
      const deletePosition = await db.position.delete({where:{id:positionId}})
@@ -20,6 +22,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
 //get Specific Position
 export const GET = async function name(req:NextRequest,{params}:TParams) {
   try {
+    await handlePrivateRoute()
     const electionId = Number(params.id)
     validateId(electionId)
     const getAllPosition = await db.position.findMany({where:{electionId:electionId}});
@@ -32,6 +35,7 @@ export const GET = async function name(req:NextRequest,{params}:TParams) {
 //update specific Position
 export const PATCH = async function name(req:NextRequest,{params}:TParams) {
   try {
+    await handlePrivateRoute()
     const positionId = Number(params.id)
     const positionToUpdate = await req.json()
     updatePositionSchema.parse(positionToUpdate)

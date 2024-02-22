@@ -191,8 +191,8 @@ model Candidate {
     electionId Int
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
 
-    pisitonId Int
-    position  Position @relation(fields: [pisitonId], references: [id], onDelete: Cascade)
+    positionId Int
+    position  Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
     votes     Votes[]
 
     @@unique([electionId, passbookNumber])

@@ -30,12 +30,14 @@ export const ElectionRoutes: TElectionRoute[] = [
      path: "settings",
   },
 ];
-
-const ElectionSideBar = () => {
+type Props = {
+   id:number
+}
+const ElectionSideBar =({id}:Props ) => {
   return (
     <div className="bg-[#ededed] w-[200px] justify-start gap-2 py-10  flex flex-col h-screen">
     {ElectionRoutes.map((route:TElectionRoute, i) => (
-       <ElectionNavItems route={route} key={i} />
+       <ElectionNavItems id={id} route={route} key={i} />
     ))}
  </div>
   )
