@@ -1,5 +1,3 @@
-
-
 const InvalidEvent = () => {
     return (
         <div className="h-dvh w-dvw flex items-center justify-center">
