@@ -119,7 +119,6 @@ model EventAttendees {
     contact        String
     picture        String? @default("/images/default-event.png")
     
-    isMIGS         Boolean? @default(false)
     canVote        Boolean? @default(false)
 
     eventId Int
