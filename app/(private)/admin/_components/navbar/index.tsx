@@ -11,12 +11,11 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import LogOut from "../sidebar/log-out";
-import { CornerDownLeft } from "lucide-react";
+import LogOut from "./log-out";
 
 type Props = {};
 
-const NavBar = async (props: Props) => {
+const NavBar = async ({}: Props) => {
    const user = await currentUserOrThrowAuthError();
 
    return (
@@ -49,13 +48,7 @@ const NavBar = async (props: Props) => {
                      </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                     <LogOut className=" font-semibold" />
-                     <DropdownMenuShortcut>
-                     ⇧⌘Q
-                        {/* <CornerDownLeft className="w-4" /> */}
-                     </DropdownMenuShortcut>
-                  </DropdownMenuItem>
+                  <LogOut />
                </DropdownMenuContent>
             </DropdownMenu>
             <ModeToggle />
