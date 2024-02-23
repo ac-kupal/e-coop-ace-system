@@ -24,6 +24,8 @@ const QrReader = ({
     onErr,
 }: Props) => {
     const ref = useRef<Html5QrcodeScanner | null>(null);
+    const qrSound = new Audio("/sounds/qrcode-beep.mp3")
+
     useEffect(() => {
         if (!ref.current) {
             ref.current = new Html5QrcodeScanner(
@@ -38,7 +40,10 @@ const QrReader = ({
         setTimeout(() => {
             const container = document.getElementById(qrcodeRegionId);
             if (html5QrcodeScanner && container?.innerHTML == "") {
-                html5QrcodeScanner.render(onRead, onErr);
+                html5QrcodeScanner.render((data)=>{
+                    qrSound.play();
+                    onRead(data)
+                }, onErr);
             }
         }, 0);
 
