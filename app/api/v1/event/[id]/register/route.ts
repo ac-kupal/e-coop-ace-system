@@ -2,7 +2,7 @@ import db from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { attendeeRegisterParamsSchema, eventIdParamSchema } from "@/validation-schema/attendee-search";
+import { attendeeRegisterParamsSchema, eventIdParamSchema } from "@/validation-schema/event-registration-voting";
 import { isSameDay } from "date-fns";
 
 type TParams = { params: { id: number } };

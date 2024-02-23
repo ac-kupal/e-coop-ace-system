@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 
 import { TMemberAttendees } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { validateBirthDay } from "@/validation-schema/attendee-search";
+import { validateBirthDay } from "@/validation-schema/event-registration-voting";
 import { useRouter } from "next/navigation";
 
 type Props = {
