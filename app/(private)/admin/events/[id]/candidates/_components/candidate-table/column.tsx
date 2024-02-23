@@ -114,7 +114,7 @@ const columns: ColumnDef<TCandidatewithPosition>[] = [
                   <AvatarImage src={img} />
                   <AvatarFallback>CN</AvatarFallback>
                </Avatar>
-               {row.original.firstName}
+               <h1 className="font-medium">{row.original.firstName}</h1>
             </div>
          );
       },

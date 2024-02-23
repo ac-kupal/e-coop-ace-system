@@ -35,7 +35,7 @@ export const deletePosition = () => {
 //get all filtered Position
 export const getPosition = (id:number| undefined) => {
    const positions = useQuery<TPosition[], string>({
-      queryKey: ["position-list-query"],
+      queryKey: ["filtered-position-list-query"],
       queryFn: async () => {
          try {
             const response = await axios.get(`/api/v1/position/${id}`);
@@ -52,7 +52,7 @@ export const getPosition = (id:number| undefined) => {
 //get all Position
 export const getAllPosition = () => {
    const positions = useQuery<TPosition[], string>({
-      queryKey: ["position-list-query"],
+      queryKey: ["all-position-list-query"],
       queryFn: async () => {
          try {
             const response = await axios.get(`/api/v1/position/`);

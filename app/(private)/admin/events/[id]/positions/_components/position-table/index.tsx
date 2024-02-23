@@ -1,8 +1,5 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Plus, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
@@ -16,10 +13,8 @@ import {
    getSortedRowModel,
    useReactTable,
 } from "@tanstack/react-table";
-import { handleAxiosErrorMessage } from "@/utils";
 import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
-import { TPosition } from "@/types";
 import CreatePostionModal from "../modals/create-position-modal";
 import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
 

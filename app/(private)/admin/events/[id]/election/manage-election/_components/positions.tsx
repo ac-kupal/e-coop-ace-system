@@ -12,7 +12,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 import { TPosition } from "@/types";
 import DataTable from "@/components/data-table/data-table";
-import { getAllPosition } from "@/hooks/api-hooks/position-api-hooks";
+import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
 
 
 const columns: ColumnDef<TPosition>[] = [
@@ -45,9 +45,13 @@ const columns: ColumnDef<TPosition>[] = [
      },
   ];
 
-export const Positions = () => {
+type Props = {
+   id:number
+}
+
+export const Positions = ({id}:Props) => {
      const [globalFilter, setGlobalFilter] = useState<string>("");
-     const { data, isFetching, isLoading, isError } = getAllPosition();
+     const { data, isFetching, isLoading, isError } = getPosition(id);
     
      const table = useReactTable({
         data,

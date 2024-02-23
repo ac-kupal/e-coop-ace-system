@@ -128,3 +128,16 @@ export const getElectionId = async (eventId: number) => {
       console.log(error);
    }
 };
+export const getElection = async (eventId: number) => {
+   try {
+      const id = Number(eventId)
+      const event = await db.event.findUnique({
+         where: { id: id, deleted: false },
+         include: { election: true, },
+      });
+      if(!event) return
+      return event.election 
+   } catch (error) {
+      console.log(error);
+   }
+}

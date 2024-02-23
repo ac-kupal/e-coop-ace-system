@@ -60,7 +60,7 @@ export const useCreateCandidate = ({ onCancelandReset }: Props) => {
    return createCandidate;
 };
 
-export const getCandidates = (electionId: number | undefined) => {
+export const getCandidates = (electionId: number) => {
    const getCandidates = useQuery<TCandidatewithPosition[], string>({
       queryKey: ["candidate-list-query"],
       queryFn: async () => {

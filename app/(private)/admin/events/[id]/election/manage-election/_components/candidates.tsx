@@ -7,7 +7,7 @@ import {
    getSortedRowModel,
    useReactTable,
 } from "@tanstack/react-table";
-import { getAllCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
+import { getAllCandidates, getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
@@ -41,7 +41,7 @@ export const columns: ColumnDef<TCandidatewithPosition>[] = [
                   <AvatarImage src={img} />
                   <AvatarFallback>CN</AvatarFallback>
                </Avatar>
-               {row.original.firstName}
+              <h1 className="font-medium">  {row.original.firstName}</h1>
             </div>
          );
       },
@@ -77,9 +77,13 @@ export const columns: ColumnDef<TCandidatewithPosition>[] = [
    },
 ];
 
-export const Candidates = () => {
+type Props={ 
+   id:number
+}
+
+export const Candidates = ({id}:Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
-   const { data, isFetching, isLoading, isError } = getAllCandidates();
+   const { data, isFetching, isLoading, isError } = getCandidates(id);
   
    const table = useReactTable({
       data,

@@ -153,6 +153,7 @@ const CreatePostionModal = ({
                         disabled={isLoading}
                         onClick={(e) => {
                            e.preventDefault();
+                           onClose(false);
                         }}
                         variant={"secondary"}
                         className="bg-muted/60 hover:bg-muted"

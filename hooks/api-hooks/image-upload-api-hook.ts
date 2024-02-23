@@ -25,3 +25,22 @@ export const uploadImage = ({ onUploadComplete } : { onUploadComplete : (imageUR
 
     return upload;
 }
+
+export const uploadImagev2 = () => { 
+    const upload = useMutation<string, string, z.infer<typeof uploadSchema>>({
+        mutationFn : async (data) => {
+            try{
+                const upload = await axios.postForm("/api/v1/upload/image", {
+                    file : data.file,
+                    fileName : `${data.fileName}${extname(data.file.name)}`,
+                    folderGroup : data.folderGroup
+                })
+                return upload.data;
+            }catch(e){
+                toast.error(`Failed to upload image : ${e}`)
+            }
+        }
+    })
+    return upload;
+}
+

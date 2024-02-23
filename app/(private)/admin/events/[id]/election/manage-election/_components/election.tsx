@@ -27,12 +27,12 @@ const ManageElection = ({ id }: Props) => {
             <Users className="size-5 text-green-700" />
             <h1 className="font-medium">Candidates</h1>
          </div>
-         <Candidates />
+         <Candidates id={id}/>
          <div className="w-full flex space-x-3 justify-start px-2">
-          <Accessibility  className="size-7 text-green-700" />
+          <Accessibility className="size-7 text-green-700" />
             <h1 className="font-medium">Positions</h1>
          </div>
-         <Positions/>
+         <Positions id={id}/>
       </div>
    );
 };

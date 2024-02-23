@@ -17,9 +17,10 @@ import { cn } from "@/lib/utils";
 import columns from "./column";
 import CreateCandidateModal from "../modals/create-candidate-modal";
 import { getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
-import { getAllPosition } from "@/hooks/api-hooks/position-api-hooks";
+import {  getPosition } from "@/hooks/api-hooks/position-api-hooks";
+import { toast } from "sonner";
 type Props = {
-   electionId: number | undefined;
+   electionId: number;
 
 };
 
@@ -28,7 +29,8 @@ const CandidateTable = ({electionId}: Props) => {
    const [createPosition, setCreatePosition] = useState(false);
 
    const { data, isFetching, isLoading, isError, refetch } = getCandidates(electionId)
-   const { data:getPositions  } = getAllPosition()
+   const { data:getPositions  } = getPosition(electionId)
+   console.log("fitered Position",getPositions)
    const table = useReactTable({
       data,
       columns,
@@ -67,7 +69,12 @@ const CandidateTable = ({electionId}: Props) => {
                <DataTableViewOptions table={table} />
                <Button
                   onClick={() => {
+                     if(getPositions.length === 0){
+                        toast.warning("You must need to add POSITION first before adding candidates!")
+                        return
+                     }
                      setCreatePosition(true);
+                     
                   }}
                   size="sm"
                   className={cn(
