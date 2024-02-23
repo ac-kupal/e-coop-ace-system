@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
 const qrcodeRegionId = "html5qr-code-full-region";
@@ -24,7 +24,6 @@ const QrReader = ({
     onErr,
 }: Props) => {
     const ref = useRef<Html5QrcodeScanner | null>(null);
-    const qrSound = new Audio("/sounds/qrcode-beep.mp3")
 
     useEffect(() => {
         if (!ref.current) {
@@ -41,7 +40,10 @@ const QrReader = ({
             const container = document.getElementById(qrcodeRegionId);
             if (html5QrcodeScanner && container?.innerHTML == "") {
                 html5QrcodeScanner.render((data)=>{
-                    qrSound.play();
+                    const qrSound = new Audio("/sounds/qrcode-beep.mp3")
+                    if(qrSound)
+                        qrSound.play();
+
                     onRead(data)
                 }, onErr);
             }

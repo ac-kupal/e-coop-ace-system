@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "query-string";
 import { toast } from "sonner";
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -25,7 +26,7 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
     const {
         data,
         isPending,
-        mutate: loadMember,
+        mutate: findVoter,
     } = useMutation<TMemberAttendees, string, string>({
         mutationKey: ["member-search"],
         mutationFn: async (passbookNumber) => {
@@ -33,10 +34,15 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                 if (passbookNumber === null || passbookNumber.length === 0)
                     return;
 
-                const request = await axios.get(
-                '',
-                // TODO : api here
+                const url = qs.stringifyUrl(
+                    {
+                        url: `/api/v1/event/${eventId}/election/${electionId}/voter-search`,
+                        query: { passbookNumber }
+                    },
+                    { skipNull: true }
                 );
+
+                const request = await axios.get(url);
                 onFound(request.data);
                 return request.data;
             } catch (e) {
@@ -44,7 +50,6 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
             }
         },
     });
-
 
     const disabled = isPending;
 
@@ -57,7 +62,7 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                 qrbox={800}
                 onRead={(val: string) => {
                     setPb(val);
-                    // todo onFound
+                    findVoter(val);
                 }}
             />
             <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
@@ -74,7 +79,7 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                 disabled={disabled}
                 className="w-full"
                 onClick={() => {
-                    /*TODO*/
+                    findVoter(pb)
                 }}
             >
                 {isPending ? (
