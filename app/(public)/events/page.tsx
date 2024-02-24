@@ -19,7 +19,7 @@ const EventsPage = async ({}: Props) => {
             </div>
             {events.length === 0 && (
                 <div className="h-full w-full flex justify-center items-center">
-                    <p>There's no event here yet 🐧</p>
+                    <p>There&#39;s no event here yet 🐧</p>
                 </div>
             )}
         </div>
