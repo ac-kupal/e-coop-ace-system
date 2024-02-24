@@ -26,7 +26,6 @@ export const GET = async function name(req:NextRequest,{params}:TParams) {
     const electionId = Number(params.id)
     validateId(electionId)
     const getAllPosition = await db.position.findMany({where:{electionId:electionId}});
-    console.log(getAllPosition)
     return NextResponse.json(getAllPosition);
  } catch (error) {
     return routeErrorHandler(error, req.method);
