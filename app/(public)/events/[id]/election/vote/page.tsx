@@ -1,11 +1,16 @@
-import { cookies } from 'next/headers'
 import React from 'react'
+import db from "@/lib/database"
+import InvalidElection from '../_components/invalid-election'
 
-type Props = {}
+type Props = {
+    params : { id : number }
+}
 
-const VotePage = async (props: Props) => {
-  
-  console.log(cookies().get("v-auth"))
+const VotePage = async ({ params }: Props) => {
+
+  const election = await db.election.findUnique({ where : { eventId : params.id }, include : { event : true }}) 
+
+  if(!election) return <InvalidElection message="Election doesn't exist" />
 
   return (
         <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
