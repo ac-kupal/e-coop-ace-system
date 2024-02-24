@@ -6,7 +6,7 @@ import UserAvatar from "./user-avatar";
 type Props = {
     className? : string;
     url : string;
-    onChange : (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange :(e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const ImagePick = ({ className, url, onChange }: Props) => {

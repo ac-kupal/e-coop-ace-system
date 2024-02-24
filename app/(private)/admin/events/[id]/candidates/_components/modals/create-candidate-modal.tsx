@@ -17,7 +17,10 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { createCandidateSchema } from "@/validation-schema/candidate";
+import {
+   createCandidateSchema,
+   createCandidateWithUploadSchema,
+} from "@/validation-schema/candidate";
 import {
    Select,
    SelectContent,
@@ -33,6 +36,7 @@ import {
    uploadImage,
    uploadImagev2,
 } from "@/hooks/api-hooks/image-upload-api-hook";
+import UserAvatar from "@/components/user-avatar";
 type Props = {
    electionId: number | undefined;
    state: boolean;
@@ -41,7 +45,7 @@ type Props = {
    positions: TPosition[];
 };
 
-type createTCandidate = z.infer<typeof createCandidateSchema>;
+export type createTCandidate = z.infer<typeof createCandidateWithUploadSchema>;
 
 const CreateCandidateModal = ({
    state,
@@ -60,13 +64,13 @@ const CreateCandidateModal = ({
       firstName: "",
       lastName: "",
       passbookNumber: 0,
-      picture: imageURL,
+      picture: imageFile,
       electionId: electionId,
       positionId: 0,
    };
 
    const candidateForm = useForm<createTCandidate>({
-      resolver: zodResolver(createCandidateSchema),
+      resolver: zodResolver(createCandidateWithUploadSchema),
       defaultValues: defaultValues,
    });
 
@@ -75,31 +79,31 @@ const CreateCandidateModal = ({
    };
    const onCancelandReset = () => {
       reset();
-      resetPicker()
+      resetPicker();
       onClose(false);
    };
-   const createCandidate = useCreateCandidate({onCancelandReset});
-   
+   const createCandidate = useCreateCandidate({ onCancelandReset });
+
    const uploadImage = uploadImagev2();
 
-   const onSubmit = async(formValues: createTCandidate) => {
-      if(!imageFile) {
-          toast.warning("you must Add image first")
-         return
-      }
+   const onSubmit = async (formValues: createTCandidate) => {
       try {
-            const image = await uploadImage.mutateAsync({
-               fileName: `${formValues.passbookNumber}`,
-               folderGroup: "election-candidates",
-               file: imageFile,
-            })
-            createCandidate.mutate({ ...formValues, picture: !image ? "/images/default.png" : image});
+         const image = await uploadImage.mutateAsync({
+            fileName: `${formValues.passbookNumber}`,
+            folderGroup: "election-candidates",
+            file: formValues.picture,
+         });
+         createCandidate.mutate({
+            ...formValues,
+            picture: !image ? "/images/default.png" : image,
+         });
+         resetPicker();
       } catch (error) {
          console.log(error);
       }
    };
-   const isUploading = uploadImage.isPending
-   const isLoading = createCandidate.isPending
+   const isUploading = uploadImage.isPending;
+   const isLoading = createCandidate.isPending;
    return (
       <Dialog
          open={state}
@@ -155,19 +159,21 @@ const CreateCandidateModal = ({
                   <FormField
                      control={candidateForm.control}
                      name="passbookNumber"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Passbook No.</FormLabel>
-                           <FormControl>
-                              <Input
-                                 placeholder="enter passbook number of candidate"
-                                 className="placeholder:text-foreground/40"
-                                 {...field}
-                              />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
+                     render={({ field }) => {
+                        return (
+                           <FormItem>
+                              <FormLabel>Passbook No.</FormLabel>
+                              <FormControl>
+                                 <Input
+                                    placeholder="enter passbook number of candidate"
+                                    className="placeholder:text-foreground/40"
+                                    {...field}
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        );
+                     }}
                   />
                   <FormField
                      control={candidateForm.control}
@@ -201,10 +207,22 @@ const CreateCandidateModal = ({
                         </FormItem>
                      )}
                   />
-                  <ImagePick
-                     className="flex flex-col items-center gap-y-4"
-                     url={imageURL}
-                     onChange={onSelectImage}
+                  <FormField
+                     control={candidateForm.control}
+                     name="picture"
+                     render={({ field }) => {
+                        return (
+                           <FormItem>
+                              <FormLabel>Profile</FormLabel>
+                              <FormControl>
+                                 <>
+                                 <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL} onChange={async (e)=> {field.onChange(await onSelectImage(e))}} />
+                                 </>
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        );
+                     }}
                   />
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
@@ -213,7 +231,7 @@ const CreateCandidateModal = ({
                         onClick={(e) => {
                            e.preventDefault();
                            reset();
-                           resetPicker()
+                           resetPicker();
                         }}
                         variant={"ghost"}
                         className="bg-muted/60 hover:bg-muted"
@@ -224,7 +242,7 @@ const CreateCandidateModal = ({
                         disabled={isLoading}
                         onClick={(e) => {
                            e.preventDefault();
-                           onCancelandReset()
+                           onCancelandReset();
                         }}
                         variant={"secondary"}
                         className="bg-muted/60 hover:bg-muted"

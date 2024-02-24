@@ -15,7 +15,7 @@ export const deletePosition = () => {
             );
             toast.success("Position deleted successfully");
             queryClient.invalidateQueries({
-               queryKey: ["position-list-query"],
+               queryKey: ["filtered-position-list-query"],
             });
             return deleted.data;
          } catch (e) {

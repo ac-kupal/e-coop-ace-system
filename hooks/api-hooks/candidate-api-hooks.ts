@@ -44,7 +44,6 @@ export const useCreateCandidate = ({ onCancelandReset }: Props) => {
       mutationKey: ["create-candidate-key"],
       mutationFn: async (data) => {
          try {
-            console.log(data);
             const response = await axios.post("/api/v1/candidate", data);
             return response.data;
          } catch (e) {

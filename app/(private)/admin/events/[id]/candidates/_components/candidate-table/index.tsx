@@ -30,7 +30,6 @@ const CandidateTable = ({electionId}: Props) => {
 
    const { data, isFetching, isLoading, isError, refetch } = getCandidates(electionId)
    const { data:getPositions  } = getPosition(electionId)
-   console.log("fitered Position",getPositions)
    const table = useReactTable({
       data,
       columns,

@@ -71,13 +71,11 @@ const UpdatePositionModal = ({
          }
       },
       onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["position-list-query"] });
+         queryClient.invalidateQueries({ queryKey: ["filtered-position-list-query"] });
          onCancelandReset();
          toast.success("position updated successfully");
       },
    });
-
-   console.log()
 
    const isLoading = updatePosition.isPending;
    return (

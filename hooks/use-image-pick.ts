@@ -44,8 +44,8 @@ const useImagePick = ( { maxPictureSizeMb = 2, maxOptimizedSizeMB = 0.5, initial
                 toast.error(`Image exceed optimization size of ${maxOptimizedSizeMB} MB. Your image size ${optimizedSize} MB`)
                 return false;
             }
-
             setImageFile(uploadedImage)
+            return uploadedImage
         } catch (error) {
             toast.error("Failed to optimize image")
         }
