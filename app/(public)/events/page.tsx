@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import React from "react";
 import db from "@/lib/database";
 import EventCard from "./[id]/_components/event-card";
