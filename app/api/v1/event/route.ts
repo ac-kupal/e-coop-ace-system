@@ -4,13 +4,13 @@ import { createEventSchema } from "@/validation-schema/event";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { createElectionValidation } from "@/validation-schema/election";
 import { ElectionStatus } from "@prisma/client";
-import { handlePrivateRoute } from "../hadle-private-route";
+import { currentUserOrThrowAuthError } from "@/lib/auth";
 
 export const POST = async (req: NextRequest) => {
    try {
-      await handlePrivateRoute()
       const { data } = await req.json();
       
+      const user = await currentUserOrThrowAuthError()
       // Determine if the event includes an election
       const includeElection = !!data.electionName;
 
@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest) => {
          createElectionValidation.parse(election);
       }
 
-      const CreateEvent = await createEvent(data, election, includeElection);
+      const CreateEvent = await createEvent(data, election, includeElection,user.id);
 
       return NextResponse.json(CreateEvent);
    } catch (e) {
@@ -36,7 +36,6 @@ export const POST = async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
    try {
-      await handlePrivateRoute()
       const getAllEvents = await getAllEvent(true);
       return NextResponse.json(getAllEvents);
    } catch (e) {

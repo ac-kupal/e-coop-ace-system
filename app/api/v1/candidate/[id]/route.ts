@@ -3,13 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import db from '@/lib/database'
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { createCandidateSchema } from "@/validation-schema/candidate";
-import { handlePrivateRoute } from "../../hadle-private-route";
 type TParams = { params: { id: number } };
 
 //delete candidate
 export const DELETE = async function name(req:NextRequest,{params}:TParams) {
     try {
-    await handlePrivateRoute()
      const candidateId = Number(params.id)
      validateId(candidateId)
      const deleteCandidate = await db.candidate.delete({where:{id:candidateId}})
@@ -22,7 +20,6 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
 //get many candidate based on id
 export const GET = async function name(req:NextRequest,{params}:TParams) {
   try {
-    await handlePrivateRoute()
     const electionId = Number(params.id)
     validateId(electionId)
     const getAllCandidate = await db.candidate.findMany(
@@ -44,7 +41,6 @@ export const GET = async function name(req:NextRequest,{params}:TParams) {
 //update specific candidate
 export const PATCH = async function name(req:NextRequest,{params}:TParams) {
   try {
-    await handlePrivateRoute()
     const candidateId = Number(params.id)
     const candidate = await req.json()
     createCandidateSchema.parse(candidate)

@@ -4,12 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { TCreatePosition } from "@/types";
 import { createPositionSchema } from "@/validation-schema/position";
-import { handlePrivateRoute } from "../hadle-private-route";
 
 export const POST = async (req: NextRequest) => {
    try {
       const postionData: TCreatePosition = await req.json();
-      await handlePrivateRoute()
       createPositionSchema.parse(postionData)
        const createPosition = await db.position.create({data:postionData})
         return NextResponse.json(createPosition)
@@ -20,7 +18,6 @@ export const POST = async (req: NextRequest) => {
 
 export const GET = async (req: NextRequest) => {
    try {
-      await handlePrivateRoute()
       const getAllPosition = await db.position.findMany({});
       return NextResponse.json(getAllPosition);
    } catch (error) {

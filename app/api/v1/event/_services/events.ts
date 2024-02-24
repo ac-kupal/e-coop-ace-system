@@ -6,7 +6,7 @@ import { VotingEligibility } from "@prisma/client";
 import { z } from "zod";
 
 export const createEvent = async (
-   event: z.infer<typeof createEventSchema>,election:TCreateElection, includeElection = false) => {
+   event: z.infer<typeof createEventSchema>,election:TCreateElection, includeElection = false ,userId:number) => {
       try {
       const CreateEvent = await db.event.create({
          data:includeElection ? {
@@ -20,9 +20,11 @@ export const createEvent = async (
                create:{
                   electionName:election.electionName,
                   status:election.status,
-                  voteEligibility:VotingEligibility.MIGS
+                  voteEligibility:VotingEligibility.MIGS,
+                  createdBy:userId
                }
-            }
+            },
+            createdBy:userId,
          }:{
             title: event.title,
             description: event.description,
@@ -30,6 +32,7 @@ export const createEvent = async (
             location: event.location,
             category: event.category,
             deleted: false,
+            createdBy:userId,
          },
          include:{
             election:true

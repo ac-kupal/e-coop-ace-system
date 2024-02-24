@@ -4,15 +4,12 @@ import { deleteEvent, getEvent, updateEvent } from "../_services/events";
 import { updateEventSchema } from "@/validation-schema/event";
 import { validateId} from "@/lib/server-utils";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { ZodError, z } from "zod";
 import { TUpdateEvent } from "@/types";
-import { handlePrivateRoute } from "../../hadle-private-route";
 
 type TParams = { params: { id: number } };
 
 export const GET = async (req: NextRequest, { params }: TParams) => {
    try {
-      await handlePrivateRoute()
       const id = Number(params.id);
       validateId(id);
       const getUniqueEvent = await getEvent(id);
@@ -25,7 +22,6 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
 
 export const PATCH = async (req: NextRequest, { params }: TParams) => {
    try { 
-      await handlePrivateRoute()
       const id = Number(params.id);
       validateId(id);
       const data:TUpdateEvent = await req.json();
@@ -40,7 +36,6 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
 
 export const DELETE = async (req: NextRequest, { params }: TParams) => {
    try {
-      await handlePrivateRoute()
       const id = Number(params.id);
       validateId(id);
       const user = await currentUserOrThrowAuthError();
