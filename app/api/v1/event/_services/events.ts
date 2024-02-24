@@ -16,6 +16,7 @@ export const createEvent = async (
             location: event.location,
             category: event.category,
             deleted: false,
+            coverImage:event.coverImage,
             election:{
                create:{
                   electionName:election.electionName,
@@ -32,6 +33,7 @@ export const createEvent = async (
             location: event.location,
             category: event.category,
             deleted: false,
+            coverImage:event.coverImage,
             createdBy:userId,
          },
          include:{

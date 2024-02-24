@@ -33,10 +33,9 @@ import { TPosition } from "@/types";
 import ImagePick from "@/components/image-pick";
 import useImagePick from "@/hooks/use-image-pick";
 import {
-   uploadImage,
-   uploadImagev2,
+   onUploadImage,
 } from "@/hooks/api-hooks/image-upload-api-hook";
-import UserAvatar from "@/components/user-avatar";
+
 type Props = {
    electionId: number | undefined;
    state: boolean;
@@ -84,7 +83,7 @@ const CreateCandidateModal = ({
    };
    const createCandidate = useCreateCandidate({ onCancelandReset });
 
-   const uploadImage = uploadImagev2();
+   const uploadImage = onUploadImage();
 
    const onSubmit = async (formValues: createTCandidate) => {
       try {

@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
 import { TEvent, TEventWithElection } from "@/types";
+import { createEvent } from "@/app/api/v1/event/_services/events";
+import { mutationErrorHandler } from "@/errors/mutation-error-handler";
+import { useRouter } from "next/navigation";
 
 export const deleteEvent = () => {
    const queryClient = useQueryClient();
@@ -29,9 +32,9 @@ export const deleteEvent = () => {
    return deleteEventMutation;
 };
 
-export const getEvent = (id:number) => {
-  const eventId = Number(id)
-  const getEvent = useQuery<TEventWithElection, string>({
+export const getEvent = (id: number) => {
+   const eventId = Number(id);
+   const getEvent = useQuery<TEventWithElection, string>({
       queryKey: ["position-list-query"],
       queryFn: async () => {
          try {
@@ -43,5 +46,33 @@ export const getEvent = (id:number) => {
          }
       },
    });
-   return getEvent
+   return getEvent;
+};
+type Props = {
+   onCancelandReset: () => void;
+}
+
+export const useCreateEvent = ({onCancelandReset}:Props) => {
+   const router = useRouter()
+   const queryClient = useQueryClient();
+   const createEvent = useMutation<TEventWithElection, string, any>({
+      mutationKey: ["create-event"],
+      mutationFn: async (data) => {
+         try {
+            const response = await axios.post("/api/v1/event", { data });
+            return response.data;
+         } catch (e) {
+            mutationErrorHandler(e);
+         }
+      },
+      onSuccess: (data: TEventWithElection) => {
+         queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
+         onCancelandReset();
+         toast.success("Event created successfully");
+         if (!data.election) return;
+         router.push(`/admin/events/${data.id}/election`);
+      },
+   });
+
+   return createEvent;
 };

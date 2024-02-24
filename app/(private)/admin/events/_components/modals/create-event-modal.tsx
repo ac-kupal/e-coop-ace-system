@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 
-import { createEventWithElectionSchema } from "@/validation-schema/event";
+import { createEventWithElectionWithUploadSchema } from "@/validation-schema/event";
 import {
    Popover,
    PopoverContent,
@@ -41,21 +41,33 @@ import {
 } from "@/components/ui/select";
 import { EventType } from "@prisma/client";
 import { useState } from "react";
-import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import { useRouter } from 'next/navigation'
-import { TCreateEventWithElection, TEventWithElection } from "@/types";
+import { z } from "zod";
+import useImagePick from "@/hooks/use-image-pick";
+import { useCreateEvent } from "@/hooks/api-hooks/event-api-hooks";
+import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
+import ImagePick from "@/components/image-pick";
 
 type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
 };
+export type EventSchemaType = z.infer<ReturnType<typeof createEventWithElectionWithUploadSchema>>;
+
 
 const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
-   
    const router = useRouter()
    const queryClient = useQueryClient();
    const [isElection, setIsElection] = useState(false);
+   // Create the schema
+   const EventSchema = createEventWithElectionWithUploadSchema(isElection);
+
+   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
+      initialImageURL: "/images/default.png",
+      maxOptimizedSizeMB: 1,
+      maxWidthOrHeight: 800,
+   });
    
    const defaultValues = {
       title: "",
@@ -64,11 +76,11 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
       category: EventType.event,
       date: undefined,
       electionName: "",
+      coverImage:imageFile,
    };
    
-   const EventSchema = createEventWithElectionSchema(isElection);
-
-   const eventForm = useForm<TCreateEventWithElection>({
+   
+   const eventForm = useForm<EventSchemaType>({
       resolver: zodResolver(EventSchema),
       defaultValues: defaultValues,
    });
@@ -81,28 +93,31 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
       onClose(false);
    };
 
-   const createEvent = useMutation<TEventWithElection, string, unknown>({
-      mutationKey: ["create-event"],
-      mutationFn: async (data) => {
-         try {
-            const response = await axios.post("/api/v1/event", { data });
-            return response.data;
-         } catch (e) {
-            mutationErrorHandler(e);
-         }
-      },
-      onSuccess:(data:TEventWithElection) => {
-         queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
-         onCancelandReset();
-         toast.success("Event created successfully");
-         if(!data.election) return
-         router.push(`/admin/events/${data.id}/election`)
-      },
-   });
+
+   const createEvent = useCreateEvent({onCancelandReset})
+   
+   const uploadImage = onUploadImage()
+   
+   const onSubmit = async (formValues:EventSchemaType) => {
+     try {
+       const image = await uploadImage.mutateAsync({
+         fileName: `${formValues.title}`,
+         folderGroup: "event",
+         file: formValues.coverImage,
+       });
+       console.log(image)
+        createEvent.mutate({
+         ...formValues,
+         coverImage: image,
+       });
+       resetPicker();
+     } catch (error) {
+       console.log(error);
+     }
+   };
 
    const isLoading = createEvent.isPending;
-   const onSubmitEvent = async (formValues: TCreateEventWithElection) => createEvent.mutateAsync(formValues);
-
+   const isUploading = uploadImage.isPending;
    return (
       <Dialog
          open={state}
@@ -118,7 +133,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
             />
             <Form {...eventForm}>
                <form
-                  onSubmit={eventForm.handleSubmit(onSubmitEvent)}
+                  onSubmit={eventForm.handleSubmit(onSubmit)}
                   className=" space-y-3"
                >
                   <FormField
@@ -272,7 +287,23 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
                         </FormItem>
                      )}
                   />
-
+                <FormField
+                     control={eventForm.control}
+                     name="coverImage"
+                     render={({ field }) => {
+                        return (
+                           <FormItem>
+                              <FormLabel>Profile</FormLabel>
+                              <FormControl>
+                                 <>
+                                 <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL} onChange={async (e)=> {field.onChange(await onSelectImage(e))}} />
+                                 </>
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        );
+                     }}
+                  />
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
                      <Button
@@ -280,6 +311,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
                         onClick={(e) => {
                            e.preventDefault();
                            reset();
+                           resetPicker()
                         }}
                         variant={"ghost"}
                         className="bg-muted/60 hover:bg-muted"
@@ -298,7 +330,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
                         cancel
                      </Button>
                      <Button disabled={isLoading} type="submit">
-                        {isLoading ? (
+                        {isLoading || isUploading? (
                            <Loader2
                               className="h-3 w-3 animate-spin"
                               strokeWidth={1}

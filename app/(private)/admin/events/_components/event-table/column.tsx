@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import UpdateEventModal from "../modals/update-event-modal";
 import { TEventWithElection } from "@/types";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const Actions = ({ event }: { event: TEventWithElection }) => {
    
    const router = useRouter()
@@ -128,7 +129,9 @@ const columns: ColumnDef<TEventWithElection>[] = [
          <DataTableColHeader column={column} title="title" />
       ),
       cell: ({ row }) => {
-         return <div className=""> {row.original.title}</div>;
+         return <div className="flex space-x-2"> 
+         <h1>{row.original.title}</h1>
+         </div>;
       },
    },
    {

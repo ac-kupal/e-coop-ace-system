@@ -26,7 +26,7 @@ export const uploadImage = ({ onUploadComplete } : { onUploadComplete : (imageUR
     return upload;
 }
 
-export const uploadImagev2 = () => { 
+export const onUploadImage = () => { 
     const upload = useMutation<string, string, z.infer<typeof uploadSchema>>({
         mutationFn : async (data) => {
             try{
