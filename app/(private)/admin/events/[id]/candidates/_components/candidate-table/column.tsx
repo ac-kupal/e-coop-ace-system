@@ -112,7 +112,7 @@ const columns: ColumnDef<TCandidatewithPosition>[] = [
             <div className="flex items-center space-x-2">
                <Avatar>
                   <AvatarImage src={img} />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback className="bg-primary text-accent">{row.original.firstName.charAt(0).toUpperCase()}</AvatarFallback>
                </Avatar>
                <h1 className="font-medium">{row.original.firstName}</h1>
             </div>
