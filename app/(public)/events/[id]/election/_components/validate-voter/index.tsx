@@ -1,22 +1,29 @@
 "use client";
-import { TMemberAttendees } from "@/types";
+import { toast } from "sonner";
 import React, { useState } from "react";
+
 import VoterSearch from "./voter-search";
+import AuthorizeVoter from "./authorize-voter";
 import MemberInfoDisplay from "../../../_components/member-info-display";
 
+import { TElectionWithEvent, TMemberAttendees } from "@/types";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
 type Props = {
-    eventId: number;
-    electionId: number;
+    electionWithEvent: TElectionWithEvent;
 };
 
-const ValidateVoter = ({ eventId, electionId }: Props) => {
+const ValidateVoter = ({ electionWithEvent }: Props) => {
+    const router = useRouter();
     const [voter, setVoter] = useState<TMemberAttendees | null>(null);
 
     if (!voter)
         return (
             <VoterSearch
-                eventId={eventId}
-                electionId={electionId}
+                eventId={electionWithEvent.event.id}
+                electionId={electionWithEvent.id}
                 onFound={(voter) => setVoter(voter)}
             />
         );
@@ -25,13 +32,29 @@ const ValidateVoter = ({ eventId, electionId }: Props) => {
         <div className="flex flex-col gap-y-16">
             <MemberInfoDisplay member={voter} />
             <div className="flex flex-col items-center">
-                {/*voter.registered ? (
-                    <Link className="mx-auto" href={`/events/${params.id}`}>
-                        <Button>Go Back to Event</Button>
-                    </Link>
+                {voter.voted ? (
+                    <div className="flex flex-col items-center gap-y-4">
+                        <p className="text-xl lg:text-3xl">You already voted</p>
+                        <p>Every member is only allowed to vote once.</p>
+                        <Link
+                            className="mx-auto"
+                            href={`/events/${electionWithEvent.eventId}`}
+                        >
+                            <Button>Go Back to Event</Button>
+                        </Link>
+                    </div>
                 ) : (
-                    <RegisterAttendance eventId={params.id} voter={member} />
-                )*/}
+                    <AuthorizeVoter
+                        voter={voter}
+                        electionWithEvent={electionWithEvent}
+                        onAuthorize={(voter) => {
+                            toast.success(
+                                `Congratulations ${voter.firstName}, you are authorized to vote 🎉.`,
+                            );
+                            router.push(`/events/${electionWithEvent.eventId}/election/vote`)
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

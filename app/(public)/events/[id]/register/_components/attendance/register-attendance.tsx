@@ -66,7 +66,7 @@ const RegisterAttendance = ({ eventId, member}: Props) => {
                     className="w-full"
                     onClick={() => register()}
                 >
-                    {false ? (
+                    {isPending ? (
                         <Loader2
                             className="h-3 w-3 animate-spin"
                             strokeWidth={1}

@@ -30,7 +30,7 @@ const ElectionVerifyPage = async ({ params }: Props) => {
             <p className="text-2xl lg:text-4xl uppercase text-center">{election.electionName}</p>
             <div className="w-5 h-2 bg-orange-400 rounded-full"/>
             <div className="py-16">
-                <ValidateVoter eventId={election.eventId} electionId={election.id} />
+                <ValidateVoter electionWithEvent={election} />
             </div>
         </div>
     );

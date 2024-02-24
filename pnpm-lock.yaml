@@ -83,6 +83,9 @@ dependencies:
   html5-qrcode:
     specifier: ^2.3.8
     version: 2.3.8
+  jose:
+    specifier: ^5.2.2
+    version: 5.2.2
   lucide-react:
     specifier: ^0.323.0
     version: 0.323.0(react@18.2.0)
@@ -4236,6 +4239,10 @@ packages:
 
   /jose@4.15.4:
     resolution: {integrity: sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==}
+    dev: false
+
+  /jose@5.2.2:
+    resolution: {integrity: sha512-/WByRr4jDcsKlvMd1dRJnPfS1GVO3WuKyaurJ/vvXcOaUQO8rnNObCQMlv/5uCceVQIq5Q4WLF44ohsdiTohdg==}
     dev: false
 
   /js-tokens@4.0.0:

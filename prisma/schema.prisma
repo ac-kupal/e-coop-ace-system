@@ -2,12 +2,12 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 // IMPORTANT NOTE
@@ -21,191 +21,192 @@ datasource db {
 // deleted Boolean @default(false)
 
 enum Role {
-  root
-  admin
-  staff
+    root
+    admin
+    staff
 }
 
 model User {
-  id Int @id @default(autoincrement())
+    id Int @id @default(autoincrement())
 
-  picture  String? @default("/images/default.png")
-  name     String
-  email    String  @unique
-  password String
-  branchId Int
+    picture  String? @default("/images/default-avatar.png")
+    name     String
+    email    String  @unique
+    password String
+    branchId Int
 
-  dateVerified DateTime?
-  verified     Boolean?  @default(false)
+    dateVerified DateTime?
+    verified     Boolean?  @default(false)
 
-  branch Branch @relation(fields: [branchId], references: [id])
-  role   Role   @default(staff)
+    branch Branch @relation(fields: [branchId], references: [id])
+    role   Role   @default(staff)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
 
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
 
-  deleted Boolean @default(false)
+    deleted Boolean @default(false)
 }
 
 model Branch {
-  id Int @id @default(autoincrement())
+    id Int @id @default(autoincrement())
 
-  branchName        String
-  branchDescription String
-  branchAddress     String
-  branchPicture     String? @default("/images/default.png")
+    branchName        String
+    branchDescription String
+    branchAddress     String
+    branchPicture     String? @default("/images/default.png")
 
-  users User[]
+    users User[]
 
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  deleted   Boolean?  @default(false)
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+    deleted   Boolean?  @default(false)
 }
 
 enum EventType {
-  election
-  event
+    election
+    event
 }
 
 model Event {
-  id          Int       @id @default(autoincrement())
-  title       String
-  description String
-  date        DateTime
-  location    String
-  category    EventType
-  coverImage  String?   @default("/images/default.png")
+    id          Int       @id @default(autoincrement())
+    title       String
+    description String
+    date        DateTime
+    location    String
+    category    EventType
+    coverImage  String?   @default("/images/default.png")
 
-  registrationOnEvent Boolean? @default(true)
+    registrationOnEvent Boolean? @default(true)
 
-  deleted Boolean
+    deleted Boolean
 
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
 
-  election Election?
+    election Election?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  attendees EventAttendees[]
+    attendees EventAttendees[]
 }
 
 enum gender {
-  Male
-  Female
+    Male
+    Female
 }
 
 model EventAttendees {
-  id             String   @id @default(uuid())
-  passbookNumber String
-  firstName      String
-  middleName     String
-  lastName       String
-  gender         gender
-  birthday       DateTime
-  contact        String
-  picture        String?  @default("/images/default-event.png")
+    id             String   @id @default(uuid())
+    passbookNumber String
+    firstName      String
+    middleName     String
+    lastName       String
+    gender         gender
+    birthday       DateTime
+    contact        String
+    picture        String?  @default("/images/default-event.png")
 
-  canVote Boolean? @default(false)
+    canVote Boolean? @default(false)
 
-  eventId Int
-  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    eventId Int
+    event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  registered Boolean  @default(false)
-  voted      Boolean? @default(false)
+    registered Boolean  @default(false)
+    voted      Boolean? @default(false)
+    voteOtp    String?
 
-  votes Votes[]
+    votes Votes[]
 
-  @@unique([eventId, passbookNumber])
+    @@unique([eventId, passbookNumber])
 }
 
 enum ElectionStatus {
-  pending
-  live
-  done
+    pending
+    live
+    done
 }
 
 enum VotingEligibility {
-  REGISTERED
-  MIGS
-  MARKED_CANVOTE
+    REGISTERED
+    MIGS
+    MARKED_CANVOTE
 }
 
 model Election {
-  id           Int            @id @default(autoincrement())
-  electionName String
-  status       ElectionStatus
+    id           Int            @id @default(autoincrement())
+    electionName String
+    status       ElectionStatus
 
-  // settings - add other settings here
-  // who can vote
-  voteEligibility VotingEligibility
+    // settings - add other settings here
+    // who can vote
+    voteEligibility VotingEligibility @default(MIGS)
 
-  positions  Position[] // 1st to create
-  canditates Candidate[] // 2nd
-  votes      Votes[]
+    positions  Position[] // 1st to create
+    canditates Candidate[] // 2nd
+    votes      Votes[]
 
-  eventId Int   @unique
-  event   Event @relation(fields: [eventId], references: [id])
+    eventId Int   @unique
+    event   Event @relation(fields: [eventId], references: [id])
 
-  deleted Boolean @default(false)
+    deleted Boolean @default(false)
 
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
 }
 
 model Position {
-  id                Int    @id @default(autoincrement())
-  positionName      String
-  numberOfSelection Int
+    id                Int    @id @default(autoincrement())
+    positionName      String
+    numberOfSelection Int
 
-  electionId Int
-  election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId Int
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
 
-  candidates Candidate[]
+    candidates Candidate[]
 }
 
 model Candidate {
-  id             Int     @id @default(autoincrement())
-  firstName      String
-  lastName       String
-  passbookNumber Int
-  picture        String? @default("/images/default.png")
+    id             Int     @id @default(autoincrement())
+    firstName      String
+    lastName       String
+    passbookNumber Int
+    picture        String? @default("/images/default.png")
 
-  electionId Int
-  election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId Int
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
 
-  positionId Int
-  position   Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
-  votes      Votes[]
+    positionId Int
+    position   Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+    votes      Votes[]
 
-  @@unique([electionId, passbookNumber])
+    @@unique([electionId, passbookNumber])
 }
 
 model Votes {
-  id Int @id @default(autoincrement())
+    id Int @id @default(autoincrement())
 
-  attendeeId  String
-  electionId  Int
-  candidateId Int
+    attendeeId  String
+    electionId  Int
+    candidateId Int
 
-  attendee  EventAttendees @relation(fields: [attendeeId], references: [id])
-  candidate Candidate      @relation(fields: [candidateId], references: [id])
-  election  Election       @relation(fields: [electionId], references: [id])
+    attendee  EventAttendees @relation(fields: [attendeeId], references: [id])
+    candidate Candidate      @relation(fields: [candidateId], references: [id])
+    election  Election       @relation(fields: [electionId], references: [id])
 }
