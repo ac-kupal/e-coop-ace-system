@@ -9,6 +9,7 @@ import {
    Loader2,
    MoreHorizontal,
    Pencil,
+   QrCode,
    Target,
    Trash,
 } from "lucide-react";
@@ -163,6 +164,11 @@ const columns: ColumnDef<TEventWithElection>[] = [
          <DataTableColHeader column={column} title="type" />
       ),
       cell: ({ row }) => <div className="">{row.original.category}</div>,
+   },{
+      id: "Event QR",
+      cell : ({ row }) => (
+            <Button size="icon" variant="ghost" ><QrCode className="size-6" strokeWidth={1}/></Button>
+        )
    },
    {
       id: "button",
