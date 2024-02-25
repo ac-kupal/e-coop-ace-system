@@ -22,10 +22,10 @@ export const createCandidateSchema = z.object({
          invalid_type_error: "candidate last name must be string",
       })
       .min(1, "candidate last name is required"), 
-      passbookNumber: z.coerce.number({
-          required_error: "passbook is required",
-          invalid_type_error: "passbook number type must be number",
-       }),
+      passbookNumber:  z.string({
+         required_error: "candidate passbook number is required",
+         invalid_type_error: "candidate passbook number must be string",
+      }),
        picture: z
        .string({
           required_error: "candidate picture is required",
@@ -55,15 +55,13 @@ export const updateCandidateSchema = z.object({
            invalid_type_error: "candidate last name must be string",
         })
         .min(1, "candidate last name is required"), 
-        passbookNumber: z.coerce.number({
-            required_error: "number of seats is required",
-            invalid_type_error: "position number of seats must be number",
-         }),
-         picture: z
-         .string({
-            required_error: "candidate picture is required",
-            invalid_type_error: "candidate picture type must be string",
-         }).nullable(),
+        passbookNumber:  z.string({
+         required_error: "candidate passbook number is required",
+         invalid_type_error: "candidate passbook number must be string",
+      }),
+      picture: z.any().refine((file: File | undefined | null) => file !== undefined && file !== null, {
+         message: "Image File is required",
+      }),
          electionId: z.coerce.number({
             required_error: "election ID is required",
             invalid_type_error: "election ID type must be number",
@@ -88,10 +86,10 @@ export const updateCandidateSchema = z.object({
          invalid_type_error: "candidate last name must be string",
       })
       .min(1, "candidate last name is required"), 
-      passbookNumber: z.coerce.number({
-          required_error: "passbook is required",
-          invalid_type_error: "passbook number type must be number",
-       }),
+      passbookNumber:  z.string({
+         required_error: "candidate passbook number is required",
+         invalid_type_error: "candidate passbook number must be string",
+      }),
        picture: z.any().refine((file: File | undefined | null) => file !== undefined && file !== null, {
          message: "Image File is required",
       }),

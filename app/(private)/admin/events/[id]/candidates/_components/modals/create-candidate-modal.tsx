@@ -62,7 +62,7 @@ const CreateCandidateModal = ({
    const defaultValues = {
       firstName: "",
       lastName: "",
-      passbookNumber: 0,
+      passbookNumber: "",
       picture: imageFile,
       electionId: electionId,
       positionId: 0,

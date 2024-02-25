@@ -28,6 +28,9 @@ import { z } from "zod";
 import { useCallback, useEffect } from "react";
 import { updateCandidateSchema } from "@/validation-schema/candidate";
 import { useUpdateCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
+import useImagePick from "@/hooks/use-image-pick";
+import ImagePick from "@/components/image-pick";
+import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 
 type Props = {
    state: boolean;
@@ -46,6 +49,13 @@ const UpdateCandidateModal = ({
    candidate,
    positions,
 }: Props) => {
+
+   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
+      initialImageURL: "/images/default.png",
+      maxOptimizedSizeMB: 0.5,
+      maxWidthOrHeight: 300,
+   });
+
 
    const candidateForm = useForm<updateTCandidate>({
       resolver: zodResolver(updateCandidateSchema),
@@ -70,6 +80,24 @@ const UpdateCandidateModal = ({
    const candidateId = candidate.id
    const updateCandidate = useUpdateCandidate({candidateId,onCancelandReset})
    const isLoading = updateCandidate.isPending;
+   const uploadImage = onUploadImage();
+
+   const onSubmit=async(formValues: updateTCandidate)=>{
+      try {
+         const image = await uploadImage.mutateAsync({
+            fileName: `${formValues.passbookNumber}`,
+            folderGroup: "election-candidates",
+            file: formValues.picture,
+         });
+         updateCandidate.mutate({
+            ...formValues,
+            picture: !image ? candidateForm.getValues("picture") : image,
+         });
+         resetPicker();
+      } catch (error) {
+         console.log(error);
+      }
+   }
 
    return (
       <Dialog
@@ -85,10 +113,7 @@ const UpdateCandidateModal = ({
             />
             <Form {...candidateForm}>
                <form
-                  onSubmit={candidateForm.handleSubmit((formValues) => {
-                  console.log(formValues)
-                   updateCandidate.mutate(formValues);
-                  })}
+                  onSubmit={candidateForm.handleSubmit(onSubmit)}
                   className=" space-y-3"
                >
                   <FormField
@@ -153,6 +178,21 @@ const UpdateCandidateModal = ({
                            <FormMessage />
                         </FormItem>
                      )}
+                  />
+                   <FormField
+                     control={candidateForm.control}
+                     name="picture"
+                     render={({ field }) => {
+                        return (
+                           <FormItem>
+                              <FormLabel>Profile</FormLabel>
+                              <FormControl>
+                                 <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL} onChange={async (e)=> {field.onChange(await onSelectImage(e))}} />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        );
+                     }}
                   />
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
