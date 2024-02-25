@@ -26,6 +26,11 @@ export type TElectionRoute = {
     path : string;
 };
 
-
-
 export type TFolderUploadGroups = z.infer<typeof folderGroupSchema>
+
+export type TVoteAuthorizationPayload = {
+            eventId : number,
+            electionId : number,
+            attendeeId : string,
+            passbookNumber: string 
+}

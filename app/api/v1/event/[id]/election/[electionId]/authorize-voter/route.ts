@@ -1,4 +1,3 @@
-import jose from "jose";
 import { SignJWT } from "jose";
 
 import db from "@/lib/database";
@@ -9,6 +8,7 @@ import {
     eventElectionParamsSchema,
     voterVerificationSchema,
 } from "@/validation-schema/event-registration-voting";
+import { TVoteAuthorizationPayload } from "@/types";
 
 type TParams = { params: { id: number; passbookNumber: number } };
 
@@ -54,11 +54,12 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
             return NextResponse.json({ message: "Invalid OTP" }, { status: 403 });
 
         // TODO : Check if allowed to vote if done na sa admin side yung option
+        // use of bday etc..
 
-        const authorizationContent = {
+        const authorizationContent : TVoteAuthorizationPayload = {
             eventId,
             electionId,
-            voterId: voter.id,
+            attendeeId : voter.id,
             passbookNumber: voter.passbookNumber,
         };
 
