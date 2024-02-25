@@ -1,4 +1,5 @@
 import { Position } from "@prisma/client";
+import { TCandidatewithPosition } from ".";
 
 export type TCreatePosition = {
      positionName:string,
@@ -13,3 +14,7 @@ export type TUpdatePosition = {
 }
 
 export type TPosition = Position
+
+
+// used in public event/[]/election/vote
+export type TPositionWithCandidatesAndPosition = Position & { candidates : TCandidatewithPosition[] }

@@ -129,6 +129,12 @@ model EventAttendees {
 
     votes Votes[]
 
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    createdBy Int?
+    updatedBy Int?
+
     @@unique([eventId, passbookNumber])
 }
 

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import LogOut from "./log-out";
+import Link from "next/link";
 
 type Props = {};
 
@@ -20,7 +21,7 @@ const NavBar = async ({}: Props) => {
 
    return (
       <div className="w-full bg-[#3D7663] justify-between flex p-3">
-         <h1 className="text-[24px] text-white font-medium">Coop ACE System</h1>
+         <Link href="/" className="text-[24px] text-white font-medium">Coop ACE System</Link>
          <div className=" flex  space-x-4 items-center">
             <h1 className="text-white">{user.name}</h1>
             <DropdownMenu>
