@@ -192,7 +192,7 @@ model Candidate {
     id             Int     @id @default(autoincrement())
     firstName      String
     lastName       String
-    passbookNumber Int
+    passbookNumber String
     picture        String? @default("/images/default.png")
 
     electionId Int
