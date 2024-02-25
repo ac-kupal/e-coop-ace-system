@@ -1,5 +1,4 @@
 "use client";
-import { toast } from "sonner";
 import React, { useState } from "react";
 
 import VoterSearch from "./voter-search";
@@ -47,10 +46,7 @@ const ValidateVoter = ({ electionWithEvent }: Props) => {
                     <AuthorizeVoter
                         voter={voter}
                         electionWithEvent={electionWithEvent}
-                        onAuthorize={(voter) => {
-                            toast.success(
-                                `Congratulations ${voter.firstName}, you are authorized to vote 🎉.`,
-                            );
+                        onAuthorize={() => {
                             router.push(`/events/${electionWithEvent.eventId}/election/vote`)
                         }}
                     />
