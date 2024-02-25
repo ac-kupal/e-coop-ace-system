@@ -17,4 +17,4 @@ export type TPosition = Position
 
 
 // used in public event/[]/election/vote
-export type TPositionWithCandidatesAndPosition = { candidates : TCandidatewithPosition[] }
+export type TPositionWithCandidatesAndPosition = Position & { candidates : TCandidatewithPosition[] }

@@ -11,6 +11,9 @@ import { handleAxiosErrorMessage } from "@/utils";
 import LoadingSpinner from "@/components/loading-spinner";
 import InvalidElection from "../../_components/invalid-election";
 import OnlyLandscape from "@/components/only-landscape";
+import VoteHeader from "./vote-header";
+import CandidateCard from "./candidate-card";
+import CandidateList from "./candidate-list";
 
 type Props = {
     election: TElectionWithPositionAndCandidates;
@@ -53,10 +56,13 @@ const VoteWindow = ({ election }: Props) => {
 
     if (isError) return <InvalidElection message={error} />;
 
-    return (
-        <div className="py-16">
-            <OnlyLandscape />
+    console.log(election)
 
+    return (
+        <div className="w-full max-w-7xl py-16">
+            <OnlyLandscape />
+            <VoteHeader position={election.positions[0]} selected={0} />
+            <CandidateList candidates={election.positions[0].candidates}/>
         </div>
     );
 };

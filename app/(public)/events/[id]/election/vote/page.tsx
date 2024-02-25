@@ -24,6 +24,8 @@ const VotePage = async ({ params }: Props) => {
 
     if (!election) return <InvalidElection message="Election doesn't exist" />;
 
+    if (election.positions.length === 0) return <InvalidElection message="It seems like this election doesn't have positions and candidates yet. Please contact admin" />;
+
     return (
         <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
             <p className="text-2xl lg:text-4xl uppercase text-center">
