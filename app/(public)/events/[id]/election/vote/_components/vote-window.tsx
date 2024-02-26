@@ -1,9 +1,11 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import {
+    TCandidatewithPosition,
     TElectionWithPositionAndCandidates,
     TMemberAttendeesMinimalInfo,
 } from "@/types";
@@ -12,7 +14,6 @@ import LoadingSpinner from "@/components/loading-spinner";
 import InvalidElection from "../../_components/invalid-election";
 import OnlyLandscape from "@/components/only-landscape";
 import VoteHeader from "./vote-header";
-import CandidateCard from "./candidate-card";
 import CandidateList from "./candidate-list";
 
 type Props = {
@@ -20,6 +21,10 @@ type Props = {
 };
 
 const VoteWindow = ({ election }: Props) => {
+    const TotalPositions = election.positions.length - 1;
+    const [currentPage, setCurrentPage] = useState(0);
+    const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
+
     const {
         data: voter,
         isPending,
@@ -56,13 +61,20 @@ const VoteWindow = ({ election }: Props) => {
 
     if (isError) return <InvalidElection message={error} />;
 
-    console.log(election)
+    const currentPosition = election.positions[currentPage];
 
     return (
         <div className="w-full max-w-7xl py-16">
             <OnlyLandscape />
-            <VoteHeader position={election.positions[0]} selected={0} />
-            <CandidateList candidates={election.positions[0].candidates}/>
+            <VoteHeader position={currentPosition} selected={ votes.filter((votedCandidate)=> votedCandidate.position.id === currentPosition.id).length } />
+            <CandidateList
+                chosenCandidates={votes.filter(
+                    (votedCandidate) => votedCandidate.position.id === currentPosition.id,
+                )}
+                onAdd={(candidate) => { setVotes((prevVotes)=> [...prevVotes, candidate]) }}
+                onRemove={(candidate) => { setVotes((prevVotes)=> prevVotes.filter((voted) => voted.id !== candidate.id))}}
+                candidates={currentPosition.candidates}
+            />
         </div>
     );
 };

@@ -33,6 +33,6 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
 
         return NextResponse.json(voter);
     } catch (e) {
-        routeErrorHandler(e, req.method);
+        return routeErrorHandler(e, req.method);
     }
 };
