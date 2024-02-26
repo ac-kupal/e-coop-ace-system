@@ -157,7 +157,7 @@ model Election {
 
     // settings - add other settings here
     // who can vote
-    allowOTP Boolean @default(false)
+    allowBirthdayVerification Boolean @default(false)
     voteEligibility VotingEligibility @default(MIGS)
 
     positions  Position[] // 1st to create
