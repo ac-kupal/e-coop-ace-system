@@ -20,7 +20,7 @@ const CandidateList = ({
 }: Props) => {
 
     return (
-        <div className="py-8 gap-y-4 flex justify-center flex-wrap w-full">
+        <div className="py-8 gap-y-4 flex flex-col items-center sm:items-start sm:flex-row justify-center flex-wrap w-full">
             {candidates.map((candidate) => (
                 <CandidateCard
                     canSelect={chosenCandidates.length < maxSelect}

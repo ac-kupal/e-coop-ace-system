@@ -31,7 +31,7 @@ const CandidateCard = ({
     return (
         <div
             className={cn(
-                "p-4 w-1/4 space-y-4 duration-300 relative cursor-hover selection:bg-background/10 cursor-pointer",
+                "p-4 w-full sm:w-1/2 md:w-1/4 space-y-4 duration-300 relative cursor-hover selection:bg-background/10 cursor-pointer",
                 !canSelect && !isChosen && "cursor-not-allowed opacity-50 ",
             )}
             onClick={handleClick}
