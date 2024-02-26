@@ -22,9 +22,11 @@ import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
 import CreateEventModal from "../modals/create-event-modal";
 import { TEventWithElection } from "@/types";
+
 const EventTable = () => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createEvent, setCreateEvent] = useState(false)
+   
    const { data, isFetching, isLoading, isError, refetch } = useQuery<
       TEventWithElection[],
       string

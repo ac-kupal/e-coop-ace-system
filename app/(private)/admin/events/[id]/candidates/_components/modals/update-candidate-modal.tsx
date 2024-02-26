@@ -51,11 +51,10 @@ const UpdateCandidateModal = ({
 }: Props) => {
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
-      initialImageURL: "/images/default.png",
+      initialImageURL: !candidate.picture ? "/images/default.png" :candidate.picture ,
       maxOptimizedSizeMB: 0.5,
       maxWidthOrHeight: 300,
    });
-
 
    const candidateForm = useForm<updateTCandidate>({
       resolver: zodResolver(updateCandidateSchema),
@@ -76,23 +75,30 @@ const UpdateCandidateModal = ({
 
    const onCancelandReset = () => {
       onClose(false);
+      candidateForm.reset()
    };
    const candidateId = candidate.id
    const updateCandidate = useUpdateCandidate({candidateId,onCancelandReset})
    const isLoading = updateCandidate.isPending;
    const uploadImage = onUploadImage();
 
+   const isCandidateOnChange = candidateForm.getValues("firstName") === candidate.firstName && candidateForm.getValues("lastName") === candidate.lastName && Number(candidateForm.getValues("positionId")) === candidate.positionId && candidateForm.getValues("picture") === candidate.picture
+
    const onSubmit=async(formValues: updateTCandidate)=>{
       try {
-         const image = await uploadImage.mutateAsync({
-            fileName: `${formValues.passbookNumber}`,
-            folderGroup: "election-candidates",
-            file: formValues.picture,
-         });
-         updateCandidate.mutate({
-            ...formValues,
-            picture: !image ? candidateForm.getValues("picture") : image,
-         });
+         if(!imageFile) {
+            updateCandidate.mutate({...formValues,picture: candidateForm.getValues("picture"),});
+         }else{
+            const image = await uploadImage.mutateAsync({
+               fileName: `${formValues.passbookNumber}`,
+               folderGroup: "election-candidates",
+               file: imageFile,
+            });
+            updateCandidate.mutate({
+               ...formValues,
+               picture: !image ? "/images/default.png" : image,
+            });
+         }
          resetPicker();
       } catch (error) {
          console.log(error);
@@ -103,7 +109,8 @@ const UpdateCandidateModal = ({
       <Dialog
          open={state}
          onOpenChange={(state) => {
-            onClose(state);
+            onCancelandReset()
+            resetPicker()
          }}
       >
          <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
@@ -207,7 +214,7 @@ const UpdateCandidateModal = ({
                      >
                         cancel
                      </Button>
-                     <Button disabled={isLoading} type="submit">
+                     <Button disabled={isCandidateOnChange} type="submit">
                         {isLoading ? (
                            <Loader2
                               className="h-3 w-3 animate-spin"

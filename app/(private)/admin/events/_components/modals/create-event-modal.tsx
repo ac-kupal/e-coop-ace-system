@@ -60,6 +60,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
    const router = useRouter()
    const queryClient = useQueryClient();
    const [isElection, setIsElection] = useState(false);
+   
    // Create the schema
    const EventSchema = createEventWithElectionWithUploadSchema(isElection);
 
@@ -118,6 +119,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
 
    const isLoading = createEvent.isPending;
    const isUploading = uploadImage.isPending;
+
    return (
       <Dialog
          open={state}

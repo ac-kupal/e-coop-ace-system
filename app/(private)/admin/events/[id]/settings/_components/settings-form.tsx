@@ -26,7 +26,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { updateElectionSettings } from "@/hooks/api-hooks/settings-hooks";
-import { Loader2, LoaderIcon } from "lucide-react";
+import { Loader2} from "lucide-react";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
    election: TElection;
@@ -38,6 +40,8 @@ export type SettingsType = {
 };
 
 const SettingsForm = ({ election }: Props) => {
+   
+   const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
    const settingsForm = useForm<SettingsType>({
       resolver: zodResolver(electionSettingSchema),
@@ -51,7 +55,6 @@ const SettingsForm = ({ election }: Props) => {
    }, [settingsForm, election]);
 
   const isSettingChange = settingsForm.getValues("allowBirthdayVerification") === election.allowBirthdayVerification || settingsForm.getValues("voteEligibility") === election.voteEligibility
-  console.log(isSettingChange)
 
   useEffect(() => {
       defaultValues();
@@ -60,9 +63,16 @@ const SettingsForm = ({ election }: Props) => {
    const updateSettings = updateElectionSettings()
    const electionId = election.id
    const onSubmit = (formValues:z.infer<typeof electionSettingSchema>)=>{
-      updateSettings.mutate({
-         electionId:electionId,
-         data:formValues
+      onOpenConfirmModal({
+         title: "Update Election Settings ",
+         description:
+            "Are you sure you want to udapte this Election",
+         onConfirm: () => {
+            updateSettings.mutate({
+               electionId:electionId,
+               data:formValues
+            })
+         },
       })
    }
 
@@ -94,12 +104,8 @@ const SettingsForm = ({ election }: Props) => {
                               </FormControl>
                               <SelectContent>
                                  <SelectItem value="MIGS">MIGS</SelectItem>
-                                 <SelectItem value="REGISTERED">
-                                    REGISTERED
-                                 </SelectItem>
-                                 <SelectItem value="MARKED_CANVOTE">
-                                    MARKED_CANVOTE
-                                 </SelectItem>
+                                 <SelectItem value="REGISTERED">REGISTERED</SelectItem>
+                                 <SelectItem value="MARKED_CANVOTE">MARKED CAN VOTE</SelectItem>
                               </SelectContent>
                            </Select>
                            </div>
@@ -108,13 +114,14 @@ const SettingsForm = ({ election }: Props) => {
                      );
                   }}
                />
+               <Separator></Separator>
+               <h1 className="font-bold">others</h1>
                <FormField
                   control={settingsForm.control}
                   name="allowBirthdayVerification"
                   render={({ field }) => (
                      <FormItem className="">
-                        <FormLabel>Voting Verification </FormLabel>
-
+                        <FormLabel className="">Voting Verification </FormLabel>
                         <div className="">
                            <div className="flex items-center  justify-between w-full pr-5  space-x-2 ">
                               <FormLabel className=" text-sm font-normal">
@@ -132,7 +139,7 @@ const SettingsForm = ({ election }: Props) => {
                   )}
                />
                <div className="w-full flex justify-end px-2">
-                  <Button disabled={!isSettingChange}  className="rounded-lg">
+                  <Button variant={isSettingChange ? "default":"secondary"} disabled={!isSettingChange}  className="rounded-lg">
                     {updateSettings.isPending ? <Loader2 className="animate-spin"/>:"save"}
                   </Button>
                </div>

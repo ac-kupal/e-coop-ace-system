@@ -30,6 +30,7 @@ export const onUploadImage = () => {
     const upload = useMutation<string, string, z.infer<typeof uploadSchema>>({
         mutationFn : async (data) => {
             try{
+                console.log(data)
                 const upload = await axios.postForm("/api/v1/upload/image", {
                     file : data.file,
                     fileName : `${data.fileName}${extname(data.file.name)}`,
