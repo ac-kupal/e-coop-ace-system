@@ -9,18 +9,33 @@ type Props = {
     candidate: TCandidatewithPosition;
     isChosen?: boolean;
 
+    canSelect: boolean;
     onSelect: (candidate: TCandidatewithPosition) => void;
     onRemove: (candidate: TCandidatewithPosition) => void;
 };
 
-const CandidateCard = ({ candidate, isChosen, onSelect, onRemove }: Props) => {
+const CandidateCard = ({
+    candidate,
+    isChosen,
+    canSelect,
+    onSelect,
+    onRemove,
+}: Props) => {
     const { firstName, lastName, picture } = candidate;
 
-    const handleClick = () =>
-        !isChosen ? onSelect(candidate) : onRemove(candidate);
+    const handleClick = () => {
+        if (!isChosen && canSelect) onSelect(candidate);
+        else onRemove(candidate);
+    };
 
     return (
-        <div className={cn("p-4 w-1/4 space-y-4 relative selection:")} onClick={handleClick}>
+        <div
+            className={cn(
+                "p-4 w-1/4 space-y-4 duration-300 relative cursor-hover selection:bg-background/10 cursor-pointer",
+                !canSelect && !isChosen && "cursor-not-allowed opacity-50 ",
+            )}
+            onClick={handleClick}
+        >
             <div className="relative">
                 <div
                     className={cn(
