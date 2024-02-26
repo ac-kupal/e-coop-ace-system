@@ -15,13 +15,15 @@ import InvalidElection from "../../_components/invalid-election";
 import OnlyLandscape from "@/components/only-landscape";
 import VoteHeader from "./vote-header";
 import CandidateList from "./candidate-list";
+import VoteNavControl from "./vote-nav-control";
+import VoteSummary from "./vote-summary";
 
 type Props = {
     election: TElectionWithPositionAndCandidates;
 };
 
 const VoteWindow = ({ election }: Props) => {
-    const TotalPositions = election.positions.length - 1;
+    const totalPositions = election.positions.length - 1;
     const [currentPage, setCurrentPage] = useState(0);
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
@@ -61,19 +63,59 @@ const VoteWindow = ({ election }: Props) => {
 
     if (isError) return <InvalidElection message={error} />;
 
-    const currentPosition = election.positions[currentPage];
+    const currentPosition =
+        election.positions[
+        currentPage > totalPositions - 1 ? totalPositions : currentPage
+        ];
 
     return (
         <div className="w-full max-w-7xl py-16">
             <OnlyLandscape />
-            <VoteHeader position={currentPosition} selected={ votes.filter((votedCandidate)=> votedCandidate.position.id === currentPosition.id).length } />
-            <CandidateList
-                chosenCandidates={votes.filter(
-                    (votedCandidate) => votedCandidate.position.id === currentPosition.id,
+            <div className="w-full flex flex-col min-h-[70vh]">
+                {currentPage > totalPositions ? (
+                    <VoteSummary positions={election.positions} votes={votes} />
+                ) : (
+                    <>
+                        <VoteHeader
+                            position={currentPosition}
+                            selected={
+                                votes.filter(
+                                    (votedCandidate) =>
+                                        votedCandidate.position.id === currentPosition.id,
+                                ).length
+                            }
+                        />
+                        <CandidateList
+                            maxSelect={currentPosition.numberOfSelection}
+                            chosenCandidates={votes.filter(
+                                (votedCandidate) =>
+                                    votedCandidate.position.id === currentPosition.id,
+                            )}
+                            onAdd={(candidate) => {
+                                setVotes((prevVotes) => [...prevVotes, candidate]);
+                            }}
+                            onRemove={(candidate) => {
+                                setVotes((prevVotes) =>
+                                    prevVotes.filter((voted) => voted.id !== candidate.id),
+                                );
+                            }}
+                            candidates={currentPosition.candidates}
+                        />
+                    </>
                 )}
-                onAdd={(candidate) => { setVotes((prevVotes)=> [...prevVotes, candidate]) }}
-                onRemove={(candidate) => { setVotes((prevVotes)=> prevVotes.filter((voted) => voted.id !== candidate.id))}}
-                candidates={currentPosition.candidates}
+            </div>
+            <VoteNavControl
+                currentPage={currentPage}
+                lastPage={totalPositions}
+                onBack={() => setCurrentPage((prev) => prev - 1)}
+                onNext={() => setCurrentPage((prev) => prev + 1)}
+                onFinalize={() => { }}
+                canNext={
+                    votes.filter(
+                        (votedCandidate) =>
+                            votedCandidate.position.id === currentPosition.id,
+                    ).length > 0
+                }
             />
         </div>
     );
