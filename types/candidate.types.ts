@@ -4,7 +4,7 @@ import { Candidate, Position } from "@prisma/client"
 export type TCreateCandidate = {
     firstName:string,
     lastName:string,
-    passbookNumber: number,
+    passbookNumber: string,
     picture: string | null;
     electionId: number;
     positionId: number;

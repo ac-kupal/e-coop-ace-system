@@ -12,7 +12,7 @@ const EventLayout = ( { children }: Props) => {
     const lastPath = pathSegments[pathSegments.length - 1];
     const isCurrentPath = EventRoutes.find((e)=> e.path === lastPath && e.path !== "election" )
     return (
-        <div className="bg-secondary/40 font-poppins p-7 h-screen">
+        <div className="bg-secondary/40 font-poppins p-7 h-screen overflow-hidden">
             <div className="p-5 w-full">
             <EventNavBar />
             </div>

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import imageCompression from "browser-image-compression";
 import UserAvatar from "./user-avatar";
 
 type Props = {

@@ -1,106 +1,44 @@
 import { z } from "zod";
 
-export type TCreateCandidate = {
-   firstName: string;
-   lastName: string;
-   passbookNumber: number;
-   picture: string | null;
-   electionId: number;
-   pisitonId: number;
+
+const commonFieldErrors = {
+   required_error: "This field is required",
+   invalid_type_error: "Invalid data type",
 };
 
 export const createCandidateSchema = z.object({
-   firstName: z
-      .string({
-         required_error: "candidate first name is required",
-         invalid_type_error: "candidate firt name must be string",
-      })
-      .min(1, "candidate name is required"),
-   lastName: z
-      .string({
-         required_error: "candidate last name is required",
-         invalid_type_error: "candidate last name must be string",
-      })
-      .min(1, "candidate last name is required"), 
-      passbookNumber: z.coerce.number({
-          required_error: "passbook is required",
-          invalid_type_error: "passbook number type must be number",
-       }),
-       picture: z
-       .string({
-          required_error: "candidate picture is required",
-          invalid_type_error: "candidate picture type must be string",
-       }).nullable(),
+   firstName: z.string({
+      ...commonFieldErrors,
+   }).min(1),
+   lastName: z.string({
+      ...commonFieldErrors,
+   }).min(1),
+   passbookNumber: z.string({
+      ...commonFieldErrors,
+   }),
+   picture: z.string({
+      ...commonFieldErrors,
+   }).nullable(),
+   electionId: z.coerce.number({
+      ...commonFieldErrors,
+   }).int(),
+   positionId: z.coerce.number({
+      ...commonFieldErrors,
+   }).int(),
+});
+
+export const updateCandidateSchema = createCandidateSchema.extend({
+   picture: z.any().refine((file: File | undefined | null) => file !== undefined && file !== null, {
+      message: "Image File is required",
+   }).optional(),
+});
+
+export const createCandidateWithUploadSchema = createCandidateSchema.extend({
+   picture: z.any().optional(),
        electionId: z.coerce.number({
           required_error: "candidate election ID is required",
           invalid_type_error: "candidate election ID type must be number",
        }),
-       positionId: z.coerce.number({
-          required_error: "position ID is required",
-          invalid_type_error: "position ID type must be number",
-       }),
 });
 
 
-export const updateCandidateSchema = z.object({
-     firstName: z
-        .string({
-           required_error: "candidate first name is required",
-           invalid_type_error: "candidate firt name must be string",
-        })
-        .min(1, "candidate name is required"),
-     lastName: z
-        .string({
-           required_error: "candidate last name is required",
-           invalid_type_error: "candidate last name must be string",
-        })
-        .min(1, "candidate last name is required"), 
-        passbookNumber: z.coerce.number({
-            required_error: "number of seats is required",
-            invalid_type_error: "position number of seats must be number",
-         }),
-         picture: z
-         .string({
-            required_error: "candidate picture is required",
-            invalid_type_error: "candidate picture type must be string",
-         }).nullable(),
-         electionId: z.coerce.number({
-            required_error: "election ID is required",
-            invalid_type_error: "election ID type must be number",
-         }),
-         positionId: z.coerce.number({
-            required_error: "position ID is required",
-            invalid_type_error: "position ID type must be number",
-         }),
-  });
-
-
-  export const createCandidateWithUploadSchema = z.object({
-   firstName: z
-      .string({
-         required_error: "candidate first name is required",
-         invalid_type_error: "candidate firt name must be string",
-      })
-      .min(1, "candidate name is required"),
-   lastName: z
-      .string({
-         required_error: "candidate last name is required",
-         invalid_type_error: "candidate last name must be string",
-      })
-      .min(1, "candidate last name is required"), 
-      passbookNumber: z.coerce.number({
-          required_error: "passbook is required",
-          invalid_type_error: "passbook number type must be number",
-       }),
-       picture: z.any().refine((file: File | undefined | null) => file !== undefined && file !== null, {
-         message: "Image File is required",
-      }),
-       electionId: z.coerce.number({
-          required_error: "candidate election ID is required",
-          invalid_type_error: "candidate election ID type must be number",
-       }),
-       positionId: z.coerce.number({
-          required_error: "position ID is required",
-          invalid_type_error: "position ID type must be number",
-       }),
-});

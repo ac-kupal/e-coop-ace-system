@@ -1,6 +1,5 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
@@ -28,11 +27,10 @@ import moment from "moment";
 import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import UpdateEventModal from "../modals/update-event-modal";
 import { TEventWithElection } from "@/types";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 const Actions = ({ event }: { event: TEventWithElection }) => {
    
    const router = useRouter()

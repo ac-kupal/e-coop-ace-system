@@ -116,7 +116,7 @@ model EventAttendees {
     gender         gender
     birthday       DateTime
     contact        String
-    picture        String?  @default("/images/default-event.png")
+    picture        String?  @default("/images/default-avatar.png")
 
     canVote Boolean? @default(false)
 
@@ -157,6 +157,7 @@ model Election {
 
     // settings - add other settings here
     // who can vote
+    allowBirthdayVerification Boolean @default(false)
     voteEligibility VotingEligibility @default(MIGS)
 
     positions  Position[] // 1st to create
@@ -192,7 +193,7 @@ model Candidate {
     id             Int     @id @default(autoincrement())
     firstName      String
     lastName       String
-    passbookNumber Int
+    passbookNumber String
     picture        String? @default("/images/default.png")
 
     electionId Int

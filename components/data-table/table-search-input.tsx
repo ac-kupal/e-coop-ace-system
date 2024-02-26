@@ -31,7 +31,7 @@ const SearchInput = ({globalFilter,setGlobalFilter}: Props) => {
          placeholder="Search..."
          value={globalFilter}
          onChange={(event) => setGlobalFilter(event.target.value)}
-         className="w-full pl-8 border-0 border-b bg-transparent   text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+         className="w-full pl-8 border-0 border-b border-white bg-transparent text-white placeholder:text-white   text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
       />
    );
 };

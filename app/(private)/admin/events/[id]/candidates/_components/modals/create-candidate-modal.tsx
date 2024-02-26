@@ -15,10 +15,8 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
-import { toast } from "sonner";
 import { z } from "zod";
 import {
-   createCandidateSchema,
    createCandidateWithUploadSchema,
 } from "@/validation-schema/candidate";
 import {
@@ -53,6 +51,7 @@ const CreateCandidateModal = ({
    electionId,
    positions,
 }: Props) => {
+
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: "/images/default.png",
       maxOptimizedSizeMB: 0.5,
@@ -62,7 +61,7 @@ const CreateCandidateModal = ({
    const defaultValues = {
       firstName: "",
       lastName: "",
-      passbookNumber: 0,
+      passbookNumber: "",
       picture: imageFile,
       electionId: electionId,
       positionId: 0,
@@ -87,15 +86,19 @@ const CreateCandidateModal = ({
 
    const onSubmit = async (formValues: createTCandidate) => {
       try {
-         const image = await uploadImage.mutateAsync({
-            fileName: `${formValues.passbookNumber}`,
-            folderGroup: "election-candidates",
-            file: formValues.picture,
-         });
-         createCandidate.mutate({
-            ...formValues,
-            picture: !image ? "/images/default.png" : image,
-         });
+         if(!imageFile) {
+            createCandidate.mutate({...formValues,picture: "/images/default.png",});
+         }else{
+            const image = await uploadImage.mutateAsync({
+               fileName: `${formValues.passbookNumber}`,
+               folderGroup: "election-candidates",
+               file: imageFile,
+            });
+            createCandidate.mutate({
+               ...formValues,
+               picture: !image ? "/images/default.png" : image,
+            });
+         }
          resetPicker();
       } catch (error) {
          console.log(error);
@@ -114,7 +117,7 @@ const CreateCandidateModal = ({
          <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
             <ModalHead
                title="Create Candidate"
-               description="You are about to create a candidate"
+               description="You are about to create a candidate for this elections and the profile can be optional."
             />
             <Form {...candidateForm}>
                <form

@@ -28,6 +28,9 @@ import { z } from "zod";
 import { useCallback, useEffect } from "react";
 import { updateCandidateSchema } from "@/validation-schema/candidate";
 import { useUpdateCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
+import useImagePick from "@/hooks/use-image-pick";
+import ImagePick from "@/components/image-pick";
+import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 
 type Props = {
    state: boolean;
@@ -46,6 +49,12 @@ const UpdateCandidateModal = ({
    candidate,
    positions,
 }: Props) => {
+
+   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
+      initialImageURL: !candidate.picture ? "/images/default.png" :candidate.picture ,
+      maxOptimizedSizeMB: 0.5,
+      maxWidthOrHeight: 300,
+   });
 
    const candidateForm = useForm<updateTCandidate>({
       resolver: zodResolver(updateCandidateSchema),
@@ -66,16 +75,42 @@ const UpdateCandidateModal = ({
 
    const onCancelandReset = () => {
       onClose(false);
+      candidateForm.reset()
    };
    const candidateId = candidate.id
    const updateCandidate = useUpdateCandidate({candidateId,onCancelandReset})
    const isLoading = updateCandidate.isPending;
+   const uploadImage = onUploadImage();
+
+   const isCandidateOnChange = candidateForm.getValues("firstName") === candidate.firstName && candidateForm.getValues("lastName") === candidate.lastName && Number(candidateForm.getValues("positionId")) === candidate.positionId && candidateForm.getValues("picture") === candidate.picture
+
+   const onSubmit=async(formValues: updateTCandidate)=>{
+      try {
+         if(!imageFile) {
+            updateCandidate.mutate({...formValues,picture: candidateForm.getValues("picture"),});
+         }else{
+            const image = await uploadImage.mutateAsync({
+               fileName: `${formValues.passbookNumber}`,
+               folderGroup: "election-candidates",
+               file: imageFile,
+            });
+            updateCandidate.mutate({
+               ...formValues,
+               picture: !image ? "/images/default.png" : image,
+            });
+         }
+         resetPicker();
+      } catch (error) {
+         console.log(error);
+      }
+   }
 
    return (
       <Dialog
          open={state}
          onOpenChange={(state) => {
-            onClose(state);
+            onCancelandReset()
+            resetPicker()
          }}
       >
          <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
@@ -85,10 +120,7 @@ const UpdateCandidateModal = ({
             />
             <Form {...candidateForm}>
                <form
-                  onSubmit={candidateForm.handleSubmit((formValues) => {
-                  console.log(formValues)
-                   updateCandidate.mutate(formValues);
-                  })}
+                  onSubmit={candidateForm.handleSubmit(onSubmit)}
                   className=" space-y-3"
                >
                   <FormField
@@ -154,6 +186,21 @@ const UpdateCandidateModal = ({
                         </FormItem>
                      )}
                   />
+                   <FormField
+                     control={candidateForm.control}
+                     name="picture"
+                     render={({ field }) => {
+                        return (
+                           <FormItem>
+                              <FormLabel>Profile</FormLabel>
+                              <FormControl>
+                                 <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL} onChange={async (e)=> {field.onChange(await onSelectImage(e))}} />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        );
+                     }}
+                  />
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
                      <Button
@@ -167,7 +214,7 @@ const UpdateCandidateModal = ({
                      >
                         cancel
                      </Button>
-                     <Button disabled={isLoading} type="submit">
+                     <Button disabled={isCandidateOnChange} type="submit">
                         {isLoading ? (
                            <Loader2
                               className="h-3 w-3 animate-spin"
