@@ -10,6 +10,7 @@ export * from './election.types'
 export * from './position.types'
 export * from './candidate.types'
 export * from './member-attendees.types'
+export * from './member.types'
 
 export type TApiError = { message: string };
 

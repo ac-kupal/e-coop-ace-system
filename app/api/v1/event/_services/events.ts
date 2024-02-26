@@ -73,6 +73,7 @@ export const getAllEvent = async (includeElection = false) => {
             category: true,
             date: true,
             election: includeElection,
+            coverImage:true
          },
       });
    } catch (error) {

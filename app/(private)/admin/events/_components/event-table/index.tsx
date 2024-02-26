@@ -22,33 +22,15 @@ import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
 import CreateEventModal from "../modals/create-event-modal";
 import { TEventWithElection } from "@/types";
+import { getAllEvent } from "@/hooks/api-hooks/event-api-hooks";
 
 const EventTable = () => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createEvent, setCreateEvent] = useState(false)
    
-   const { data, isFetching, isLoading, isError, refetch } = useQuery<
-      TEventWithElection[],
-      string
-   >({
-      queryKey: ["event-list-query"],
-      queryFn: async () => {
-         try {
-            const response = await axios.get("/api/v1/event");
-            return response.data;
-         } catch (e) {
-            const errorMessage = handleAxiosErrorMessage(e);
-            toast.error(errorMessage, {
-               action: {
-                  label: "try agian",
-                  onClick: () => refetch(),
-               },
-            });
-            throw handleAxiosErrorMessage(e);
-         }
-      },
-      initialData: [],
-   });
+   const { data, isFetching, isLoading, isError, refetch } = getAllEvent()
+      
+   
 
    const table = useReactTable({
       data,

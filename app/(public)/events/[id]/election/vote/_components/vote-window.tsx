@@ -4,19 +4,20 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
+import VoteHeader from "./vote-header";
+import VoteSummary from "./vote-summary";
+import CandidateList from "./candidate-list";
+import VoteNavControl from "./vote-nav-control";
+import OnlyLandscape from "@/components/only-landscape";
+import LoadingSpinner from "@/components/loading-spinner";
+import InvalidElection from "../../_components/invalid-election";
+
 import {
     TCandidatewithPosition,
     TElectionWithPositionAndCandidates,
     TMemberAttendeesMinimalInfo,
 } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import LoadingSpinner from "@/components/loading-spinner";
-import InvalidElection from "../../_components/invalid-election";
-import OnlyLandscape from "@/components/only-landscape";
-import VoteHeader from "./vote-header";
-import CandidateList from "./candidate-list";
-import VoteNavControl from "./vote-nav-control";
-import VoteSummary from "./vote-summary";
 
 type Props = {
     election: TElectionWithPositionAndCandidates;
@@ -26,6 +27,8 @@ const VoteWindow = ({ election }: Props) => {
     const totalPositions = election.positions.length - 1;
     const [currentPage, setCurrentPage] = useState(0);
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
+
+    // TODO: Add modal direction
 
     const {
         data: voter,
@@ -70,7 +73,6 @@ const VoteWindow = ({ election }: Props) => {
 
     return (
         <div className="w-full max-w-7xl py-16">
-            <OnlyLandscape />
             <div className="w-full flex flex-col min-h-[70vh]">
                 {currentPage > totalPositions ? (
                     <VoteSummary positions={election.positions} votes={votes} />
@@ -117,6 +119,8 @@ const VoteWindow = ({ election }: Props) => {
                     ).length > 0
                 }
             />
+
+            <OnlyLandscape />
         </div>
     );
 };
