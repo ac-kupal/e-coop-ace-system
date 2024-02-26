@@ -40,14 +40,14 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { EventType } from "@prisma/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation'
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { useCreateEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
-
+import {v4 as uuid, v4} from "uuid"
 type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
@@ -101,16 +101,22 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
    
    const onSubmit = async (formValues:EventSchemaType) => {
      try {
-       const image = await uploadImage.mutateAsync({
-         fileName: `${formValues.title}`,
-         folderGroup: "event",
-         file: formValues.coverImage,
-       });
-       console.log(image)
-        createEvent.mutate({
-         ...formValues,
-         coverImage: image,
-       });
+       if(!imageFile){
+         createEvent.mutate({
+            ...formValues,
+            coverImage: "/images/default.png",
+          });
+       }else{
+         const image = await uploadImage.mutateAsync({
+            fileName: `${v4()}`,
+            folderGroup: "event",
+            file: formValues.coverImage,
+          });
+          createEvent.mutate({
+            ...formValues,
+            coverImage:  !image ? "/images/default.png" : image,
+          });
+       }
        resetPicker();
      } catch (error) {
        console.log(error);
@@ -130,8 +136,8 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
       >
          <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
             <ModalHead
-               title="Edit Event"
-               description="You will be able to modify this event, excluding event categories or types."
+               title="Create Event"
+               description="Creating an event will also generate an election. The election may be optional as well."
             />
             <Form {...eventForm}>
                <form

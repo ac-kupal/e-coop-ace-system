@@ -33,12 +33,15 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 
 import { mutationErrorHandler } from "@/errors/mutation-error-handler";
-import {
-   updateEventSchema,
-} from "@/validation-schema/event";
+import { updateEventSchema } from "@/validation-schema/event";
 import { z } from "zod";
 import { useCallback, useEffect } from "react";
 import { TEventWithElection } from "@/types";
+import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
+import useImagePick from "@/hooks/use-image-pick";
+import { v4 as uuid, v4 } from "uuid";
+import { updateEvent } from "@/hooks/api-hooks/event-api-hooks";
+import ImagePick from "@/components/image-pick";
 
 type Props = {
    event: TEventWithElection;
@@ -51,45 +54,64 @@ type TUpdateEventSchema = z.infer<typeof updateEventSchema>;
 const UpdateEventModal = ({ event, state, onClose }: Props) => {
    const queryClient = useQueryClient();
 
+   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
+      initialImageURL: !event.coverImage
+         ? "/images/default.png"
+         : event.coverImage,
+      maxOptimizedSizeMB: 1,
+      maxWidthOrHeight: 800,
+   });
+
    const eventForm = useForm<TUpdateEventSchema>({
       resolver: zodResolver(updateEventSchema),
    });
 
+   const isEventOnChange = eventForm.getValues("title") === event.title &&  eventForm.getValues("description") === event.description &&  eventForm.getValues("location") === event.location &&  eventForm.getValues("coverImage") === event.coverImage 
    const defaultValues = useCallback(() => {
       eventForm.setValue("title", event.title);
       eventForm.setValue("description", event.description);
       eventForm.setValue("location", event.location);
       eventForm.setValue("date", event.date);
+      eventForm.setValue("coverImage",event.coverImage)
    }, [eventForm, event]);
 
    useEffect(() => {
       defaultValues();
    }, [eventForm, event, defaultValues]);
 
+   const onCancelandReset = () => {
+      eventForm.reset();
+      onClose(false);
+   };
 
-   const createUpdateEventMutation = useMutation<TUpdateEventSchema,string, unknown>({
-      mutationKey: ["update-event"],
-      mutationFn: async (data) => {
-         try {
-            const response = await axios.patch(`/api/v1/event/${event.id}`,data);
-            return response.data;
-         } catch (error) {
-            mutationErrorHandler(error);
+   const uploadImage = onUploadImage();
+   const updateEventMutation = updateEvent({ onCancelandReset, id: event.id });
+
+   const isLoading = updateEventMutation.isPending;
+
+   const onSubmit = async (formValues: TUpdateEventSchema) => {
+      try {
+         if (!imageFile) {
+            updateEventMutation.mutate({
+               ...formValues,
+               coverImage: "/images/default.png",
+            });
+         } else {
+            const image = await uploadImage.mutateAsync({
+               fileName: `${v4()}`,
+               folderGroup: "event",
+               file: formValues.coverImage,
+            });
+            updateEventMutation.mutate({
+               ...formValues,
+               coverImage: !image ? "/images/default.png" : image,
+            });
          }
-      },
-      onSuccess: () => {
-        onClose(false)
-        queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
-         toast.success("event updated successfully");
-      },
-   });
-
-   const isLoading = createUpdateEventMutation.isPending;
-
-   const onSubmit = async (formValues: TUpdateEventSchema) =>{
-    createUpdateEventMutation.mutate(formValues);
-   }
-
+         resetPicker();
+      } catch (error) {
+         console.log(error);
+      }
+   };
    return (
       <Dialog
          open={state}
@@ -103,7 +125,10 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                description="Edit Event: You will be able to edit the basic information of this event, but not its category."
             />
             <Form {...eventForm}>
-               <form onSubmit={eventForm.handleSubmit(onSubmit)} className=" space-y-3">
+               <form
+                  onSubmit={eventForm.handleSubmit(onSubmit)}
+                  className=" space-y-3"
+               >
                   <FormField
                      control={eventForm.control}
                      name="title"
@@ -198,6 +223,27 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                         </FormItem>
                      )}
                   />
+                  <FormField
+                     control={eventForm.control}
+                     name="coverImage"
+                     render={({ field }) => {
+                        return (
+                           <FormItem>
+                              <FormLabel>Profile</FormLabel>
+                              <FormControl>
+                                 <ImagePick
+                                    className="flex flex-col items-center gap-y-4"
+                                    url={imageURL}
+                                    onChange={async (e) => {
+                                       field.onChange(await onSelectImage(e));
+                                    }}
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        );
+                     }}
+                  />
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
                      <Button
@@ -220,7 +266,7 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                      >
                         cancel
                      </Button>
-                     <Button disabled={isLoading} type="submit">
+                     <Button disabled={isEventOnChange} type="submit">
                         {isLoading ? (
                            <Loader2
                               className="h-3 w-3 animate-spin"

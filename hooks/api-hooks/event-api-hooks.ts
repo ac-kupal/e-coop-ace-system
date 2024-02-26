@@ -2,8 +2,7 @@ import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
-import { TEvent, TEventWithElection } from "@/types";
-import { createEvent } from "@/app/api/v1/event/_services/events";
+import { TEventWithElection } from "@/types";
 import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import { useRouter } from "next/navigation";
 
@@ -32,6 +31,30 @@ export const deleteEvent = () => {
    return deleteEventMutation;
 };
 
+export const getAllEvent = () => {
+   const getAllEvent = useQuery<TEventWithElection[], string>({
+      queryKey: ["event-list-query"],
+      queryFn: async () => {
+         try {
+            const response = await axios.get("/api/v1/event");
+            return response.data;
+         } catch (e) {
+            const errorMessage = handleAxiosErrorMessage(e);
+            toast.error(errorMessage, {
+               action: {
+                  label: "try agian",
+                  onClick: () => getAllEvent.refetch(),
+               },
+            });
+            throw handleAxiosErrorMessage(e);
+         }
+      },
+      initialData: [],
+   });
+
+   return getAllEvent
+};
+
 export const getEvent = (id: number) => {
    const eventId = Number(id);
    const getEvent = useQuery<TEventWithElection, string>({
@@ -50,10 +73,11 @@ export const getEvent = (id: number) => {
 };
 type Props = {
    onCancelandReset: () => void;
-}
+   id?: number;
+};
 
-export const useCreateEvent = ({onCancelandReset}:Props) => {
-   const router = useRouter()
+export const useCreateEvent = ({ onCancelandReset }: Props) => {
+   const router = useRouter();
    const queryClient = useQueryClient();
    const createEvent = useMutation<TEventWithElection, string, any>({
       mutationKey: ["create-event"],
@@ -71,6 +95,28 @@ export const useCreateEvent = ({onCancelandReset}:Props) => {
          toast.success("Event created successfully");
          if (!data.election) return;
          router.push(`/admin/events/${data.id}/election`);
+      },
+   });
+
+   return createEvent;
+};
+
+export const updateEvent = ({ onCancelandReset, id }: Props) => {
+   const queryClient = useQueryClient();
+   const createEvent = useMutation<TEventWithElection, string, any>({
+      mutationKey: ["update-event"],
+      mutationFn: async (data) => {
+         try {
+            const response = await axios.patch(`/api/v1/event/${id}`, data);
+            return response.data;
+         } catch (e) {
+            mutationErrorHandler(e);
+         }
+      },
+      onSuccess: () => {
+         queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
+         onCancelandReset();
+         toast.success("Event updated successfully");
       },
    });
 
