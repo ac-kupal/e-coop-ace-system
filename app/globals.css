@@ -68,3 +68,15 @@
 #html5qr-code-full-region__scan_region{
     @apply flex justify-center
 }
+
+.thin-scroll::-webkit-scrollbar {
+    width: 0.6rem;
+}
+
+.thin-scroll::-webkit-scrollbar-track {
+    @apply bg-transparent shadow-sm;
+}
+
+.thin-scroll::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-600;
+}
