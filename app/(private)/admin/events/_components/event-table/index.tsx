@@ -49,12 +49,12 @@ const EventTable = () => {
    });
    
    return (
-      <div className="flex flex-1 flex-col gap-y-2 ">
+      <div className="flex flex-1 flex-col gap-y-2">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-[#3D7663]">
          <CreateEventModal state={createEvent} onClose={(state) => setCreateEvent(state)} />
             <div className="flex items-center gap-x-4 text-muted-foreground">
                <div className="relative">
-                  <SearchIcon className="absolute text-white w-4 h-auto top-3 left-2" />
+                  <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                   <SearchInput
                      setGlobalFilter={(e) => setGlobalFilter(e)}
                      globalFilter={globalFilter}

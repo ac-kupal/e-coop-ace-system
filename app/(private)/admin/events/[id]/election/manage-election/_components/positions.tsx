@@ -52,7 +52,9 @@ type Props = {
 export const Positions = ({id}:Props) => {
      const [globalFilter, setGlobalFilter] = useState<string>("");
      const { data, isFetching, isLoading, isError } = getPosition(id);
-    
+
+     console.log(data)
+
      const table = useReactTable({
         data,
         columns,

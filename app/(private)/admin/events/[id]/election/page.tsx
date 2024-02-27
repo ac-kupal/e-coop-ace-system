@@ -8,6 +8,7 @@ type Props ={
 }
 
 const ElectionPage = async ({ params }: Props) => {
+   
    const electionId =await getElectionId(params.id)
 
    if(!electionId) return <NotFound/>
