@@ -39,7 +39,7 @@ const EventNavBar = ({hasElection}:Props) => {
       <div className="flex space-x-2 -translate-x-4 ">
         {EventRoutes.map((route: TElectionRoute, i) => {
             if (hasElection && route.path === "election") {
-               return <></>
+               return null
             } else {
                return <EventNavItems route={route} key={i} />;
             }
