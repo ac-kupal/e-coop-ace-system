@@ -24,7 +24,7 @@ const EventLayout = ( { children,params }: Props) => {
             <div className="p-5 w-full">
             <EventNavBar hasElection={hasElection} />
             </div>
-            <div className="flex bg-secondary shadow-xl dark:bg-secondary/30 rounded-3xl overflow-x-hidden p-8 w-full ">
+            <div className="flex bg-secondary  min-h-screen shadow-xl dark:bg-secondary/30 rounded-3xl overflow-x-hidden p-8 w-full ">
                <div className="flex w-full">
               {!isCurrentPath && <>
               {!hasElection && (<ElectionSideBar/>)}

@@ -48,7 +48,7 @@ const MemberTable = ({ id }: Props) => {
    });
 
    return (
-      <div>
+      <div className={``}>
       <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
       <CreateMemberModal eventId={id} state={createMember} onClose={(state) => setCreateMember(state)} />
             <div className="flex items-center gap-x-4 text-muted-foreground">
