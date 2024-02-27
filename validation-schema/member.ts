@@ -64,3 +64,5 @@ export const createEventSchema = z.object({
      }).optional()
   });
   
+
+export const memberEmailSchema = z.string({invalid_type_error : "invalid email"}).email("invalid email");

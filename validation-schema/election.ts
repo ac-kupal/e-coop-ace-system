@@ -1,6 +1,6 @@
 import z from "zod"
 import { ElectionStatus, Election } from "@prisma/client";
-import { TEvent } from "@/types";
+import { candidateId } from "./candidate";
 
 export const createElectionValidation = z.object({
      electionName: z.string({
@@ -9,3 +9,7 @@ export const createElectionValidation = z.object({
         }),
      status: z.nativeEnum(ElectionStatus,{ invalid_type_error : "invalid category" }),
   });
+
+
+// used in api vote submission
+export const chosenCandidateIds = z.array(candidateId)

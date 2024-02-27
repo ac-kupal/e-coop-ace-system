@@ -11,9 +11,6 @@ type Props = {
 };
 
 const VoteSummary = ({ positions, votes }: Props) => {
-
-// TODO: Cast Vote
-
     return (
         <div className="w-full flex flex-col gap-y-8 items-center">
             <div className="flex flex-col gap-y-4 items-center">

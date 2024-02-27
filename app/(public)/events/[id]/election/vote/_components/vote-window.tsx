@@ -1,8 +1,5 @@
-"use client";
-import axios from "axios";
-import { toast } from "sonner";
+'use client'
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 import VoteHeader from "./vote-header";
 import VoteSummary from "./vote-summary";
@@ -12,49 +9,27 @@ import OnlyLandscape from "@/components/only-landscape";
 import LoadingSpinner from "@/components/loading-spinner";
 import InvalidElection from "../../_components/invalid-election";
 
+import { useCastVote, loadVoter } from "@/hooks/api-hooks/voter-api-hooks";
+
 import {
     TCandidatewithPosition,
     TElectionWithPositionAndCandidates,
-    TMemberAttendeesMinimalInfo,
 } from "@/types";
-import { handleAxiosErrorMessage } from "@/utils";
+import { useRouter } from "next/navigation";
 
 type Props = {
     election: TElectionWithPositionAndCandidates;
 };
 
 const VoteWindow = ({ election }: Props) => {
+    const router = useRouter();
     const totalPositions = election.positions.length - 1;
     const [currentPage, setCurrentPage] = useState(0);
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
     // TODO: Add modal direction
-
-    const {
-        data: voter,
-        isPending,
-        isError,
-        error,
-    } = useQuery<TMemberAttendeesMinimalInfo, string>({
-        queryKey: ["voter-authorization"],
-        queryFn: async () => {
-            try {
-                const checkVoteAuthorization = await axios.get(
-                    `/api/v1/event/${election.eventId}/election/${election.id}/check-vote-auth/`,
-                );
-
-                const voter: TMemberAttendeesMinimalInfo = checkVoteAuthorization.data;
-                toast.success(
-                    `Congratulations ${voter.firstName}, you are authorized to vote 🎉.`,
-                );
-                return checkVoteAuthorization.data;
-            } catch (e) {
-                const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage);
-                throw errorMessage;
-            }
-        },
-    });
+    const { voter, isPending, isError, error } = loadVoter(election)
+    const { castVote, isCasting, isCastError, castError } = useCastVote(election, (data) => { console.log(data)});
 
     if (isPending)
         return (
@@ -64,7 +39,7 @@ const VoteWindow = ({ election }: Props) => {
             </div>
         );
 
-    if (isError) return <InvalidElection message={error} />;
+    if (isError && error) return <InvalidElection message={error} />;
 
     const currentPosition =
         election.positions[
@@ -72,7 +47,7 @@ const VoteWindow = ({ election }: Props) => {
         ];
 
     return (
-        <div className="w-full max-w-7xl py-16">
+        <div className="w-full max-w-7xl py-2 lg:py-16 pb-4">
             <div className="w-full flex flex-col min-h-[70vh]">
                 {currentPage > totalPositions ? (
                     <VoteSummary positions={election.positions} votes={votes} />
@@ -111,7 +86,7 @@ const VoteWindow = ({ election }: Props) => {
                 lastPage={totalPositions}
                 onBack={() => setCurrentPage((prev) => prev - 1)}
                 onNext={() => setCurrentPage((prev) => prev + 1)}
-                onFinalize={() => { }}
+                onFinalize={() => castVote(votes.map((votedCandidate) => votedCandidate.id ))}
                 canNext={
                     votes.filter(
                         (votedCandidate) =>
@@ -119,7 +94,6 @@ const VoteWindow = ({ election }: Props) => {
                     ).length > 0
                 }
             />
-
             <OnlyLandscape />
         </div>
     );

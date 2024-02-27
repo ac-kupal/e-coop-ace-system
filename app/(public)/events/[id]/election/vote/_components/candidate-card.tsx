@@ -44,7 +44,7 @@ const CandidateCard = ({
                     )}
                 >
                     <img
-                        className="h-[200px] pointer-events-none w-[300px] rounded-none object-cover"
+                        className="h-[100px] w-full lg:h-[200px] pointer-events-none rounded-none object-cover"
                         src={picture ?? "/images/default-avatar.png"}
                     />
                 </div>
@@ -59,7 +59,7 @@ const CandidateCard = ({
                     </div>
                 </div>
             </div>
-            <p className="text-xl font-medium">{`${firstName} ${lastName}`}</p>
+            <p className="text-base lg:text-xl font-medium">{`${firstName} ${lastName}`}</p>
         </div>
     );
 };
