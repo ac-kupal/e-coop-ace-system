@@ -57,7 +57,7 @@ const CandidateTable = ({electionId}: Props) => {
             />
             <div className="flex items-center gap-x-4 text-muted-foreground">
                <div className="relative">
-                  <SearchIcon className="absolute  w-4 h-auto top-3 left-2" />
+                  <SearchIcon className="absolute text-muted-forground  w-4 h-auto top-3 left-2" />
                   <SearchInput
                      setGlobalFilter={(e) => setGlobalFilter(e)}
                      globalFilter={globalFilter}
