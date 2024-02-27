@@ -24,7 +24,6 @@ const SearchInput = ({globalFilter,setGlobalFilter}: Props) => {
            window.removeEventListener("keydown", shortCutCommand);
         };
      }, []);
-
    return (
       <Input
          ref={onFocusSearch}

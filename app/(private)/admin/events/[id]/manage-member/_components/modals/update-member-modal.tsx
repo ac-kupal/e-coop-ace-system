@@ -157,6 +157,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                  <FormLabel>Passbook Number</FormLabel>
                                  <FormControl>
                                     <Input
+                                       disabled={true}
                                        placeholder="enter pass book"
                                        className="placeholder:text-foreground/40"
                                        {...field}

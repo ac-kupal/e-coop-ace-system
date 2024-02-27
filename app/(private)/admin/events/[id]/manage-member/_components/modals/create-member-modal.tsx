@@ -90,6 +90,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
    const reset = () => {
       memberForm.reset();
    };
+   
    const onCancelandReset = () => {
       reset();
       onClose(false);

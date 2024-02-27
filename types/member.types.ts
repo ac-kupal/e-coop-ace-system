@@ -24,6 +24,7 @@ export type TCreateManyMember = {
     picture: string | null;
     eventId:number;
     emailAddress:string | null;
+    createdBy:number,
 }
 
 
