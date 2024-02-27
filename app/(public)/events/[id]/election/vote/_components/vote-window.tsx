@@ -28,8 +28,8 @@ const VoteWindow = ({ election }: Props) => {
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
     // TODO: Add modal direction
-    const { voter, isPending, isError, error } = loadVoter(election)
-    const { castVote, isCasting, isCastError, castError } = useCastVote(election, (data) => { console.log(data)});
+    const { isPending, isError, error } = loadVoter(election)
+    const { castVote, isCasting, isCastError, castError } = useCastVote(election, (data) => { router.push(`/events/${election.eventId}/election/vote/complete`) });
 
     if (isPending)
         return (
@@ -84,6 +84,7 @@ const VoteWindow = ({ election }: Props) => {
             <VoteNavControl
                 currentPage={currentPage}
                 lastPage={totalPositions}
+                isLoading={isCasting}
                 onBack={() => setCurrentPage((prev) => prev - 1)}
                 onNext={() => setCurrentPage((prev) => prev + 1)}
                 onFinalize={() => castVote(votes.map((votedCandidate) => votedCandidate.id ))}
