@@ -21,11 +21,19 @@ import {
 import moment from "moment";
 import { TMember } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { deleteMember } from "@/hooks/api-hooks/member-api-hook";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import UpdateMemberModal from "../modals/update-member-modal";
+import { useState } from "react";
 
 const Actions = ({ member }: { member: TMember }) => {
-
+   const [onOpenModal,setOnOpenModal] = useState(false)
+   const deleteOperation = deleteMember();
+   const { onOpen: onOpenConfirmModal } = useConfirmModal();
    return (
       <DropdownMenu>
+         <UpdateMemberModal member={member} state={onOpenModal} onClose={()=> setOnOpenModal(false)} onCancel={()=> setOnOpenModal(false)} ></UpdateMemberModal>
          <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="w-8 h-8 p-0">
                <span className="sr-only">Open menu</span>
@@ -47,11 +55,25 @@ const Actions = ({ member }: { member: TMember }) => {
                Copy member ID
             </DropdownMenuItem>
 
-            <DropdownMenuItem className="px-2 gap-x-2">
+            <DropdownMenuItem className="px-2 gap-x-2"
+               onClick={()=>{setOnOpenModal(true)}}
+               
+            >
                <Pencil strokeWidth={2} className="h-4" /> Edit Member
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="px-2 gap-x-2 text-destructive">
+            <DropdownMenuItem className="px-2 gap-x-2 text-destructive"
+             onClick={() =>
+               onOpenConfirmModal({
+                  title:"Delete Member 🗑️",
+                  description:
+                     "Are you sure to delete this member permanently? This cannot be undone.",
+                  onConfirm: () => {
+                     deleteOperation.mutate({eventId:member.id});
+                  },
+               })
+            }
+            >
                <Trash strokeWidth={2} className="h-4" />Delete
             </DropdownMenuItem>
          </DropdownMenuContent>
@@ -66,9 +88,14 @@ const columns: ColumnDef<TMember>[] = [
          <DataTableColHeader column={column} title="first Name" />
       ),
       cell: ({ row }) => {
+         const img = row.original.picture === null ? "/images/default.png" :  row.original.picture
          return (
-            <div className="flex space-x-2">
-               <h1>{row.original.firstName}</h1>
+            <div className="flex items-center space-x-2">
+               <Avatar>
+                  <AvatarImage src={img} />
+                  <AvatarFallback className="bg-primary text-accent">{row.original.firstName.charAt(0).toUpperCase()}</AvatarFallback>
+               </Avatar>
+               <h1 className="font-medium">{row.original.firstName}</h1>
             </div>
          );
       },
@@ -119,12 +146,12 @@ const columns: ColumnDef<TMember>[] = [
       cell: ({ row }) => <div className="">{row.original.contact}</div>,
    },
    {
-      id: "eventId",
+      id: "emailAddress",
       enableHiding: false,
       header: ({ column }) => (
-         <DataTableColHeader column={column} title="event ID" />
+         <DataTableColHeader column={column} title="email" />
       ),
-      cell: ({ row }) => <div className="">{row.original.eventId}</div>,
+      cell: ({ row }) => <div className="">{row.original.emailAddress}</div>,
    },
    {
      id: "voteOtp",
@@ -140,7 +167,7 @@ const columns: ColumnDef<TMember>[] = [
      header: ({ column }) => (
         <DataTableColHeader column={column} title="Registered" />
      ),
-     cell: ({ row }) => <div className="">{row.original.registered ? <Badge>registered</Badge>:<Badge>unregistered</Badge>}</div>,
+     cell: ({ row }) => <div className="">{row.original.registered ? <Badge>registered</Badge>:<Badge variant={"secondary"}>unregistered</Badge>}</div>,
   },
    {
       id: "actions",

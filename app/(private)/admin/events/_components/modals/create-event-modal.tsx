@@ -225,13 +225,16 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
                                  className="w-auto p-0"
                                  align="start"
                               >
-                                 <Calendar
-                                    mode="single"
-                                    selected={field.value}
-                                    onSelect={field.onChange}
-                                    disabled={(date) => date < new Date()}
-                                    initialFocus
-                                 />
+                                  <Calendar
+                                          mode="single"
+                                          selected={field.value}
+                                          onSelect={field.onChange}
+                                          captionLayout="dropdown-buttons"
+                                          disabled={(date) => date < new Date()}
+                                          fromYear={1900}
+                                          toYear={new Date().getFullYear()}
+                                          initialFocus
+                                       />
                               </PopoverContent>
                            </Popover>
                            <FormMessage />

@@ -1,19 +1,20 @@
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { createElectionValidation } from "@/validation-schema/election";
-import { createEventSchema } from "@/validation-schema/event";
-import { ElectionStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { createEvent } from "../event/_services/events";
 import db from '@/lib/database'
+import { createMemberSchema } from "@/validation-schema/member";
+import { generateOTP } from "@/lib/server-utils";
 
 
 export const POST = async (req: NextRequest) => {
      try {
-        const { data } = await req.json();
-        
+        const data  = await req.json();
+        console.log(data)
+        createMemberSchema.parse(data)
         const user = await currentUserOrThrowAuthError()
-        
+        const memberData = {...data,createdBy:user.id,voteOtp:generateOTP(6)}
+        const newMember = await db.eventAttendees.create({data:memberData})
+        return NextResponse.json(newMember)
      } catch (e) {
         return routeErrorHandler(e, req.method);
      }

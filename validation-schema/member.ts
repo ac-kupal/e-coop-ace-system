@@ -1,5 +1,6 @@
 import { gender } from "@prisma/client";
 import { z } from "zod";
+import { passbookNumber } from "./event-registration-voting";
 
 // export type TCreateMember = {
 //    passbookNumber: string;
@@ -22,47 +23,65 @@ const commonFieldErrorsMinimum = {
    required_error: "Field must contain at least 1 character(s)",
 };
 
-export const createEventSchema = z.object({
-     passbookNumber: z.string({
-        ...commonFieldErrors,
-     }).min(1, commonFieldErrorsMinimum.required_error),
-  
-     firstName: z.string({
-        ...commonFieldErrors,
-     }).min(1, commonFieldErrorsMinimum.required_error),
-  
-     middleName: z.coerce.date({
-        ...commonFieldErrors,
-     }),
-  
-     lastName: z.string({
-        ...commonFieldErrors,
-     }).min(1, commonFieldErrorsMinimum.required_error),
-  
-     gender: z.nativeEnum(gender, {
-        ...commonFieldErrors,
-     }),
-  
-     picture: z.string({
-        ...commonFieldErrors,
-     }).nullable(),
-  
-     birthday: z.coerce.date({
-        ...commonFieldErrors,
-     }),
-  
-     contact: z.string({
-        ...commonFieldErrors,
-     }).min(11, commonFieldErrorsMinimum.required_error),
-  
-     voteOtp: z.string({
-        ...commonFieldErrors,
-     }).min(6, commonFieldErrorsMinimum.required_error),
-  
-     eventId: z.coerce.number({
-          ...commonFieldErrors,
-     }).optional()
-  });
-  
+export const createMemberSchema = z.object({
+   passbookNumber: z
+      .string({
+         required_error: "passBook Number field is required",
+         invalid_type_error: "Invalid passBook Number data type",
+      })
+      .min(1, commonFieldErrorsMinimum.required_error),
 
-export const memberEmailSchema = z.string({invalid_type_error : "invalid email"}).email("invalid email");
+   firstName: z
+      .string({
+         required_error: "firstname field is required",
+         invalid_type_error: "Invalid firstname data type",
+      })
+      .min(1, commonFieldErrorsMinimum.required_error),
+
+   middleName: z
+      .string({
+         required_error: "middle field is required",
+         invalid_type_error: "Invalid middle data type",
+      })
+      .min(1, commonFieldErrorsMinimum.required_error),
+
+   lastName: z
+      .string({
+         required_error: "lastname field is required",
+         invalid_type_error: "Invalid lastname data type",
+      })
+      .min(1, commonFieldErrorsMinimum.required_error),
+
+   gender: z.nativeEnum(gender, {
+      required_error: "gender field is required",
+         invalid_type_error: "Invalid gender data type",
+   }),
+
+   birthday: z.coerce.date({ required_error: "birthday field is required",
+   invalid_type_error: "Invalid birthday data type",}),
+
+   emailAddress: z
+      .string({
+         required_error: "email field is required",
+         invalid_type_error: "Invalid email data type",
+      })
+      .min(1, "email is required")
+      .email("please provide a valid email").nullable(),
+   contact: z
+      .string({
+         required_error: "contact field is required",
+         invalid_type_error: "Invalid contact data type",
+      })
+      .min(11, commonFieldErrorsMinimum.required_error),
+   eventId: z.coerce
+      .number({
+         required_error: "event field is required",
+         invalid_type_error: "Invalid event data type",
+      })
+      .optional(),
+});
+
+export const createMemberWithUploadSchema = createMemberSchema.extend({
+  picture: z.any().optional(),
+})   
+

@@ -1,6 +1,6 @@
 import z from "zod"
 
-export const folderGroupSchema = z.enum(["user", "branch", "election-candidates","event"])
+export const folderGroupSchema = z.enum(["user", "branch", "election-candidates","event","member"])
 
 export const uploadSchema = z.object({
     file : z.any().refine((file: File | undefined | null) => file !== undefined && file !== null, {

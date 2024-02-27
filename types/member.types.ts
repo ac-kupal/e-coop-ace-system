@@ -9,8 +9,8 @@ export type TCreateMember = {
     birthday: Date;
     contact: string;
     picture: string | null;
-    voteOtp: string
-    eventId:number
+    eventId?:number;
+    emailAddress:string | null;
 }
 
 export  type TMember = EventAttendees

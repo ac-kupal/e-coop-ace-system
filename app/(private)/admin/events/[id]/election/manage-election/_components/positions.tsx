@@ -74,7 +74,7 @@ export const Positions = ({id}:Props) => {
      return (
         <div className="h-fit">
            <DataTable
-              className="flex-1 bg-[#F7F7F7] rounded-2xl"
+              className="flex-1 bg-background rounded-2xl"
               isError={isError}
               isLoading={isLoading || isFetching}
               table={table}
