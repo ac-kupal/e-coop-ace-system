@@ -30,13 +30,20 @@ export const EventRoutes: TElectionRoute[] = [
       path: "claims",
    },
 ];
+type Props={
+   hasElection:boolean
+}
 
-const EventNavBar = () => {
+const EventNavBar = ({hasElection}:Props) => {
    return (
       <div className="flex space-x-2 -translate-x-4 ">
-         {EventRoutes.map((route: TElectionRoute, i) => (
-            <EventNavItems route={route} key={i} />
-         ))}
+        {EventRoutes.map((route: TElectionRoute, i) => {
+            if (hasElection && route.path === "election") {
+               return <></>
+            } else {
+               return <EventNavItems route={route} key={i} />;
+            }
+         })}
       </div>
    );
 };

@@ -1,24 +1,6 @@
 import { gender } from "@prisma/client";
 import { z } from "zod";
-import { passbookNumber } from "./event-registration-voting";
 
-// export type TCreateMember = {
-//    passbookNumber: string;
-//    firstName: string;
-//    middleName: string;
-//    lastName: string;
-//    gender: $Enums.gender;
-//    birthday: Date;
-//    contact: string;
-//    picture: string | null;
-//    voteOtp: string;
-//    eventId: number;
-// };
-
-const commonFieldErrors = {
-   required_error: "This field is required",
-   invalid_type_error: "Invalid data type",
-};
 const commonFieldErrorsMinimum = {
    required_error: "Field must contain at least 1 character(s)",
 };
@@ -29,28 +11,28 @@ export const createMemberSchema = z.object({
          required_error: "passBook Number field is required",
          invalid_type_error: "Invalid passBook Number data type",
       })
-      .min(1, commonFieldErrorsMinimum.required_error),
+      .min(1,"passbook Field must contain at least 1 character(s)"),
 
    firstName: z
       .string({
          required_error: "firstname field is required",
          invalid_type_error: "Invalid firstname data type",
       })
-      .min(1, commonFieldErrorsMinimum.required_error),
+      .min(1,"firstName Field must contain at least 1 character(s)"),
 
    middleName: z
       .string({
          required_error: "middle field is required",
          invalid_type_error: "Invalid middle data type",
       })
-      .min(1, commonFieldErrorsMinimum.required_error),
+      .min(1, "middleName Field must contain at least 1 character(s)"),
 
    lastName: z
       .string({
          required_error: "lastname field is required",
          invalid_type_error: "Invalid lastname data type",
       })
-      .min(1, commonFieldErrorsMinimum.required_error),
+      .min(1,"lastName Field must contain at least 1 character(s)"),
 
    gender: z.nativeEnum(gender, {
       required_error: "gender field is required",
@@ -72,7 +54,7 @@ export const createMemberSchema = z.object({
          required_error: "contact field is required",
          invalid_type_error: "Invalid contact data type",
       })
-      .min(11, commonFieldErrorsMinimum.required_error),
+      .min(11,"contact Field must contain at least 1 character(s)"),
    eventId: z.coerce
       .number({
          required_error: "event field is required",

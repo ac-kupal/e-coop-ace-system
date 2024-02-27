@@ -75,7 +75,14 @@ export const createMember = ({onCancelandReset}:Props) => {
             return response.data;
          } catch (e) {
             console.log(e)
-             throw handleAxiosErrorMessage(e);
+            const errorMessage = handleAxiosErrorMessage(e);
+            toast.error(errorMessage, {
+               action: {
+                  label: "try agian",
+                  onClick: () => addMember.mutate({member}),
+               },
+            });
+            throw errorMessage;
          }
       },
    });
