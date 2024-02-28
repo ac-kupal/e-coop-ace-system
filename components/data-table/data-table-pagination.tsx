@@ -54,7 +54,9 @@ export default function DataTablePagination<TData>({
                     >
                         <SelectTrigger className="h-8 w-[70px]">
                             <SelectValue
-                                placeholder="select"
+                                placeholder={
+                                    table.getState().pagination.pageSize
+                                }
                             />
                         </SelectTrigger>
                         <SelectContent side="top">
