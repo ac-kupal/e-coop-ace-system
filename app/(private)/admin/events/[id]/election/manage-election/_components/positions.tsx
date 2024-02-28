@@ -13,6 +13,7 @@ import { DataTableColHeader } from "@/components/data-table/data-table-col-heade
 import { TPosition } from "@/types";
 import DataTable from "@/components/data-table/data-table";
 import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
+import DataTablePagination from "@/components/data-table/data-table-pagination";
 
 
 const columns: ColumnDef<TPosition>[] = [
@@ -52,7 +53,7 @@ type Props = {
 export const Positions = ({id}:Props) => {
      const [globalFilter, setGlobalFilter] = useState<string>("");
      const { data, isFetching, isLoading, isError } = getPosition(id);
-    
+
      const table = useReactTable({
         data,
         columns,
@@ -72,11 +73,12 @@ export const Positions = ({id}:Props) => {
      return (
         <div className="h-fit">
            <DataTable
-              className="flex-1 bg-[#F7F7F7] rounded-2xl"
+              className="flex-1 bg-background/50 rounded-2xl"
               isError={isError}
               isLoading={isLoading || isFetching}
               table={table}
            />
+            <DataTablePagination pageSizes={[5,10,15]} table={table} />
         </div>
      );
   };

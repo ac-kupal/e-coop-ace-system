@@ -1,3 +1,4 @@
+import z from "zod";
 import axios from "axios";
 import qs from "query-string";
 import { toast } from "sonner";
@@ -13,83 +14,86 @@ import QrReader from "@/components/qr-reader/html5-qr-reader";
 
 import { TMemberAttendees } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { passbookSearchSchema } from "@/validation-schema/event-registration-voting";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { searchVoter } from "@/hooks/api-hooks/voter-api-hooks";
 
 type Props = {
-    eventId: number;
-    electionId: number;
-    onFound: (voter: TMemberAttendees) => void;
+  eventId: number;
+  electionId: number;
+  onFound: (voter: TMemberAttendees) => void;
 };
 
+type TPassbookForm = z.infer<typeof passbookSearchSchema>;
+
 const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
-    const [pb, setPb] = useState("");
+  const [pb, setPb] = useState("");
 
-    const {
-        data,
-        isPending,
-        mutate: findVoter,
-    } = useMutation<TMemberAttendees, string, string>({
-        mutationKey: ["member-search"],
-        mutationFn: async (passbookNumber) => {
-            try {
-                if (passbookNumber === null || passbookNumber.length === 0)
-                    return;
+  const form = useForm<TPassbookForm>({
+    resolver: zodResolver(passbookSearchSchema),
+    defaultValues: {
+      passbookNumber: "",
+    },
+  });
 
-                const url = qs.stringifyUrl(
-                    {
-                        url: `/api/v1/event/${eventId}/election/${electionId}/voter-search`,
-                        query: { passbookNumber }
-                    },
-                    { skipNull: true }
-                );
+  const {isPending, findVoter} = searchVoter(eventId, electionId, onFound);
+  const disabled = isPending;
 
-                const request = await axios.get(url);
-                onFound(request.data);
-                return request.data;
-            } catch (e) {
-                toast.error(handleAxiosErrorMessage(e));
-            }
-        },
-    });
+  return (
+    <div className="flex flex-col items-center gap-y-4">
+      <QrReader
+        className="size-[400px] bg-background overflow-clip rounded-xl"
+        disableFlip={false}
+        fps={5}
+        qrbox={800}
+        onRead={(val: string) => {
+          form.setValue("passbookNumber", val);
+          findVoter(val);
+        }}
+      />
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit((pb) => findVoter(pb.passbookNumber))}
+          className="space-y-4"
+        >
+          <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
+            <Separator className="w-1/2" /> or <Separator className="w-1/2" />
+          </div>
+          <FormField
+            control={form.control}
+            name="passbookNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    disabled={disabled}
+                    placeholder="Enter Passbook Number"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
-    const disabled = isPending;
-
-    return (
-        <div className="flex flex-col items-center gap-y-4">
-            <QrReader
-                className="size-[400px] bg-background overflow-clip rounded-xl"
-                disableFlip={false}
-                fps={5}
-                qrbox={800}
-                onRead={(val: string) => {
-                    setPb(val);
-                    findVoter(val);
-                }}
-            />
-            <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
-                <Separator className="w-1/2" /> or{" "}
-                <Separator className="w-1/2" />
-            </div>
-            <Input
-                disabled={disabled}
-                placeholder="Enter Passbook Number"
-                value={pb}
-                onChange={(e) => setPb(e.target.value)}
-            />
-            <Button
-                disabled={disabled}
-                className="w-full"
-                onClick={() => {
-                    findVoter(pb)
-                }}
-            >
-                {isPending ? (
-                    <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
-                ) : (
-                    "Find"
-                )}
-            </Button>
-        </div>
-    );
+          <Button disabled={disabled} className="w-full" type="submit">
+            {isPending ? (
+              <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
+            ) : (
+              "Find"
+            )}
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
 };
 
 export default VoterSearch;

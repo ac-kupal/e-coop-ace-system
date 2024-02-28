@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+export const candidateId = z.coerce.number({ required_error : "CandidateId is required", invalid_type_error : "Invalid candidate Id"})
 
 const commonFieldErrors = {
    required_error: "This field is required",
@@ -40,5 +41,4 @@ export const createCandidateWithUploadSchema = createCandidateSchema.extend({
           invalid_type_error: "candidate election ID type must be number",
        }),
 });
-
 

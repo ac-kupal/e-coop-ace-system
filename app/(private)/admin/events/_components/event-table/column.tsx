@@ -11,6 +11,7 @@ import {
    QrCode,
    Target,
    Trash,
+   Users,
 } from "lucide-react";
 
 import { toast } from "sonner";
@@ -32,11 +33,10 @@ import { TEventWithElection } from "@/types";
 import Link from "next/link";
 
 const Actions = ({ event }: { event: TEventWithElection }) => {
-   
-   const router = useRouter()
-    
+   const router = useRouter();
+
    const [onOpenModal, setOnOpenModal] = useState(false);
- 
+
    const deleteOperation = deleteEvent();
    const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
@@ -70,15 +70,28 @@ const Actions = ({ event }: { event: TEventWithElection }) => {
                Copy event ID
             </DropdownMenuItem>
             {event.election && (
-               <DropdownMenuItem 
-               onClick={()=>{
-                  router.push(`/admin/events/${event.id}/election/`)
-               }}
-                
-               className="px-2 gap-x-2">
+               <DropdownMenuItem
+                  onClick={() => {
+                     router.push(`/admin/events/${event.id}/election/`);
+                  }}
+                  className="px-2 gap-x-2"
+               >
                   <Target strokeWidth={2} className="h-4" />
                   view Election
                </DropdownMenuItem>
+            )}
+            {event.election === null ? (
+               <DropdownMenuItem
+                  onClick={() => {
+                     router.push(`/admin/events/${event.id}/manage-member/`);
+                  }}
+                  className="px-2 gap-x-2"
+               >
+                  <Users strokeWidth={2} className="h-4" />
+                  manage member
+               </DropdownMenuItem>
+            ) : (
+               <></>
             )}
             <DropdownMenuItem
                onClick={() => {
@@ -128,9 +141,11 @@ const columns: ColumnDef<TEventWithElection>[] = [
          <DataTableColHeader column={column} title="title" />
       ),
       cell: ({ row }) => {
-         return <div className="flex space-x-2"> 
-         <h1>{row.original.title}</h1>
-         </div>;
+         return (
+            <div className="flex space-x-2">
+               <h1>{row.original.title}</h1>
+            </div>
+         );
       },
    },
    {
@@ -162,18 +177,25 @@ const columns: ColumnDef<TEventWithElection>[] = [
          <DataTableColHeader column={column} title="type" />
       ),
       cell: ({ row }) => <div className="">{row.original.category}</div>,
-   },{
+   },
+   {
       id: "Event QR",
-      cell : ({ row }) => (
-            <Button size="icon" variant="ghost" ><QrCode className="size-6" strokeWidth={1}/></Button>
-        )
+      cell: ({ row }) => (
+         <Button size="icon" variant="ghost">
+            <QrCode className="size-6" strokeWidth={1} />
+         </Button>
+      ),
    },
    {
       id: "button",
       enableHiding: false,
       cell: ({ row }) => (
          <div className="">
-            {row.original.election && <Link href={`/admin/events/${row.original.id}/election/`}><Button className=" rounded-xl h-8">View Election</Button></Link> }
+            {row.original.election && (
+               <Link href={`/admin/events/${row.original.id}/election/`}>
+                  <Button className=" rounded-xl h-8">View Election</Button>
+               </Link>
+            )}
          </div>
       ),
    },

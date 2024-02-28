@@ -117,6 +117,7 @@ model EventAttendees {
     birthday       DateTime
     contact        String
     picture        String?  @default("/images/default-avatar.png")
+    emailAddress   String? 
 
     canVote Boolean? @default(false)
 

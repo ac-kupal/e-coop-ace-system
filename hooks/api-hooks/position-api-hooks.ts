@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
-import { TPosition } from "@/types";
+import { TMember, TPosition } from "@/types";
 
 export const deletePosition = () => {
    const queryClient = useQueryClient();
@@ -65,3 +65,4 @@ export const getAllPosition = () => {
    });
    return positions
 };
+

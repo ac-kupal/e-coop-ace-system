@@ -1,21 +1,21 @@
 import { TElectionRoute } from "@/types";
-import { BaggageClaim, GanttChartSquare, Gift } from "lucide-react";
+import { BaggageClaim, GanttChartSquare, Gift, ListChecks, Users, Vote } from "lucide-react";
 import React from "react";
 import EventNavItems from "./event-nav-items";
 
 export const EventRoutes: TElectionRoute[] = [
    {
-      icon: <GanttChartSquare className="size-5" />,
-      name: "Manage-election",
+      icon: <Vote  className="size-5" />,
+      name: "election",
       path: "election",
    },
    {
-      icon: <GanttChartSquare className="size-5" />,
-      name: "Manage-member",
+      icon: <Users  className="size-5" />,
+      name: "member",
       path: "manage-member",
    },
    {
-      icon: <GanttChartSquare className=" size-5" />,
+      icon: <ListChecks  className=" size-5" />,
       name: "Attendance",
       path: "attendance",
    },
@@ -30,13 +30,20 @@ export const EventRoutes: TElectionRoute[] = [
       path: "claims",
    },
 ];
+type Props={
+   hasElection:boolean
+}
 
-const EventNavBar = () => {
+const EventNavBar = ({hasElection}:Props) => {
    return (
-      <div className="flex space-x-2 -translate-x-4 ">
-         {EventRoutes.map((route: TElectionRoute, i) => (
-            <EventNavItems route={route} key={i} />
-         ))}
+      <div className="flex space-x-2 -translate-x-4 w-full lg: max-w-[400px]">
+        {EventRoutes.map((route: TElectionRoute, i) => {
+            if (hasElection && route.path === "election") {
+               return null
+            } else {
+               return <EventNavItems route={route} key={i} />;
+            }
+         })}
       </div>
    );
 };

@@ -31,6 +31,11 @@ export const eventElectionParamsSchema = z.object({
     electionId : electionIdParamSchema
 })
 
+// for voter passbook search
+export const passbookSearchSchema = z.object({
+    passbookNumber
+})
+
 // for voter search params
 export const voterSearchParamSchema = z.object({
     passbookNumber

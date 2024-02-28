@@ -38,6 +38,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
         resolver: zodResolver(voterVerificationSchema),
         defaultValues : {
             passbookNumber : voter.passbookNumber,
+            birthday : electionWithEvent.allowBirthdayVerification? new Date() : undefined,
             otp : ''
         }
     });
@@ -60,6 +61,8 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
 
     const disabled = isPending;
 
+    console.log(electionWithEvent.allowBirthdayVerification)
+
     return (
         <div className="flex flex-col items-center gap-y-4">
             <p>This step is for verification before we authorize you to vote</p>
@@ -70,7 +73,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                             control={form.control}
                             name="birthday"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
+                                <FormItem className={cn("flex flex-col", !electionWithEvent.allowBirthdayVerification && "hidden" )}>
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <FormControl>

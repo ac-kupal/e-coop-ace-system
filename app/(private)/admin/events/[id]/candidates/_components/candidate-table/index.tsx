@@ -57,7 +57,7 @@ const CandidateTable = ({electionId}: Props) => {
             />
             <div className="flex items-center gap-x-4 text-muted-foreground">
                <div className="relative">
-                  <SearchIcon className="absolute  w-4 h-auto top-3 left-2" />
+                  <SearchIcon className="absolute text-muted-forground  w-4 h-auto top-3 left-2" />
                   <SearchInput
                      setGlobalFilter={(e) => setGlobalFilter(e)}
                      globalFilter={globalFilter}
@@ -86,12 +86,12 @@ const CandidateTable = ({electionId}: Props) => {
             </div>
          </div>
          <DataTable
-            className="flex-1"
+            className="flex-1 bg-background/50 rounded-xl"
             isError={isError}
             isLoading={isLoading || isFetching}
             table={table}
          />
-         <DataTablePagination pageSizes={[20, 40, 60, 80, 100]} table={table} />
+         <DataTablePagination pageSizes={[5,10,15]} table={table} />
       </div>
    );
 };

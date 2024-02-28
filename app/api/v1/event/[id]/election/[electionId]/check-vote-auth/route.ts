@@ -33,9 +33,6 @@ export const GET = async (req: NextRequest) => {
                 { status: 400 },
             );
 
-        // check if election exist
-        // check if election open
-        // check member if exist
         const voter = await db.eventAttendees.findUnique({
             where: { id: attendeeId },
             select: {
@@ -49,6 +46,12 @@ export const GET = async (req: NextRequest) => {
             },
         });
 
+        if (!voter)
+            return NextResponse.json(
+                { message: "Sorry we can't identify who you are" },
+                { status: 404 },
+            );
+
         if (voter?.voted) {
             const response = NextResponse.json(
                 { message: "You already voted" },
@@ -57,7 +60,6 @@ export const GET = async (req: NextRequest) => {
             response.cookies.delete("v-auth");
             return response;
         }
-        // check if user has not voted
 
         return NextResponse.json(voter);
     } catch (e) {

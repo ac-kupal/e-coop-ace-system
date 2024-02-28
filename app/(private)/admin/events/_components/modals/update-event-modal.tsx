@@ -66,13 +66,17 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
       resolver: zodResolver(updateEventSchema),
    });
 
-   const isEventOnChange = eventForm.getValues("title") === event.title &&  eventForm.getValues("description") === event.description &&  eventForm.getValues("location") === event.location &&  eventForm.getValues("coverImage") === event.coverImage 
+   const isEventOnChange =
+      eventForm.getValues("title") === event.title &&
+      eventForm.getValues("description") === event.description &&
+      eventForm.getValues("location") === event.location &&
+      eventForm.getValues("coverImage") === event.coverImage;
    const defaultValues = useCallback(() => {
       eventForm.setValue("title", event.title);
       eventForm.setValue("description", event.description);
       eventForm.setValue("location", event.location);
       eventForm.setValue("date", event.date);
-      eventForm.setValue("coverImage",event.coverImage)
+      eventForm.setValue("coverImage", event.coverImage);
    }, [eventForm, event]);
 
    useEffect(() => {
@@ -214,7 +218,10 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                                     mode="single"
                                     selected={field.value}
                                     onSelect={field.onChange}
-                                    disabled={(date) => date < new Date()}
+                                    disabled={(date) => date > new Date()}
+                                    captionLayout="dropdown-buttons"
+                                    fromYear={1900}
+                                    toYear={new Date().getFullYear()}
                                     initialFocus
                                  />
                               </PopoverContent>

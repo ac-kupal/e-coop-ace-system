@@ -32,7 +32,7 @@ export const ElectionRoutes: TElectionRoute[] = [
 ];
 const ElectionSideBar =( ) => {
   return (
-    <div className="bg-[#F9F9F9] shadow-xl w-[200px] rounded-3xl justify-start gap-5 py-10  flex flex-col h-screen">
+    <div className="flex flex-row lg:flex-col w-full lg:w-[220px] px-3 justify-evenly  gap-1 lg:gap-5 py-2 lg:py-10 bg-[#ffffff] h-16 lg:min-h-screen  dark:bg-secondary/50 shadow-xl  rounded-3xl lg:justify-start    ">
     {ElectionRoutes.map((route:TElectionRoute, i) => (
        <ElectionNavItems  route={route} key={i} />
     ))}
