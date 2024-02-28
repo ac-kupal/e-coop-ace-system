@@ -30,7 +30,7 @@ const SearchInput = ({globalFilter,setGlobalFilter}: Props) => {
          placeholder="Search..."
          value={globalFilter}
          onChange={(event) => setGlobalFilter(event.target.value)}
-         className="w-full pl-8 border-t-0 border-l-0 border-r-0 border-muted-foreground placeholder:text-accent text-muted-foreground  dark:border-white bg-transparent dark:text-white dark:placeholder:text-white   text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+         className="w-full pl-8 border-t-0 border-l-0 border-r-0 border-muted-foreground placeholder:text-black/50 dark:placeholder:text-white/50 text-muted-foreground  dark:border-white/40 bg-transparent dark:text-white  text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
       />
    );
 };

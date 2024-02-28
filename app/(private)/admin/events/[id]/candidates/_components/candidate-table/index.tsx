@@ -86,12 +86,12 @@ const CandidateTable = ({electionId}: Props) => {
             </div>
          </div>
          <DataTable
-            className="flex-1"
+            className="flex-1 bg-background/50 rounded-xl"
             isError={isError}
             isLoading={isLoading || isFetching}
             table={table}
          />
-         <DataTablePagination pageSizes={[20, 40, 60, 80, 100]} table={table} />
+         <DataTablePagination pageSizes={[5,10,15]} table={table} />
       </div>
    );
 };

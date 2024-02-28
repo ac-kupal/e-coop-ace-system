@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,11 +23,13 @@ import { cn } from "@/lib/utils";
 import CreateEventModal from "../modals/create-event-modal";
 import { TEventWithElection } from "@/types";
 import { getAllEvent } from "@/hooks/api-hooks/event-api-hooks";
+import { Input } from "@/components/ui/input";
 
 const EventTable = () => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createEvent, setCreateEvent] = useState(false)
-   
+   const onFocusSearch = useRef<HTMLInputElement | null>(null);
+
    const { data, isFetching, isLoading, isError, refetch } = getAllEvent()
       
    
@@ -54,11 +56,16 @@ const EventTable = () => {
          <CreateEventModal state={createEvent} onClose={(state) => setCreateEvent(state)} />
             <div className="flex items-center gap-x-4 text-muted-foreground">
                <div className="relative">
-                  <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
-                  <SearchInput
-                     setGlobalFilter={(e) => setGlobalFilter(e)}
-                     globalFilter={globalFilter}
-                  ></SearchInput>
+               <SearchIcon className="absolute text-white w-4 h-auto top-3 left-2" />
+                        <Input
+                            ref={onFocusSearch}
+                            placeholder="Search..."
+                            value={globalFilter}
+                            onChange={(event) =>
+                                setGlobalFilter(event.target.value)
+                            }
+                            className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        />
                </div>
             </div>
             <div className="flex items-center gap-x-2 md:gap-x-4">

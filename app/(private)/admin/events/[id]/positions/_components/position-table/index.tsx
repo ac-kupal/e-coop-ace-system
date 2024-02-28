@@ -56,6 +56,7 @@ const PositionTable = ({ electionId }: Props) => {
                <div className="relative">
                   <SearchIcon className="absolute  w-4 h-auto top-3 left-2" />
                   <SearchInput
+                     
                      setGlobalFilter={(e) => setGlobalFilter(e)}
                      globalFilter={globalFilter}
                   ></SearchInput>
@@ -78,12 +79,12 @@ const PositionTable = ({ electionId }: Props) => {
             </div>
          </div>
          <DataTable
-            className="flex-1"
+            className="flex-1 bg-background/50 rounded-xl"
             isError={isError}
             isLoading={isLoading || isFetching}
             table={table}
          />
-         <DataTablePagination pageSizes={[20, 40, 60, 80, 100]} table={table} />
+         <DataTablePagination pageSizes={[5,10,15]} table={table} />
       </div>
    );
 };
