@@ -14,8 +14,8 @@ const EventNavItems = ({ route}: Props) => {
    const isCurrentPath = pathname.includes(path);
 
    return (
-      <Link href={`${path}`} className="flex cursor-pointer justify-start space-x-2">
-         <div className={`flex lg:space-x-2 duration-300  items-center px-2 lg:px-5  ease-in-out ${isCurrentPath ? "  text-[#099065] font-bold":"text-foreground/90 "}   hover:bg-[#17f5af]/30 dark:hover:bg-primary/30 shadow lg:shadow-sm p-2 rounded-xl`}>
+      <Link href={`${path}`} className="flex cursor-pointer justify-start space-x-2  hover:scale-105">
+         <div className={`flex lg:space-x-2 duration-300  items-center px-2 lg:px-5  ease-in-out ${isCurrentPath ? "text-[#099065] font-bold":"text-foreground/90 "}  hover:bg-none dark:hover:bg-primary/30 shadow lg:shadow-sm p-2 rounded-xl`}>
             <div className={`${isCurrentPath ? "  dark:text-[#17f5af] font-bold":"text-foreground/90 "} hidden lg:block `}>
                {icon}
             </div>

@@ -34,7 +34,7 @@ const ManageElection = ({ id }: Props) => {
          {isLive && (
             <Badge
                className={cn(
-                  "dark:text-foreground text-red-300 animate-pulse bg-red-700 border-red-800 dark:border-red-500 tracking-wide"
+                  "dark:text-foreground text-red-300 animate-pulse bg-red-600 border-red-800 dark:border-red-500 tracking-wide"
                )}
             >
                live
