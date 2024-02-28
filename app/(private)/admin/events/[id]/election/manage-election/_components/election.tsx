@@ -24,7 +24,7 @@ const ManageElection = ({ id }: Props) => {
          </div>
       );
    }
-   if (!Election.data) return <NotFound></NotFound>;
+   if (!Election.data) return null
 
    const isLive = Election.data.status === "live";
    const isPending = Election.data.status === "pending";

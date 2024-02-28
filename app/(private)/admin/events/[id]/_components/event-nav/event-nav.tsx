@@ -34,15 +34,11 @@ type Props={
    hasElection:boolean
 }
 
-const EventNavBar = ({hasElection}:Props) => {
+const EventNavBar = () => {
    return (
       <div className="flex space-x-1 -translate-x-4 w-full lg: max-w-[400px]">
         {EventRoutes.map((route: TElectionRoute, i) => {
-            if (hasElection && route.path === "election") {
-               return null
-            } else {
                return <EventNavItems route={route} key={i} />;
-            }
          })}
       </div>
    );
