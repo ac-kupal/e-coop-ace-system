@@ -33,7 +33,7 @@ const NavBar = async ({}: Props) => {
       <div className="w-full bg-[#3D7663] font-poppins dark:bg-background/70 dark:border-[1px] dark:border-b-primary/70 dark:backdrop-blur-md justify-between flex p-3">
          <Sheet>
             <SheetTrigger className="lg:hidden">
-               <MenuIcon className="size-7"></MenuIcon>
+               <MenuIcon className="size-7 text-white"></MenuIcon>
             </SheetTrigger>
             <SheetContent side={"left"}>
                <SheetHeader>

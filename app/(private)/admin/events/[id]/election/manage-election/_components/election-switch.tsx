@@ -27,7 +27,7 @@ const ElectionSwitch = ({ id, status, election }: Props) => {
    const allowedToStart =
       election.positions.length >= 1 && election.candidates.length >= 1;
    return (
-      <div className="absolute right-0 top-0 flex space-x-3">
+      <div className="absolute -top-3 right-3 lg:right-0 lg:top-0  flex space-x-3">
          <Button
             disabled={isDone}
             onClick={() => {

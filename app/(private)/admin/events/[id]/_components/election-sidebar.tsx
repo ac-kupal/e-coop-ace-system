@@ -32,7 +32,7 @@ export const ElectionRoutes: TElectionRoute[] = [
 ];
 const ElectionSideBar =( ) => {
   return (
-    <div className="flex flex-row lg:flex-col border w-full h-16 py-2 lg:w-[220px] px-3 justify-evenly  gap-1 lg:gap-5 lg:py-10 bg-[#ffffff]  lg:min-h-screen  dark:bg-secondary/50 shadow-xl  rounded-3xl lg:justify-start    ">
+    <div className="flex flex-row lg:flex-col border w-full h-16 py-2 lg:w-[220px] px-3 justify-evenly  gap-1 lg:gap-5 lg:py-10 bg-[#ffffff]  lg:min-h-screen  dark:bg-secondary/50 shadow lg:shadow-md  rounded-3xl lg:justify-start    ">
     {ElectionRoutes.map((route:TElectionRoute, i) => (
        <ElectionSideBarItems  route={route} key={i} />
     ))}

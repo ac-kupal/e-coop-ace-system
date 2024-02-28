@@ -54,7 +54,7 @@ const ManageElection = ({ id }: Props) => {
             status={Election.data.status}
             id={id}
          ></ElectionSwitch>
-         <h1 className="text-[min(25px,3vw)] font-bold">Manage Election</h1>
+         <h1 className="text-[min(25px,3.5vw)] font-bold">Manage Election</h1>
          <ElectionDetails election={Election.data} />
          <div className="w-full flex space-x-3 justify-start px-2">
             <Users className="size-5 text-green-700" />
