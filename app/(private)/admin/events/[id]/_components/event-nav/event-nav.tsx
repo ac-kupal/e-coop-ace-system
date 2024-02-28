@@ -36,7 +36,7 @@ type Props={
 
 const EventNavBar = () => {
    return (
-      <div className="flex space-x-1 -translate-x-4 w-full lg: max-w-[400px]">
+      <div className="flex space-x-1 -translate-x-4 w-full justify-evenly lg:max-w-[400px]">
         {EventRoutes.map((route: TElectionRoute, i) => {
                return <EventNavItems route={route} key={i} />;
          })}

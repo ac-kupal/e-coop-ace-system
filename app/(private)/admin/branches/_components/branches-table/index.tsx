@@ -60,9 +60,9 @@ const BranchesTable = () => {
     }, []);
 
     return (
-        <div className="flex flex-1 flex-col gap-y-2 ">
+        <div className="flex flex-1 flex-col  gap-y-5 ">
             <CreateBranchModal state={createModal} onClose={(state) => setCreateModal(state)} />
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-[#4e7563]">
+            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
                     <div className="relative text-white">
                         <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
@@ -89,7 +89,7 @@ const BranchesTable = () => {
                     </Button>
                 </div>
             </div>
-            <DataTable className="flex-1" isError={isError} isLoading={isLoading || isFetching} table={table} />
+            <DataTable className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl" isError={isError} isLoading={isLoading || isFetching} table={table} />
             <DataTablePagination pageSizes={[20,40,60,80,100]} table={table}/>
         </div>
     );

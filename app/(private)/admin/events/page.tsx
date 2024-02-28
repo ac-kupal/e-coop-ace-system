@@ -4,7 +4,7 @@ type Props = {};
 
 const EventsPage = (props: Props) => {
    return (
-      <div className="flex p-5 min-h-screen flex-col w-full bg-background dark:bg-background/80">
+      <div className="flex p-5 min-h-screen flex-col w-full ">
          <EventTable />
       </div>
    );

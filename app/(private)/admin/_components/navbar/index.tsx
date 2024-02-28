@@ -30,12 +30,12 @@ const NavBar = async ({}: Props) => {
    const user = await currentUserOrThrowAuthError();
 
    return (
-      <div className="w-full bg-[#3D7663] font-poppins dark:bg-background/70 dark:border-[1px] dark:border-b-primary/70 dark:backdrop-blur-md justify-between flex p-3">
+      <div className="w-full bg-primary font-poppins dark:bg-background/70 dark:border-[1px] dark:border-b-primary/70 dark:backdrop-blur-md justify-between flex p-3">
          <Sheet>
             <SheetTrigger className="lg:hidden">
                <MenuIcon className="size-7 text-white"></MenuIcon>
             </SheetTrigger>
-            <SheetContent side={"left"}>
+            <SheetContent className=" dark:bg-background/30 backdrop-blur-sm" side={"left"}>
                <SheetHeader>
                   <SheetTitle>Coop ACE System</SheetTitle>
                   <SheetDescription>

@@ -114,7 +114,7 @@ const CreateCandidateModal = ({
             reset();
          }}
       >
-         <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
+         <DialogContent className="border-none shadow-2 sm:rounded-2xl overflow-y-auto lg:overflow-hidden max-h-[600px] lg:max-h-[900px] max-w-[600px] font-inter">
             <ModalHead
                title="Create Candidate"
                description="You are about to create a candidate for this elections and the profile can be optional."
