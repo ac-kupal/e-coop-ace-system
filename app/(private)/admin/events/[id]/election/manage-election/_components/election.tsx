@@ -3,7 +3,7 @@ import { Accessibility, Loader2, Users } from "lucide-react";
 import { Candidates } from "./candidates";
 import ElectionDetails from "./election-details";
 import { Positions } from "./positions";
-import { getElection, promptElectionStatus } from "@/hooks/api-hooks/election-api-hooks";
+import { getElection } from "@/hooks/api-hooks/election-api-hooks";
 import NotFound from "../../../_components/not-found";
 import ElectionSwitch from "./election-switch";
 import { Badge } from "@/components/ui/badge";

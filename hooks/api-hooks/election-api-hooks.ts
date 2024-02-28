@@ -47,16 +47,11 @@ export const  promptElectionStatus = () =>{
       mutationKey:["election-prompt-key"],
       mutationFn:async({status,id})=>{
          try { 
-
-          
             const electionId = Number(id)
-              console.log(status,id)
              const response = await axios.patch(`/api/v1/election/${electionId}/start`,{
             status:status
             })
-           
-
-           toast.success(`Election is Already  ${status === "live" ? "starting! 🎉":"end"}`);
+           toast.success(`The Election is already  ${status === "live" ? "Live! 🎉":"End"}`);
            queryClient.invalidateQueries({queryKey: ["election-list-query"],});
            router.refresh();
            return response.data 

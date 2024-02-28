@@ -2,13 +2,10 @@ import { Button } from "@/components/ui/button";
 import { promptElectionStatus } from "@/hooks/api-hooks/election-api-hooks";
 import { cn } from "@/lib/utils";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { TElection, TElectionWithPositionsAndCandidates } from "@/types";
+import { TElectionWithPositionsAndCandidates } from "@/types";
 import { ElectionStatus } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { stat } from "fs";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
 
 type Props = {

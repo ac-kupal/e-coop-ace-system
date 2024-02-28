@@ -18,7 +18,6 @@ export const getElection = async (id: number) => {
             candidates:true,
            }
         });
-        console.log(election)
         return election
      } catch (error) {
         console.log(error);
