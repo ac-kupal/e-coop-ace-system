@@ -1,5 +1,5 @@
 "use client";
-import { Accessibility, Loader2, Users } from "lucide-react";
+import { Accessibility, CheckCircle2, Loader2, Users } from "lucide-react";
 import { Candidates } from "./candidates";
 import ElectionDetails from "./election-details";
 import { Positions } from "./positions";
@@ -28,6 +28,8 @@ const ManageElection = ({ id }: Props) => {
 
    const isLive = Election.data.status === "live";
    const isPending = Election.data.status === "pending";
+   const isEnded = Election.data.status === "done";
+
 
    return (
       <div className="relative space-y-4">
@@ -47,6 +49,18 @@ const ManageElection = ({ id }: Props) => {
                )}
             >
                pending
+            </Badge>
+         )}
+           {isEnded && (
+            <Badge
+               className={cn(
+                  "text-foreground bg-green-400 dark:bg-green-500 text-green-900 border-green-600 tracking-wide"
+               )}
+            >
+              <div className="flex space-x-2">
+                <p>ended</p>
+               <CheckCircle2 className="size-4 text-gray-900"></CheckCircle2>
+              </div>
             </Badge>
          )}
          <ElectionSwitch

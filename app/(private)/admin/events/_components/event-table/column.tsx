@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
 import {
+   CheckCircle2,
    Copy,
    Loader2,
    MoreHorizontal,
    Pencil,
    QrCode,
    Target,
+   TouchpadOff,
    Trash,
    Users,
 } from "lucide-react";
@@ -177,6 +179,31 @@ const columns: ColumnDef<TEventWithElection>[] = [
          <DataTableColHeader column={column} title="type" />
       ),
       cell: ({ row }) => <div className="">{row.original.category}</div>,
+   },
+   {
+      id: "live",
+      cell: ({ row }) => (
+         <div className="">
+            {row.original.election?.status === "live" && (
+               <div className="flex items-center justify-center space-x-2">
+                  <p className=" bg-red-600 rounded-full size-2 translate-y-[0.20rem]"></p>
+                  <h1>live</h1>
+               </div>
+            )}
+            {row.original.election?.status === "done" && (
+               <div className="flex items-center justify-center space-x-2">
+                  <CheckCircle2 className="size-4 text-green-500"></CheckCircle2>
+                  <h1>ended</h1>
+               </div>
+            )}
+             {row.original.election?.status === "pending" && (
+               <div className="flex items-center justify-center space-x-2">
+                  <TouchpadOff className="size-4 text-yellow-500"/>
+                  <h1>unbegan</h1>
+               </div>
+            )}
+         </div>
+      ),
    },
    {
       id: "Event QR",

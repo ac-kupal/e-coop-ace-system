@@ -6,12 +6,12 @@ import EventNavItems from "./event-nav-items";
 export const EventRoutes: TElectionRoute[] = [
    {
       icon: <Vote  className="size-5" />,
-      name: "election",
+      name: "Election",
       path: "election",
    },
    {
       icon: <Users  className="size-5" />,
-      name: "member",
+      name: "Members",
       path: "manage-member",
    },
    {
@@ -36,7 +36,7 @@ type Props={
 
 const EventNavBar = () => {
    return (
-      <div className="flex space-x-1 -translate-x-4 w-full justify-evenly lg:max-w-[400px]">
+      <div className="flex space-x-1 w-full justify-evenly lg:justify-start ">
         {EventRoutes.map((route: TElectionRoute, i) => {
                return <EventNavItems route={route} key={i} />;
          })}

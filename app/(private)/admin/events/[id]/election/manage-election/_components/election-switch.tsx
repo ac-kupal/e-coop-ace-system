@@ -82,7 +82,7 @@ const ElectionSwitch = ({ id, status, election }: Props) => {
                   },
                });
             }}
-            className={`text-white hover:scale-105 cursor-pointer rounded-xl bg-primary hover:bg-primary/80 dark:bg-[#1E8A56]  dark:hover:bg-[#1e8a56ee] `}
+            className={`text-white hover:scale-105 cursor-pointer rounded-xl bg-primary hover:bg-primary/80 dark:bg-primary  dark:hover:bg-primary `}
          >
             {isLoading ? (
                <Loader2 className=" size-4 animate-spin " />
