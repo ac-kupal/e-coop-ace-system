@@ -20,15 +20,17 @@ const EventLayout = ( { children,params }: Props) => {
     const isCurrentPath = EventRoutes.find((e)=> e.path === lastPath && e.path !== "election" )
 
     return (
-        <div className="bg-[#eeeded] dark:bg-[#110f0e] font-poppins p-7 h-fit overflow-hidden">
+        <div className="bg-[#eeeded] dark:bg-[#110f0e] font-poppins pt-5 lg:p-7 h-fit overflow-hidden">
             <div className="p-5 w-full">
             <EventNavBar hasElection={hasElection} />
             </div>
-            <div className="flex bg-secondary  min-h-screen shadow-xl dark:bg-secondary/30 rounded-3xl overflow-x-hidden p-8 w-full ">
-               <div className="flex w-full">
-              {!isCurrentPath && <>
-              {!hasElection && (<ElectionSideBar/>)}
+            <div className="flex bg-secondary  min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl overflow-x-hidden lg:p-8  w-full ">
+               <div className="flex w-full flex-col lg:flex-row">
+                <div>
+                {!isCurrentPath && <>
+                 {!hasElection && (<ElectionSideBar/>)}
               </>}
+                </div>
                 <div className="p-5 w-full">
                 {children}
                 </div>
