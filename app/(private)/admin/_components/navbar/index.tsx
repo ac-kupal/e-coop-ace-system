@@ -20,7 +20,7 @@ const NavBar = async ({}: Props) => {
    const user = await currentUserOrThrowAuthError();
 
    return (
-      <div className="w-full bg-[#3D7663] justify-between flex p-3">
+      <div className="w-full bg-[#3D7663] dark:bg-background/70 dark:border-[1px] dark:border-b-primary/70 dark:backdrop-blur-md justify-between flex p-3">
          <Link href="/" className="text-[24px] text-white font-medium">Coop ACE System</Link>
          <div className=" flex  space-x-4 items-center">
             <h1 className="text-white">{user.name}</h1>

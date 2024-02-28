@@ -33,6 +33,7 @@ const ManageElection = ({ id }: Props) => {
             <h1 className="font-medium">Positions</h1>
          </div>
          <Positions id={id}/>
+         
       </div>
    );
 };

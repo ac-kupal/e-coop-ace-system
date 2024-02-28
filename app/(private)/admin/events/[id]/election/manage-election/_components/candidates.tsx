@@ -14,6 +14,7 @@ import { DataTableColHeader } from "@/components/data-table/data-table-col-heade
 import { TCandidatewithPosition } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DataTable from "@/components/data-table/data-table";
+import DataTablePagination from "@/components/data-table/data-table-pagination";
 
 export const columns: ColumnDef<TCandidatewithPosition>[] = [
    {
@@ -104,11 +105,12 @@ export const Candidates = ({id}:Props) => {
    return (
       <div className="h-fit">
          <DataTable
-            className="flex-1 bg-background rounded-2xl"
+            className="flex-1 bg-background/50 rounded-2xl"
             isError={isError}
             isLoading={isLoading || isFetching}
             table={table}
          />
+          <DataTablePagination pageSizes={[5, 10, 20, 30]} table={table} />
       </div>
    );
 };
