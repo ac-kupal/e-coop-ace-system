@@ -15,6 +15,7 @@ import { TCandidatewithPosition } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
+import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 
 export const columns: ColumnDef<TCandidatewithPosition>[] = [
    {
@@ -110,7 +111,12 @@ export const Candidates = ({id}:Props) => {
             isLoading={isLoading || isFetching}
             table={table}
          />
-          <DataTablePagination pageSizes={[5, 10, 20, 30]} table={table} />
+          <div className="lg:hidden">
+           <DataTableBasicPagination2 table={table} />
+           </div>
+           <div className="hidden lg:block">
+           <DataTablePagination pageSizes={[5,10,15]} table={table} />
+           </div>
       </div>
    );
 };

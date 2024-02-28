@@ -17,6 +17,7 @@ import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
 import CreatePostionModal from "../modals/create-position-modal";
 import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
+import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 
 type Props = {
    electionId: number | undefined;
@@ -84,7 +85,12 @@ const PositionTable = ({ electionId }: Props) => {
             isLoading={isLoading || isFetching}
             table={table}
          />
-         <DataTablePagination pageSizes={[5,10,15]} table={table} />
+          <div className="lg:hidden">
+           <DataTableBasicPagination2 table={table} />
+           </div>
+           <div className="hidden lg:block">
+           <DataTablePagination pageSizes={[5,10,15]} table={table} />
+           </div>
       </div>
    );
 };

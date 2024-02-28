@@ -14,6 +14,7 @@ import { TPosition } from "@/types";
 import DataTable from "@/components/data-table/data-table";
 import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
+import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 
 
 const columns: ColumnDef<TPosition>[] = [
@@ -78,7 +79,12 @@ export const Positions = ({id}:Props) => {
               isLoading={isLoading || isFetching}
               table={table}
            />
-            <DataTablePagination pageSizes={[5,10,15]} table={table} />
+           <div className="lg:hidden">
+           <DataTableBasicPagination2 table={table} />
+           </div>
+           <div className="hidden lg:block">
+           <DataTablePagination pageSizes={[5,10,15]} table={table} />
+           </div>
         </div>
      );
   };

@@ -17,19 +17,20 @@ import { cn } from "@/lib/utils";
 import columns from "./column";
 import CreateCandidateModal from "../modals/create-candidate-modal";
 import { getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
-import {  getPosition } from "@/hooks/api-hooks/position-api-hooks";
+import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
 import { toast } from "sonner";
+import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 type Props = {
    electionId: number;
-
 };
 
-const CandidateTable = ({electionId}: Props) => {
+const CandidateTable = ({ electionId }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
 
-   const { data, isFetching, isLoading, isError, refetch } = getCandidates(electionId)
-   const { data:getPositions  } = getPosition(electionId)
+   const { data, isFetching, isLoading, isError, refetch } =
+      getCandidates(electionId);
+   const { data: getPositions } = getPosition(electionId);
    const table = useReactTable({
       data,
       columns,
@@ -68,12 +69,13 @@ const CandidateTable = ({electionId}: Props) => {
                <DataTableViewOptions table={table} />
                <Button
                   onClick={() => {
-                     if(getPositions.length === 0){
-                        toast.warning("You must need to add POSITION first before adding candidates!")
-                        return
+                     if (getPositions.length === 0) {
+                        toast.warning(
+                           "You must need to add POSITION first before adding candidates!"
+                        );
+                        return;
                      }
                      setCreatePosition(true);
-                     
                   }}
                   size="sm"
                   className={cn(
@@ -86,12 +88,17 @@ const CandidateTable = ({electionId}: Props) => {
             </div>
          </div>
          <DataTable
-            className="flex-1 bg-background/50 rounded-xl"
+            className="flex-1 bg-background/50 rounded-"
             isError={isError}
             isLoading={isLoading || isFetching}
             table={table}
          />
-         <DataTablePagination pageSizes={[5,10,15]} table={table} />
+         <div className="lg:hidden">
+            <DataTableBasicPagination2 table={table} />
+         </div>
+         <div className="hidden lg:block">
+            <DataTablePagination pageSizes={[5, 10, 15]} table={table} />
+         </div>
       </div>
    );
 };
