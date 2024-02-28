@@ -1,4 +1,4 @@
-import { TElection } from "@/types";
+import { TElection, TElectionWithPositionsAndCandidates } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { ElectionStatus } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 export const getElection = (id:number) => {
      const electionId = Number(id)
-     const getElection = useQuery<TElection>({
+     const getElection = useQuery<TElectionWithPositionsAndCandidates>({
          queryKey: ["election-list-query"],
          queryFn: async () => {
             try {
@@ -47,11 +47,15 @@ export const  promptElectionStatus = () =>{
       mutationKey:["election-prompt-key"],
       mutationFn:async({status,id})=>{
          try { 
-           const electionId = Number(id)
-           console.log(status,id)
-           const response = await axios.patch(`/api/v1/election/${electionId}/start`,{
+
+          
+            const electionId = Number(id)
+              console.log(status,id)
+             const response = await axios.patch(`/api/v1/election/${electionId}/start`,{
             status:status
-           })
+            })
+           
+
            toast.success(`Election is Already  ${status === "live" ? "starting! 🎉":"end"}`);
            queryClient.invalidateQueries({queryKey: ["election-list-query"],});
            router.refresh();

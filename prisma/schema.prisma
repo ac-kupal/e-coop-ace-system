@@ -162,7 +162,7 @@ model Election {
     voteEligibility VotingEligibility @default(MIGS)
 
     positions  Position[] // 1st to create
-    canditates Candidate[] // 2nd
+    candidates Candidate[] // 2nd
     votes      Votes[]
 
     eventId Int   @unique

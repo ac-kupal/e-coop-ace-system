@@ -7,7 +7,18 @@ export const getElection = async (id: number) => {
         const electionId = Number(id)
         const election = await db.election.findUnique({
            where: { id:electionId},
+           select:{
+            id:true,
+            electionName:true,
+            status:true,
+            allowBirthdayVerification:true,
+            voteEligibility:true,
+            eventId:true,
+            positions:true,
+            candidates:true,
+           }
         });
+        console.log(election)
         return election
      } catch (error) {
         console.log(error);
