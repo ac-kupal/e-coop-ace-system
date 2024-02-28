@@ -15,8 +15,9 @@ const EventNavItems = ({ route}: Props) => {
 
    return (
       <Link href={`${path}`} className="flex cursor-pointer justify-start space-x-2">
-         <div className={`flex space-x-2 duration-300  ease-in-out ${isCurrentPath ? "bg-white dark:bg-primary/20 text-[#099065] font-bold":"text-foreground/90 "} px-5  hover:bg-white dark:hover:bg-primary/30 shadow-sm p-2 rounded-xl`}>
+         <div className={`flex space-x-2 duration-300  ease-in-out ${isCurrentPath ? "  text-[#099065] font-bold":"text-foreground/90 "} px-5  hover:bg-white dark:hover:bg-primary/30 shadow-sm p-2 rounded-xl`}>
             <div className="">
+               {icon}
             </div>
             <h1 className="">{name}</h1>
          </div>

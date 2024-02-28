@@ -110,7 +110,7 @@ const columns: ColumnDef<TMember>[] = [
    {
       accessorKey: "middleName",
       header: ({ column }) => (
-         <DataTableColHeader column={column} title="date" />
+         <DataTableColHeader column={column} title="middle" />
       ),
       cell: ({ row }) => <div className="">{row.original.middleName}</div>,
    },
@@ -123,6 +123,7 @@ const columns: ColumnDef<TMember>[] = [
    },
    {
       accessorKey: "gender",
+      enableSorting:false,
       header: ({ column }) => (
          <DataTableColHeader column={column} title="gender" />
       ),
@@ -139,7 +140,6 @@ const columns: ColumnDef<TMember>[] = [
    },
    {
       id: "contact",
-      enableHiding: false,
       header: ({ column }) => (
          <DataTableColHeader column={column} title="contact" />
       ),
@@ -148,6 +148,7 @@ const columns: ColumnDef<TMember>[] = [
    {
       id: "emailAddress",
       enableHiding: false,
+      enableSorting:true,
       header: ({ column }) => (
          <DataTableColHeader column={column} title="email" />
       ),
@@ -171,7 +172,6 @@ const columns: ColumnDef<TMember>[] = [
   },
    {
       id: "actions",
-      enableHiding: false,
       cell: ({ row }) => (
          <div className="flex justify-end">
             <Actions member={row.original} />

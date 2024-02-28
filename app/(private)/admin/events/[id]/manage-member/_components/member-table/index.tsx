@@ -115,7 +115,7 @@ const MemberTable = ({ id }: Props) => {
             </div>
          </div>
          <DataTable
-            className="flex-1"
+            className="flex-1 bg-background/50 rounded-xl"
             isError={isError}
             isLoading={isLoading || isFetching}
             table={table}
