@@ -29,7 +29,9 @@ const VoteWindow = ({ election }: Props) => {
 
     // TODO: Add modal direction
     const { isPending, isError, error } = loadVoter(election)
-    const { castVote, isCasting, isCastError, castError } = useCastVote(election, (data) => { router.push(`/events/${election.eventId}/election/vote/complete`) });
+    const { data, castVote, isCasting } = useCastVote(election, (data) => { 
+        router.push(`/events/${election.eventId}/election/vote/complete`) 
+    });
 
     if (isPending)
         return (
@@ -82,6 +84,7 @@ const VoteWindow = ({ election }: Props) => {
                 )}
             </div>
             <VoteNavControl
+                casted={data}
                 currentPage={currentPage}
                 lastPage={totalPositions}
                 isLoading={isCasting}

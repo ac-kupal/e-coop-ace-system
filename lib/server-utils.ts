@@ -31,7 +31,7 @@ export const getTemplate = (name: emailTemplateNames) => {
 };
 
 export const transformer = (
-    template: string,
+    template: emailTemplateNames,
     value: Record<string, any>
 ): string => {
     const regex = /\${(.*?)}/g;

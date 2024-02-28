@@ -5,7 +5,8 @@ type Props = {
     onBack: () => void;
     onNext: () => void;
     onFinalize: () => void;
-    isLoading : boolean;
+    casted : boolean;
+    isLoading: boolean;
 
     currentPage: number;
     lastPage: number;
@@ -15,6 +16,7 @@ type Props = {
 const VoteNavControl = ({
     currentPage,
     lastPage,
+    casted,
     isLoading,
     onBack,
     onNext,
@@ -23,18 +25,16 @@ const VoteNavControl = ({
 }: Props) => {
     return (
         <div className="w-full flex items-center p-4 justify-between">
-            <Button disabled={currentPage == 0 || isLoading} onClick={onBack}>
+            <Button disabled={currentPage == 0 || isLoading || casted} onClick={onBack}>
                 Previous Position
             </Button>
             {currentPage > lastPage ? (
-                <Button onClick={onFinalize} disabled={isLoading}>
-                    {
-                        isLoading ? <LoadingSpinner /> : "Cast Vote" 
-                    }
+                <Button onClick={onFinalize} disabled={isLoading || casted}>
+                    {isLoading || casted ? <LoadingSpinner /> : "Cast Vote"}
                 </Button>
             ) : (
-                <Button disabled={!canNext} onClick={onNext}>
-                    {currentPage === lastPage - 1 ? "Next Position" : "View Summary"}
+                <Button disabled={!canNext || casted} onClick={onNext}>
+                    Next 
                 </Button>
             )}
         </div>

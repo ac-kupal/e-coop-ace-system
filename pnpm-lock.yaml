@@ -83,6 +83,9 @@ dependencies:
   date-fns:
     specifier: ^3.3.1
     version: 3.3.1
+  handlebars:
+    specifier: ^4.7.8
+    version: 4.7.8
   html5-qrcode:
     specifier: ^2.3.8
     version: 2.3.8
@@ -107,9 +110,6 @@ dependencies:
   nodemailer:
     specifier: ^6.9.9
     version: 6.9.9
-  nodemailer-express-handlebars:
-    specifier: ^6.1.2
-    version: 6.1.2(express-handlebars@7.1.2)(nodemailer@6.9.9)
   qrcode.react:
     specifier: ^3.1.0
     version: 3.1.0(react@18.2.0)
@@ -3745,15 +3745,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /express-handlebars@7.1.2:
-    resolution: {integrity: sha512-ss9d3mBChOLTEtyfzXCsxlItUxpgS3i4cb/F70G6Q5ohQzmD12XB4x/Y9U6YboeeYBJZt7WQ5yUNu7ZSQ/EGyQ==}
-    engines: {node: '>=v16'}
-    dependencies:
-      glob: 10.3.10
-      graceful-fs: 4.2.11
-      handlebars: 4.7.8
-    dev: false
-
   /fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
     dev: true
@@ -4639,17 +4630,6 @@ packages:
   /node-releases@2.0.14:
     resolution: {integrity: sha512-y10wOWt8yZpqXmOgRo77WaHEmhYQYGNA6y421PKsKYWEK8aW+cqAphborZDhqfyKrbZEN92CN1X2KbafY2s7Yw==}
     dev: true
-
-  /nodemailer-express-handlebars@6.1.2(express-handlebars@7.1.2)(nodemailer@6.9.9):
-    resolution: {integrity: sha512-p5ZKPe8PmiDZquNqi+uDKE1eKXOcqOVPdnmhWELCT1HHoaYXcVwM7wQE1R7wtPPracZRH2hL7mEWiXhVwr5hng==}
-    engines: {node: 14.* || 16.* || >= 18}
-    peerDependencies:
-      express-handlebars: '>= 6.0.0'
-      nodemailer: '>= 6.0.0'
-    dependencies:
-      express-handlebars: 7.1.2
-      nodemailer: 6.9.9
-    dev: false
 
   /nodemailer@6.9.9:
     resolution: {integrity: sha512-dexTll8zqQoVJEZPwQAKzxxtFn0qTnjdQTchoU6Re9BUUGBJiOy3YMn/0ShTW6J5M0dfQ1NeDeRTTl4oIWgQMA==}

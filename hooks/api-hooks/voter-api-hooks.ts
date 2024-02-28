@@ -85,6 +85,5 @@ export const useCastVote = (election : TElection, onSuccess? : (data : any) => v
         }
     })
 
-    return { isCasting, isCastError, castError, castVote }
-
+    return { data, isCasting, isCastError, castError, castVote }
 }
