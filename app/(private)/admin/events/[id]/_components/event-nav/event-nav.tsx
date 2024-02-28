@@ -36,7 +36,7 @@ type Props={
 
 const EventNavBar = ({hasElection}:Props) => {
    return (
-      <div className="flex space-x-2 -translate-x-4 w-full lg: max-w-[400px]">
+      <div className="flex space-x-1 -translate-x-4 w-full lg: max-w-[400px]">
         {EventRoutes.map((route: TElectionRoute, i) => {
             if (hasElection && route.path === "election") {
                return null

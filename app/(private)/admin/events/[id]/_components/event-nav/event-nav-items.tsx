@@ -19,7 +19,7 @@ const EventNavItems = ({ route}: Props) => {
             <div className={`${isCurrentPath ? "  dark:text-[#17f5af] font-bold":"text-foreground/90 "} hidden lg:block `}>
                {icon}
             </div>
-            <h1 className="text-[min(16px,2.6vw)]">{name}</h1>
+            <h1 className="text-[min(16px,3.2vw)]">{name}</h1>
          </div>
       </Link>
    );
