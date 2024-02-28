@@ -131,3 +131,5 @@ export const createManySchema = z.object({
       })
       .optional(),
 });
+
+export const memberEmailSchema = z.string({ invalid_type_error : "invalid email", required_error : "Email is required"}).email("Email is required");
