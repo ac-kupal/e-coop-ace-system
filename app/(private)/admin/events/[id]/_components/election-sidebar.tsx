@@ -1,7 +1,7 @@
 import React from 'react'
-import ElectionNavItems from './election-nav-item'
 import { TElectionRoute } from '@/types'
 import { LayoutDashboard, Users, Medal, Settings2, Combine } from 'lucide-react'
+import ElectionSideBarItems from './election-side-bar-item';
 
 export const ElectionRoutes: TElectionRoute[] = [
    {
@@ -32,9 +32,9 @@ export const ElectionRoutes: TElectionRoute[] = [
 ];
 const ElectionSideBar =( ) => {
   return (
-    <div className="flex flex-row lg:flex-col h-full w-full lg:w-[220px] px-3 justify-evenly  gap-1 lg:gap-5 py-2 lg:py-10 bg-[#ffffff]  lg:min-h-screen  dark:bg-secondary/50 shadow-xl  rounded-3xl lg:justify-start    ">
+    <div className="flex flex-row lg:flex-col border w-full h-16 py-2 lg:w-[220px] px-3 justify-evenly  gap-1 lg:gap-5 lg:py-10 bg-[#ffffff]  lg:min-h-screen  dark:bg-secondary/50 shadow-xl  rounded-3xl lg:justify-start    ">
     {ElectionRoutes.map((route:TElectionRoute, i) => (
-       <ElectionNavItems  route={route} key={i} />
+       <ElectionSideBarItems  route={route} key={i} />
     ))}
  </div>
   )
