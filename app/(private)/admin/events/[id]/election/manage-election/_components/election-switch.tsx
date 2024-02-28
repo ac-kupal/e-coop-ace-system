@@ -53,7 +53,7 @@ const ElectionSwitch = ({ id, status }: Props) => {
                });
             }}
             className={cn(
-               "text-white hover:scale-105 cursor-pointer hover:bg-secondary/90 bg-secondary rounded-xl"
+               "text-white hover:scale-105 cursor-pointer hover:bg-secondary/90 bg-secondary-foreground  dark:bg-secondary rounded-xl"
             )}
          >
            {isLoading ? <Loader2 className=" size-4 animate-spin "/>:"end"}
@@ -79,7 +79,7 @@ const ElectionSwitch = ({ id, status }: Props) => {
                   },
                });
             }}
-            className={`text-white hover:scale-105 cursor-pointer rounded-xl bg-[#15803D] hover:bg-[#15803D] `}
+            className={`text-white hover:scale-105 cursor-pointer rounded-xl bg-primary dark:bg-[#15803D] hover:bg-[#15803D] `}
          >
             {isLoading ? <Loader2 className=" size-4 animate-spin "/>:"start"}
          </Button>

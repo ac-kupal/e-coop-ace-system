@@ -31,7 +31,7 @@ const ManageElection = ({ id }: Props) => {
    return (
       <div className="relative space-y-4">
           {isLive && <Badge className={cn("dark:text-foreground text-red-300 animate-pulse bg-red-700 border-red-800 dark:border-red-500 tracking-wide")}>live</Badge>}
-          {isPending && <Badge className={cn("text-foreground bg-yellow-500 text-yellow-900 border-yellow-950 tracking-wide")}>pending</Badge>}
+          {isPending && <Badge className={cn("text-foreground bg-yellow-400 dark:bg-yellow-500 text-yellow-900 border-yellow-600 tracking-wide")}>pending</Badge>}
          <ElectionSwitch status={Election.data.status} id={id}></ElectionSwitch>
          <h1 className="text-2xl font-medium">Manage Election</h1>
          <ElectionDetails election={Election.data}/>
