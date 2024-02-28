@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+
 export const updateElectionSettings = () => {
      const queryClient = useQueryClient();
      const router = useRouter()
@@ -13,9 +14,9 @@ export const updateElectionSettings = () => {
         mutationFn: async ({electionId,data}) => {
            try {
               const response = await axios.patch(`/api/v1/settings/vote-eligibility/${electionId}`,data);
-              queryClient.invalidateQueries({  queryKey: ["election-list-query"] });
               toast.success("Election updated successfully");
-              router.refresh()
+              queryClient.invalidateQueries({queryKey: ["election-list-query"],});
+              router.refresh();
               return response.data;
            } catch (e) {
               const errorMessage = handleAxiosErrorMessage(e);

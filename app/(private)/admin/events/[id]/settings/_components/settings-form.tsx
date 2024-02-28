@@ -1,6 +1,4 @@
-import {
-   electionSettingSchema,
-} from "@/validation-schema/election-settings";
+import { electionSettingSchema } from "@/validation-schema/election-settings";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Role, VotingEligibility } from "@prisma/client";
 import React, { useCallback, useEffect, useState } from "react";
@@ -26,9 +24,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { updateElectionSettings } from "@/hooks/api-hooks/settings-hooks";
-import { Loader2} from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 
 type Props = {
    election: TElection;
@@ -40,9 +39,10 @@ export type SettingsType = {
 };
 
 const SettingsForm = ({ election }: Props) => {
-   
    const { onOpen: onOpenConfirmModal } = useConfirmModal();
-
+   const [voteEligibility,setVoteEligibility] = useState<VotingEligibility>(election.voteEligibility)
+   const [allowBirthday,setAllowBirthday] = useState<boolean>(election.allowBirthdayVerification)
+    
    const settingsForm = useForm<SettingsType>({
       resolver: zodResolver(electionSettingSchema),
    });
@@ -54,32 +54,40 @@ const SettingsForm = ({ election }: Props) => {
       );
    }, [settingsForm, election]);
 
-  const isSettingChange = settingsForm.getValues("allowBirthdayVerification") === election.allowBirthdayVerification || settingsForm.getValues("voteEligibility") === election.voteEligibility
-
-  useEffect(() => {
+   const isSettingChange = voteEligibility === election.voteEligibility && allowBirthday === election.allowBirthdayVerification
+   
+   useEffect(() => {
       defaultValues();
-   }, [settingsForm, election]);
+   }, [settingsForm, election,]);
 
-   const updateSettings = updateElectionSettings()
-   const electionId = election.id
-   const onSubmit = (formValues:z.infer<typeof electionSettingSchema>)=>{
+
+
+
+   const updateSettings = updateElectionSettings();
+   const electionId = election.id;
+   
+   const isLoading = updateSettings.isPending 
+
+   const onSubmit = (formValues: z.infer<typeof electionSettingSchema>) => {
       onOpenConfirmModal({
          title: "Update Election Settings ",
-         description:
-            "Are you sure you want to udapte this Election",
+         description: "Are you sure you want to udapte this Election",
          onConfirm: () => {
             updateSettings.mutate({
-               electionId:electionId,
-               data:formValues
-            })
+               electionId: electionId,
+               data: formValues,
+            });
+            settingsForm.reset()
          },
-      })
-   }
-
+      });
+   };
    return (
       <div className="w-full ">
          <Form {...settingsForm}>
-            <form onSubmit={settingsForm.handleSubmit(onSubmit)} className="space-y-5">
+            <form
+               onSubmit={settingsForm.handleSubmit(onSubmit)}
+               className="space-y-5"
+            >
                <FormField
                   control={settingsForm.control}
                   name="voteEligibility"
@@ -88,26 +96,29 @@ const SettingsForm = ({ election }: Props) => {
                         <FormItem className="flex justify-between items-center">
                            <FormLabel>Vote Eligibility </FormLabel>
                            <div className="w-44">
-                           <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                           >
-                             <FormControl>
-                                 <SelectTrigger className=" border-0 ring-offset-0 focus:ring-0 round-0 focus-visible:ring-0">
-                                    <SelectValue 
-                                    className="ring-offset-0 focus:ring-0 round-0 focus-visible:ring-0"
-                                       placeholder={`${settingsForm.getValues(
-                                          "voteEligibility"
-                                       )}`}
-                                    />
-                                 </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                 <SelectItem value="MIGS">MIGS</SelectItem>
-                                 <SelectItem value="REGISTERED">REGISTERED</SelectItem>
-                                 <SelectItem value="MARKED_CANVOTE">MARKED CAN VOTE</SelectItem>
-                              </SelectContent>
-                           </Select>
+                              <Select
+                                 onValueChange={(e:VotingEligibility)=>{
+                                    setVoteEligibility(e)
+                                    return field.onChange(e)
+                                 }}
+                                 defaultValue={field.value}
+                              >
+                                 <FormControl>
+                                    <SelectTrigger className=" border-0 ring-offset-0 focus:ring-0 round-0 focus-visible:ring-0">
+                                       <SelectValue
+                                          className="ring-offset-0 focus:ring-0 round-0 focus-visible:ring-0"
+                                          placeholder={`${settingsForm.getValues(
+                                             "voteEligibility"
+                                          )}`}
+                                       />
+                                    </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                    <SelectItem value={VotingEligibility.MIGS}>{VotingEligibility.MIGS}</SelectItem>
+                                    <SelectItem value={VotingEligibility.REGISTERED}>{VotingEligibility.REGISTERED}</SelectItem>
+                                    <SelectItem value={VotingEligibility.MARKED_CANVOTE}>{VotingEligibility.MARKED_CANVOTE}</SelectItem>
+                                 </SelectContent>
+                              </Select>
                            </div>
                            <FormMessage />
                         </FormItem>
@@ -128,10 +139,14 @@ const SettingsForm = ({ election }: Props) => {
                                  Allow “Birthday” for Member Verification
                               </FormLabel>
                               <FormControl>
-                                 <Checkbox
+                                 <Switch
                                     checked={field.value}
-                                    onCheckedChange={field.onChange}
+                                    onCheckedChange={(e)=>{
+                                       setAllowBirthday(e)
+                                       return field.onChange(e)
+                                    }}
                                  />
+                                
                               </FormControl>
                            </div>
                         </div>
@@ -139,8 +154,16 @@ const SettingsForm = ({ election }: Props) => {
                   )}
                />
                <div className="w-full flex justify-end px-2">
-                  <Button variant={isSettingChange ? "default":"secondary"} disabled={!isSettingChange}  className="rounded-lg">
-                    {updateSettings.isPending ? <Loader2 className="animate-spin"/>:"save"}
+                  <Button
+                     disabled={isSettingChange}
+                     variant={isSettingChange ? "secondary" : "default"}
+                     className="rounded-lg"
+                  >
+                     {isLoading ? (
+                        <Loader2 className="animate-spin" />
+                     ) : (
+                        "save"
+                     )}
                   </Button>
                </div>
             </form>
