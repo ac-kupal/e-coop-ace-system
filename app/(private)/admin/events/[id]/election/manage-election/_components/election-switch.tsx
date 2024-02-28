@@ -6,6 +6,7 @@ import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { ElectionStatus } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { stat } from "fs";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
@@ -16,15 +17,16 @@ type Props = {
 };
 
 const ElectionSwitch = ({ id, status }: Props) => {
- 
-   const route = useRouter()
- 
+   const route = useRouter();
+
    const queryClient = useQueryClient();
-   
+
    const promptElection = promptElectionStatus();
-   
+
+   const isLoading = promptElection.isPending;
+
    const { onOpen: onOpenConfirmModal } = useConfirmModal();
-   
+
    const isLive = status === "live";
    const isDone = status === "done";
    
@@ -44,8 +46,7 @@ const ElectionSwitch = ({ id, status }: Props) => {
                            status: ElectionStatus.done,
                            id: id,
                         });
-                        route.refresh()
-                        location.reload()
+                        route.refresh();
                         toast.success("Election is Already End 🎉");
                         queryClient.invalidateQueries({
                            queryKey: ["election-list-query"],
@@ -60,7 +61,7 @@ const ElectionSwitch = ({ id, status }: Props) => {
                "text-white hover:scale-105 cursor-pointer hover:bg-secondary/90 bg-secondary rounded-xl"
             )}
          >
-            end
+           {isLoading ? <Loader2 className=" size-4 animate-spin "/>:"end"}
          </Button>
          <Button
             disabled={isLive}
@@ -75,8 +76,7 @@ const ElectionSwitch = ({ id, status }: Props) => {
                            status: ElectionStatus.live,
                            id: id,
                         });
-                        route.refresh()
-                        location.reload()
+                        route.refresh();
                         toast.success("Election Already Starting 🎉");
                         queryClient.invalidateQueries({
                            queryKey: ["election-list-query"],
@@ -89,7 +89,7 @@ const ElectionSwitch = ({ id, status }: Props) => {
             }}
             className={`text-white hover:scale-105 cursor-pointer rounded-xl bg-[#15803D] hover:bg-[#15803D] `}
          >
-            start
+            {isLoading ? <Loader2 className=" size-4 animate-spin "/>:"start"}
          </Button>
       </div>
    );

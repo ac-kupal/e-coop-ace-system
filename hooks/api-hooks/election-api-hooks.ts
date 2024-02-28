@@ -49,6 +49,7 @@ export const  promptElectionStatus = () =>{
            const response = await axios.patch(`/api/v1/election/${electionId}/start`,{
             status:status
            })
+            location.reload()
            return response.data 
          } catch (e) {
             throw handleAxiosErrorMessage(e);
