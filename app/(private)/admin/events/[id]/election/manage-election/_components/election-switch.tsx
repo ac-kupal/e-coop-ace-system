@@ -17,7 +17,6 @@ type Props = {
 };
 
 const ElectionSwitch = ({ id, status }: Props) => {
-   const route = useRouter();
 
    const queryClient = useQueryClient();
 
@@ -46,11 +45,7 @@ const ElectionSwitch = ({ id, status }: Props) => {
                            status: ElectionStatus.done,
                            id: id,
                         });
-                        route.refresh();
-                        toast.success("Election is Already End 🎉");
-                        queryClient.invalidateQueries({
-                           queryKey: ["election-list-query"],
-                        });
+                       
                      } catch (error) {
                         console.log(error);
                      }
@@ -76,11 +71,8 @@ const ElectionSwitch = ({ id, status }: Props) => {
                            status: ElectionStatus.live,
                            id: id,
                         });
-                        route.refresh();
-                        toast.success("Election Already Starting 🎉");
-                        queryClient.invalidateQueries({
-                           queryKey: ["election-list-query"],
-                        });
+                       
+                       
                      } catch (error) {
                         console.log(error);
                      }
