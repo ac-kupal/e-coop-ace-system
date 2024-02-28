@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import QrReader from "@/components/qr-reader/html5-qr-reader";
+import QrReader from "@/components/qr-reader";
 
 import { TMemberAttendees } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
@@ -48,15 +48,13 @@ const AttendeeSearch = ({ onFound, params }: Props) => {
 
     return (
         <div className="flex flex-col items-center gap-y-4">
-            <QrReader
-                className="size-[400px] bg-background overflow-clip rounded-xl"
-                disableFlip={false}
-                fps={5}
-                qrbox={800}
+            <QrReader 
+                qrReaderOption="ReactQrCodeReader"
                 onRead={(val: string) => {
                     setPb(val);
                     loadMember(val);
                 }}
+                className="size-[400px] bg-background overflow-clip rounded-xl"
             />
             <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
                 <Separator className="w-1/2" /> or{" "}

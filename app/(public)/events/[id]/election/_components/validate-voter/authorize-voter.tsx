@@ -61,8 +61,6 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
 
     const disabled = isPending;
 
-    console.log(electionWithEvent.allowBirthdayVerification)
-
     return (
         <div className="flex flex-col items-center gap-y-4">
             <p>This step is for verification before we authorize you to vote</p>
