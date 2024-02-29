@@ -29,7 +29,7 @@ const VoteWindow = ({ election }: Props) => {
 
     const { voter, isPending, isError, error } = loadVoter(election);
     const { data, castVote, isCasting } = useCastVote(election, (data) => {
-        if (document.exitFullscreen) document.exitFullscreen();
+        // if (document.exitFullscreen) document.exitFullscreen();
         router.push(`/events/${election.eventId}/election/vote/complete`);
     });
 
