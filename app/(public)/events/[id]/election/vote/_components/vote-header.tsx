@@ -7,7 +7,6 @@ type Props = {
 };
 
 const VoteHeader = ({ position, selected }: Props) => {
-    console.log(position);
     const { positionName, numberOfSelection } = position;
 
     return (

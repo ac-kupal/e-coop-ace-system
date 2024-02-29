@@ -29,10 +29,19 @@ const VoteSummary = ({ positions, votes }: Props) => {
                             {position.positionName}
                         </p>
                         <div className="flex gap-y-4 flex-wrap w-full justify-center">
+                            {votes.filter(
+                                (votedCandidate) =>
+                                    votedCandidate.position.id === position.id
+                            ).length === 0 && (
+                                <p className="text-sm text-foreground/70">
+                                    No selected candidate for this position
+                                </p>
+                            )}
                             {votes
                                 .filter(
                                     (votedCandidate) =>
-                                        votedCandidate.position.id === position.id,
+                                        votedCandidate.position.id ===
+                                        position.id
                                 )
                                 .map((votedCandidate) => (
                                     <CandidateCard
@@ -40,8 +49,8 @@ const VoteSummary = ({ positions, votes }: Props) => {
                                         canSelect={false}
                                         isChosen={true}
                                         candidate={votedCandidate}
-                                        onRemove={() => { }}
-                                        onSelect={() => { }}
+                                        onRemove={() => {}}
+                                        onSelect={() => {}}
                                     />
                                 ))}
                         </div>

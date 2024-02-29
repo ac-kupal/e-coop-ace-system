@@ -11,6 +11,7 @@ type Props = {
     currentPage: number;
     lastPage: number;
     canNext: boolean;
+    canFinalize : boolean;
 };
 
 const VoteNavControl = ({
@@ -21,6 +22,7 @@ const VoteNavControl = ({
     onBack,
     onNext,
     canNext,
+    canFinalize,
     onFinalize,
 }: Props) => {
     return (
@@ -29,7 +31,7 @@ const VoteNavControl = ({
                 Previous Position
             </Button>
             {currentPage > lastPage ? (
-                <Button onClick={onFinalize} disabled={isLoading || casted}>
+                <Button onClick={onFinalize} disabled={isLoading || casted || !canFinalize}>
                     {isLoading || casted ? <LoadingSpinner /> : "Cast Vote"}
                 </Button>
             ) : (

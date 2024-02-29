@@ -63,6 +63,7 @@ export const loadVoter = (election : TElection) => {
                 throw errorMessage;
             }
         },
+        retry : 0
     });
 
     return { voter, isPending, isError, error }

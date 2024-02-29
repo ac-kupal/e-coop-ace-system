@@ -8,7 +8,6 @@ const getEmailTemplate = async(templateFile : emailTemplates, payload : Record<s
     const templateContent = await fs.readFile(`${process.cwd()}/email-templates/${templateFile}`, 'utf8') 
     const template = handlebars.compile(templateContent)
     const generatedTemplate = template(payload);
-    console.log("Template ", generatedTemplate);
     return generatedTemplate
 }
 

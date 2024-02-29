@@ -1,8 +1,8 @@
 import React from "react";
 import db from "@/lib/database";
-import { eventIdParamSchema } from "@/validation-schema/event-registration-voting";
 import InvalidElection from "./_components/invalid-election";
 import ValidateVoter from "./_components/validate-voter";
+import { eventIdParamSchema } from "@/validation-schema/event-registration-voting";
 
 type Props = {
     params: { id: number };
@@ -21,18 +21,10 @@ const ElectionVerifyPage = async ({ params }: Props) => {
     if (!election) return <InvalidElection />;
 
     if (election.status === "done")
-        return (
-            <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
-                <InvalidElection message="This election has ended" />
-            </div>
-        );
+        return <InvalidElection message="This election has ended" />;
 
     if (election.status != "live")
-        return (
-            <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
-                <InvalidElection message="Election is not yet open" />
-            </div>
-        );
+        return <InvalidElection message="Election is not yet open" />;
 
     return (
         <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">

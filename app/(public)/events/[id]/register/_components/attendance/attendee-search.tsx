@@ -49,7 +49,7 @@ const AttendeeSearch = ({ onFound, params }: Props) => {
     return (
         <div className="flex flex-col items-center gap-y-4">
             <QrReader 
-                qrReaderOption="ReactQrCodeReader"
+                qrReaderOption="HTML5QrScanner"
                 onRead={(val: string) => {
                     setPb(val);
                     loadMember(val);

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState } from "react";
 
 import VoteHeader from "./vote-header";
@@ -27,25 +27,27 @@ const VoteWindow = ({ election }: Props) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
-    // TODO: Add modal direction
-    const { isPending, isError, error } = loadVoter(election)
-    const { data, castVote, isCasting } = useCastVote(election, (data) => { 
-        router.push(`/events/${election.eventId}/election/vote/complete`) 
+    const { isPending, isError, error } = loadVoter(election);
+    const { data, castVote, isCasting } = useCastVote(election, (data) => {
+        router.push(`/events/${election.eventId}/election/vote/complete`);
     });
 
     if (isPending)
         return (
             <div className="fixed top-1/2 left-auto gap-x-2 rounded-xl flex items-center justify-center px-3 py-1 bg-secondary/40 backdrop-blur-sm">
                 <LoadingSpinner strokeWidth={1} />
-                <p className="text-foreground/80 text-sm">checking authorization</p>
+                <p className="text-foreground/80 text-sm">
+                    checking authorization
+                </p>
             </div>
         );
 
-    if (isError && error) return <InvalidElection message={error} />;
+    if (isError && error)
+        return <InvalidElection className="text-lg" message={error} />;
 
     const currentPosition =
         election.positions[
-        currentPage > totalPositions - 1 ? totalPositions : currentPage
+            currentPage > totalPositions - 1 ? totalPositions : currentPage
         ];
 
     return (
@@ -60,7 +62,8 @@ const VoteWindow = ({ election }: Props) => {
                             selected={
                                 votes.filter(
                                     (votedCandidate) =>
-                                        votedCandidate.position.id === currentPosition.id,
+                                        votedCandidate.position.id ===
+                                        currentPosition.id
                                 ).length
                             }
                         />
@@ -68,14 +71,20 @@ const VoteWindow = ({ election }: Props) => {
                             maxSelect={currentPosition.numberOfSelection}
                             chosenCandidates={votes.filter(
                                 (votedCandidate) =>
-                                    votedCandidate.position.id === currentPosition.id,
+                                    votedCandidate.position.id ===
+                                    currentPosition.id
                             )}
                             onAdd={(candidate) => {
-                                setVotes((prevVotes) => [...prevVotes, candidate]);
+                                setVotes((prevVotes) => [
+                                    ...prevVotes,
+                                    candidate,
+                                ]);
                             }}
                             onRemove={(candidate) => {
                                 setVotes((prevVotes) =>
-                                    prevVotes.filter((voted) => voted.id !== candidate.id),
+                                    prevVotes.filter(
+                                        (voted) => voted.id !== candidate.id
+                                    )
                                 );
                             }}
                             candidates={currentPosition.candidates}
@@ -90,13 +99,11 @@ const VoteWindow = ({ election }: Props) => {
                 isLoading={isCasting}
                 onBack={() => setCurrentPage((prev) => prev - 1)}
                 onNext={() => setCurrentPage((prev) => prev + 1)}
-                onFinalize={() => castVote(votes.map((votedCandidate) => votedCandidate.id ))}
-                canNext={
-                    votes.filter(
-                        (votedCandidate) =>
-                            votedCandidate.position.id === currentPosition.id,
-                    ).length > 0
+                onFinalize={() =>
+                    castVote(votes.map((votedCandidate) => votedCandidate.id))
                 }
+                canFinalize={votes.length > 0}
+                canNext={true}
             />
             <OnlyLandscape />
         </div>
