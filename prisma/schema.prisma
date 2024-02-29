@@ -99,7 +99,8 @@ model Event {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    attendees EventAttendees[]
+    attendees  EventAttendees[]
+    incentives Incentives[]
 }
 
 enum gender {
@@ -117,7 +118,7 @@ model EventAttendees {
     birthday       DateTime
     contact        String
     picture        String?  @default("/images/default-avatar.png")
-    emailAddress   String? 
+    emailAddress   String?
 
     canVote Boolean? @default(false)
 
@@ -129,9 +130,10 @@ model EventAttendees {
     voteOtp    String?
 
     votes Votes[]
+    incentiveClaimed IncentiveClaims[]
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     createdBy Int?
     updatedBy Int?
@@ -158,8 +160,8 @@ model Election {
 
     // settings - add other settings here
     // who can vote
-    allowBirthdayVerification Boolean @default(false)
-    voteEligibility VotingEligibility @default(MIGS)
+    allowBirthdayVerification Boolean           @default(false)
+    voteEligibility           VotingEligibility @default(MIGS)
 
     positions  Position[] // 1st to create
     candidates Candidate[] // 2nd
@@ -217,4 +219,38 @@ model Votes {
     attendee  EventAttendees @relation(fields: [attendeeId], references: [id])
     candidate Candidate      @relation(fields: [candidateId], references: [id])
     election  Election       @relation(fields: [electionId], references: [id])
+}
+
+model Incentives {
+    id Int @id @default(autoincrement())
+
+    itemName String
+    allotted Int
+    eventId  Int
+
+    event Event @relation(fields: [eventId], references: [id])
+    claimed   IncentiveClaims[]
+
+    createdBy Int?
+    updatedBy Int?
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+}
+
+model IncentiveClaims {
+    id Int @id @default(autoincrement())
+
+    incentiveId Int
+    incentive Incentives @relation(fields: [incentiveId], references: [id])
+
+    eventAttendeeId String
+    eventAttendee EventAttendees @relation(fields : [eventAttendeeId], references: [id])
+
+    createdBy  Int?
+    assistedBy Int?
+    updatedBy  Int?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
