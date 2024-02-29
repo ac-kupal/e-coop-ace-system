@@ -228,7 +228,7 @@ model Incentives {
     allotted Int
     eventId  Int
 
-    event Event @relation(fields: [eventId], references: [id])
+    event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
     claimed   IncentiveClaims[]
 
     createdBy Int?
@@ -245,7 +245,7 @@ model IncentiveClaims {
     incentive Incentives @relation(fields: [incentiveId], references: [id])
 
     eventAttendeeId String
-    eventAttendee EventAttendees @relation(fields : [eventAttendeeId], references: [id])
+    eventAttendee EventAttendees @relation(fields : [eventAttendeeId], references: [id], onDelete: Cascade)
 
     createdBy  Int?
     assistedBy Int?

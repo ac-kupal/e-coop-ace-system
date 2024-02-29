@@ -3,16 +3,11 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import {
-  Copy,
-  Image,
-  Loader2,
-  MoreHorizontal,
-  Pencil,
-  Trash,
-} from "lucide-react";
+import { Copy, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import LoadingSpinner from "@/components/loading-spinner";
+import UpdateIncentiveModal from "../modals/update-incentive-modal";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 import {
   DropdownMenu,
@@ -25,18 +20,27 @@ import {
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { TIncentiveWithClaimCount } from "@/types";
-import UpdateIncentiveModal from "../modals/update-incentive-modal";
+import { useDeleteIncentive } from "@/hooks/api-hooks/incentive-api-hooks";
 
 const Actions = ({ incentive }: { incentive: TIncentiveWithClaimCount }) => {
   const [modal, setModal] = useState(false);
-  const [incentivePictureModal, setBranchPictureModal] = useState(false);
   const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
-  if (false) return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
+  const { deleteIncentive, isPending } = useDeleteIncentive(
+    incentive.eventId,
+    incentive.id,
+  );
+
+  if (isPending)
+    return <LoadingSpinner className="h-4 text-foreground/70 animate-spin" />;
 
   return (
     <>
-      <UpdateIncentiveModal state={modal} onClose={()=>setModal(false)} incentive={incentive}/>
+      <UpdateIncentiveModal
+        state={modal}
+        onClose={() => setModal(false)}
+        incentive={incentive}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="w-8 h-8 p-0">
@@ -70,7 +74,7 @@ const Actions = ({ incentive }: { incentive: TIncentiveWithClaimCount }) => {
                 title: "Delete Incentive 🗑️",
                 description: "Are you sure to delete this incentive?",
                 onConfirm: () => {
-                  //          deleteOperation.mutate(incentive.id);
+                  deleteIncentive();
                 },
               })
             }

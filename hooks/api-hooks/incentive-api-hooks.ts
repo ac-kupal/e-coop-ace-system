@@ -1,12 +1,14 @@
-import { TIncentiveWithClaimCount } from "@/types";
+import { TIncentive, TIncentiveWithClaimCount } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 import z from "zod";
 
 export const incentiveListWithClaimCount = (eventId: number) => {
-  const { data, isFetching, isLoading, isError, error} = useQuery<TIncentiveWithClaimCount[]>({
+  const { data, isFetching, isLoading, isError, error } = useQuery<
+    TIncentiveWithClaimCount[]
+  >({
     queryKey: ["incentive-withclaimcount-list"],
     queryFn: async () => {
       try {
@@ -18,8 +20,38 @@ export const incentiveListWithClaimCount = (eventId: number) => {
         throw e;
       }
     },
-    initialData : []
+    initialData: [],
   });
 
-    return { data, isFetching, isLoading, isError, error }
+  return { data, isFetching, isLoading, isError, error };
+};
+
+export const useDeleteIncentive = (eventId: number, incentiveId: number) => {
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteIncentive, isPending } = useMutation<any, string>({
+    mutationKey: ["delete-incentive"],
+    mutationFn: async (data) => {
+      try {
+        const response = await axios.delete(
+          `/api/v1/event/${eventId}/incentives/${incentiveId}`,
+          { data },
+        );
+
+        queryClient.invalidateQueries({
+          queryKey: ["incentive-withclaimcount-list"],
+        });
+
+        toast.success("Incentive has been deleted.");
+        return response.data;
+      } catch (e) {
+        const errorMessage = handleAxiosErrorMessage(e);
+
+        toast.error(errorMessage);
+        throw errorMessage;
+      }
+    },
+  });
+
+  return { deleteIncentive, isPending };
 };

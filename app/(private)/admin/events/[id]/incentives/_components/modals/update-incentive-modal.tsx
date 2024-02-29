@@ -61,8 +61,8 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
         onClose(false);
     }
 
-    const createIncentive = useMutation<TIncentive, string, updateTIncentives>({
-        mutationKey: ["create-incentive"],
+    const updateIncentive = useMutation<TIncentive, string, updateTIncentives>({
+        mutationKey: ["update-incentive"],
         mutationFn: async (data) => {
             try {
                 const response = await axios.patch(`/api/v1/event/${incentive.eventId}/incentives/${incentive.id}`, { data });
@@ -81,7 +81,7 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
         },
     });
 
-    const isLoading = createIncentive.isPending;
+    const isLoading = updateIncentive.isPending;
 
 
     return (
@@ -94,7 +94,7 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit((formValues) =>
-                            createIncentive.mutate(formValues)
+                            updateIncentive.mutate(formValues)
                         )}
                         className="space-y-4"
                     >
