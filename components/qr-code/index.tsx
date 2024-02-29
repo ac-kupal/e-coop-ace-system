@@ -19,7 +19,7 @@ const QrCode = ({ value, className, themeResponsive = false }: Props) => {
             )}
         >
             {!value || value.length === 0 ? (
-                <Loader2 className="size-8 animate-spin" strokeWidth={1} />
+                <Loader2 className="size-8 text-gray-800 animate-spin" strokeWidth={1} />
             ) : (
                 <QRCodeSVG
                     value={value}

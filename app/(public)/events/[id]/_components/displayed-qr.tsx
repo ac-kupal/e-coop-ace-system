@@ -14,11 +14,11 @@ type Props = {
 const DisplayEventQRLink = ({ Event }: Props) => {
     const { origin } = useOrigin();
 
-    const url = origin.length === 0 ? "" : `${origin}/events/${Event.id}`;
+    const url = origin.length === 0 ? "" : `${origin}/events/${Event.id}/register`;
 
     return (
         <div className="flex gap-y-4 flex-col items-center pt-6">
-            <p className="text-foreground/80 text-sm">Share this event</p>
+            <p className="text-foreground/80 text-sm">Share registration for this event</p>
             <QrCode themeResponsive={false} value={url}/>
             { url.length > 0 && (
                 <CopyUrl url={url} />
