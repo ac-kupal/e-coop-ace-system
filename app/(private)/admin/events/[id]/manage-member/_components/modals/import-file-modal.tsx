@@ -98,7 +98,7 @@ const ImportFileModal = ({ state, onClose, onCancel,id }: Props) => {
                   type="file"
                   name="file"
                   onChange={handleImport}
-                  accept=".xlsx, .xls, .csv"
+                  accept=".xlsx, .xls, .csv, .xlm"
                />
                <div className="flex justify-end gap-x-2">
                   <Button
