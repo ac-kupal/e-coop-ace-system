@@ -2,6 +2,7 @@ import { TCreateMember, TMember } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import moment from "moment";
 import { toast } from "sonner";
 
 
@@ -66,7 +67,9 @@ export const createMember = ({onCancelandReset}:Props) => {
       mutationKey: ["delete-member-query"],
       mutationFn: async ({member}) => { 
          try {
-             const response = await axios.post(`/api/v1/member/`,member);
+             const newBirthday =  moment(member.birthday).format('YYYY-MM-DD HH:mm:ss')
+             const newMember = {...member, birthday:newBirthday}
+             const response = await axios.post(`/api/v1/member/`,newMember);
              queryClient.invalidateQueries({ queryKey: ["all-event-members-list-query"] });
              toast.success("Member added successfully");
              onCancelandReset()

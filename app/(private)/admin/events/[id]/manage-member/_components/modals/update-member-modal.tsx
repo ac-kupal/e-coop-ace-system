@@ -252,6 +252,9 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                           mode="single"
                                           selected={field.value}
                                           onSelect={field.onChange}
+                                          captionLayout="dropdown-buttons"
+                                          fromYear={1900}
+                                          toYear={new Date().getFullYear()}
                                           initialFocus
                                        />
                                     </PopoverContent>

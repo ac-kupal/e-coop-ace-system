@@ -10,17 +10,13 @@ import {
 } from "@tanstack/react-table";
 import React, { useState } from "react";
 import columns from "./column";
-import NotFound from "../../../_components/not-found";
-import { Plus, SearchIcon, Sheet } from "lucide-react";
+import { Plus, SearchIcon } from "lucide-react";
 import SearchInput from "@/components/data-table/table-search-input";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { getAllEventMembers } from "@/hooks/api-hooks/member-api-hook";
 import CreateMemberModal from "../modals/create-member-modal";
-import { read, utils, writeFile } from "xlsx";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import ImportFileModal from "../modals/import-file-modal";
 type Props = {
    id: number;
@@ -35,23 +31,6 @@ const MemberTable = ({ id }: Props) => {
 
    if (data === undefined)
       return <h1 className=" animate-pulse">Loading...</h1>;
-
-   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const files = event.target.files;
-      if (files?.length) {
-         const file = files[0];
-         const reader = new FileReader();
-         reader.onload = (event) => {
-            const wb = read(event.target?.result);
-            const sheets = wb.SheetNames;
-            if (sheets.length) {
-               const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
-               setMembers(rows);
-            }
-         };
-         reader.readAsArrayBuffer(file);
-      }
-   };
 
    const table = useReactTable({
       data,
