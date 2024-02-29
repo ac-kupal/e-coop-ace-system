@@ -29,8 +29,8 @@ const VotePage = async ({ params }: Props) => {
     if (election.positions.length === 0) return (<InvalidElection message="It seems like this election doesn't have positions and candidates yet. Please contact admin" />);
 
     return (
-        <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center  bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-[#e7e0fb] dark:from-secondary to-transparent">
-            <p className="text-2xl lg:text-4xl uppercase text-center">
+        <div className="flex flex-col py-20 px-5 gap-y-4 lg:gap-y-6 min-h-screen w-full items-center  bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-[#e7e0fb] dark:from-secondary to-transparent">
+            <p className="text-lg lg:text-2xl xl:text-4xl uppercase text-center">
                 {election.electionName}
             </p>
             <div className="w-5 h-2 bg-orange-400 rounded-full" />

@@ -31,7 +31,7 @@ const CandidateCard = ({
     return (
         <div
             className={cn(
-                "p-4 w-full relative sm:w-1/2 md:w-1/4 space-y-4 duration-300 cursor-hover selection:bg-background/10 cursor-pointer",
+                "p-4 w-full relative md:w-1/5 lg:w-1/4 space-y-4 duration-300 cursor-hover selection:bg-background/10 cursor-pointer",
                 !canSelect && !isChosen && "cursor-not-allowed opacity-50 ",
             )}
             onClick={handleClick}
@@ -59,7 +59,7 @@ const CandidateCard = ({
                     </div>
                 </div>
             </div>
-            <p className="text-base lg:text-xl font-medium">{`${firstName} ${lastName}`}</p>
+            <p className="text-sm lg:text-xl font-medium">{`${firstName} ${lastName}`}</p>
         </div>
     );
 };
