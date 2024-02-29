@@ -29,7 +29,7 @@ const ElectionSwitch = ({ id, status, election }: Props) => {
    return (
       <div className="absolute -top-3 right-3 lg:right-0 lg:top-0  flex space-x-3">
          <Button
-            disabled={isDone}
+            disabled={isDone || !allowedToStart}
             onClick={() => {
                onOpenConfirmModal({
                   title: "You are about to End the Election",

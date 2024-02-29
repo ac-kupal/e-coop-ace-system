@@ -69,6 +69,7 @@ const ManageElection = ({ id }: Props) => {
             id={id}
          ></ElectionSwitch>
          <h1 className="text-[min(25px,3.5vw)] font-bold">Manage Election</h1>
+         <p className=" text-sm italic text-muted-foreground">Note: You will not be able to start the election if there are no candidates and the position is empty.</p>
          <ElectionDetails election={Election.data} />
          <div className="w-full flex space-x-3 justify-start px-2">
             <Users className="size-5 text-green-700" />
