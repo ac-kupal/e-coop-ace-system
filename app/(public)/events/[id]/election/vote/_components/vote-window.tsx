@@ -27,10 +27,21 @@ const VoteWindow = ({ election }: Props) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
-    const { isPending, isError, error } = loadVoter(election);
+    const { voter, isPending, isError, error } = loadVoter(election);
     const { data, castVote, isCasting } = useCastVote(election, (data) => {
+        if (document.exitFullscreen) document.exitFullscreen();
         router.push(`/events/${election.eventId}/election/vote/complete`);
     });
+
+    const toggleFullScreen = () => {
+        if (voter && document) {
+            if (!document.fullscreenElement)
+                document.documentElement.requestFullscreen();
+            else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+    };
 
     if (isPending)
         return (
