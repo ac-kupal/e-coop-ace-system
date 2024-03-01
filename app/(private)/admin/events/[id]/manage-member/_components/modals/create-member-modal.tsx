@@ -59,9 +59,6 @@ type Props = {
 export type createTMember = z.infer<typeof createMemberWithUploadSchema>;
 
 const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
-   const router = useRouter();
-   const queryClient = useQueryClient();
-   const [isElection, setIsElection] = useState(false);
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: "/images/default.png",
@@ -75,7 +72,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
       middleName: "",
       lastName: "",
       gender: undefined,
-      birthday:undefined,
+      birthday: undefined,
       contact: "",
       emailAddress: "",
       picture: imageFile,
@@ -131,12 +128,8 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
    };
    const isLoading = createMemberMutation.isPending;
    const isUploading = uploadImage.isPending;
-   const inputRef = useRef(null); 
-   const convertIosString = (date:Date)=>{
-      const originalDate = new Date(date)
-      const formattedDate = format(originalDate, 'MM/dd/yyyy');
-      return formattedDate
-   }
+
+   const inputRef = useRef(null);
 
 
    return (
@@ -147,15 +140,15 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
             reset();
          }}
       >
-         <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[1000px] font-inter">
+         <DialogContent className="border-none shadow-2 sm:rounded-2xl max-h-[1000px] overflow-y-auto md:max-w-[700px] lg:max-w-[1000px] font-inter">
             <ModalHead
                title="Create Member"
                description="Creating a member that is exclusive to being either a partial or full member of the Coop."
             />
             <Form {...memberForm}>
                <form onSubmit={memberForm.handleSubmit(onSubmit)} className="">
-                  <div className="flex w-full space-x-5">
-                     <div className="w-1/2 space-y-2">
+                  <div className="flex  w-full flex-col lg:flex-row lg:space-x-5">
+                     <div className="w-full  space-y-2">
                         <FormField
                            control={memberForm.control}
                            name="passbookNumber"
@@ -228,57 +221,21 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                            control={memberForm.control}
                            name="birthday"
                            render={({ field }) => {
-                              console.log(field.value)
-                             return  <FormItem className="flex flex-col">
-                             <FormLabel>Birthday</FormLabel>
-                             <div className="flex border">
-                                <InputMask
-                                   mask="99/99/9999"
-                                   ref={inputRef}
-                                   value={field.value as any}
-                                   onChange={field.onChange}
-                                   placeholder="mm/dd/yyyy"
-                                   className="h-10 w-[120px] bg-transparent placeholder:text-white focus-visible:outline-none focus-visible:ring-0  focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-                                />
-                                <div className="w-full  flex items-center">
-                                
-                                </div>
-                                {/* <Popover>
-                                   <PopoverTrigger asChild>
-                                      <FormControl>
-                                         <Button
-                                            variant={"outline"}
-                                            className={cn(
-                                               "w-[5%] relative"
-                                            )}
-                                         >
-                                            <CalendarIcon className="absolute ml-auto h-4 w-4 opacity-50" />
-                                         </Button>
-                                      </FormControl>
-                                   </PopoverTrigger>
-                                   <PopoverContent
-                                      className="w-auto p-0"
-                                      align="start"
-                                   >
-                                      <div>
-                                         <Calendar
-                                            mode="single"
-                                            selected={field.value}
-                                            onSelect={field.onChange}
-                                            captionLayout="dropdown-buttons"
-                                            fromYear={1900}
-                                            toYear={new Date().getFullYear()}
-                                            initialFocus
-                                         />
-                                      </div>
-                                   </PopoverContent>
-                                </Popover> */}
-                             </div>
-                             <FormMessage />
-                          </FormItem>
-                           }
-                        
-                           }
+                              return (
+                                 <FormItem className="flex flex-col">
+                                    <FormLabel className="flex justify-between"><h1>Birthday</h1> <span className="text-[12px] italic text-muted-foreground">mm/dd/yyyy</span></FormLabel>
+                                    <InputMask
+                                       mask="99/99/9999"
+                                       ref={inputRef}
+                                       value={field.value as any}
+                                       onChange={field.onChange}
+                                       placeholder="input birthday"
+                                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    />
+                                    <FormMessage />
+                                 </FormItem>
+                              );
+                           }}
                         />
                         <FormField
                            control={memberForm.control}
@@ -324,7 +281,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                            )}
                         />
                      </div>
-                     <div className="w-1/2 space-y-2">
+                     <div className="w-full space-y-2">
                         <FormField
                            control={memberForm.control}
                            name="gender"
@@ -381,7 +338,6 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                      </div>
                   </div>
                   <div>
-                     <Separator className="bg-muted/70" />
                      <div className="flex justify-end gap-x-2">
                         <Button
                            onClick={(e) => {
