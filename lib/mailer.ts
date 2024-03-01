@@ -5,7 +5,7 @@ import * as handlebars from "handlebars";
 type emailTemplates = "vote-submit.html"
 
 const getEmailTemplate = async(templateFile : emailTemplates, payload : Record<string, any>) => {
-    const templateContent = await fs.readFile(`./email-templates/${templateFile}`, 'utf8') 
+    const templateContent = await fs.readFile(`public/email-templates/${templateFile}`, 'utf8') 
     const template = handlebars.compile(templateContent)
     const generatedTemplate = template(payload);
     return generatedTemplate
