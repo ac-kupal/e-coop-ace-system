@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { getAllEventMembers } from "@/hooks/api-hooks/member-api-hook";
 import CreateMemberModal from "../modals/create-member-modal";
 import ImportFileModal from "../modals/import-file-modal";
+import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 type Props = {
    id: number;
 };
@@ -25,7 +26,7 @@ type Props = {
 const MemberTable = ({ id }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createMember, setCreateMember] = useState(false);
-   const [onImportModal, setOnImportModal] = useState(false)
+   const [onImportModal, setOnImportModal] = useState(false);
    const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
 
    if (data === undefined)
@@ -54,7 +55,11 @@ const MemberTable = ({ id }: Props) => {
                state={createMember}
                onClose={(state) => setCreateMember(state)}
             />
-            <ImportFileModal id={id} state={onImportModal} onClose={(state) => setOnImportModal(state)} ></ImportFileModal>
+            <ImportFileModal
+               id={id}
+               state={onImportModal}
+               onClose={(state) => setOnImportModal(state)}
+            ></ImportFileModal>
             <div className="flex items-center gap-x-4 text-muted-foreground">
                <div className="relative">
                   <SearchIcon className="absolute  w-4 h-auto top-3 left-2" />
@@ -84,10 +89,10 @@ const MemberTable = ({ id }: Props) => {
                      "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                   )}
                   onClick={() => {
-                    setOnImportModal(true)
+                     setOnImportModal(true);
                   }}
                >
-                 <p> import csv</p>
+                  <p> import csv</p>
                   <Plus className="w-4 h-4" />
                </Button>
             </div>
@@ -98,7 +103,15 @@ const MemberTable = ({ id }: Props) => {
             isLoading={isLoading || isFetching}
             table={table}
          />
-         <DataTablePagination pageSizes={[20, 40, 60, 80, 100]} table={table} />
+         <div className="lg:hidden">
+            <DataTableBasicPagination2 table={table} />
+         </div>
+         <div className="hidden lg:block">
+            <DataTablePagination
+               pageSizes={[20, 40, 60, 80, 100]}
+               table={table}
+            />
+         </div>
       </div>
    );
 };
