@@ -24,11 +24,17 @@ type Props = {
 };
 
 const MemberTable = ({ id }: Props) => {
-   const [globalFilter, setGlobalFilter] = useState<string>("");
-   const [createMember, setCreateMember] = useState(false);
-   const [onImportModal, setOnImportModal] = useState(false);
-   const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
+   
+   
 
+   const [globalFilter, setGlobalFilter] = useState<string>("");
+
+   const [createMember, setCreateMember] = useState(false);
+
+   const [onImportModal, setOnImportModal] = useState(false);
+
+   const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
+      
    if (data === undefined)
       return <h1 className=" animate-pulse">Loading...</h1>;
 

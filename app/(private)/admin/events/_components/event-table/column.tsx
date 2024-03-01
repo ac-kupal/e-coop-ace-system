@@ -7,6 +7,7 @@ import {
    CheckCircle2,
    Copy,
    Loader2,
+   MenuIcon,
    MoreHorizontal,
    Pencil,
    QrCode,
@@ -54,7 +55,7 @@ const Actions = ({ event }: { event: TEventWithElection }) => {
          <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="w-8 h-8 p-0">
                <span className="sr-only">Open menu</span>
-               <MoreHorizontal className="w-4 h-4" />
+               <MenuIcon className="size-7 text-muted-foreground" />
             </Button>
          </DropdownMenuTrigger>
          <DropdownMenuContent className="border-none shadow-2" align="end">
@@ -128,6 +129,16 @@ const Actions = ({ event }: { event: TEventWithElection }) => {
 };
 
 const columns: ColumnDef<TEventWithElection>[] = [
+   {
+      header: ({ column }) => <DataTableColHeader column={column} title="Actions" />,
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => (
+         <div className="flex justify-start">
+            <Actions event={row.original} />
+         </div>
+      ),
+   },
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
@@ -217,24 +228,16 @@ const columns: ColumnDef<TEventWithElection>[] = [
       id: "button",
       enableHiding: false,
       cell: ({ row }) => (
-         <div className="">
+         <div className="flex justify-end">
             {row.original.election && (
                <Link href={`/admin/events/${row.original.id}/election/`}>
-                  <Button className=" rounded-xl h-8">View Election</Button>
+                  <Button className=" rounded-xl h-8">View List</Button>
                </Link>
             )}
          </div>
       ),
    },
-   {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => (
-         <div className="flex justify-end">
-            <Actions event={row.original} />
-         </div>
-      ),
-   },
+  
 ];
 
 export default columns;

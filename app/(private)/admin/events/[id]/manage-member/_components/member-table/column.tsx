@@ -29,18 +29,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UpdateMemberModal from "../modals/update-member-modal";
 import { useState } from "react";
 import { format } from "date-fns";
+import { useSession } from "next-auth/react";
 
 const Actions = ({ member }: { member: TMember }) => {
-   const [onOpenModal,setOnOpenModal] = useState(false)
+   const { data: session } = useSession();
+
+   const isAdminOrRoot =
+      session?.user.role === "admin" || session?.user.role === "root";
+
+   const [onOpenModal, setOnOpenModal] = useState(false);
    const deleteOperation = deleteMember();
    const { onOpen: onOpenConfirmModal } = useConfirmModal();
    return (
       <DropdownMenu>
-         <UpdateMemberModal member={member} state={onOpenModal} onClose={()=> setOnOpenModal(false)} onCancel={()=> setOnOpenModal(false)} ></UpdateMemberModal>
+         <UpdateMemberModal
+            member={member}
+            state={onOpenModal}
+            onClose={() => setOnOpenModal(false)}
+            onCancel={() => setOnOpenModal(false)}
+         ></UpdateMemberModal>
          <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="w-8 h-8 p-0">
                <span className="sr-only">Open menu</span>
-                <MenuIcon className="size-7 text-muted-foreground"/>
+               <MenuIcon className="size-7 text-muted-foreground" />
             </Button>
          </DropdownMenuTrigger>
          <DropdownMenuContent className="border-none shadow-2" align="end">
@@ -71,7 +82,9 @@ const Actions = ({ member }: { member: TMember }) => {
             <DropdownMenuItem
                className="px-2 gap-x-2"
                onClick={() => {
-                  navigator.clipboard.writeText(`${format(member.birthday, "PPP")}`);
+                  navigator.clipboard.writeText(
+                     `${format(member.birthday, "PPP")}`
+                  );
                   toast.success("coppied");
                }}
             >
@@ -80,27 +93,35 @@ const Actions = ({ member }: { member: TMember }) => {
                Copy birthday
             </DropdownMenuItem>
 
-            <DropdownMenuItem className="px-2 gap-x-2"
-               onClick={()=>{setOnOpenModal(true)}}
-               
-            >
-               <Pencil strokeWidth={2} className="h-4" /> Edit Member
-            </DropdownMenuItem>
+            {isAdminOrRoot && (
+               <DropdownMenuItem
+                  className="px-2 gap-x-2"
+                  onClick={() => {
+                     setOnOpenModal(true);
+                  }}
+               >
+                  <Pencil strokeWidth={2} className="h-4" /> Edit Member
+               </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="px-2 gap-x-2 text-destructive"
-             onClick={() =>
-               onOpenConfirmModal({
-                  title:"Delete Member 🗑️",
-                  description:
-                     "Are you sure to delete this member permanently? This cannot be undone.",
-                  onConfirm: () => {
-                     deleteOperation.mutate({eventId:member.id});
-                  },
-               })
-            }
-            >
-               <Trash strokeWidth={2} className="h-4" />Delete
-            </DropdownMenuItem>
+            {isAdminOrRoot && (
+               <DropdownMenuItem
+                  className="px-2 gap-x-2 text-destructive"
+                  onClick={() =>
+                     onOpenConfirmModal({
+                        title: "Delete Member 🗑️",
+                        description:
+                           "Are you sure to delete this member permanently? This cannot be undone.",
+                        onConfirm: () => {
+                           deleteOperation.mutate({ eventId: member.id });
+                        },
+                     })
+                  }
+               >
+                  <Trash strokeWidth={2} className="h-4" />
+                  Delete
+               </DropdownMenuItem>
+            )}
          </DropdownMenuContent>
       </DropdownMenu>
    );
@@ -108,7 +129,6 @@ const Actions = ({ member }: { member: TMember }) => {
 
 const columns: ColumnDef<TMember>[] = [
    {
-      
       id: "actions",
       header: ({ column }) => (
          <DataTableColHeader column={column} title="Actions" />
@@ -125,12 +145,17 @@ const columns: ColumnDef<TMember>[] = [
          <DataTableColHeader column={column} title="first Name" />
       ),
       cell: ({ row }) => {
-         const img = row.original.picture === null ? "/images/default.png" :  row.original.picture
+         const img =
+            row.original.picture === null
+               ? "/images/default.png"
+               : row.original.picture;
          return (
             <div className="flex items-center space-x-2">
                <Avatar>
                   <AvatarImage src={img} />
-                  <AvatarFallback className="bg-primary text-accent">{row.original.firstName.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="bg-primary text-accent">
+                     {row.original.firstName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                </Avatar>
                <h1 className="font-medium">{row.original.firstName}</h1>
             </div>
@@ -165,10 +190,10 @@ const columns: ColumnDef<TMember>[] = [
       ),
       cell: ({ row }) => <div className="">{row.original.voteOtp}</div>,
    },
-  
+
    {
       accessorKey: "birthday",
-      enableHiding:true,
+      enableHiding: true,
       header: ({ column }) => (
          <DataTableColHeader column={column} title="birthday" />
       ),
@@ -197,13 +222,23 @@ const columns: ColumnDef<TMember>[] = [
       ),
       cell: ({ row }) => <div className="">{row.original.gender}</div>,
    },
-  {
-     id: "registered",
-     header: ({ column }) => (
-        <DataTableColHeader column={column} title="Registered" />
-     ),
-     cell: ({ row }) => <div className="">{row.original.registered ? <Badge className="dark:text-white text-white bg-primary">registered</Badge>:<Badge variant={"secondary"}>unregistered</Badge>}</div>,
-  },
+   {
+      id: "registered",
+      header: ({ column }) => (
+         <DataTableColHeader column={column} title="Registered" />
+      ),
+      cell: ({ row }) => (
+         <div className="">
+            {row.original.registered ? (
+               <Badge className="dark:text-white text-white bg-primary">
+                  registered
+               </Badge>
+            ) : (
+               <Badge variant={"secondary"}>unregistered</Badge>
+            )}
+         </div>
+      ),
+   },
 ];
 
 export default columns;
