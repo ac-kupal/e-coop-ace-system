@@ -1,9 +1,9 @@
 import UserAvatar from '@/components/user-avatar'
-import { TMemberAttendees } from '@/types'
+import { TMemberAttendeesMinimalInfo } from '@/types'
 import React from 'react'
 
 type Props = {
-    member : TMemberAttendees
+    member : TMemberAttendeesMinimalInfo
 }
 
 const MemberInfoDisplay = ({ member }: Props) => {

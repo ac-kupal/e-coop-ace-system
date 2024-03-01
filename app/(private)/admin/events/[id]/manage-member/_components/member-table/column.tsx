@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 import {
    Copy,
+   MenuIcon,
+   MenuSquare,
    MoreHorizontal,
    Pencil,
    Trash,
@@ -37,7 +39,7 @@ const Actions = ({ member }: { member: TMember }) => {
          <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="w-8 h-8 p-0">
                <span className="sr-only">Open menu</span>
-               <MoreHorizontal className="w-4 h-4" />
+                <MenuIcon className="size-7 text-muted-foreground"/>
             </Button>
          </DropdownMenuTrigger>
          <DropdownMenuContent className="border-none shadow-2" align="end">
@@ -83,6 +85,18 @@ const Actions = ({ member }: { member: TMember }) => {
 
 const columns: ColumnDef<TMember>[] = [
    {
+      
+      id: "actions",
+      header: ({ column }) => (
+         <DataTableColHeader column={column} title="Actions" />
+      ),
+      cell: ({ row }) => (
+         <div className="flex justify-start">
+            <Actions member={row.original} />
+         </div>
+      ),
+   },
+   {
       accessorKey: "firstName",
       header: ({ column }) => (
          <DataTableColHeader column={column} title="first Name" />
@@ -122,13 +136,13 @@ const columns: ColumnDef<TMember>[] = [
       cell: ({ row }) => <div className="">{row.original.passbookNumber}</div>,
    },
    {
-      accessorKey: "gender",
-      enableSorting:false,
+      id: "voteOtp",
       header: ({ column }) => (
-         <DataTableColHeader column={column} title="gender" />
+         <DataTableColHeader column={column} title="vote OTP" />
       ),
-      cell: ({ row }) => <div className="">{row.original.gender}</div>,
+      cell: ({ row }) => <div className="">{row.original.voteOtp}</div>,
    },
+  
    {
       id: "birthday",
       header: ({ column }) => (
@@ -147,37 +161,26 @@ const columns: ColumnDef<TMember>[] = [
    },
    {
       id: "emailAddress",
-      enableHiding: false,
-      enableSorting:true,
       header: ({ column }) => (
          <DataTableColHeader column={column} title="email" />
       ),
       cell: ({ row }) => <div className="">{row.original.emailAddress}</div>,
    },
    {
-     id: "voteOtp",
-     enableHiding: false,
-     header: ({ column }) => (
-        <DataTableColHeader column={column} title="vote OTP" />
-     ),
-     cell: ({ row }) => <div className="">{row.original.voteOtp}</div>,
-  },
+      accessorKey: "gender",
+      enableSorting:false,
+      header: ({ column }) => (
+         <DataTableColHeader column={column} title="gender" />
+      ),
+      cell: ({ row }) => <div className="">{row.original.gender}</div>,
+   },
   {
      id: "registered",
-     enableHiding: false,
      header: ({ column }) => (
         <DataTableColHeader column={column} title="Registered" />
      ),
-     cell: ({ row }) => <div className="">{row.original.registered ? <Badge>registered</Badge>:<Badge variant={"secondary"}>unregistered</Badge>}</div>,
+     cell: ({ row }) => <div className="">{row.original.registered ? <Badge className="dark:text-white text-white bg-primary">registered</Badge>:<Badge variant={"secondary"}>unregistered</Badge>}</div>,
   },
-   {
-      id: "actions",
-      cell: ({ row }) => (
-         <div className="flex justify-end">
-            <Actions member={row.original} />
-         </div>
-      ),
-   },
 ];
 
 export default columns;

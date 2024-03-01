@@ -2,8 +2,9 @@ import db from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { attendeeRegisterParamsSchema, eventIdParamSchema } from "@/validation-schema/event-registration-voting";
+import { attendeeRegisterSchema, eventIdParamSchema } from "@/validation-schema/event-registration-voting";
 import { isSameDay } from "date-fns";
+import { TMemberAttendeesMinimalInfo } from "@/types";
 
 type TParams = { params: { id: number } };
 
@@ -12,7 +13,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         const eventId = eventIdParamSchema.parse(params.id)
         const data = await req.json();
 
-        const { passbookNumber, birthday } = attendeeRegisterParamsSchema.parse(data)
+        const { passbookNumber, birthday } = attendeeRegisterSchema.parse(data)
         
         const memberAttendee = await db.eventAttendees.findUnique({
             where: {
@@ -29,7 +30,18 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         if(!isSameDay(birthday, memberAttendee.birthday)) 
             return NextResponse.json({ message : "Wrong birthday, please try again"}, { status : 403 })
 
-        const registered = await db.eventAttendees.update({
+        const registered : TMemberAttendeesMinimalInfo = await db.eventAttendees.update({
+            select : {
+                id : true,
+                firstName: true,
+                passbookNumber : true,
+                middleName: true,
+                lastName: true,
+                contact: true,
+                picture: true,
+                registered: true,
+                voted: true 
+            },
             where: {
                 eventId_passbookNumber: {
                     eventId,

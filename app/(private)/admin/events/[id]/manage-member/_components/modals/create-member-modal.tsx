@@ -39,7 +39,7 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { EventType, gender } from "@prisma/client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
@@ -48,6 +48,7 @@ import ImagePick from "@/components/image-pick";
 import { v4 as uuid, v4 } from "uuid";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
 import { createMember } from "@/hooks/api-hooks/member-api-hook";
+import InputMask from "react-input-mask";
 
 type Props = {
    state: boolean;
@@ -58,9 +59,6 @@ type Props = {
 export type createTMember = z.infer<typeof createMemberWithUploadSchema>;
 
 const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
-   const router = useRouter();
-   const queryClient = useQueryClient();
-   const [isElection, setIsElection] = useState(false);
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: "/images/default.png",
@@ -90,7 +88,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
    const reset = () => {
       memberForm.reset();
    };
-   
+
    const onCancelandReset = () => {
       reset();
       onClose(false);
@@ -101,7 +99,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
    const uploadImage = onUploadImage();
 
    const onSubmit = async (formValues: createTMember) => {
-      console.log(formValues)
+      // console.log(formValues);
       try {
          if (!imageFile) {
             createMemberMutation.mutate({
@@ -131,6 +129,9 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
    const isLoading = createMemberMutation.isPending;
    const isUploading = uploadImage.isPending;
 
+   const inputRef = useRef(null);
+
+
    return (
       <Dialog
          open={state}
@@ -139,15 +140,15 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
             reset();
          }}
       >
-         <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[1000px] font-inter">
+         <DialogContent className="border-none shadow-2 sm:rounded-2xl max-h-[1000px] overflow-y-auto md:max-w-[700px] lg:max-w-[1000px] font-inter">
             <ModalHead
                title="Create Member"
                description="Creating a member that is exclusive to being either a partial or full member of the Coop."
             />
             <Form {...memberForm}>
                <form onSubmit={memberForm.handleSubmit(onSubmit)} className="">
-                  <div className="flex w-full space-x-5">
-                     <div className="w-1/2 space-y-2">
+                  <div className="flex  w-full flex-col lg:flex-row lg:space-x-5">
+                     <div className="w-full  space-y-2">
                         <FormField
                            control={memberForm.control}
                            name="passbookNumber"
@@ -219,47 +220,22 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                         <FormField
                            control={memberForm.control}
                            name="birthday"
-                           render={({ field }) => (
-                              <FormItem className="flex flex-col">
-                                 <FormLabel>Birthday</FormLabel>
-                                 <Popover>
-                                    <PopoverTrigger asChild>
-                                       <FormControl>
-                                          <Button
-                                             variant={"outline"}
-                                             className={cn(
-                                                "w-[240px] pl-3 text-left font-normal",
-                                                !field.value &&
-                                                   "text-muted-foreground"
-                                             )}
-                                          >
-                                             {field.value ? (
-                                                format(field.value, "PPP")
-                                             ) : (
-                                                <span>Pick a date</span>
-                                             )}
-                                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                          </Button>
-                                       </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                       className="w-auto p-0"
-                                       align="start"
-                                    >
-                                       <Calendar
-                                          mode="single"
-                                          selected={field.value}
-                                          onSelect={field.onChange}
-                                          captionLayout="dropdown-buttons"
-                                          fromYear={1900}
-                                          toYear={new Date().getFullYear()}
-                                          initialFocus
-                                       />
-                                    </PopoverContent>
-                                 </Popover>
-                                 <FormMessage />
-                              </FormItem>
-                           )}
+                           render={({ field }) => {
+                              return (
+                                 <FormItem className="flex flex-col">
+                                    <FormLabel className="flex justify-between"><h1>Birthday</h1> <span className="text-[12px] italic text-muted-foreground">mm/dd/yyyy</span></FormLabel>
+                                    <InputMask
+                                       mask="99/99/9999"
+                                       ref={inputRef}
+                                       value={field.value as any}
+                                       onChange={field.onChange}
+                                       placeholder="input birthday"
+                                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    />
+                                    <FormMessage />
+                                 </FormItem>
+                              );
+                           }}
                         />
                         <FormField
                            control={memberForm.control}
@@ -285,25 +261,27 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                               <FormItem className="">
                                  <FormLabel>Email</FormLabel>
                                  <FormControl>
-                                    <Input
-                                       placeholder="enter email address"
-                                       className="placeholder:text-foreground/40"
-                                       {...field}
-                                       value={field.value ?? ""}
-                                       onChange={(e) => {
-                                          const value = e.target.value;
-                                          field.onChange(
-                                             value !== "" ? value : null
-                                          );
-                                       }}
-                                    />
+                                    <>
+                                       <Input
+                                          placeholder="enter email address"
+                                          className="placeholder:text-foreground/40"
+                                          {...field}
+                                          value={field.value ?? ""}
+                                          onChange={(e) => {
+                                             const value = e.target.value;
+                                             field.onChange(
+                                                value !== "" ? value : null
+                                             );
+                                          }}
+                                       />
+                                    </>
                                  </FormControl>
                                  <FormMessage />
                               </FormItem>
                            )}
                         />
                      </div>
-                     <div className="w-1/2 space-y-2">
+                     <div className="w-full space-y-2">
                         <FormField
                            control={memberForm.control}
                            name="gender"
@@ -360,7 +338,6 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                      </div>
                   </div>
                   <div>
-                     <Separator className="bg-muted/70" />
                      <div className="flex justify-end gap-x-2">
                         <Button
                            onClick={(e) => {
