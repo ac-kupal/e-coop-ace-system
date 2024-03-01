@@ -59,18 +59,6 @@ const AttendeeSearch = ({ onFound, params }: Props) => {
                             </FormItem>
                         )}
                     />
-                    <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
-                        <Separator className="w-1/2" /> or <Separator className="w-1/2" />
-                    </div>
-                    <QrReader
-                        qrReaderOption="HTML5QrScanner"
-                        onRead={(val: string) => {
-                            if(val.length === 0) return;
-                            form.setValue("passbookNumber", val);
-                            searchMember({ passbookNumber : val });
-                        }}
-                        className="size-[400px] bg-background overflow-clip rounded-xl"
-                    />
                     {isError && error && (
                         <ErrorAlert
                             className="w-full"
@@ -85,6 +73,18 @@ const AttendeeSearch = ({ onFound, params }: Props) => {
                             "Find"
                         )}
                     </Button>
+                    <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
+                        <Separator className="w-1/2" /> or <Separator className="w-1/2" />
+                    </div>
+                    <QrReader
+                        qrReaderOption="HTML5QrScanner"
+                        onRead={(val: string) => {
+                            if(val.length === 0) return;
+                            form.setValue("passbookNumber", val);
+                            searchMember({ passbookNumber : val });
+                        }}
+                        className="size-[400px] bg-background overflow-clip rounded-xl"
+                    />
                 </form>
             </Form>
         </div>

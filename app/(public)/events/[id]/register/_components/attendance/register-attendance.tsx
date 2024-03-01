@@ -3,18 +3,23 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 import { Loader2 } from "lucide-react";
-
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { TMemberAttendeesMinimalInfo } from "@/types";
 import { useRegisterMember } from "@/hooks/api-hooks/registraton-search-attendance-api-hooks";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+    Form,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { useForm } from "react-hook-form";
 import { attendeeRegisterFormSchema } from "@/validation-schema/event-registration-voting";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorAlert from "@/components/error-alert/error-alert";
+import ReactInputMask from "react-input-mask";
 
 type Props = {
     eventId: string;
@@ -24,18 +29,16 @@ type Props = {
 const RegisterAttendance = ({ eventId, member }: Props) => {
     const router = useRouter();
 
-    const { registeredMember, isPending, register, isError, error } = useRegisterMember(
-        eventId,
-        () => {
+    const { registeredMember, isPending, register, isError, error } =
+        useRegisterMember(eventId, () => {
             router.push(`/events/${eventId}/registered`);
-        },
-    );
+        });
 
     const form = useForm<z.infer<typeof attendeeRegisterFormSchema>>({
         resolver: zodResolver(attendeeRegisterFormSchema),
         defaultValues: {
             passbookNumber: member.passbookNumber,
-            birthday: undefined,
+            birthday: "",
         },
     });
 
@@ -51,20 +54,26 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
                         className="space-y-4"
                     >
                         <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
-                            <Separator className="w-1/2" /> or <Separator className="w-1/2" />
+                            <Separator className="w-1/2" /> or{" "}
+                            <Separator className="w-1/2" />
                         </div>
                         <FormField
                             control={form.control}
                             name="birthday"
                             render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input
-                                            disabled={disabled}
-                                            placeholder="MM/DD/YYYY"
-                                            {...field}
-                                        />
-                                    </FormControl>
+                                <FormItem className="flex flex-col">
+                                    <FormLabel className="flex justify-between">
+                                        <h1>Birthday</h1>{" "}
+                                        <span className="text-[12px] italic text-muted-foreground">
+                                            mm/dd/yyyy
+                                        </span>
+                                    </FormLabel>
+                                    <ReactInputMask
+                                        {...field}
+                                        mask="99/99/9999"
+                                        placeholder="input birthday"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    />
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -72,13 +81,16 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
                         {isError && error && (
                             <ErrorAlert
                                 className="w-full"
-                                title="Something went wrong"
+                                title="Registration Error"
                                 message={error}
                             />
                         )}
                         <Button disabled={disabled} className="w-full">
                             {isPending ? (
-                                <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
+                                <Loader2
+                                    className="h-3 w-3 animate-spin"
+                                    strokeWidth={1}
+                                />
                             ) : (
                                 "Register"
                             )}

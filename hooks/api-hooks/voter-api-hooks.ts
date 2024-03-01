@@ -5,16 +5,14 @@ import { toast } from "sonner";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { handleAxiosErrorMessage } from "@/utils";
-import {
-    TElection,
-    TMemberAttendeesMinimalInfo,
-} from "@/types";
+import { TElection, TMemberAttendeesMinimalInfo } from "@/types";
 import { chosenCandidateIds } from "@/validation-schema/election";
+import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 
 export const searchVoter = (
     eventId: number,
     electionId: number,
-    onFound: (data: TMemberAttendeesMinimalInfo) => void,
+    onFound: (data: TMemberAttendeesMinimalInfo) => void
 ) => {
     const {
         isPending,
@@ -25,14 +23,15 @@ export const searchVoter = (
         mutationKey: ["member-search"],
         mutationFn: async (passbookNumber) => {
             try {
-                if (passbookNumber === null || passbookNumber.length === 0) return;
+                if (passbookNumber === null || passbookNumber.length === 0)
+                    return;
 
                 const url = qs.stringifyUrl(
                     {
                         url: `/api/v1/event/${eventId}/election/${electionId}/voter-search`,
                         query: { passbookNumber },
                     },
-                    { skipNull: true },
+                    { skipNull: true }
                 );
 
                 const request = await axios.get(url);
@@ -60,12 +59,13 @@ export const loadVoter = (election: TElection) => {
         queryFn: async () => {
             try {
                 const checkVoteAuthorization = await axios.get(
-                    `/api/v1/event/${election.eventId}/election/${election.id}/check-vote-auth/`,
+                    `/api/v1/event/${election.eventId}/election/${election.id}/check-vote-auth/`
                 );
 
-                const voter: TMemberAttendeesMinimalInfo = checkVoteAuthorization.data;
+                const voter: TMemberAttendeesMinimalInfo =
+                    checkVoteAuthorization.data;
                 toast.success(
-                    `Congratulations ${voter.firstName}, you are authorized to vote 🎉.`,
+                    `Congratulations ${voter.firstName}, you are authorized to vote 🎉.`
                 );
                 return checkVoteAuthorization.data;
             } catch (e) {
@@ -82,7 +82,7 @@ export const loadVoter = (election: TElection) => {
 
 export const useCastVote = (
     election: TElection,
-    onSuccess?: (data: any) => void,
+    onSuccess?: (data: any) => void
 ) => {
     const {
         data,
@@ -96,7 +96,7 @@ export const useCastVote = (
             try {
                 const voteSubmission = await axios.post(
                     `/api/v1/event/${election.eventId}/election/${election.id}/submit-vote`,
-                    { candidateIds: chosenCandidatesIds },
+                    { candidateIds: chosenCandidatesIds }
                 );
                 toast.success("Thank you, your vote has been submitted 🥳");
                 if (onSuccess) onSuccess(voteSubmission.data);
@@ -110,4 +110,42 @@ export const useCastVote = (
     });
 
     return { data, isCasting, isCastError, castError, castVote };
+};
+
+export const useVoterAuthorization = (
+    eventId: number | string,
+    electionId: number | string,
+    voterId: string,
+    onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void
+) => {
+    const {
+        data: authenticatedVoter,
+        isPending,
+        mutate: getAuthorization,
+        isError,
+        error,
+    } = useMutation<
+        TMemberAttendeesMinimalInfo,
+        string,
+        z.infer<typeof voterVerificationFormSchema>
+    >({
+        mutationKey: ["authorize-voter", voterId],
+        mutationFn: async (data) => {
+            try {
+                const request = await axios.post(
+                    `/api/v1/event/${eventId}/election/${electionId}/authorize-voter`,
+                    data,
+                    { withCredentials: true }
+                );
+                onAuthorize(request.data);
+                return request.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        },
+    });
+
+    return { authenticatedVoter, isPending, getAuthorization, isError, error };
 };

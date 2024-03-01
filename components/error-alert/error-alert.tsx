@@ -15,7 +15,7 @@ export const ErrorAlert = ({ className, message, title }: TProps) => {
             </div>
             <div className="space-y-2">
                 <p className="font-medium text-foreground/80">{title}</p>
-                <p className="text-xs text-rose-400">{message}</p>
+                <p className="text-sm text-rose-400">{message}</p>
             </div>
         </div>
     );
