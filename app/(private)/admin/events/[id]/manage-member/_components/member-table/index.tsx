@@ -47,8 +47,8 @@ const MemberTable = ({ id }: Props) => {
       onGlobalFilterChange: setGlobalFilter,
    });
    return (
-      <div className={``}>
-         <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
+      <div className=" space-y-5">
+         <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-secondary/50 ">
             <CreateMemberModal
                eventId={id}
                state={createMember}
@@ -93,7 +93,7 @@ const MemberTable = ({ id }: Props) => {
             </div>
          </div>
          <DataTable
-            className="flex-1 bg-background/50 rounded-xl"
+            className="flex-1 bg-background/50 rounded-xl py-5 overflow-y-auto max-h-[70vh] overflow-auto overscroll-y-none"
             isError={isError}
             isLoading={isLoading || isFetching}
             table={table}
