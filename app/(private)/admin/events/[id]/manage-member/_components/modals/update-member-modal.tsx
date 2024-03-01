@@ -39,7 +39,7 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { EventType, gender } from "@prisma/client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
@@ -49,6 +49,7 @@ import { v4 as uuid, v4 } from "uuid";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
 import { createMember, updateMember } from "@/hooks/api-hooks/member-api-hook";
 import { TMember } from "@/types";
+import InputMask from "react-input-mask";
 
 type Props = {
    state: boolean;
@@ -59,6 +60,7 @@ type Props = {
 export type createTMember = z.infer<typeof createMemberWithUploadSchema>;
 
 const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
+   
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: !member.picture ? "/images/default.png" : member.picture,
       maxOptimizedSizeMB: 0.5,
@@ -119,7 +121,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
             createMemberMutation.mutate({
                member: {
                   ...formValues,
-                  picture: !image ? "/images/default.png" : image,
+                  picture: image,
                },
                memberId: member.id,
             });
@@ -131,6 +133,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
    };
    const isLoading = createMemberMutation.isPending;
    const isUploading = uploadImage.isPending;
+   const inputRef = useRef(null);
 
    return (
       <Dialog
@@ -157,7 +160,6 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                  <FormLabel>Passbook Number</FormLabel>
                                  <FormControl>
                                     <Input
-                                       disabled={true}
                                        placeholder="enter pass book"
                                        className="placeholder:text-foreground/40"
                                        {...field}
@@ -223,44 +225,17 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                            name="birthday"
                            render={({ field }) => (
                               <FormItem className="flex flex-col">
-                                 <FormLabel>Birthday</FormLabel>
-                                 <Popover>
-                                    <PopoverTrigger asChild>
-                                       <FormControl>
-                                          <Button
-                                             variant={"outline"}
-                                             className={cn(
-                                                "w-[240px] pl-3 text-left font-normal",
-                                                !field.value &&
-                                                   "text-muted-foreground"
-                                             )}
-                                          >
-                                             {field.value ? (
-                                                format(field.value, "PPP")
-                                             ) : (
-                                                <span>Pick a date</span>
-                                             )}
-                                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                          </Button>
-                                       </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                       className="w-auto p-0"
-                                       align="start"
-                                    >
-                                       <Calendar
-                                          mode="single"
-                                          selected={field.value}
-                                          onSelect={field.onChange}
-                                          captionLayout="dropdown-buttons"
-                                          fromYear={1900}
-                                          toYear={new Date().getFullYear()}
-                                          initialFocus
-                                       />
-                                    </PopoverContent>
-                                 </Popover>
-                                 <FormMessage />
-                              </FormItem>
+                              <FormLabel className="flex justify-between"><h1>Birthday</h1> <span className="text-[12px] italic text-muted-foreground">mm/dd/yyyy</span></FormLabel>
+                              <InputMask
+                                 mask="99/99/9999"
+                                 ref={inputRef}
+                                 value={field.value as any}
+                                 onChange={field.onChange}
+                                 placeholder="input birthday"
+                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                              />
+                              <FormMessage />
+                           </FormItem>
                            )}
                         />
                         <FormField

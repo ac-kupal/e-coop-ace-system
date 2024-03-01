@@ -25,7 +25,6 @@ type Props = {
 const MemberTable = ({ id }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createMember, setCreateMember] = useState(false);
-   const [Members, setMembers] = useState<any>([]);
    const [onImportModal, setOnImportModal] = useState(false)
    const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
 

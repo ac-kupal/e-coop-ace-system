@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database";
 import { createMemberSchema } from "@/validation-schema/member";
 import { generateOTP } from "@/lib/server-utils";
-import moment from "moment";
 
 export const POST = async (req: NextRequest) => {
    try {
