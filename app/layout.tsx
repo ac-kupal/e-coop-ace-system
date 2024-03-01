@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import QueryClientProviderWrapper from "@/providers/query-client-provider-wrapper";
 import ConfirmModalProvider from "@/providers/confirm-modal-provider";
 import { Toaster } from "@/components/ui/sonner";
+import InfoModalProvider from "@/providers/info-modal-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -23,7 +24,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={`   ${poppins.variable}`}>
+            <body className={`${poppins.variable} ${inter.variable}`}>
                 <QueryClientProviderWrapper>
                     <ThemeProvider
                         attribute="class"
@@ -31,6 +32,8 @@ export default function RootLayout({
                         enableSystem
                     >
                         <ConfirmModalProvider />
+                        <InfoModalProvider />
+
                         <Toaster richColors closeButton />
                         <div className="font-inter">{children}</div>
                     </ThemeProvider>

@@ -109,7 +109,7 @@ export const POST = async (req: NextRequest) => {
                 const voted = position.candidates.filter((candidate) =>
                     candidateIds.includes(candidate.id),
                 );
-                if(voted.length === 0) payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:16px;">no candidate selected</p>`;
+                if(voted.length === 0) payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:10px; font-style: italic;">no candidate selected</p>`;
                 voted.forEach((candidate) => {
                     payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:16px;">${candidate.firstName} ${candidate.lastName}</p>`;
                 });

@@ -3,9 +3,9 @@ import { Check, Copy, Send } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
-type Props = { url : string, duration? : number };
+type Props = { url : string, className? : string, duration? : number };
 
-const CopyURL = ( { url, duration = 3 }: Props) => {
+const CopyURL = ( { url, className, duration = 3}: Props) => {
     const [coppied, setCoppied] = useState(false);
 
     const handleCopy = () => {
@@ -21,7 +21,7 @@ const CopyURL = ( { url, duration = 3 }: Props) => {
     }
 
     return (
-        <div onClick={handleCopy} className={cn("flex gap-x-4 px-3 group duration-200 cursor-pointer text-foreground/70 hover:text-foreground py-2 bg-secondary rounded-xl text-sm", coppied && "bg-green-300/20")}>
+        <div onClick={handleCopy} className={cn("flex gap-x-4 px-3 group duration-200 cursor-pointer text-foreground/70 hover:text-foreground py-2 bg-secondary rounded-xl text-sm", className, coppied && "bg-green-300/20")}>
             <p>{url}</p>
             {
                 coppied ? <Check className="size-4 text-green-700" strokeWidth={1} /> : <Copy className="h-4 w-4" strokeWidth={1} />

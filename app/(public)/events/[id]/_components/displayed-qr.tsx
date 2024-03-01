@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import CopyUrl from "./copy-url";
+import CopyUrl from "@/components/copy-url";
 
 import QrCode from "@/components/qr-code";
 

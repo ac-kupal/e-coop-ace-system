@@ -8,7 +8,6 @@ import {
    Copy,
    Loader2,
    MenuIcon,
-   MoreHorizontal,
    Pencil,
    QrCode,
    Target,
@@ -34,6 +33,10 @@ import { useRouter } from "next/navigation";
 import UpdateEventModal from "../modals/update-event-modal";
 import { TEventWithElection } from "@/types";
 import Link from "next/link";
+import { useInfoModal } from "@/stores/use-info-modal-store";
+import QrViewContent from "@/components/modals/modal-content/qr-view-content";
+import useOrigin from "@/hooks/use-origin";
+import CopyURL from "@/components/copy-url";
 
 const Actions = ({ event }: { event: TEventWithElection }) => {
    const router = useRouter();
@@ -128,6 +131,28 @@ const Actions = ({ event }: { event: TEventWithElection }) => {
    );
 };
 
+const ViewEventQr = ( { eventWithElection } : { eventWithElection : TEventWithElection } ) => {
+   const { onOpen } = useInfoModal(); 
+   const { origin }= useOrigin();
+
+    const eventUrl = `${origin}/events/${eventWithElection.id}`
+
+    return (
+         <Button onClick={()=> onOpen({
+            title : "Event QRCode",
+            description : "You are viewing the actual QRCode of this event",
+            component : (
+                <div className="flex gap-y-4 items-center flex-col">
+                    <QrViewContent fileName={eventWithElection.title} value={eventUrl} enableDownload />
+                    <CopyURL className="w-fit text-center flex justify-center" url={eventUrl} />
+                </div>),
+            confirmString : "okay"
+        })} size="icon" variant="ghost">
+            <QrCode className="size-6" strokeWidth={1} />
+         </Button>
+    )
+}
+
 const columns: ColumnDef<TEventWithElection>[] = [
    {
       header: ({ column }) => <DataTableColHeader column={column} title="Actions" />,
@@ -219,9 +244,7 @@ const columns: ColumnDef<TEventWithElection>[] = [
    {
       id: "Event QR",
       cell: ({ row }) => (
-         <Button size="icon" variant="ghost">
-            <QrCode className="size-6" strokeWidth={1} />
-         </Button>
+        <ViewEventQr eventWithElection={row.original} />
       ),
    },
    {
