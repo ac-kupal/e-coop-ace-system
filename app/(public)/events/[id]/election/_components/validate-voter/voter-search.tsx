@@ -59,6 +59,15 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                             </FormItem>
                         )}
                     />
+
+                    { isError && error && <ErrorAlert title="Search failed" message={error}/> }
+                    <Button disabled={disabled} className="w-full" type="submit">
+                        {isPending ? (
+                            <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
+                        ) : (
+                            "Find"
+                        )}
+                    </Button>
                     <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
                         <Separator className="w-1/2" /> or <Separator className="w-1/2" />
                     </div>
@@ -70,14 +79,6 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                         }}
                         className="size-[400px] bg-background overflow-clip rounded-xl"
                     />
-                    { isError && error && <ErrorAlert title="Search failed" message={error}/> }
-                    <Button disabled={disabled} className="w-full" type="submit">
-                        {isPending ? (
-                            <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
-                        ) : (
-                            "Find"
-                        )}
-                    </Button>
                 </form>
             </Form>
         </div>
