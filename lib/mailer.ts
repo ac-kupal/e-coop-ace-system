@@ -1,11 +1,16 @@
 import { promises as fs } from "fs";
 import nodemailer from "nodemailer";
 import * as handlebars from "handlebars";
+import path from "path";
 
 type emailTemplates = "vote-submit.html"
 
 const getEmailTemplate = async(templateFile : emailTemplates, payload : Record<string, any>) => {
-    const templateContent = await fs.readFile(`public/email-templates/${templateFile}`, 'utf8') 
+    try{
+        const tmplt = await fs.readFile(path.join(process.cwd(),'public','email-templates', templateFile), 'utf8');
+        console.log("found!", tmplt);
+    }catch(e){console.log("not found");}
+    const templateContent = await fs.readFile(`./public/email-templates/${templateFile}`, 'utf8') 
     const template = handlebars.compile(templateContent)
     const generatedTemplate = template(payload);
     return generatedTemplate

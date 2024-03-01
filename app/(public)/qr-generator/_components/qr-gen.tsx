@@ -14,7 +14,7 @@ const QrGen = () => {
   return (
     <div className="flex bg-background/70 rounded-xl p-4 flex-col items-center gap-y-4  w-fit flex-1 py-16">
       <p className="text-2xl text-foreground/80 lg:text-4xl">Generate QR Code</p>
-      <QrCode value={value} className="size-[200px] lg:size-[400px]" showDownload />
+      <QrCode value={value} className="size-[300px] lg:size-[400px]" showDownload />
       <div className="flex flex-col items-center gap-y-8 pb-4">
         <Input
           placeholder="Input value here"
