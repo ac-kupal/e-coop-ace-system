@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
-import { Copy, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { Copy, Loader2, MenuIcon, MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 import { toast } from "sonner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
@@ -44,7 +44,7 @@ const Actions = ({ candidate }: { candidate: TCandidatewithPosition }) => {
          <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="w-8 h-8 p-0">
                <span className="sr-only">Open menu</span>
-               <MoreHorizontal className="w-4 h-4" />
+               <MenuIcon className="size-7 text-muted-foreground" />
             </Button>
          </DropdownMenuTrigger>
          <DropdownMenuContent className="border-none shadow-2" align="end">
@@ -92,6 +92,22 @@ const Actions = ({ candidate }: { candidate: TCandidatewithPosition }) => {
 };
 
 const columns: ColumnDef<TCandidatewithPosition>[] = [
+   {
+      header: ({ column }) => (
+         <DataTableColHeader
+            column={column}
+            className=""
+            title="action"
+         />
+      ),
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => (
+         <div className="flex justify-start">
+            <Actions candidate={row.original} />
+         </div>
+      ),
+   },
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
@@ -142,22 +158,7 @@ const columns: ColumnDef<TCandidatewithPosition>[] = [
          <div className=""> {row.original.position.positionName}</div>
       ),
    },
-   {
-      header: ({ column }) => (
-         <DataTableColHeader
-            column={column}
-            className="text-end"
-            title="action"
-         />
-      ),
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => (
-         <div className="flex justify-end">
-            <Actions candidate={row.original} />
-         </div>
-      ),
-   },
+   
 ];
 
 export default columns;

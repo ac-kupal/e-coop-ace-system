@@ -7,6 +7,7 @@ import { DataTableColHeader } from "@/components/data-table/data-table-col-heade
 import {
    Copy,
    Loader2,
+   MenuIcon,
    MoreHorizontal,
    Pencil,
    Target,
@@ -48,7 +49,7 @@ const Actions = ({ position }: { position: TPosition }) => {
          <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="w-8 h-8 p-0">
                <span className="sr-only">Open menu</span>
-               <MoreHorizontal className="w-4 h-4" />
+               <MenuIcon className="size-7 text-muted-foreground" />
             </Button>
          </DropdownMenuTrigger>
          <DropdownMenuContent className="border-none shadow-2" align="end">
@@ -97,6 +98,22 @@ const Actions = ({ position }: { position: TPosition }) => {
 
 const columns: ColumnDef<TPosition>[] = [
    {
+      header: ({ column }) => (
+         <DataTableColHeader
+            column={column}
+            className=""
+            title="action"
+         />
+      ),
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => (
+         <div className="flex justify-start">
+            <Actions position={row.original} />
+         </div>
+      ),
+   },
+   {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
       cell: ({ row }) => (
@@ -123,22 +140,7 @@ const columns: ColumnDef<TPosition>[] = [
          <div className=""> {row.original.numberOfSelection}</div>
       ),
    },
-   {
-      header: ({ column }) => (
-         <DataTableColHeader
-            column={column}
-            className="text-end"
-            title="action"
-         />
-      ),
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => (
-         <div className="flex justify-end">
-            <Actions position={row.original} />
-         </div>
-      ),
-   },
+  
 ];
 
 export default columns;

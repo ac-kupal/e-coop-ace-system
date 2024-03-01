@@ -31,7 +31,7 @@ const CandidateCard = ({
     return (
         <div
             className={cn(
-                "p-4 w-full relative md:w-1/5 lg:w-1/4 space-y-4 duration-300 cursor-hover selection:bg-background/10 cursor-pointer",
+                "p-1 lg:p-4 w-full relative md:w-[12.5%] lg:w-1/6 space-y-4 duration-300 cursor-hover selection:bg-background/10 cursor-pointer",
                 !canSelect && !isChosen && "cursor-not-allowed opacity-50 ",
             )}
             onClick={handleClick}
@@ -51,7 +51,7 @@ const CandidateCard = ({
                 <div className="w-full pointer-events-none absolute -bottom-3 left-0 flex justify-center rounded-full ">
                     <div
                         className={cn(
-                            "p-2 rounded-full hidden order-2 bg-green-400 border-secondary text-foreground",
+                            "p-1 lg:p-2 rounded-full hidden order-2 bg-green-400 border-secondary text-foreground",
                             isChosen && "block",
                         )}
                     >
@@ -59,7 +59,7 @@ const CandidateCard = ({
                     </div>
                 </div>
             </div>
-            <p className="text-sm lg:text-xl font-medium">{`${firstName} ${lastName}`}</p>
+            <p className="text-sm text-center lg:text-xl font-medium">{`${firstName} ${lastName}`}</p>
         </div>
     );
 };
