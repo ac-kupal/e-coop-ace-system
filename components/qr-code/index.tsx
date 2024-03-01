@@ -8,20 +8,23 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 
 type Props = {
-    className?: string;
     value: string;
+    fileName? : string;
     themeResponsive?: boolean;
 
+    className?: string;
     showDownload?: boolean;
 };
 
 const QrCode = ({
     value,
+    fileName,
     className,
     themeResponsive = false,
     showDownload = false,
 }: Props) => {
     const qrRef = useRef<HTMLDivElement>(null);
+    const downloadName = fileName || value
 
     const downloadQRCode = () => {
         if (!qrRef.current) return;
@@ -30,7 +33,7 @@ const QrCode = ({
             .toJpeg(qrRef.current, { quality: 0.95 })
             .then(function(dataUrl) {
                 var link = document.createElement("a");
-                link.download = `${value}.jpeg`;
+                link.download = `${downloadName}.jpeg`;
                 link.href = dataUrl;
                 link.click();
                 toast.success("QR Code downloaded");
