@@ -7,7 +7,6 @@ import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database";
 import moment, { Moment } from "moment";
 import middleware from "@/middleware";
-import { passbookNumber } from "@/validation-schema/event-registration-voting";
 type TParams = { params: { id: number } };
 
 const ExcelDateToJSDate = (date: number) => {

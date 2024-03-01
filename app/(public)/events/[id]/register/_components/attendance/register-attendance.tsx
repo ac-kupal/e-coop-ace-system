@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { TMemberAttendees } from "@/types";
+import { TMemberAttendeesMinimalInfo } from "@/types";
 import { useRegisterMember } from "@/hooks/api-hooks/registraton-search-attendance-api-hooks";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
@@ -18,7 +18,7 @@ import ErrorAlert from "@/components/error-alert/error-alert";
 
 type Props = {
     eventId: string;
-    member: TMemberAttendees;
+    member: TMemberAttendeesMinimalInfo;
 };
 
 const RegisterAttendance = ({ eventId, member }: Props) => {
