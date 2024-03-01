@@ -1,15 +1,11 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
@@ -24,31 +20,24 @@ import {
 } from "@/components/ui/form";
 
 import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import {
    Select,
    SelectContent,
    SelectItem,
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { EventType, gender } from "@prisma/client";
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+
+import {  gender } from "@prisma/client";
+import { useCallback, useEffect, useRef } from "react";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
-import { v4 as uuid, v4 } from "uuid";
+import { v4 } from "uuid";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
-import { createMember, updateMember } from "@/hooks/api-hooks/member-api-hook";
+import { updateMember } from "@/hooks/api-hooks/member-api-hook";
 import { TMember } from "@/types";
+import InputMask from "react-input-mask";
 
 type Props = {
    state: boolean;
@@ -59,6 +48,7 @@ type Props = {
 export type createTMember = z.infer<typeof createMemberWithUploadSchema>;
 
 const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
+   
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: !member.picture ? "/images/default.png" : member.picture,
       maxOptimizedSizeMB: 0.5,
@@ -94,19 +84,20 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
       onClose(false);
    };
 
-   const isMemberOnchange = memberForm.getValues("passbookNumber") === member.passbookNumber && memberForm.getValues("firstName") === member.firstName && memberForm.getValues("middleName") === member.middleName && memberForm.getValues("lastName") === member.lastName && memberForm.getValues("birthday") === member.birthday && memberForm.getValues("emailAddress") === member.emailAddress && memberForm.getValues("contact") === member.contact && memberForm.getValues("picture") === member.picture && memberForm.getValues("gender") === member.gender
-
-   const createMemberMutation = updateMember({ onCancelandReset });
+   const isMemberOnchange = memberForm.watch().passbookNumber === member.passbookNumber && memberForm.watch().firstName === member.firstName && memberForm.watch().middleName === member.middleName && memberForm.watch().lastName === member.lastName && memberForm.watch().birthday === member.birthday && memberForm.watch().emailAddress === member.emailAddress && memberForm.watch().contact === member.contact && memberForm.watch().picture === member.picture && memberForm.watch().gender === member.gender
+    
+   const updateMemberMutation = updateMember({ onCancelandReset });
 
    const uploadImage = onUploadImage();
-
+   
    const onSubmit = async (formValues: createTMember) => {
+      console.log(member.picture)
       try {
          if (!imageFile) {
-            createMemberMutation.mutate({
+            updateMemberMutation.mutate({
                member: {
                   ...formValues,
-                  picture: "/images/default.png",
+                  picture: member.picture,
                },
                memberId: member.id,
             });
@@ -116,7 +107,8 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                folderGroup: "member",
                file: formValues.picture,
             });
-            createMemberMutation.mutate({
+
+            updateMemberMutation.mutate({
                member: {
                   ...formValues,
                   picture: !image ? "/images/default.png" : image,
@@ -129,8 +121,9 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
          console.log(error);
       }
    };
-   const isLoading = createMemberMutation.isPending;
+   const isLoading = updateMemberMutation.isPending;
    const isUploading = uploadImage.isPending;
+   const inputRef = useRef(null);
 
    return (
       <Dialog
@@ -157,7 +150,6 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                  <FormLabel>Passbook Number</FormLabel>
                                  <FormControl>
                                     <Input
-                                       disabled={true}
                                        placeholder="enter pass book"
                                        className="placeholder:text-foreground/40"
                                        {...field}
@@ -223,44 +215,17 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                            name="birthday"
                            render={({ field }) => (
                               <FormItem className="flex flex-col">
-                                 <FormLabel>Birthday</FormLabel>
-                                 <Popover>
-                                    <PopoverTrigger asChild>
-                                       <FormControl>
-                                          <Button
-                                             variant={"outline"}
-                                             className={cn(
-                                                "w-[240px] pl-3 text-left font-normal",
-                                                !field.value &&
-                                                   "text-muted-foreground"
-                                             )}
-                                          >
-                                             {field.value ? (
-                                                format(field.value, "PPP")
-                                             ) : (
-                                                <span>Pick a date</span>
-                                             )}
-                                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                          </Button>
-                                       </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                       className="w-auto p-0"
-                                       align="start"
-                                    >
-                                       <Calendar
-                                          mode="single"
-                                          selected={field.value}
-                                          onSelect={field.onChange}
-                                          captionLayout="dropdown-buttons"
-                                          fromYear={1900}
-                                          toYear={new Date().getFullYear()}
-                                          initialFocus
-                                       />
-                                    </PopoverContent>
-                                 </Popover>
-                                 <FormMessage />
-                              </FormItem>
+                              <FormLabel className="flex justify-between"><h1>Birthday</h1> <span className="text-[12px] italic text-muted-foreground">yyyy/mm/dd</span></FormLabel>
+                              <InputMask
+                                 mask="9999/99/99"
+                                 ref={inputRef}
+                                 value={field.value as any}
+                                 onChange={field.onChange}
+                                 placeholder="input birthday"
+                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                              />
+                              <FormMessage />
+                           </FormItem>
                            )}
                         />
                         <FormField
@@ -360,7 +325,6 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                      </div>
                   </div>
                   <div>
-                     <Separator className="bg-muted/70" />
                      <div className="flex justify-end gap-x-2">
                         <Button
                            onClick={(e) => {

@@ -34,7 +34,7 @@ import useImagePick from "@/hooks/use-image-pick";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
 import { v4 as uuid, v4 } from "uuid";
-import { createMemberWithUploadSchema } from "@/validation-schema/member";
+import { createMemberWithUploadSchema, memberEmailSchema } from "@/validation-schema/member";
 import { createManyMember, createMember } from "@/hooks/api-hooks/member-api-hook";
 import { read, utils, writeFile } from "xlsx";
 import { importCSVSchema } from "@/validation-schema/import-csv";

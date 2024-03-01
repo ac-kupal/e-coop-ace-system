@@ -1,21 +1,12 @@
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { generateOTP, validateId } from "@/lib/server-utils";
-import { TCreateManyMember, TCreateMember } from "@/types";
-import { createManySchema, createMemberSchema } from "@/validation-schema/member";
+import { ExcelDateToJSDate, generateOTP, validateId } from "@/lib/server-utils";
+import { createManySchema } from "@/validation-schema/member";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database";
-import moment, { Moment } from "moment";
-import middleware from "@/middleware";
 type TParams = { params: { id: number } };
 
-const ExcelDateToJSDate = (date: number) => {
-   if(date === undefined) return null
-   if (date < -657434 || date > 2958465) {
-      return null
-   }
-   return new Date(Math.round((date - 25569) * 864e5));
-};
+
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
    try {
@@ -23,6 +14,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
       validateId(id);
       const user = await currentUserOrThrowAuthError();
       const membersData = await req.json();
+
       const modifiedMembersData = membersData.map(
          (member:any) => {
             const date = new Date()
@@ -32,7 +24,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                createdBy: user.id,
                birthday: ExcelDateToJSDate(member.birthday) === null ? date : ExcelDateToJSDate(member.birthday),
                eventId: id,
-               middleName:!member.middleName ? "middleName": member.middleName,
+               middleName:!member.middleName ? "": member.middleName,
                emailAddress: !member.emailAddress ? null : member.emailAddress,
                contact: !member.contact ? "" : member.contact.toString(),
                voteOtp: generateOTP(6),

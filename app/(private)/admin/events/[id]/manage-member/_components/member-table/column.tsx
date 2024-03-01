@@ -28,6 +28,7 @@ import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UpdateMemberModal from "../modals/update-member-modal";
 import { useState } from "react";
+import { format } from "date-fns";
 
 const Actions = ({ member }: { member: TMember }) => {
    const [onOpenModal,setOnOpenModal] = useState(false)
@@ -48,13 +49,35 @@ const Actions = ({ member }: { member: TMember }) => {
             <DropdownMenuItem
                className="px-2 gap-x-2"
                onClick={() => {
-                  navigator.clipboard.writeText(`${member.id}`);
+                  navigator.clipboard.writeText(`${member.passbookNumber}`);
                   toast.success("coppied");
                }}
             >
                {" "}
                <Copy strokeWidth={2} className="h-4" />
-               Copy member ID
+               Copy passbook No.
+            </DropdownMenuItem>
+            <DropdownMenuItem
+               className="px-2 gap-x-2"
+               onClick={() => {
+                  navigator.clipboard.writeText(`${member.voteOtp}`);
+                  toast.success("coppied");
+               }}
+            >
+               {" "}
+               <Copy strokeWidth={2} className="h-4" />
+               Copy vote OTP
+            </DropdownMenuItem>
+            <DropdownMenuItem
+               className="px-2 gap-x-2"
+               onClick={() => {
+                  navigator.clipboard.writeText(`${format(member.birthday, "PPP")}`);
+                  toast.success("coppied");
+               }}
+            >
+               {" "}
+               <Copy strokeWidth={2} className="h-4" />
+               Copy birthday
             </DropdownMenuItem>
 
             <DropdownMenuItem className="px-2 gap-x-2"
@@ -136,7 +159,7 @@ const columns: ColumnDef<TMember>[] = [
       cell: ({ row }) => <div className="">{row.original.passbookNumber}</div>,
    },
    {
-      id: "voteOtp",
+      accessorKey: "voteOtp",
       header: ({ column }) => (
          <DataTableColHeader column={column} title="vote OTP" />
       ),
@@ -144,7 +167,8 @@ const columns: ColumnDef<TMember>[] = [
    },
   
    {
-      id: "birthday",
+      accessorKey: "birthday",
+      enableHiding:true,
       header: ({ column }) => (
          <DataTableColHeader column={column} title="birthday" />
       ),
@@ -153,14 +177,14 @@ const columns: ColumnDef<TMember>[] = [
       ),
    },
    {
-      id: "contact",
+      accessorKey: "contact",
       header: ({ column }) => (
          <DataTableColHeader column={column} title="contact" />
       ),
       cell: ({ row }) => <div className="">{row.original.contact}</div>,
    },
    {
-      id: "emailAddress",
+      accessorKey: "emailAddress",
       header: ({ column }) => (
          <DataTableColHeader column={column} title="email" />
       ),
@@ -168,7 +192,6 @@ const columns: ColumnDef<TMember>[] = [
    },
    {
       accessorKey: "gender",
-      enableSorting:false,
       header: ({ column }) => (
          <DataTableColHeader column={column} title="gender" />
       ),

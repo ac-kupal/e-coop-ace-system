@@ -81,6 +81,17 @@ export const searchParamsEntries = (searchParams : URLSearchParams) => {
     return searchParamsObj;
 };
 
+export const ExcelDateToJSDate = (date: string) => {
+    if(date === undefined) return null;
+    
+    const numericDate = parseFloat(date);
+ 
+    if (isNaN(numericDate) || numericDate < -657434 || numericDate > 2958465) {
+       return null;
+    }
+ 
+    return new Date(Math.round((numericDate - 25569) * 864e5));
+ };
 
 export function generateOTP(length: number): string {
     const charset = '0123456789';
