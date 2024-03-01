@@ -7,7 +7,7 @@ export type TPublicNavItem = {
     Icon: React.ElementType;
 };
 
-export const RouteItem = ({ routeName, path, Icon }: TPublicNavItem) => {
+const RouteItem = ({ routeName, path, Icon }: TPublicNavItem) => {
     return (
         <Link
             href={path}
@@ -17,3 +17,5 @@ export const RouteItem = ({ routeName, path, Icon }: TPublicNavItem) => {
         </Link>
     )
 };
+
+export default RouteItem;
