@@ -41,13 +41,13 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
         },
     });
 
-    const { getAuthorization, isPending, isError, error } = useVoterAuthorization(electionWithEvent.eventId, electionWithEvent.id, voter.id, onAuthorize);
+    const { authenticatedVoter, getAuthorization, isPending, isError, error } = useVoterAuthorization(electionWithEvent.eventId, electionWithEvent.id, voter.id, onAuthorize);
 
     const onSubmit = (values: TForm) => {
         getAuthorization(values);
     };
 
-    const disabled = isPending;
+    const disabled = isPending || authenticatedVoter !== undefined;
 
     return (
         <div className="flex flex-col items-center gap-y-4">
@@ -103,7 +103,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                             className="w-full"
                             type="submit"
                         >
-                            {isPending ? (
+                            {isPending || authenticatedVoter !== undefined? (
                                 <Loader2
                                     className="h-3 w-3 animate-spin"
                                     strokeWidth={1}
