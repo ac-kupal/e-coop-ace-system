@@ -26,6 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+notes.md
 .env*.local
 .env
 accounts.md
