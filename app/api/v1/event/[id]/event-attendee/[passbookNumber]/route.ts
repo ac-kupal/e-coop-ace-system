@@ -11,6 +11,17 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
         const { id : eventId, passbookNumber } = attendeeParamsSchema.parse(params);
 
         const memberAttendee = await db.eventAttendees.findUnique({
+            select : {
+                id : true,
+                firstName: true,
+                passbookNumber : true,
+                middleName: true,
+                lastName: true,
+                contact: true,
+                picture: true,
+                registered: true,
+                voted: true
+            },
             where: {
                 eventId_passbookNumber: {
                     eventId,

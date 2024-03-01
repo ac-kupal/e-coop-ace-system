@@ -15,7 +15,7 @@ const NavBar = () => {
     return (
         <header className="fixed top-0 z-50 flex flex-col items-center w-[100vw] px-4 py-2 lg:p-4 bg-white/20 dark:bg-slate-900/20 backdrop-blur-md">
             <div className="flex items-center justify-between w-full max-w-7xl">
-                <Link href="/" className="text-sm lg:text-lg font-medium inline-flex items-center" ><span className="text-lg">e</span>Coop ACE <span className="hidden md:block">System</span></Link>
+                <Link href="/" className="text-sm lg:text-lg font-medium inline-flex items-center" ><span className="text-lg">e</span>Coop ACE &nbsp;<span className="hidden md:block">System</span></Link>
                 <div className="flex items-center text-foreground/60 gap-y-2 md:gap-x-5 justify-center">
                     {
                         routes.map((route)=> <RouteItem key={route.path} {...route} />)

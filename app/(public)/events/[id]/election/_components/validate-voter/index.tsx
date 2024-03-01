@@ -5,7 +5,7 @@ import VoterSearch from "./voter-search";
 import AuthorizeVoter from "./authorize-voter";
 import MemberInfoDisplay from "../../../_components/member-info-display";
 
-import { TElectionWithEvent, TMemberAttendees } from "@/types";
+import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,7 @@ type Props = {
 
 const ValidateVoter = ({ electionWithEvent }: Props) => {
     const router = useRouter();
-    const [voter, setVoter] = useState<TMemberAttendees | null>(null);
+    const [voter, setVoter] = useState<TMemberAttendeesMinimalInfo | null>(null);
 
     if (!voter)
         return (

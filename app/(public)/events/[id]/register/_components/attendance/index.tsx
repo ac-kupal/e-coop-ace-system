@@ -19,25 +19,23 @@ const Attendance = ({ params }: Props) => {
 
     if (!member)
         return (
-            <AttendeeSearch
-                params={params}
-                onFound={(member) => setMember(member)}
-            />
+            <AttendeeSearch params={params} onFound={(member) => setMember(member)} />
         );
 
-    return <div className="flex flex-col gap-y-16">
-        <MemberInfoDisplay member={member}/>
-        <div className="flex flex-col items-center">
-            {
-                member.registered ? 
-                <Link className="mx-auto" href={`/events/${params.id}`}>
-                    <Button>Go Back to Event</Button>
-                </Link> 
-                :
-                <RegisterAttendance eventId={params.id} member={member} />
-            }
+    return (
+        <div className="flex flex-col gap-y-16">
+            <MemberInfoDisplay member={member} />
+            <div className="flex flex-col items-center">
+                {member.registered ? (
+                    <Link className="mx-auto" href={`/events/${params.id}`}>
+                        <Button>Go Back to Event</Button>
+                    </Link>
+                ) : (
+                    <RegisterAttendance eventId={params.id} member={member} />
+                )}
+            </div>
         </div>
-    </div>;
+    );
 };
 
 export default Attendance;

@@ -23,12 +23,12 @@ import {
 
 import { cn } from "@/lib/utils";
 import { handleAxiosErrorMessage } from "@/utils";
-import { TElectionWithEvent, TMemberAttendees } from "@/types";
+import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
 
 type Props = {
-    voter: TMemberAttendees;
+    voter: TMemberAttendeesMinimalInfo;
     electionWithEvent: TElectionWithEvent;
-    onAuthorize: (voter: TMemberAttendees) => void;
+    onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void;
 };
 
 const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {

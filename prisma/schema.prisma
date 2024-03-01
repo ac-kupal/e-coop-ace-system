@@ -120,13 +120,13 @@ model EventAttendees {
     picture        String?  @default("/images/default-avatar.png")
     emailAddress   String?
 
-    canVote Boolean? @default(false)
+    canVote Boolean @default(false)
 
     eventId Int
     event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
     registered Boolean  @default(false)
-    voted      Boolean? @default(false)
+    voted      Boolean @default(false)
     voteOtp    String?
 
     votes Votes[]
