@@ -47,6 +47,7 @@
     "date-fns": "^3.3.1",
     "faker": "^6.6.6",
     "handlebars": "^4.7.8",
+    "html-to-image": "^1.11.11",
     "html5-qrcode": "^2.3.8",
     "jose": "^5.2.2",
     "lucide-react": "^0.323.0",

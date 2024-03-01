@@ -1,40 +1,84 @@
-import React from "react";
+import React, { useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import * as htmlToImage from "html-to-image";
+
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Download, QrCodeIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 type Props = {
-    className?: string;
-    value: string;
-    themeResponsive?: boolean;
+  className?: string;
+  value: string;
+  themeResponsive?: boolean;
+
+  showDownload?: boolean;
 };
 
-const QrCode = ({ value, className, themeResponsive = false }: Props) => {
-    return (
-        <div
-            className={cn(
-                "h-[300px] w-[300px] flex justify-center items-center p-5 rounded-xl bg-background drop-shadow-xl border-secondary",
-                !themeResponsive && "bg-white",
-                className
-            )}
+const QrCode = ({
+  value,
+  className,
+  themeResponsive = false,
+  showDownload = false,
+}: Props) => {
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  const downloadQRCode = () => {
+    if (!qrRef.current) return;
+
+    htmlToImage
+      .toJpeg(qrRef.current, { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement("a");
+        link.download = `${value}.jpeg`;
+        link.href = dataUrl;
+        link.click();
+        toast.success("QR Code downloaded");
+      })
+      .catch(function (error) {
+        toast.error("Could not generated QR Code");
+      });
+  };
+
+  return (
+    <div className="flex flex-col gap-y-4">
+      <div
+        ref={qrRef}
+        className={cn(
+          "size-[300px] flex flex-col justify-center items-center p-5 rounded-xl bg-background drop-shadow-xl border-secondary",
+          !themeResponsive && "bg-white",
+          className,
+        )}
+      >
+        {value.length === 0 ? (
+          <div className="flex flex-col items-center gap-y-4  text-gray-700/70">
+            <QrCodeIcon className="size-16" />
+            <p className="text-sm text-center lg:text-lg">
+              Enter value to generate
+            </p>
+          </div>
+        ) : (
+          <QRCodeSVG
+            value={value}
+            className={cn("h-full duration-300 w-full rounded-sm ", className)}
+            bgColor={themeResponsive ? "transparent" : "white"}
+            fgColor={themeResponsive ? "currentColor" : "black"}
+            level={"L"}
+            includeMargin={false}
+          />
+        )}
+      </div>
+      {showDownload && (
+        <Button
+          onClick={downloadQRCode}
+          disabled={!value || value.length === 0}
+          className="gap-x-2 rounded-full"
         >
-            {!value || value.length === 0 ? (
-                <Loader2 className="size-8 animate-spin" strokeWidth={1} />
-            ) : (
-                <QRCodeSVG
-                    value={value}
-                    className={cn(
-                        "h-full duration-300 w-full rounded-sm ",
-                        className
-                    )}
-                    bgColor={themeResponsive ? "transparent" : "white"}
-                    fgColor={themeResponsive ? "currentColor" : "black"}
-                    level={"L"}
-                    includeMargin={false}
-                />
-            )}
-        </div>
-    );
+          <Download className="size-4" strokeWidth={1} /> Download QR
+        </Button>
+      )}
+    </div>
+  );
 };
 
 export default QrCode;

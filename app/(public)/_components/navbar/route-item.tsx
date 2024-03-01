@@ -1,15 +1,19 @@
-import React from 'react'
-import Link from 'next/link'
+import React from "react";
+import Link from "next/link";
 
-type Props = {
-    routeName : string,
-    path : string
-}
+export type TPublicNavItem = {
+    routeName: string;
+    path: string;
+    Icon: React.ElementType;
+};
 
-const RouteItem = ({ routeName, path } : Props) => {
-  return (
-    <Link href={ path } className="duration-200 text-foreground">{routeName}</Link>
-  )
-}
-
-export default RouteItem
+export const RouteItem = ({ routeName, path, Icon }: TPublicNavItem) => {
+    return (
+        <Link
+            href={path}
+            className="duration-200 px-3 py-2 text-foreground rounded-full bg-secondary/20 hover:bg-background/70 ease-in flex items-center gap-x-2"
+        >
+            <Icon className="size-4 md:size-5" strokeWidth={1} /> {routeName}
+        </Link>
+    )
+};
