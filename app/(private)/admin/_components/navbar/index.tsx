@@ -48,7 +48,7 @@ const NavBar = async ({}: Props) => {
             href="/"
             className="hidden lg:flex text-[min(22px,3.5vw)] text-white font-medium  items-center"
          >
-            <h1>Coop ACE System</h1>
+            <h1><span className="text-lg">e</span>Coop ACE System</h1>
          </Link>
          <div className=" flex  space-x-4 items-center">
             <h1 className="text-white text-[min(14px,2.9vw)]">{user.name}</h1>
