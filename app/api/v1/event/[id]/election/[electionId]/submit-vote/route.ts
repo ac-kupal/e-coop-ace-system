@@ -106,11 +106,13 @@ export const POST = async (req: NextRequest) => {
 
             electionPosition.map((position) => {
                 payload.voted += `<p style=" font-family: helvetica, sans-serif;text-decoration: none;color: #333;font-weight: 800;display: block;font-size: 16px; line-height: 24px; margin: 1em 0 0em;padding: 0;">${position.positionName}</p>`;
-                position.candidates
-                    .filter((candidate) => candidateIds.includes(candidate.id))
-                    .forEach((candidate) => {
-                        payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:16px;">${candidate.firstName} ${candidate.lastName}</p>`;
-                    });
+                const voted = position.candidates.filter((candidate) =>
+                    candidateIds.includes(candidate.id),
+                );
+                if(voted.length === 0) payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:16px;">no candidate selected</p>`;
+                voted.forEach((candidate) => {
+                    payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:16px;">${candidate.firstName} ${candidate.lastName}</p>`;
+                });
             });
 
             await sendMail(
