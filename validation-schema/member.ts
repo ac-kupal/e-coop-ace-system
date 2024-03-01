@@ -1,6 +1,5 @@
 import { gender } from "@prisma/client";
 import { z } from "zod";
-import { passbookNumber } from "./event-registration-voting";
 
 const commonFieldErrorsMinimum = {
    required_error: "Field must contain at least 1 character(s)",

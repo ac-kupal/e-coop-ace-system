@@ -4,9 +4,8 @@ import { useState } from "react";
 
 import AttendeeSearch from "./attendee-search";
 import { Button } from "@/components/ui/button";
-import UserAvatar from "@/components/user-avatar";
 
-import { TMemberAttendees } from "@/types";
+import { TMemberAttendeesMinimalInfo } from "@/types";
 import RegisterAttendance from "./register-attendance";
 import MemberInfoDisplay from "../../../_components/member-info-display";
 
@@ -15,7 +14,7 @@ type Props = {
 };
 
 const Attendance = ({ params }: Props) => {
-    const [member, setMember] = useState<TMemberAttendees | null>(null);
+    const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(null);
 
     if (!member)
         return (
