@@ -1,11 +1,11 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
+
+import { Toaster } from "@/components/ui/sonner";
+import ModalProvider from "@/providers/modal-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import QueryClientProviderWrapper from "@/providers/query-client-provider-wrapper";
-import ConfirmModalProvider from "@/providers/confirm-modal-provider";
-import { Toaster } from "@/components/ui/sonner";
-import InfoModalProvider from "@/providers/info-modal-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -31,9 +31,7 @@ export default function RootLayout({
                         defaultTheme="system"
                         enableSystem
                     >
-                        <ConfirmModalProvider />
-                        <InfoModalProvider />
-
+                        <ModalProvider />
                         <Toaster richColors closeButton />
                         <div className="font-inter">{children}</div>
                     </ThemeProvider>

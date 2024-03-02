@@ -1,6 +1,20 @@
 "use client";
+import React, { useState } from "react";
+
+import { Mails, Plus, QrCode, ScanLine, SearchIcon, Send } from "lucide-react";
+
+import columns from "./column";
+import { Button } from "@/components/ui/button";
+import ActionTooltip from "@/components/action-tooltip";
+import ImportFileModal from "../modals/import-file-modal";
+import LoadingSpinner from "@/components/loading-spinner";
 import DataTable from "@/components/data-table/data-table";
+import CreateMemberModal from "../modals/create-member-modal";
+import SearchInput from "@/components/data-table/table-search-input";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
+import DataTableViewOptions from "@/components/data-table/data-table-view-options";
+import { getAllEventMembers, useBroadcastOTP } from "@/hooks/api-hooks/member-api-hook";
+import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 import {
     useReactTable,
     getCoreRowModel,
@@ -8,19 +22,10 @@ import {
     getSortedRowModel,
     getFilteredRowModel,
 } from "@tanstack/react-table";
-import React, { useState } from "react";
-import columns from "./column";
-import { Fingerprint, Mails, Plus, SearchIcon, Send } from "lucide-react";
-import SearchInput from "@/components/data-table/table-search-input";
-import DataTableViewOptions from "@/components/data-table/data-table-view-options";
+
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { getAllEventMembers, useBroadcastOTP } from "@/hooks/api-hooks/member-api-hook";
-import CreateMemberModal from "../modals/create-member-modal";
-import ImportFileModal from "../modals/import-file-modal";
-import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
-import ActionTooltip from "@/components/action-tooltip";
-import LoadingSpinner from "@/components/loading-spinner";
+import { useQrReaderModal } from "@/stores/use-qr-scanner";
+
 type Props = {
     id: number;
 };
@@ -32,8 +37,9 @@ const MemberTable = ({ id }: Props) => {
 
     const [onImportModal, setOnImportModal] = useState(false);
 
-    const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
+    const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
+    const { onOpenQR } = useQrReaderModal();
 
     if (data === undefined)
         return <h1 className=" animate-pulse">Loading...</h1>;
@@ -72,10 +78,15 @@ const MemberTable = ({ id }: Props) => {
                         <SearchInput
                             setGlobalFilter={(e) => setGlobalFilter(e)}
                             globalFilter={globalFilter}
-                        ></SearchInput>
+                        />
                     </div>
+                    <ActionTooltip content="Scan Passbook Number">
+                        <Button variant="ghost" size="icon" className="cursor-pointer bg-transparent " onClick={()=> onOpenQR({ onRead : (val) => setGlobalFilter(val) }) } >
+                            <ScanLine className="size-4" />
+                        </Button>
+                    </ActionTooltip>
                 </div>
-                <div className="flex items-center gap-x-2 md:gap-x-4">
+                <div className="flex items-center flex-1 overflow-y-scroll gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />
                     <ActionTooltip
                         side="top"
