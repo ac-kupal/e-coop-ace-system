@@ -5,9 +5,8 @@ import { DataTableColHeader } from "@/components/data-table/data-table-col-heade
 import {
    Copy,
    MenuIcon,
-   MenuSquare,
-   MoreHorizontal,
    Pencil,
+   Send,
    Trash,
 } from "lucide-react";
 
@@ -23,23 +22,30 @@ import {
 import moment from "moment";
 import { TMember } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { deleteMember } from "@/hooks/api-hooks/member-api-hook";
+import { deleteMember, useOtpSend } from "@/hooks/api-hooks/member-api-hook";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UpdateMemberModal from "../modals/update-member-modal";
 import { useState } from "react";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
+import LoadingSpinner from "@/components/loading-spinner";
 
 const Actions = ({ member }: { member: TMember }) => {
    const { data: session } = useSession();
 
-   const isAdminOrRoot =
-      session?.user.role === "admin" || session?.user.role === "root";
+   const isAdminOrRoot = session?.user.role === "admin" || session?.user.role === "root";
 
    const [onOpenModal, setOnOpenModal] = useState(false);
    const deleteOperation = deleteMember();
    const { onOpen: onOpenConfirmModal } = useConfirmModal();
+   
+   const { isSendingOtp, sendOtp } = useOtpSend(member.eventId, member.passbookNumber);
+
+   const isLoading = isSendingOtp
+
+   if(isLoading) return <LoadingSpinner />
+
    return (
       <DropdownMenu>
          <UpdateMemberModal
@@ -78,6 +84,15 @@ const Actions = ({ member }: { member: TMember }) => {
                {" "}
                <Copy strokeWidth={2} className="h-4" />
                Copy vote OTP
+            </DropdownMenuItem>
+            <DropdownMenuItem
+               className="px-2 gap-x-2"
+               onClick={() => {
+                   sendOtp()
+               }}
+            >
+               <Send strokeWidth={2} className="h-4" />
+               Send OTP
             </DropdownMenuItem>
             <DropdownMenuItem
                className="px-2 gap-x-2"

@@ -120,7 +120,7 @@ model EventAttendees {
     picture        String?  @default("/images/default-avatar.png")
     emailAddress   String?
 
-    canVote Boolean @default(false)
+    canVote Boolean @default(true)
 
     eventId Int
     event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
