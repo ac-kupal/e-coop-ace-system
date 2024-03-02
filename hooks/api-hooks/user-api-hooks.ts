@@ -12,7 +12,7 @@ export const userQuery = ( userId : number ) => {
         queryKey: [`query-user-${userId}`],
         queryFn: async () => {
             try {
-                const response = await axios.get(`/api/v1/user/${userId}`);
+                const response = await axios.get(`/api/v1/admin/user/${userId}`);
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -86,7 +86,7 @@ export const updateUser = ( userId : number, onUpdate : (updatedUser : TUser) =>
         mutationKey: ["update-user"],
         mutationFn: async (data) => {
             try {
-                const response = await axios.patch(`/api/v1/user/${userId}`, { data });
+                const response = await axios.patch(`/api/v1/admin/user/${userId}`, { data });
                 queryClient.invalidateQueries({ queryKey: ["user-list-query"] });
                 toast.success("User updated successfully")
                 onUpdate(response.data)
@@ -113,7 +113,7 @@ export const deleteUser = () => {
         mutationKey : ["delete-user"],
         mutationFn : async (userId) => {
             try{
-                const deleted = await axios.delete(`/api/v1/user/${userId}`);
+                const deleted = await axios.delete(`/api/v1/admin/user/${userId}`);
                 toast.success("User deleted successfully");
                 queryClient.invalidateQueries({ queryKey: ["user-list-query"] })
                 return deleted.data;
