@@ -1,4 +1,5 @@
 import { EventAttendees } from "@prisma/client";
+import { TUserMinimalInfo } from "./user.types";
 
 export type TMemberAttendees = EventAttendees;
 
@@ -13,3 +14,7 @@ export type TMemberAttendeesMinimalInfo = {
     registered: boolean;
     voted: boolean;
 };
+
+export type TMemberAttendeesWithRegistrationAssistance = TMemberAttendees & {
+    registeredBy? : TUserMinimalInfo
+}

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { eventIdParamSchema } from "@/validation-schema/event-registration-voting";
+import { eventIdParamSchema } from "@/validation-schema/commons";
 import { createIncentiveSchema } from "@/validation-schema/incentive";
 
 type TParams = { params: { id: number } }

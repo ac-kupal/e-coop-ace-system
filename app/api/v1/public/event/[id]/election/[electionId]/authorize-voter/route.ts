@@ -1,15 +1,11 @@
 import { SignJWT } from "jose";
-
 import db from "@/lib/database";
+import { isSameDay } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import {
-    eventElectionParamsSchema,
-    voterVerificationSchema,
-} from "@/validation-schema/event-registration-voting";
+import { eventElectionParamsSchema, voterVerificationSchema } from "@/validation-schema/event-registration-voting";
 import { TVoteAuthorizationPayload } from "@/types";
-import { format, isSameDay } from "date-fns";
 
 type TParams = { params: { id: number; passbookNumber: number } };
 

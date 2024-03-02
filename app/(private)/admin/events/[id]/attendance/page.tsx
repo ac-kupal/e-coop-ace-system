@@ -1,9 +1,26 @@
 import React from 'react'
 
-const page = () => {
-  return (
-    <div>Attendance</div>
-  )
-}
+import AttendanceTable from './_components/attendance-table';
 
-export default page
+import { allowed } from '@/lib/utils';
+import { currentUserOrThrowAuthError } from '@/lib/auth';
+import { eventIdParamSchema } from '@/validation-schema/commons';
+
+type Props = { params : { id : number }};
+
+const AttendancePage = async ({ params } : Props) => {
+  const user = await currentUserOrThrowAuthError();
+
+  if (!allowed(["root", "admin", "staff"], user.role))
+    throw new Error("You don't have access to this page");
+
+  const eventId = eventIdParamSchema.parse(params.id);
+
+  return (
+    <div className="flex p-4 min-h-screen flex-col w-full">
+      <AttendanceTable eventId={eventId}/>
+    </div>
+  );
+};
+
+export default AttendancePage;

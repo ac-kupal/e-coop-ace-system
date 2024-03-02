@@ -41,6 +41,8 @@ model User {
     branch Branch @relation(fields: [branchId], references: [id])
     role   Role   @default(staff)
 
+    assistedAttendance EventAttendees[]
+
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
@@ -128,6 +130,9 @@ model EventAttendees {
     registered Boolean  @default(false)
     voted      Boolean @default(false)
     voteOtp    String?
+
+    registrationAssistId Int?
+    registeredBy User? @relation(fields: [registrationAssistId], references: [id], onDelete: SetNull)
 
     votes Votes[]
     incentiveClaimed IncentiveClaims[]
@@ -242,7 +247,7 @@ model IncentiveClaims {
     id Int @id @default(autoincrement())
 
     incentiveId Int
-    incentive Incentives @relation(fields: [incentiveId], references: [id])
+    incentive Incentives @relation(fields: [incentiveId], references: [id], onDelete: Cascade)
 
     eventAttendeeId String
     eventAttendee EventAttendees @relation(fields : [eventAttendeeId], references: [id], onDelete: Cascade)
