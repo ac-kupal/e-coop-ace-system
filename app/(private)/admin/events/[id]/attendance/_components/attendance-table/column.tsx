@@ -2,7 +2,12 @@
 import { toast } from "sonner";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Copy, MenuIcon } from "lucide-react";
+import {
+    Copy,
+    MenuIcon,
+    MonitorSmartphone,
+    TabletSmartphone,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,7 +24,11 @@ import {
 import { TMemberAttendeesWithRegistrationAssistance } from "@/types";
 import UserAvatar from "@/components/user-avatar";
 
-const Actions = ({ member, }: { member: TMemberAttendeesWithRegistrationAssistance;}) => {
+const Actions = ({
+    member,
+}: {
+    member: TMemberAttendeesWithRegistrationAssistance;
+}) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -110,14 +119,18 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
         id: "registered by",
         accessorKey: "registeredBy",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="registered by" />
+            <DataTableColHeader
+                column={column}
+                className="justify-center"
+                title="registered by"
+            />
         ),
         cell: ({ row }) => (
-            <div className="flex gap-x-2 items-center">
+            <div className="flex gap-x-2 items-center justify-center">
                 {row.original.registeredBy ? (
-                    <>
+                    <div className="px-2 text-sm py-1 flex items-center justify-center gap-x-2 rounded-full bg-secondary text-[#457f5a] dark:text-[#68ca93]">
                         <UserAvatar
-                            className="size-7"
+                            className="size-4"
                             src={row.original.registeredBy.picture as ""}
                             fallback={row.original.registeredBy.name.substring(
                                 0,
@@ -125,9 +138,12 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
                             )}
                         />
                         {row.original.registeredBy.name}
-                    </>
+                    </div>
                 ) : (
-                    "Self Registered"
+                    <div className="px-2 text-sm py-1 flex items-center justify-center gap-x-2 rounded-full bg-[#f0fdf5] dark:bg-[#f0fdf5]/5 text-[#457f5a] dark:text-[#68ca93]">
+                        <TabletSmartphone className="size-3" />{" "}
+                        <span>Self Registered</span>
+                    </div>
                 )}
             </div>
         ),
