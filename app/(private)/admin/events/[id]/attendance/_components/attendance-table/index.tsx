@@ -34,7 +34,12 @@ const AttendanceTable = ({ eventId } : { eventId : number }) => {
             globalFilter,
         },
         initialState : {
-            pagination : { pageIndex : 0, pageSize : 20 }
+            pagination : { pageIndex : 0, pageSize : 20 },
+            columnVisibility : {
+                emailAddress : false,
+                middleName : false,
+                contact : false
+            }
         },
         onGlobalFilterChange: setGlobalFilter,
     });

@@ -1,13 +1,10 @@
 "use client";
 import { toast } from "sonner";
-import { format } from "date-fns";
-import { useSession } from "next-auth/react";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Copy, MenuIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import LoadingSpinner from "@/components/loading-spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 import {
@@ -52,21 +49,30 @@ const Actions = ({ member, }: { member: TMemberAttendeesWithRegistrationAssistan
 };
 
 const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
+    // {
+    //     id: "actions",
+    //     header: ({ column }) => (
+    //         <DataTableColHeader column={column} title="Actions" />
+    //     ),
+    //     cell: ({ row }) => (
+    //         <div className="flex justify-start">
+    //             <Actions member={row.original} />
+    //         </div>
+    //     ),
+    // },
     {
-        id: "actions",
+        accessorKey: "passbookNumber",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Actions" />
+            <DataTableColHeader column={column} title="passbook no" />
         ),
         cell: ({ row }) => (
-            <div className="flex justify-start">
-                <Actions member={row.original} />
-            </div>
+            <div className="">{row.original.passbookNumber}</div>
         ),
     },
     {
         accessorKey: "firstName",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="first Name" />
+            <DataTableColHeader column={column} title="first name" />
         ),
         cell: ({ row }) => {
             const img =
@@ -89,14 +95,14 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
     {
         accessorKey: "middleName",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="middle" />
+            <DataTableColHeader column={column} title="middle name" />
         ),
         cell: ({ row }) => <div className="">{row.original.middleName}</div>,
     },
     {
         accessorKey: "lastName",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="last Name" />
+            <DataTableColHeader column={column} title="last name" />
         ),
         cell: ({ row }) => <div className=""> {row.original.lastName}</div>,
     },
@@ -124,15 +130,6 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
                     "Self Registered"
                 )}
             </div>
-        ),
-    },
-    {
-        accessorKey: "passbookNumber",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="passbook N0." />
-        ),
-        cell: ({ row }) => (
-            <div className="">{row.original.passbookNumber}</div>
         ),
     },
     {
