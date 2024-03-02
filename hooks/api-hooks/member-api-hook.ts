@@ -24,25 +24,6 @@ export const getAllEventMembers = (eventId: number) => {
     return positions;
 };
 
-export const useAttendanceList = (eventId : number) => {
-    const { data : attendanceList, isLoading, isError, isFetching } = useQuery<TMemberAttendeesWithRegistrationAssistance[], string>({
-        queryKey : ["all-attendance-list-query"],
-        queryFn : async () => {
-            try{
-                const response = await axios.get(`/api/v1/admin/event/${eventId}/member/attendance`)
-                return response.data;
-            }catch(e){
-                const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage);
-                throw errorMessage;
-            }
-        },
-        initialData : []
-    })
-
-    return { attendanceList, isLoading, isError, isFetching }
-}
-
 export const getMembers = () => {
     const getAllMember = useQuery<TMember[]>({
         queryKey: ["get-all-member-list-query"],

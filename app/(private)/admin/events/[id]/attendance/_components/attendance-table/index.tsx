@@ -15,7 +15,8 @@ import { Input } from "@/components/ui/input";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import { getAllEventMembers, useAttendanceList } from "@/hooks/api-hooks/member-api-hook";
+
+import { useAttendanceList } from "@/hooks/api-hooks/attendance-api-hooks";
 
 const AttendanceTable = ({ eventId } : { eventId : number }) => {
     const [globalFilter, setGlobalFilter] = React.useState("");

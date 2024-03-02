@@ -16,6 +16,6 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
 
         return NextResponse.json(eventAttendees);
     } catch (e) {
-        routeErrorHandler(e, req.method);
+        routeErrorHandler(e, req);
     }
 };
