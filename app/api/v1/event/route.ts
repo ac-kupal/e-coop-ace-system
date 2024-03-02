@@ -30,7 +30,7 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json(CreateEvent);
    } catch (e) {
       console.log(e)
-      return routeErrorHandler(e, req.method);
+      return routeErrorHandler(e, req);
    }
 };
 
@@ -39,6 +39,6 @@ export const GET = async (req: NextRequest) => {
       const getAllEvents = await getAllEvent(true);
       return NextResponse.json(getAllEvents);
    } catch (e) {
-      return routeErrorHandler(e, req.method);
+      return routeErrorHandler(e, req);
    }
 };

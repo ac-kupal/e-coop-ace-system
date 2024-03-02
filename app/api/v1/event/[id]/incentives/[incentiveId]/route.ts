@@ -29,7 +29,7 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
 
     return NextResponse.json(updatedIncentives);
   } catch (e) {
-    return routeErrorHandler(e, req.method);
+    return routeErrorHandler(e, req);
   }
 };
 
@@ -59,6 +59,6 @@ export const DELETE = async (req: NextRequest, { params }: TParams) => {
 
     return NextResponse.json("Incentive deleted");
   } catch (e) {
-    return routeErrorHandler(e, req.method);
+    return routeErrorHandler(e, req);
   }
 };

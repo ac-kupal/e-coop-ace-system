@@ -30,7 +30,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
      return NextResponse.json(updatedMember)
   } catch (e) {
      console.log(e)
-     return routeErrorHandler(e, req.method);
+     return routeErrorHandler(e, req);
   }
 };
  

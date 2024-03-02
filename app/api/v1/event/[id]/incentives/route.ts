@@ -27,7 +27,7 @@ export const GET = async (
 
     return NextResponse.json(claimsWithClaimCount);
   } catch (e) {
-    return routeErrorHandler(e, req.method);
+    return routeErrorHandler(e, req);
   }
 };
 
@@ -49,6 +49,6 @@ export const POST = async (req :NextRequest, { params } : TParams) => {
 
         return NextResponse.json(newIncentive)
     }catch(e){
-        return routeErrorHandler(e, req.method);
+        return routeErrorHandler(e, req);
     }
 }

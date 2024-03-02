@@ -25,7 +25,7 @@ export const PATCH = async ( req : NextRequest, { params }: TParams ) =>{
 
         return NextResponse.json(updatedBranch)
     }catch(e){
-        return routeErrorHandler(e, req.method)
+        return routeErrorHandler(e, req)
     }
 }
 
@@ -47,6 +47,6 @@ export const DELETE = async ( req : NextRequest, { params } : TParams ) => {
 
         return NextResponse.json(deletedBranch)
     }catch(e){
-        return routeErrorHandler(e, req.method)
+        return routeErrorHandler(e, req)
     }
 }

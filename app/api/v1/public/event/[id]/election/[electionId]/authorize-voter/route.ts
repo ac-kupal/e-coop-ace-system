@@ -103,6 +103,6 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         return response;
     } catch (e) {
-        return routeErrorHandler(e, req.method);
+        return routeErrorHandler(e, req);
     }
 };
