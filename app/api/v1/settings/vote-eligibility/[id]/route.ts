@@ -25,7 +25,7 @@ export const PATCH = async function name(req:NextRequest,{params}:TParams) {
         )
        return NextResponse.json(updatedElectionSettings)     
        } catch (error) {
-         return routeErrorHandler(error,req.method)
+         return routeErrorHandler(error,req)
        }
    }
    

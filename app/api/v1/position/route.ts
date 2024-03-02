@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
        const createPosition = await db.position.create({data:postionData})
         return NextResponse.json(createPosition)
      } catch (error) {
-     return routeErrorHandler(error, req.method);
+     return routeErrorHandler(error, req);
    }
 };
 
@@ -21,7 +21,7 @@ export const GET = async (req: NextRequest) => {
       const getAllPosition = await db.position.findMany({});
       return NextResponse.json(getAllPosition);
    } catch (error) {
-      return routeErrorHandler(error, req.method);
+      return routeErrorHandler(error, req);
    }
 };
 

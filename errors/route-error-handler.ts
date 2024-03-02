@@ -28,6 +28,6 @@ export const routeErrorHandler = (e: unknown, req: NextRequest) => {
             );
     }
 
-    console.error(`ERROR : ${req.url} - [${req.method}]: ${e}`);
+    console.error(`ERROR : ${req.url} - [${req}]: ${e}`);
     return NextResponse.json({ message: `${e}` }, { status: 500 });
 };

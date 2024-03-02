@@ -13,7 +13,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
      const deletePosition = await db.position.delete({where:{id:positionId}})
      return NextResponse.json(deletePosition)     
      } catch (error) {
-       return routeErrorHandler(error,req.method)
+       return routeErrorHandler(error,req)
      }
 }
 
@@ -25,7 +25,7 @@ export const GET = async function name(req:NextRequest,{params}:TParams) {
     const getAllPosition = await db.position.findMany({where:{electionId:electionId}});
     return NextResponse.json(getAllPosition);
  } catch (error) {
-    return routeErrorHandler(error, req.method);
+    return routeErrorHandler(error, req);
  }
      
 }
@@ -42,6 +42,6 @@ export const PATCH = async function name(req:NextRequest,{params}:TParams) {
     })
     return NextResponse.json(deletePosition)     
     } catch (error) {
-      return routeErrorHandler(error,req.method)
+      return routeErrorHandler(error,req)
     }
 }
