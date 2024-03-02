@@ -14,7 +14,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
       const deletePosition = await db.eventAttendees.delete({where:{id:memberId}})
       return NextResponse.json(deletePosition)     
       } catch (error) {
-        return routeErrorHandler(error,req.method)
+        return routeErrorHandler(error,req)
       }
  }
 
@@ -30,7 +30,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
      return NextResponse.json(updatedMember)
   } catch (e) {
      console.log(e)
-     return routeErrorHandler(e, req.method);
+     return routeErrorHandler(e, req);
   }
 };
  

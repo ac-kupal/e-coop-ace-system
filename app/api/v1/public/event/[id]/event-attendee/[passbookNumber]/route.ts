@@ -39,6 +39,6 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
         return NextResponse.json(memberAttendee);
     } catch (e) {
         console.error(e);
-        return routeErrorHandler(e, req.method);
+        return routeErrorHandler(e, req);
     }
 };

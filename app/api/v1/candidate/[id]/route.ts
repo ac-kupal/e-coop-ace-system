@@ -13,7 +13,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
      const deleteCandidate = await db.candidate.delete({where:{id:candidateId}})
      return NextResponse.json(deleteCandidate)     
      } catch (error) {
-       return routeErrorHandler(error,req.method)
+       return routeErrorHandler(error, req)
      }
 }
 
@@ -34,7 +34,7 @@ export const GET = async function name(req:NextRequest,{params}:TParams) {
    );
     return NextResponse.json(getAllCandidate);
  } catch (error) {
-    return routeErrorHandler(error, req.method);
+    return routeErrorHandler(error, req );
  }
      
 }
@@ -67,6 +67,6 @@ export const PATCH = async function name(req:NextRequest,{params}:TParams) {
     })
     return NextResponse.json(updatedCandidate)     
     } catch (error) {
-      return routeErrorHandler(error,req.method)
+      return routeErrorHandler(error,req)
     }
 }

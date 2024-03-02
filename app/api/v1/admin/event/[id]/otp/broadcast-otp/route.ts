@@ -84,6 +84,6 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         return NextResponse.json(mailTaskStatus);
     } catch (e) {
-        return routeErrorHandler(e, req.method);
+        return routeErrorHandler(e, req);
     }
 };

@@ -2,7 +2,7 @@ import React from "react";
 import db from "@/lib/database";
 import InvalidElection from "./_components/invalid-election";
 import ValidateVoter from "./_components/validate-voter";
-import { eventIdParamSchema } from "@/validation-schema/event-registration-voting";
+import { eventIdParamSchema } from "@/validation-schema/commons";
 
 type Props = {
     params: { id: number };

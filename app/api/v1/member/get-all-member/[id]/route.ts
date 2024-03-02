@@ -16,6 +16,6 @@ export const GET = async(req:NextRequest,{params}:TParams)=>{
      }})
       return NextResponse.json(getAllFilteredMembers)
      } catch (e) {
-          routeErrorHandler(e,req.method)
+          routeErrorHandler(e,req)
      }
 }

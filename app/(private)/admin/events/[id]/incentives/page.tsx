@@ -2,7 +2,7 @@ import React from "react";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { allowed } from "@/lib/utils";
 import IncentivesTable from "./_components/incentives-table";
-import { eventIdParamSchema } from "@/validation-schema/event-registration-voting";
+import { eventIdParamSchema } from "@/validation-schema/commons";
 
 type Props = { params : { id : number }};
 

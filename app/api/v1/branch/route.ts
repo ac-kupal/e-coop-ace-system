@@ -10,7 +10,7 @@ export const GET = async (req : NextRequest) => {
         const branch = await db.branch.findMany({ where : { deleted : false }, orderBy : { createdAt : "desc" }});
         return NextResponse.json(branch)
     }catch(e){
-        return routeErrorHandler(e, req.method)
+        return routeErrorHandler(e, req)
     }
 }
 
@@ -28,6 +28,6 @@ export const POST = async (req : NextRequest) => {
         })
         return NextResponse.json(newBranch)
     }catch(e){
-        return routeErrorHandler(e, req.method)
+        return routeErrorHandler(e, req)
     }
 }

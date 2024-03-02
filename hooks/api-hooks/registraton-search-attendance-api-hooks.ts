@@ -18,7 +18,7 @@ export const useSearchMemberAttendee = (eventId : string | number, onFound : (me
         mutationFn: async ({ passbookNumber }) => {
             try {
                 const request = await axios.get(
-                    `/api/v1/event/${eventId}/event-attendee/${passbookNumber}`,
+                    `/api/v1/public/event/${eventId}/event-attendee/${passbookNumber}`,
                 );
                 onFound(request.data);
                 return request.data;
@@ -45,7 +45,7 @@ export const useRegisterMember = (eventId: string, onRegister: () => void) => {
         mutationFn: async (data) => {
             try {
                 const request = await axios.post(
-                    `/api/v1/event/${eventId}/register`,
+                    `/api/v1/public/event/${eventId}/register`,
                     data,
                 );
                 toast.success("You have been registered to this event.");

@@ -1,7 +1,6 @@
 import db from "@/lib/database";
-import { eventIdParamSchema } from "@/validation-schema/event-registration-voting";
+import { eventIdParamSchema } from "@/validation-schema/commons";
 import React from "react";
-import InvalidEvent from "../../../_components/invalid-event";
 import InvalidElection from "../../_components/invalid-election";
 import { CheckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";

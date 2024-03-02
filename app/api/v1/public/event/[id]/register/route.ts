@@ -2,7 +2,8 @@ import db from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { attendeeRegisterSchema, eventIdParamSchema } from "@/validation-schema/event-registration-voting";
+import { attendeeRegisterSchema } from "@/validation-schema/event-registration-voting";
+import  { eventIdParamSchema } from "@/validation-schema/commons"
 import { isSameDay } from "date-fns";
 import { TMemberAttendeesMinimalInfo } from "@/types";
 
@@ -56,6 +57,6 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         return NextResponse.json(registered);
     } catch (e) {
         console.error(e);
-        return routeErrorHandler(e, req.method);
+        return routeErrorHandler(e, req);
     }
 };

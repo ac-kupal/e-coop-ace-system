@@ -16,7 +16,7 @@ export const GET = async (req : NextRequest) => {
         });
         return NextResponse.json(users);
     } catch (e) {
-        return routeErrorHandler(e, req.method)
+        return routeErrorHandler(e, req)
     }
 };
 
@@ -35,6 +35,6 @@ export const POST = async (req: NextRequest) => {
 
         return NextResponse.json(newUser);
     } catch (e) {
-        return routeErrorHandler(e, req.method)
+        return routeErrorHandler(e, req)
     }
 };

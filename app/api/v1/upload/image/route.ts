@@ -18,6 +18,6 @@ export const POST = async (req: NextRequest) => {
 
         return NextResponse.json(url)
     } catch (e) {
-        return routeErrorHandler(e, req.method);
+        return routeErrorHandler(e, req);
     }
 };

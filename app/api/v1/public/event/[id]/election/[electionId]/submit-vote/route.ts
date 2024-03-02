@@ -131,6 +131,6 @@ export const POST = async (req: NextRequest) => {
         response.cookies.delete("v-auth");
         return response;
     } catch (e) {
-        return routeErrorHandler(e, req.method);
+        return routeErrorHandler(e, req);
     }
 };

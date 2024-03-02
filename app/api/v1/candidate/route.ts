@@ -28,7 +28,7 @@ export const POST = async (req: NextRequest) => {
       });
       return NextResponse.json(createPosition);
    } catch (error) {
-      return routeErrorHandler(error, req.method);
+      return routeErrorHandler(error, req);
    }
 };
 
@@ -37,7 +37,7 @@ export const GET = async (req: NextRequest) => {
       const getAllCandidate = await db.candidate.findMany({include:{position:true}});
       return NextResponse.json(getAllCandidate);
    } catch (error) {
-      return routeErrorHandler(error, req.method);
+      return routeErrorHandler(error, req);
    }
 };
 
