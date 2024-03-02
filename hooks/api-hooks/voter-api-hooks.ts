@@ -28,7 +28,7 @@ export const searchVoter = (
 
                 const url = qs.stringifyUrl(
                     {
-                        url: `/api/v1/event/${eventId}/election/${electionId}/voter-search`,
+                        url: `/api/v1/public/event/${eventId}/election/${electionId}/voter-search`,
                         query: { passbookNumber },
                     },
                     { skipNull: true }
@@ -59,7 +59,7 @@ export const loadVoter = (election: TElection) => {
         queryFn: async () => {
             try {
                 const checkVoteAuthorization = await axios.get(
-                    `/api/v1/event/${election.eventId}/election/${election.id}/check-vote-auth/`
+                    `/api/v1/public/event/${election.eventId}/election/${election.id}/check-vote-auth/`
                 );
 
                 const voter: TMemberAttendeesMinimalInfo =
@@ -95,7 +95,7 @@ export const useCastVote = (
         mutationFn: async (chosenCandidatesIds) => {
             try {
                 const voteSubmission = await axios.post(
-                    `/api/v1/event/${election.eventId}/election/${election.id}/submit-vote`,
+                    `/api/v1/public/event/${election.eventId}/election/${election.id}/submit-vote`,
                     { candidateIds: chosenCandidatesIds }
                 );
                 toast.success("Thank you, your vote has been submitted 🥳");
@@ -133,7 +133,7 @@ export const useVoterAuthorization = (
         mutationFn: async (data) => {
             try {
                 const request = await axios.post(
-                    `/api/v1/event/${eventId}/election/${electionId}/authorize-voter`,
+                    `/api/v1/public/event/${eventId}/election/${electionId}/authorize-voter`,
                     data,
                     { withCredentials: true }
                 );

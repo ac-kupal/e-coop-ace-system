@@ -144,3 +144,40 @@ export const createManyMember = ({onCancelandReset}:Props) => {
 
    return addMember;
 };
+
+export const useBroadcastOTP = (eventId : number) => {
+   const { data : broadcastData, isPending : isBroadcasting, mutate : broadcastOTP} = useMutation<{ sentCount : 0, invalidEmailAddress : 0, failedSend : 0 }, string>({
+        mutationKey : [`broadcast-otp-${eventId}`],
+        mutationFn : async () => {
+           try{
+                const request = await axios.post(`/api/v1/admin/event/${eventId}/otp/broadcast-otp`);
+                return request.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        }
+    }) 
+
+  return { broadcastData, broadcastOTP, isBroadcasting } ;
+}
+
+export const useOtpSend = (eventId : number, passbookNumber : string) => {
+   const { isPending : isSendingOtp, mutate : sendOtp } = useMutation<any, string>({
+        mutationKey : [`send-otp-${eventId}`],
+        mutationFn : async () => {
+           try{
+                const request = await axios.post(`/api/v1/admin/event/${eventId}/otp/specific-send`, { passbookNumber });
+                toast.success("OTP has been sent");
+                return request.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        }
+    }) 
+
+  return { isSendingOtp, sendOtp } ;
+}
