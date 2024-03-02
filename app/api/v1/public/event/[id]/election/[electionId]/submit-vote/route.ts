@@ -98,7 +98,7 @@ export const POST = async (req: NextRequest) => {
             const payload = {
                 iconImage: `${process.env.DEPLOYMENT_URL}/images/vote-saved.png`,
                 title: election.event.title,
-                coverImage: election.event.coverImage,
+                coverImage: election.event.coverImage as '',
                 participantName: `${firstName} ${lastName}`,
                 eventLink: `${process.env.DEPLOYMENT_URL}/events/${election.event.id}`,
                 voted: "",
@@ -115,11 +115,14 @@ export const POST = async (req: NextRequest) => {
                 });
             });
 
-            await sendMail(
-                "Confirmation: Your Vote has been Successfully Submitted",
-                voter.emailAddress,
-                "vote-submit.html",
-                payload,
+            await sendMail( { 
+                subject : "Confirmation: Your Vote has been Successfully Submitted",
+                toEmail : voter.emailAddress,
+                template : {
+                    templateFile : "vote-submit.html",
+                    payload 
+                }
+            }
             );
         }
 

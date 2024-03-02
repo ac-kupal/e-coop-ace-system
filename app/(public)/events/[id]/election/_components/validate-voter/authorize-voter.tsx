@@ -70,6 +70,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                                         </span>
                                     </FormLabel>
                                     <ReactInputMask
+                                        disabled={disabled}
                                         {...field}
                                         mask="99/99/9999"
                                         placeholder="input birthday"
