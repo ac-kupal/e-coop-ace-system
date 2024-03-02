@@ -7,7 +7,6 @@ import db from "@/lib/database";
 type TParams = { params: { id: number } };
 
 
-
 export const POST = async (req: NextRequest, { params }: TParams) => {
    try {
       const id = Number(params.id);
@@ -20,13 +19,13 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
             const date = new Date()
             return {
                ...member,
-               passbookNumber:member.passbookNumber.toString(),
+               passbookNumber:member.passbookNumber === "" || null || undefined ? "" :member.passbookNumber,
                createdBy: user.id,
-               birthday: ExcelDateToJSDate(member.birthday) === null ? date : ExcelDateToJSDate(member.birthday),
+               birthday: ExcelDateToJSDate(member.birthday) === null || "" || undefined ? date : ExcelDateToJSDate(member.birthday),
                eventId: id,
-               middleName:!member.middleName ? "": member.middleName,
-               emailAddress: !member.emailAddress ? null : member.emailAddress,
-               contact: !member.contact ? "" : member.contact.toString(),
+               middleName:member.middleName  === "" || null || undefined ? "" : member.middleName,
+               emailAddress: member.emailAddress  === "" || null || undefined ? "" : member.emailAddress,
+               contact: member.contact === "" || null || undefined ? "" : member.contact.toString(),
                voteOtp: generateOTP(6),
             };
          }
