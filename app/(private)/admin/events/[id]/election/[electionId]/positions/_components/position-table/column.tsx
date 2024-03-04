@@ -9,12 +9,11 @@ import {
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useState } from "react";
-import { TPosition } from "@/types";
+import {  TPositionWithEventID } from "@/types";
 import { deletePosition } from "@/hooks/api-hooks/position-api-hooks";
 import UpdatePositionModal from "../modals/update-position-modal";
 
-const columns: ColumnDef<TPosition>[] = [
-
+const columns: ColumnDef<TPositionWithEventID>[] = [
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
@@ -57,7 +56,6 @@ const columns: ColumnDef<TPosition>[] = [
                <Button
                   onClick={() => {
                      setOnOpenModal(true);
-                     console.log(row.original);
                   }}
                   variant={"outline"}
                >
@@ -70,7 +68,8 @@ const columns: ColumnDef<TPosition>[] = [
    {
       id: "delete",
       cell: ({ row }) => {
-         const deleteOperation = deletePosition();
+         const params = {id:row.original.eventId,electionId:row.original.electionId}
+         const deleteOperation = deletePosition(params);
          const { onOpen: onOpenConfirmModal } = useConfirmModal();
          return (
             <>

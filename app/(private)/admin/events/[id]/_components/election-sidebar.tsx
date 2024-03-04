@@ -12,7 +12,7 @@ export const ElectionRoutes: TElectionRoute[] = [
    {
       icon: <Combine className="h-5 w-5" />,
       name: "election",
-      path: "election",
+      path: "overview",
    },
   {
      icon: <Users className="h-5 w-5" />,
@@ -30,11 +30,16 @@ export const ElectionRoutes: TElectionRoute[] = [
      path: "settings",
   },
 ];
-const ElectionSideBar =( ) => {
+
+type Props = {
+   params:{id:number,electionId:number}
+}
+
+const ElectionSideBar =({params}:Props ) => {
   return (
     <div className="flex flex-row lg:flex-col w-full h-16 py-2 lg:w-[220px] px-3 justify-evenly border border-[#0000000b]  gap-1 lg:gap-5 lg:py-10 bg-secondary  lg:min-h-screen  dark:bg-secondary/50 shadow lg:shadow-md  rounded-3xl lg:justify-start    ">
     {ElectionRoutes.map((route:TElectionRoute, i) => (
-       <ElectionSideBarItems  route={route} key={i} />
+       <ElectionSideBarItems params={params} route={route} key={i} />
     ))}
  </div>
   )

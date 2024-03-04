@@ -1,9 +1,7 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -19,71 +17,66 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 
-import { mutationErrorHandler } from "@/errors/mutation-error-handler";
-import { useRouter } from "next/navigation";
-import { TCreatePosition } from "@/types";
-import { createPositionSchema } from "@/validation-schema/position";
+import { TPosition, TPositionWithEventID} from "@/types";
+import { createPositionSchema, updatePositionSchema } from "@/validation-schema/position";
 import { z } from "zod";
-import { createPosition } from "@/hooks/api-hooks/position-api-hooks";
+import { useCallback, useEffect } from "react";
+import { updatePositions } from "@/hooks/api-hooks/position-api-hooks";
 
 type Props = {
-   electionId: number | undefined;
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
+   position:TPositionWithEventID
 };
 
-type createTPosition = z.infer<typeof createPositionSchema>;
+type updateTPosition = z.infer<typeof updatePositionSchema>;
 
-const CreatePostionModal = ({
+const UpdatePositionModal = ({
    state,
    onClose,
    onCancel,
-   electionId,
+   position,
 }: Props) => {
 
-   const queryClient = useQueryClient();
-
-   const defaultValues = {
-      positionName: "",
-      numberOfSelection: 0,
-      electionId: electionId,
-   };
-
-   const positionForm = useForm<createTPosition>({
+   const positionForm = useForm<updateTPosition>({
       resolver: zodResolver(createPositionSchema),
-      defaultValues: defaultValues,
    });
 
-   const reset = () => {
-      positionForm.reset(defaultValues);
-   };
+   const defaultValues = useCallback(() => {
+      positionForm.setValue("positionName", position.positionName);
+      positionForm.setValue("numberOfSelection", position.numberOfSelection);
+      positionForm.setValue("electionId", position.electionId);
+   }, [positionForm, position]);
+
+   useEffect(() => {
+      defaultValues();
+   }, [positionForm, position]);
+
    const onCancelReset = () => {
-      reset();
       onClose(false);
    };
-   const createPositionMutatation = createPosition({onCancelReset})
+   const params = { id: position.eventId, electionId: position.electionId, positionId: position.id };
+   const updatePositionMutation = updatePositions({onCancelReset:onCancelReset,params:params})
 
-   const isLoading = createPositionMutatation.isPending;
+   const isLoading = updatePositionMutation.isPending
 
    return (
       <Dialog
          open={state}
          onOpenChange={(state) => {
             onClose(state);
-            reset();
          }}
       >
          <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
-          
             <ModalHead
-               title="Create Position"
-               description="You are about to create a position. you must need to provide atleast 1 number of seats!"
+               title="Update Position"
+               description="You are about to  a position. When updating you must need to provide atleast 1 number of seats!"
             />
             <Form {...positionForm}>
                <form
                   onSubmit={positionForm.handleSubmit((formValues) => {
-                     createPositionMutatation.mutate(formValues);
+                     updatePositionMutation.mutate(formValues);
                   })}
                   className=" space-y-3"
                >
@@ -127,18 +120,7 @@ const CreatePostionModal = ({
                         disabled={isLoading}
                         onClick={(e) => {
                            e.preventDefault();
-                           reset();
-                        }}
-                        variant={"ghost"}
-                        className="bg-muted/60 hover:bg-muted"
-                     >
-                        clear
-                     </Button>
-                     <Button
-                        disabled={isLoading}
-                        onClick={(e) => {
-                           e.preventDefault();
-                           onClose(false);
+                           onClose(false)
                         }}
                         variant={"secondary"}
                         className="bg-muted/60 hover:bg-muted"
@@ -163,4 +145,4 @@ const CreatePostionModal = ({
    );
 };
 
-export default CreatePostionModal;
+export default UpdatePositionModal;

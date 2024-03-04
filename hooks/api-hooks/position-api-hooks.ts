@@ -4,13 +4,13 @@ import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
 import { TCreatePosition, TPosition, TUpdatePosition } from "@/types";
 
-export const deletePosition = () => {
+export const deletePosition = ( params: { id: number; electionId: number }) => {
    const queryClient = useQueryClient();
    const deletePositionMutation = useMutation<any, string, number>({
       mutationKey: ["delete-position"],
       mutationFn: async (positionId) => {
          try {
-            const deleted = await axios.delete(`/api/v1/position/${positionId}`);
+            const deleted = await axios.delete(`/api/v1/admin/event/${params.id}/election/${params.electionId}/position/${positionId}`);
             return deleted.data;
          } catch (e) {
             const errorMessage = handleAxiosErrorMessage(e);
@@ -49,15 +49,16 @@ const {data,isLoading,isError} = useQuery<TPosition[], string>({
 
 type Props = {
    onCancelReset:  ()=> void;
+   params: { id: number; electionId: number };
 }
 
-export const createPosition = ({onCancelReset}:Props)=>{
+export const createPosition = ({onCancelReset,params}:Props)=>{
    const queryClient = useQueryClient()
   const createPosition = useMutation<TCreatePosition, string, unknown>({
       mutationKey: ["create-position-key"],
       mutationFn: async (data) => {
          try {
-            const response = await axios.post("/api/v1/position", data);
+            const response = await axios.post(`/api/v1/admin/event/${params.id}/election/${params.electionId}/position/`, data);
             return response.data;
          } catch (e) {
             const errorMessage = handleAxiosErrorMessage(e);
@@ -80,18 +81,18 @@ export const createPosition = ({onCancelReset}:Props)=>{
 }
 
 type updateProps = {
-   positionId:number,
    onCancelReset:()=> void;
+   params: { id: number; electionId: number,positionId:number };
 } 
 
-export const updatePositions = ({positionId,onCancelReset}:updateProps)=>{
+export const updatePositions = ({onCancelReset,params}:updateProps)=>{
    const queryClient = useQueryClient()
 
    const updatePosition = useMutation<TUpdatePosition, string, unknown>({
       mutationKey: ["update-position-key"],
       mutationFn: async (positionData) => {
          try {
-            const response = await axios.patch(`/api/v1/position/${positionId}`, positionData);
+            const response = await axios.patch(`/api/v1/admin/event/${params.id}/election/${params.electionId}/position/${params.positionId}`, positionData);
             return response.data;
          } catch (e) {
             const errorMessage = handleAxiosErrorMessage(e);

@@ -14,7 +14,7 @@ export type TUpdatePosition = {
 }
 
 export type TPosition = Position
-
+export type TPositionWithEventID = Position & {eventId:number}
 
 // used in public event/[]/election/vote
 export type TPositionWithCandidatesAndPosition = Position & { candidates : TCandidatewithPosition[] }

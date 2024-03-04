@@ -16,17 +16,19 @@ import {
 import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
-import { TPosition } from "@/types";
+import { TPositionWithEventID } from "@/types";
 import CreatePostionModal from "../modals/create-position-modal";
 
 type Props = {
-   data:TPosition[]
+   data:TPositionWithEventID[]
+   electionId:number
+   params: { id: number; electionId: number };
 };
 
-const PositionTable = ({ data}: Props) => {
+const PositionTable = ({data,electionId,params}: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
-
+   
    if(!data) return null
    
 
@@ -50,7 +52,8 @@ const PositionTable = ({ data}: Props) => {
       <div className="flex flex-1 flex-col gap-y-2 ">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
             <CreatePostionModal
-               electionId={data[0].id}
+               params={params}
+               electionId={electionId}
                state={createPosition}
                onClose={(state) => setCreatePosition(state)}
             />

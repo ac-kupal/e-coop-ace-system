@@ -94,7 +94,7 @@ export const useCreateEvent = ({ onCancelandReset }: Props) => {
          onCancelandReset();
          toast.success("Event created successfully");
          if (!data.election) return;
-         router.push(`/admin/events/${data.id}/election`);
+         router.push(`/admin/events/${data.id}/election/${data.election.id}/overview`);
       },
    });
 
