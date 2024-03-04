@@ -3,12 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import db from '@/lib/database'
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { createCandidateSchema } from "@/validation-schema/candidate";
-type TParams = { params: { id: number } };
+type TParams = { params: {id:number,electionId:number, candidateId: number } };
 
 //delete candidate
 export const DELETE = async function name(req:NextRequest,{params}:TParams) {
     try {
-     const candidateId = Number(params.id)
+     
+     console.log(params)
+     const candidateId = Number(params.candidateId)
      validateId(candidateId)
      const deleteCandidate = await db.candidate.delete({where:{id:candidateId}})
      return NextResponse.json(deleteCandidate)     
@@ -20,7 +22,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
 //get many candidate based on id
 export const GET = async function name(req:NextRequest,{params}:TParams) {
   try {
-    const electionId = Number(params.id)
+    const electionId = Number(params.candidateId)
     console.log(electionId)
     validateId(electionId)
     const getAllCandidate = await db.candidate.findMany(
@@ -42,7 +44,7 @@ export const GET = async function name(req:NextRequest,{params}:TParams) {
 //update specific candidate
 export const PATCH = async function name(req:NextRequest,{params}:TParams) {
   try {
-    const candidateId = Number(params.id)
+    const candidateId = Number(params.candidateId)
     const candidate = await req.json()
     createCandidateSchema.parse(candidate)
     validateId(candidateId)

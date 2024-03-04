@@ -1,5 +1,5 @@
 "use client";
-import { getElectionWithPosition} from "@/hooks/api-hooks/election-api-hooks";
+import { getElectionWithPositionAndCandidates} from "@/hooks/api-hooks/election-api-hooks";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import PositionTable from "./_components/position-table";
@@ -10,18 +10,17 @@ type Props = {
 };
 
 const page = ({ params }: Props) => {
-   const { elections, isLoading, error } = getElectionWithPosition({
+   const { elections, isLoading, error } = getElectionWithPositionAndCandidates({
       params,
    });
    const [data, setData] = useState<TPositionWithEventID[]>([]);
-
+   
    useEffect(() => {
        if (elections && elections.positions) {
            setData(elections.positions.map(position => ({
                ...position,
                eventId: params.id
            })));
-           console.log(elections.positions);
        }
    }, [elections, params.id]);
 

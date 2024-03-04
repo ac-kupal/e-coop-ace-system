@@ -17,15 +17,17 @@ import { cn } from "@/lib/utils";
 import columns from "./column";
 import CreateCandidateModal from "../modals/create-candidate-modal";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
-import { TCandidatewithPosition, TPosition } from "@/types";
+import { TCandidateWithEventID, TCandidatewithPosition, TPosition } from "@/types";
 type Props = {
-   data: TCandidatewithPosition[];
-   positions:TPosition[];
+   params: { id: number; electionId: number };
+   data: TCandidateWithEventID[];
+   positions:TPosition[] | undefined;
 };
 
-const CandidateTable = ({ data,positions }: Props) => {
+const CandidateTable = ({ data,positions,params }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
+
 
    const table = useReactTable({
       data,
@@ -50,7 +52,7 @@ const CandidateTable = ({ data,positions }: Props) => {
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
             <CreateCandidateModal
                positions={positions}
-               electionId={1}
+               params={params}
                state={createPosition}
                onClose={(state) => setCreatePosition(state)}
             />

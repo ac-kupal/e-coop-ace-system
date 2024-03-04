@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
    Form,
@@ -15,88 +15,88 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
-import {
-   createCandidateWithUploadSchema,
-} from "@/validation-schema/candidate";
 import {
    Select,
    SelectContent,
    SelectItem,
    SelectTrigger,
    SelectValue,
-} from "@/components/ui/select";
-import { useCreateCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
-import { TPosition } from "@/types";
-import ImagePick from "@/components/image-pick";
+ } from "@/components/ui/select"
+
+import { TCandidate, TCandidateWithEventID, TCandidatewithPosition, TPosition } from "@/types";
+import { z } from "zod";
+import { useCallback, useEffect } from "react";
+import { candidateId, updateCandidateSchema } from "@/validation-schema/candidate";
+import { useUpdateCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
 import useImagePick from "@/hooks/use-image-pick";
-import {
-   onUploadImage,
-} from "@/hooks/api-hooks/image-upload-api-hook";
+import ImagePick from "@/components/image-pick";
+import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 
 type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
-   positions:TPosition[];
-   electionId:number
+   candidate:TCandidateWithEventID,
+   positions:TPosition[] | undefined
 };
 
-export type createTCandidate = z.infer<typeof createCandidateWithUploadSchema>;
+type updateTCandidate = z.infer<typeof updateCandidateSchema>;
 
-const CreateCandidateModal = ({
+const UpdateCandidateModal = ({
    state,
    onClose,
    onCancel,
+   candidate,
    positions,
-   electionId
 }: Props) => {
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
-      initialImageURL: "/images/default.png",
+      initialImageURL: !candidate.picture ? "/images/default.png" :candidate.picture ,
       maxOptimizedSizeMB: 0.5,
       maxWidthOrHeight: 300,
    });
-  
 
-   const defaultValues = {
-      firstName: "",
-      lastName: "",
-      passbookNumber: "",
-      picture: imageFile,
-      electionId: electionId,
-      positionId: 0,
-   };
-
-   const candidateForm = useForm<createTCandidate>({
-      resolver: zodResolver(createCandidateWithUploadSchema),
-      defaultValues: defaultValues,
+   const candidateForm = useForm<updateTCandidate>({
+      resolver: zodResolver(updateCandidateSchema),
    });
+   
+   const defaultValues = useCallback(() => {
+      candidateForm.setValue("firstName", candidate.firstName);
+      candidateForm.setValue("lastName", candidate.lastName);
+      candidateForm.setValue("passbookNumber", candidate.passbookNumber);
+      candidateForm.setValue("picture", candidate.picture);
+      candidateForm.setValue("positionId", candidate.positionId);
+      candidateForm.setValue("electionId", candidate.electionId);
+   }, [candidateForm, candidate]);
 
-   const reset = () => {
-      candidateForm.reset(defaultValues);
-   };
+   useEffect(() => {
+      defaultValues();
+   }, [candidateForm, candidate]);
+
    const onCancelandReset = () => {
-      reset();
-      resetPicker();
       onClose(false);
+      candidateForm.reset()
    };
-   const createCandidate = useCreateCandidate({ onCancelandReset });
-
+   const params = {id:candidate.eventId, electionId:candidate.electionId, candidateId:candidate.id} 
+   const updateCandidate = useUpdateCandidate({onCancelandReset},{params})
+   const isLoading = updateCandidate.isPending;
    const uploadImage = onUploadImage();
 
-   const onSubmit = async (formValues: createTCandidate) => {
-      console.log(formValues)
+   const isCandidateOnChange = candidateForm.watch().firstName === candidate.firstName && candidateForm.watch().lastName === candidate.lastName && Number(candidateForm.watch().positionId) === candidate.positionId && candidateForm.watch().picture === candidate.picture
+
+
+   const onSubmit=async(formValues: updateTCandidate)=>{
+   console.log(formValues)
       try {
          if(!imageFile) {
-            createCandidate.mutate({...formValues,picture: "/images/default.png",});
+            updateCandidate.mutate({...formValues,picture: candidateForm.getValues("picture"),});
          }else{
             const image = await uploadImage.mutateAsync({
                fileName: `${formValues.passbookNumber}`,
                folderGroup: "election-candidates",
-               file: imageFile,
+               file: formValues.picture,
             });
-            createCandidate.mutate({
+            updateCandidate.mutate({
                ...formValues,
                picture: !image ? "/images/default.png" : image,
             });
@@ -105,21 +105,20 @@ const CreateCandidateModal = ({
       } catch (error) {
          console.log(error);
       }
-   };
-   const isUploading = uploadImage.isPending;
-   const isLoading = createCandidate.isPending;
+   }
+
    return (
       <Dialog
          open={state}
          onOpenChange={(state) => {
-            onClose(state);
-            reset();
+            onCancelandReset()
+            resetPicker()
          }}
       >
-         <DialogContent className="border-none shadow-2 sm:rounded-2xl overflow-y-auto lg:overflow-hidden max-h-[600px] lg:max-h-[900px] max-w-[600px] font-inter">
+         <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
             <ModalHead
-               title="Create Candidate"
-               description="You are about to create a candidate for this elections and the profile can be optional."
+               title="Update Candidate"
+               description="You are about to update a candidate. When updating the candidate, you no longer need to update the passbook number."
             />
             <Form {...candidateForm}>
                <form
@@ -162,29 +161,10 @@ const CreateCandidateModal = ({
                   />
                   <FormField
                      control={candidateForm.control}
-                     name="passbookNumber"
-                     render={({ field }) => {
-                        return (
-                           <FormItem>
-                              <FormLabel>Passbook No.</FormLabel>
-                              <FormControl>
-                                 <Input
-                                    placeholder="enter passbook number of candidate"
-                                    className="placeholder:text-foreground/40"
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        );
-                     }}
-                  />
-                  <FormField
-                     control={candidateForm.control}
                      name="positionId"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Select a Position </FormLabel>
+                           <FormLabel>Position </FormLabel>
                            <Select
                               onValueChange={field.onChange}
                               defaultValue={field.value.toString()}
@@ -195,14 +175,11 @@ const CreateCandidateModal = ({
                                  </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                 {positions.map((position) => {
+                                 {positions?.map((position) => {
                                     return (
-                                       <SelectItem
-                                          key={position.id}
-                                          value={position.id.toString()}
-                                       >
-                                          {position.positionName}
-                                       </SelectItem>
+                                          <SelectItem key={position.id} value={position.id.toString()}>
+                                             {position.positionName}
+                                          </SelectItem>
                                     );
                                  })}
                               </SelectContent>
@@ -211,7 +188,7 @@ const CreateCandidateModal = ({
                         </FormItem>
                      )}
                   />
-                  <FormField
+                   <FormField
                      control={candidateForm.control}
                      name="picture"
                      render={({ field }) => {
@@ -219,42 +196,27 @@ const CreateCandidateModal = ({
                            <FormItem>
                               <FormLabel>Profile</FormLabel>
                               <FormControl>
-                                 <>
                                  <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL} onChange={async (e)=> {field.onChange(await onSelectImage(e))}} />
-                                 </>
                               </FormControl>
                               <FormMessage />
                            </FormItem>
                         );
                      }}
                   />
-                  <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
                      <Button
                         disabled={isLoading}
                         onClick={(e) => {
+                           onCancelandReset()
                            e.preventDefault();
-                           reset();
-                           resetPicker();
-                        }}
-                        variant={"ghost"}
-                        className="bg-muted/60 hover:bg-muted"
-                     >
-                        clear
-                     </Button>
-                     <Button
-                        disabled={isLoading}
-                        onClick={(e) => {
-                           e.preventDefault();
-                           onCancelandReset();
                         }}
                         variant={"secondary"}
                         className="bg-muted/60 hover:bg-muted"
                      >
                         cancel
                      </Button>
-                     <Button disabled={isLoading} type="submit">
-                        {isLoading || isUploading ? (
+                     <Button disabled={isCandidateOnChange} type="submit">
+                        {isLoading ? (
                            <Loader2
                               className="h-3 w-3 animate-spin"
                               strokeWidth={1}
@@ -271,4 +233,4 @@ const CreateCandidateModal = ({
    );
 };
 
-export default CreateCandidateModal;
+export default UpdateCandidateModal;

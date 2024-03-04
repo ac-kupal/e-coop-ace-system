@@ -5,13 +5,14 @@ import { DataTableColHeader } from "@/components/data-table/data-table-col-heade
 import {  Loader2, Trash2Icon } from "lucide-react";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useState } from "react";
-import { TCandidatewithPosition } from "@/types";
+import { TCandidateWithEventID, TCandidatewithPosition } from "@/types";
 import { deleteCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import UpdateCandidateModal from "../modals/update-candidate-modal";
 import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
+import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 
-const columns: ColumnDef<TCandidatewithPosition>[] = [
+const columns: ColumnDef<TCandidateWithEventID>[] = [
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
@@ -59,26 +60,26 @@ const columns: ColumnDef<TCandidatewithPosition>[] = [
          <DataTableColHeader column={column} title="position" />
       ),
       cell: ({ row }) => (
-         <div className=""> {row.original.position.positionName}</div>
+         <div className=""> {row.original.positionId}</div>
       ),
    },
    {
       id:"edit",
       cell:({row})=>{
-         const {positions,isError,isLoading}= getPosition(row.original.electionId)
+         const params = {id:row.original.eventId,electionId:row.original.electionId }
+         const { elections, isLoading, error } = getElectionWithPositionAndCandidates({params});
          const [onOpenModal, setOnOpenModal] = useState(false);
          return (
             <>
             <UpdateCandidateModal
                candidate={row.original}
-               positions={positions}
+               positions={elections?.positions}
                state={onOpenModal}
                onClose={() => setOnOpenModal(false)}
             />
             <Button
                onClick={() => {
                   setOnOpenModal(true);
-                  console.log(row.original);
                }}
                variant={"outline"}
             >
@@ -91,7 +92,8 @@ const columns: ColumnDef<TCandidatewithPosition>[] = [
    {
       id: "delete",
       cell: ({ row }) => {
-         const deleteOperation = deleteCandidate();
+         const params = {id:row.original.eventId,electionId:row.original.electionId }
+         const deleteOperation = deleteCandidate({params});
          const { onOpen: onOpenConfirmModal } = useConfirmModal();
          return (
             <>

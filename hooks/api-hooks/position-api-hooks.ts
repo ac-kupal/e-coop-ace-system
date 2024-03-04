@@ -24,7 +24,7 @@ export const deletePosition = ( params: { id: number; electionId: number }) => {
          }
       },
       onSuccess: () => {
-         queryClient.invalidateQueries({queryKey: ["get-filtered-position-query"],});
+         queryClient.invalidateQueries({queryKey: ["get-election-query"],});
          toast.success("position deleted successfully");
       },
    });
@@ -72,7 +72,7 @@ export const createPosition = ({onCancelReset,params}:Props)=>{
          }
       },
       onSuccess: () => {
-         queryClient.invalidateQueries({queryKey: ["get-filtered-position-query"],});
+         queryClient.invalidateQueries({queryKey: ["get-election-query"],});
          onCancelReset();
          toast.success("position created successfully");
       },
@@ -106,7 +106,7 @@ export const updatePositions = ({onCancelReset,params}:updateProps)=>{
          }
       },
       onSuccess: () => {
-         queryClient.invalidateQueries({queryKey: ["get-filtered-position-query"],});
+         queryClient.invalidateQueries({queryKey: ["get-election-query"],});
          onCancelReset();
          toast.success("position updated successfully");
       },

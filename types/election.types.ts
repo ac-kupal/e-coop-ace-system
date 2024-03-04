@@ -9,7 +9,7 @@ export type TElection = Election;
 
 export type TElectionWithEvent = TElection & { event: TEvent };
 
-export type TElectionWithPositions = TElection & { positions : TPosition[] };
+export type TElectionWithPositionAndCandidate = TElection & { positions : TPosition[] } & {candidates: TCandidate[]}
 
 export type TElectionWithPositionsAndCandidates = TElection & { positions : TPositionWithCandidatesAndPosition[] } & {candidates: TCandidate[]}
 

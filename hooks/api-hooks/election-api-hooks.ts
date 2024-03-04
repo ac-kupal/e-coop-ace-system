@@ -1,4 +1,4 @@
-import { TCandidate, TCandidatewithPosition, TElection, TElectionWithPositions, TElectionWithPositionsAndCandidates, TPosition } from "@/types";
+import { TCandidate, TCandidatewithPosition, TElection, TElectionWithPositionsAndCandidates, TPosition } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { ElectionStatus } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -66,9 +66,9 @@ type TParams ={
    params:{id:number,electionId:number}
 }
 
-export const getElectionWithPosition = ({params}:TParams) => {
-    const { data, isLoading, error } = useQuery<TElectionWithPositions, any>({
-       queryKey: ["get-filtered-position-query"],
+export const getElectionWithPositionAndCandidates = ({params}:TParams) => {
+    const { data, isLoading, error } = useQuery<TElectionWithPositionsAndCandidates, any>({
+       queryKey: ["get-election-query"],
        queryFn: async () => {
           try {
              const response = await axios.get(`/api/v1/admin/event/${params.id}/election/${params.electionId}`);
@@ -81,24 +81,6 @@ export const getElectionWithPosition = ({params}:TParams) => {
     });
     return { elections: data , isLoading, error };
 };
-
-export const getCandidatesWithElectionId = (id:number) => {
-   const eventId = Number(id)
-    const { data, isLoading, error } = useQuery<TCandidatewithPosition[]>({
-       queryKey: ["get-filtered-candidates-query"],
-       queryFn: async () => {
-          try {
-             const response = await axios.get(`/api/v1/election/candidates/${eventId}`);
-             return response.data;
-          } catch (e) {
-             const errorMessage = handleAxiosErrorMessage(e);
-             throw errorMessage;
-          }
-       },
-    });
-    return { candidates: data ?? [], isLoading, error };
-};
-
 
 
 
