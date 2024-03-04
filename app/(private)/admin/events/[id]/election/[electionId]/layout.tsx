@@ -1,11 +1,5 @@
-"use client"
-import { usePathname } from "next/navigation";
 import React, { ReactNode } from "react";
-import { EventRoutes } from "../../_components/event-nav/event-nav";
-import ElectionSideBar from "../../_components/election-sidebar";
-// import EventNavBar, { EventRoutes } from "./_components/event-nav/event-nav";
-// import ElectionSideBar from "./_components/election-sidebar";
-// import { usePathname } from "next/navigation";
+import ElectionSideBar from "./_components/sidebar/election-sidebar";
 
 type Props = { 
     children : ReactNode
