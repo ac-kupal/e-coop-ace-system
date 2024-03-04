@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import CandidateTable from "./_components/candidate-table";
 import { Loader2 } from "lucide-react";
 import Loading from "../_components/loading";
+import Header from "../_components/header";
 type Props = {
    params: { id: number; electionId: number };
 };
@@ -27,6 +28,7 @@ const page = ({ params }: Props) => {
 
    return (
       <div>
+           <Header text="Manage Candidates"></Header>
          <CandidateTable params={params} positions={elections?.positions} data={data}></CandidateTable>
       </div>
    );

@@ -4,6 +4,7 @@ import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election
 import SettingsForm from "./_components/settings-form";
 import NotFound from "../_components/not-found";
 import Loading from "../_components/loading";
+import Header from "../_components/header";
 
 
 type Props = {
@@ -22,8 +23,8 @@ const Settings = ({ params }: Props) => {
 
    return (
       <div className="space-y-2 p-2">
-         <h1 className="text-2xl font-medium">Settings</h1>
-         <p className="text-sm">
+        <Header text="Manage Settings"></Header>
+         <p className="text-sm p-2">
             You can view this page because you are one of the administrators.
             This privilege grants authorized individuals the ability to access
             and navigate this page, ensuring that only designated administrators

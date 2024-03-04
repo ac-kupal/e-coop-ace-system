@@ -79,7 +79,7 @@ const SettingsForm = ({ election,params }: Props) => {
       });
    };
    return (
-      <div className="w-full ">
+      <div className="w-full p-2">
          <Form {...settingsForm}>
             <form
                onSubmit={settingsForm.handleSubmit(onSubmit)}

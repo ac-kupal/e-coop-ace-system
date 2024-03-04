@@ -12,7 +12,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 import { TPosition } from "@/types";
 import DataTable from "@/components/data-table/data-table";
-import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 

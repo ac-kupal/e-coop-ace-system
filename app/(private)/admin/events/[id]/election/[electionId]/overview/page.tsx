@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import ElectionSwitch from './_components/election-switch';
 import ElectionDetails from './_components/election-details';
 import { TCandidateWithEventID } from '@/types';
+import Header from '../_components/header';
 
 type Props = {
   params: { id: number; electionId: number };
@@ -75,7 +76,7 @@ const page = ({params}:Props) => {
               </div>
             </Badge>
          )}
-      <h1 className='font-bold text-2xl'>Overview</h1>
+      <Header text="Overview"></Header>
       <p className=" text-sm italic text-muted-foreground">Note: You will not be able to start the election if there are no candidates and the position is empty.</p>
       <ElectionSwitch
             election={elections}

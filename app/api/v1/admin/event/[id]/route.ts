@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { TUpdateEvent } from "@/types";
 import { updateEventSchema } from "@/validation-schema/event";
 import db from "@/lib/database"
-type TParams = { params: { id: number } };
+type TParams = { params: { id: number, electionId?:number } };
 
 export const PATCH = async (req: NextRequest, { params }: TParams) => {
      try { 
@@ -54,4 +54,23 @@ export const DELETE = async (req: NextRequest, { params }: TParams) => {
         return routeErrorHandler(e, req);
      }
   };
+
+export const GET =async (req:NextRequest, {params}:TParams) => {
+   
+   try {
+      const eventId = Number(params.id)
+      validateId(eventId)
+      const getElection = await db.election.findUnique({
+         where:{
+            eventId:eventId
+         }
+      })
+      return NextResponse.json(getElection)
+
+   } catch (e) {
+      return routeErrorHandler(e,req)
+   }
+
+}
+
   

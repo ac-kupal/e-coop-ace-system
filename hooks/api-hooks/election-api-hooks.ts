@@ -9,12 +9,11 @@ type TParams ={
    params:{id?:number,electionId?:number}
 }
 export const getElection = (id:number) => {
-     const electionId = Number(id)
-     const {data, isLoading,error } = useQuery<TElectionWithPositionsAndCandidates>({
-         queryKey: ["election-list-query"],
+     const {data, isLoading,error } = useQuery<TElection>({
+         queryKey: ["election-query"],
          queryFn: async () => {
             try {
-               const response = await axios.get(`/api/v1/election/${electionId}`);
+               const response = await axios.get(`/api/v1/admin/event/${id}`);
                return response.data;
             } catch (e) {
                const errorMessage = handleAxiosErrorMessage(e);
@@ -22,7 +21,7 @@ export const getElection = (id:number) => {
             }
          },
       });
-      return { elections: data ?? [], isLoading, error };
+      return { elections: data, isLoading, error };
 };
 
 export const hasElection = (id:number) => {

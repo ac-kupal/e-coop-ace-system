@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import PositionTable from "./_components/position-table";
 import { TPosition, TPositionWithEventID } from "@/types";
+import Header from "../_components/header";
 
 type Props = {
    params: { id: number; electionId: number };
@@ -34,6 +35,7 @@ const page = ({ params }: Props) => {
 
    if (error) return;
    return <div>
+        <Header text="Manage Positions"></Header>
         <PositionTable params={params} electionId={params.electionId} data={data}></PositionTable>    
    </div>;
 };
