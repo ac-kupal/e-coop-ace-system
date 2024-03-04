@@ -5,7 +5,7 @@ import { sendMail } from "@/lib/mailer";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { memberEmailSchema } from "@/validation-schema/member";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { eventIdParamsSchema } from "@/validation-schema/api-params";
+import { eventIdParamSchema } from "@/validation-schema/commons";
 import { passbookNumberSchema } from "@/validation-schema/commons";
 
 type TParams = { params: { id: number } };
@@ -13,7 +13,7 @@ type TParams = { params: { id: number } };
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
         await currentUserOrThrowAuthError();
-        const eventId = eventIdParamsSchema.parse(params.id);
+        const eventId = eventIdParamSchema.parse(params.id);
 
         const { passbookNumber } = await req.json();
 

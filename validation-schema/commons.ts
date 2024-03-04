@@ -12,6 +12,11 @@ export const eventIdParamSchema = z.coerce.number({
     required_error: "event id is required",
 });
 
+export const incentiveIdParamSchema = z.coerce.number({
+    invalid_type_error : "invalid incentive id",
+    required_error : "incentive id is required"
+})
+
 export const electionIdParamSchema = z.coerce.number({
     invalid_type_error: "invalid event electionId",
     required_error: "electionId is required",

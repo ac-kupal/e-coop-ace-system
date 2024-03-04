@@ -1,3 +1,7 @@
 import z from "zod"
+import { eventIdParamSchema, incentiveIdParamSchema } from "./commons"
 
-export const eventIdParamsSchema = z.coerce.number({ required_error : "event id is required", invalid_type_error : "invalid id"})
+export const eventAndIncentiveParamSchema = z.object({
+    id : eventIdParamSchema,
+    incentiveId : incentiveIdParamSchema
+})

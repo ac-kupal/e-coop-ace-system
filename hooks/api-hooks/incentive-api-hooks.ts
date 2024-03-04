@@ -1,4 +1,4 @@
-import { TIncentive, TIncentiveWithClaimCount } from "@/types";
+import { TIncentive, TIncentiveWithClaimAndAssignedCount } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -7,7 +7,7 @@ import z from "zod";
 
 export const incentiveListWithClaimCount = (eventId: number) => {
   const { data, isFetching, isLoading, isError, error } = useQuery<
-    TIncentiveWithClaimCount[]
+    TIncentiveWithClaimAndAssignedCount[]
   >({
     queryKey: ["incentive-withclaimcount-list"],
     queryFn: async () => {

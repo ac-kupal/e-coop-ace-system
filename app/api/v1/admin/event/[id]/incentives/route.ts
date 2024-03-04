@@ -16,16 +16,16 @@ export const GET = async (
     await currentUserOrThrowAuthError();
     const eventId = eventIdParamSchema.parse(params.id);
 
-    const claimsWithClaimCount = await db.incentives.findMany({
+    const claimsWithClaimAndAssignedCount = await db.incentives.findMany({
       where: { eventId },
       include: {
         _count: {
-          select: { claimed : true },
+          select: { claimed : true, assigned : true }, 
         },
       },
     });
 
-    return NextResponse.json(claimsWithClaimCount);
+    return NextResponse.json(claimsWithClaimAndAssignedCount);
   } catch (e) {
     return routeErrorHandler(e, req);
   }

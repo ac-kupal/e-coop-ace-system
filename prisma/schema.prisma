@@ -41,7 +41,9 @@ model User {
     branch Branch @relation(fields: [branchId], references: [id])
     role   Role   @default(staff)
 
+    assignedIncentive  IncentiveAssigned[] 
     assistedAttendance EventAttendees[]
+    assistedClaims     IncentiveClaims[]
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -101,8 +103,10 @@ model Event {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    incentiveAssigned IncentiveAssigned[]
     attendees  EventAttendees[]
     incentives Incentives[]
+    incentivesClaims IncentiveClaims[]
 }
 
 enum gender {
@@ -163,8 +167,6 @@ model Election {
     electionName String
     status       ElectionStatus
 
-    // settings - add other settings here
-    // who can vote
     allowBirthdayVerification Boolean           @default(false)
     voteEligibility           VotingEligibility @default(MIGS)
 
@@ -230,11 +232,12 @@ model Incentives {
     id Int @id @default(autoincrement())
 
     itemName String
-    allotted Int
     eventId  Int
 
     event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
     claimed   IncentiveClaims[]
+
+    assigned IncentiveAssigned[]
 
     createdBy Int?
     updatedBy Int?
@@ -243,17 +246,46 @@ model Incentives {
     updatedAt DateTime  @updatedAt
 }
 
+model IncentiveAssigned {
+    id Int @id @default(autoincrement())
+
+    // assigned user
+    userId Int?
+    user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+    eventId Int
+    event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+    incentiveId Int
+    incentive  Incentives @relation(fields: [incentiveId], references: [id], onDelete: Cascade)
+
+    alloted  Int
+
+    createdBy Int
+    updatedBy Int
+
+    deletedBy Int
+    deletedAt DateTime?    
+    deleted Boolean @default(false)
+}
+
 model IncentiveClaims {
     id Int @id @default(autoincrement())
 
     incentiveId Int
     incentive Incentives @relation(fields: [incentiveId], references: [id], onDelete: Cascade)
 
+    eventId Int
+    event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
     eventAttendeeId String
     eventAttendee EventAttendees @relation(fields : [eventAttendeeId], references: [id], onDelete: Cascade)
 
+    assisted   Boolean @default(false) // incase user was deleted, this indicates it was assisted but user was missing 
+    assistedId Int?
+    assistedBy User? @relation(fields: [assistedId], references: [id], onDelete: SetNull)
+
     createdBy  Int?
-    assistedBy Int?
     updatedBy  Int?
 
     createdAt DateTime @default(now())
