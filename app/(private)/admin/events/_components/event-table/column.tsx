@@ -253,11 +253,17 @@ const columns: ColumnDef<TEventWithElection>[] = [
       enableHiding: false,
       cell: ({ row }) => (
          <div className="flex justify-end">
-            {row.original.election && (
+            {row.original.election ? (
                <Link href={`/admin/events/${row.original.id}/election/${row.original.election.id}/overview`}>
                   <Button className=" rounded-xl h-8">View List</Button>
                </Link>
-            )}
+            ):
+            (
+               <Link href={`/admin/events/${row.original.id}/manage-member`}>
+                  <Button className=" rounded-xl h-8">View List</Button>
+               </Link>
+            )
+            }
          </div>
       ),
    },
