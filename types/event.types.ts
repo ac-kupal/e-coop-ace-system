@@ -32,4 +32,4 @@ export type TUpdateEvent = {
 
 export type TEvent = Event;
 
-export type TEventWithElection = Event & { election: TElection };
+export type TEventWithElection = Event & { election : TElection | null };
