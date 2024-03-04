@@ -9,7 +9,7 @@ const incentiveRoutes = [
         path : "incentives",
     },
     {
-        title : "Assign",
+        title : "Incentive Assignees",
         path : "assign"
     },
     {

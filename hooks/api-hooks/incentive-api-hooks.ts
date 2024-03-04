@@ -1,4 +1,4 @@
-import { TIncentive, TIncentiveWithClaimAndAssignedCount } from "@/types";
+import { TIncentive, TIncentiveWithClaimAndAssignedCount, TListOfAssigneesWithAssistCount } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -55,3 +55,22 @@ export const useDeleteIncentive = (eventId: number, incentiveId: number) => {
 
   return { deleteIncentive, isPending };
 };
+
+export const useIncentiveListAssignee = ( eventId : number ) => {
+    const  { data, isLoading, isFetching, isError, error } = useQuery<TListOfAssigneesWithAssistCount[], string>({
+        queryKey : ["incentive-assignee-list"],
+        queryFn : async () => {
+            try{
+                const request = await axios.get(`/api/v1/admin/event/${eventId}/incentives/assignees`)
+                return request.data
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e)
+                toast.error(errorMessage)
+                throw errorMessage
+            }
+        },
+        initialData : []
+    })
+
+    return { data, isFetching, isLoading, isError, error };
+}

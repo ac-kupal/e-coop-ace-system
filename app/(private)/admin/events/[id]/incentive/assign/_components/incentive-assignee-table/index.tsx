@@ -16,15 +16,14 @@ import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import { incentiveListWithClaimCount } from "@/hooks/api-hooks/incentive-api-hooks";
-import CreateIncentiveModal from "../modals/create-incentive-modal";
+import { incentiveListWithClaimCount, useIncentiveListAssignee } from "@/hooks/api-hooks/incentive-api-hooks";
 
-const IncentivesTable = ({ eventId } : { eventId : number }) => {
+const IncentiveAssigneeTable = ({ eventId } : { eventId : number }) => {
     const [createModal, setCreateModal] = useState(false)
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-    const { data, isFetching, isLoading, isError } = incentiveListWithClaimCount(eventId);
+    const { data, isFetching, isLoading, isError } = useIncentiveListAssignee(eventId);
 
     const table = useReactTable({
         data,
@@ -39,7 +38,8 @@ const IncentivesTable = ({ eventId } : { eventId : number }) => {
         initialState : {
             pagination : { pageIndex : 0, pageSize : 20 },
             columnVisibility : {
-                id : false
+                id : false,
+                "User ID" : false,
             }
         },
         onGlobalFilterChange: setGlobalFilter,
@@ -64,8 +64,6 @@ const IncentivesTable = ({ eventId } : { eventId : number }) => {
 
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
-            {/* TODO: Add create modal*/}
-            <CreateIncentiveModal eventId={eventId} state={createModal} onClose={()=>setCreateModal(false)}/>
             <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
                     <div className="relative text-white">
@@ -88,7 +86,7 @@ const IncentivesTable = ({ eventId } : { eventId : number }) => {
                         className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem] bg-[#5B9381] hover:bg-[#5B9381]/70 "
                         onClick={() => setCreateModal(true)}
                     >
-                        Add Item
+                        Add Assignee
                         <Plus className="w-4 h-4" />
                     </Button>
                 </div>
@@ -99,4 +97,4 @@ const IncentivesTable = ({ eventId } : { eventId : number }) => {
     );
 };
 
-export default IncentivesTable;
+export default IncentiveAssigneeTable;

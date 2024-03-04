@@ -22,6 +22,18 @@ export const GET = async (
         _count: {
           select: { claimed : true, assigned : true }, 
         },
+        // assigned : {
+        //     include : {
+        //         user : {
+        //             select : {
+        //                 id : true,
+        //                 picture : true,
+        //                 name : true,
+        //                 email : true,
+        //             }
+        //         }
+        //     }
+        // }
       },
     });
 
