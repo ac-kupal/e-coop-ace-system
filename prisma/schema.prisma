@@ -259,14 +259,13 @@ model IncentiveAssigned {
     incentiveId Int
     incentive  Incentives @relation(fields: [incentiveId], references: [id], onDelete: Cascade)
 
-    alloted  Int
+    assignedQuantity Int
 
-    createdBy Int
-    updatedBy Int
+    claimAssists IncentiveClaims[]
 
-    deletedBy Int
-    deletedAt DateTime?    
-    deleted Boolean @default(false)
+    updatedAt DateTime @updatedAt
+    createdBy Int?
+    updatedBy Int?
 }
 
 model IncentiveClaims {
@@ -284,6 +283,9 @@ model IncentiveClaims {
     assisted   Boolean @default(false) // incase user was deleted, this indicates it was assisted but user was missing 
     assistedId Int?
     assistedBy User? @relation(fields: [assistedId], references: [id], onDelete: SetNull)
+
+    incentiveAssignId Int?
+    incentiveAssign IncentiveAssigned? @relation(fields: [incentiveAssignId], references: [id])
 
     createdBy  Int?
     updatedBy  Int?

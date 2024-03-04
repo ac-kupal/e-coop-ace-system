@@ -17,6 +17,11 @@ export const incentiveIdParamSchema = z.coerce.number({
     required_error : "incentive id is required"
 })
 
+export const incentiveAssignIdParamSchema = z.coerce.number({
+    invalid_type_error : "invalid assign id",
+    required_error : "assign id is required"
+})
+
 export const electionIdParamSchema = z.coerce.number({
     invalid_type_error: "invalid event electionId",
     required_error: "electionId is required",
@@ -32,3 +37,5 @@ export const validateBirthdayString = z.string().refine((value) => {
         value
     );
 }, "Invalid date format");
+
+export const userIdSchema = z.coerce.number({invalid_type_error : "id is invalid", required_error : "id is required"})

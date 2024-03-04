@@ -4,17 +4,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import {
-  eventIncentiveParamsSchema,
   updateIncentiveSchema,
 } from "@/validation-schema/incentive";
+import { eventAndIncentiveParamSchema } from "@/validation-schema/api-params";
 
 type TParams = { params: { id: number; incentiveId: number } };
 
 export const PATCH = async (req: NextRequest, { params }: TParams) => {
   try {
     const user = await currentUserOrThrowAuthError();
-    const { id: eventId, incentiveId } =
-      eventIncentiveParamsSchema.parse(params);
+    const { id: eventId, incentiveId } = eventAndIncentiveParamSchema.parse(params);
     const { data: unparsedData } = await req.json();
 
     const data = updateIncentiveSchema.parse(unparsedData);
@@ -36,8 +35,7 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
 export const DELETE = async (req: NextRequest, { params }: TParams) => {
   try {
     const user = currentUserOrThrowAuthError();
-    const { id: eventId, incentiveId } =
-      eventIncentiveParamsSchema.parse(params);
+    const { id: eventId, incentiveId } = eventAndIncentiveParamSchema.parse(params);
 
     const incentive = await db.incentives.findUnique({
       where: {
