@@ -12,7 +12,7 @@ export const incentiveListWithClaimCount = (eventId: number) => {
     queryKey: ["incentive-withclaimcount-list"],
     queryFn: async () => {
       try {
-        const request = await axios.get(`/api/v1/event/${eventId}/incentives`);
+        const request = await axios.get(`/api/v1/admin/event/${eventId}/incentives`);
         return request.data;
       } catch (e) {
         const errorMessage = handleAxiosErrorMessage(e);
@@ -34,7 +34,7 @@ export const useDeleteIncentive = (eventId: number, incentiveId: number) => {
     mutationFn: async (data) => {
       try {
         const response = await axios.delete(
-          `/api/v1/event/${eventId}/incentives/${incentiveId}`,
+          `/api/v1/admin/event/${eventId}/incentives/${incentiveId}`,
           { data },
         );
 

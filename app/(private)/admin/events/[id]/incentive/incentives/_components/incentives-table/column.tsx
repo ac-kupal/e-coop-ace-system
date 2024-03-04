@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { TIncentiveWithClaimCount } from "@/types";
+import { TIncentiveWithClaimAndAssignedCount } from "@/types";
 import { useDeleteIncentive } from "@/hooks/api-hooks/incentive-api-hooks";
 
-const Actions = ({ incentive }: { incentive: TIncentiveWithClaimCount }) => {
+const Actions = ({ incentive }: { incentive: TIncentiveWithClaimAndAssignedCount }) => {
   const [modal, setModal] = useState(false);
   const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
@@ -88,7 +88,7 @@ const Actions = ({ incentive }: { incentive: TIncentiveWithClaimCount }) => {
   );
 };
 
-const columns: ColumnDef<TIncentiveWithClaimCount>[] = [
+const columns: ColumnDef<TIncentiveWithClaimAndAssignedCount>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => <DataTableColHeader column={column} title="ID" />,
@@ -109,9 +109,9 @@ const columns: ColumnDef<TIncentiveWithClaimCount>[] = [
   {
     accessorKey: "allotted",
     header: ({ column }) => (
-      <DataTableColHeader column={column} title="Allotted Quantity" />
+      <DataTableColHeader column={column} title="Assigned Staff" />
     ),
-    cell: ({ row }) => <div className=""> {row.original.allotted}</div>,
+    cell: ({ row }) => <div className=""> {row.original._count.assigned}</div>,
   },
   {
     accessorKey: "_count.claimed",

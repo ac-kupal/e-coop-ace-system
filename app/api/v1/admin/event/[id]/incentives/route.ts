@@ -37,11 +37,11 @@ export const POST = async (req :NextRequest, { params } : TParams) => {
         const eventId = eventIdSchema.parse(params.id);
         let { data } = await req.json();
 
-        data = createIncentiveSchema.parse(data);
+        const validatedData = createIncentiveSchema.parse(data);
 
         const newIncentive = await db.incentives.create({
             data : {
-                ...data, 
+                ...validatedData, 
                 eventId,
                 createdBy : user.id
             }

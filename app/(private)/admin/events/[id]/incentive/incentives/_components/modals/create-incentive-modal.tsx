@@ -26,51 +26,44 @@ import {
 
 import { TBranch, TIncentive } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { updateIncentiveSchema } from "@/validation-schema/incentive";
-import { useEffect } from "react";
+import { createIncentiveSchema } from "@/validation-schema/incentive";
 
 
 type Props = {
     state: boolean;
-    incentive : TIncentive;
+    eventId : number;
     onClose: (state: boolean) => void;
     onCancel?: () => void;
     onCreate?: (newBranch: TBranch) => void;
 };
 
-type updateTIncentives = z.infer<typeof updateIncentiveSchema>;
+type createTIncentives = z.infer<typeof createIncentiveSchema>;
 
-const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) => {
+const CreateIncentiveModal = ({ state, onClose, eventId, onCancel, onCreate }: Props) => {
     const queryClient = useQueryClient();
 
-    const form = useForm<updateTIncentives>({
-        resolver: zodResolver(updateIncentiveSchema),
+    const form = useForm<createTIncentives>({
+        resolver: zodResolver(createIncentiveSchema),
         defaultValues: {
-            allotted : incentive.allotted,
-            itemName : incentive.itemName 
+            itemName : ""
         },
     });
-
-    useEffect(()=>{
-        form.setValue("itemName", incentive.itemName)
-        form.setValue("allotted", incentive.allotted)
-    }, [incentive, form]);
 
     const reset = () => {
         form.reset();
         onClose(false);
     }
 
-    const updateIncentive = useMutation<TIncentive, string, updateTIncentives>({
-        mutationKey: ["update-incentive"],
+    const createIncentive = useMutation<TIncentive, string, createTIncentives>({
+        mutationKey: ["create-incentive"],
         mutationFn: async (data) => {
             try {
-                const response = await axios.patch(`/api/v1/event/${incentive.eventId}/incentives/${incentive.id}`, { data });
+                const response = await axios.post(`/api/v1/admin/event/${eventId}/incentives`, { data });
 
                 queryClient.invalidateQueries({ queryKey: ["incentive-withclaimcount-list"] });
                 if (onCreate !== undefined) onCreate(response.data);
                 reset();
-                toast.success("Incentive updated successfully")
+                toast.success("Incentive created successfully")
                 return response.data;
             } catch (e) {
                 const errorMessage =  handleAxiosErrorMessage(e);
@@ -81,20 +74,20 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
         },
     });
 
-    const isLoading = updateIncentive.isPending;
+    const isLoading = createIncentive.isPending;
 
 
     return (
         <Dialog open={state} onOpenChange={(state)=> reset() }>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
                 <ModalHead
-                    title="Update Incentive"
-                    description="Update incentive information"
+                    title="Create Incentive"
+                    description="Incentives are items that is given away on the event."
                 />
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit((formValues) =>
-                            updateIncentive.mutate(formValues)
+                            createIncentive.mutate(formValues)
                         )}
                         className="space-y-4"
                     >
@@ -107,23 +100,6 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
                                     <FormControl>
                                         <Input
                                             placeholder="Item name"
-                                            className="placeholder:text-foreground/40"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="allotted"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Allotted item</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="How many items are allotted"
                                             className="placeholder:text-foreground/40"
                                             {...field}
                                         />
@@ -163,4 +139,4 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
     );
 };
 
-export default UpdateIncentiveModal;
+export default CreateIncentiveModal;
