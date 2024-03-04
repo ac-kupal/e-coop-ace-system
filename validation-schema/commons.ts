@@ -7,20 +7,28 @@ export const passbookNumberSchema = z
     })
     .min(1, "passbook number must not be empty");
 
-export const eventIdParamSchema = z.coerce.number({
+export const otpSchema = z
+    .string({
+        invalid_type_error: "otp must be valid string",
+        required_error: "otp is required",
+    })
+    .min(6, "otp must be minimum of 6 digits")
+    .max(6, "otp must be maximum of 6 digits");
+
+export const eventIdSchema = z.coerce.number({
     invalid_type_error: "invalid event id",
     required_error: "event id is required",
 });
 
-export const incentiveIdParamSchema = z.coerce.number({
-    invalid_type_error : "invalid incentive id",
-    required_error : "incentive id is required"
-})
+export const incentiveIdSchema = z.coerce.number({
+    invalid_type_error: "invalid incentive id",
+    required_error: "incentive id is required",
+});
 
 export const incentiveAssignIdParamSchema = z.coerce.number({
-    invalid_type_error : "invalid assign id",
-    required_error : "assign id is required"
-})
+    invalid_type_error: "invalid assign id",
+    required_error: "assign id is required",
+});
 
 export const electionIdParamSchema = z.coerce.number({
     invalid_type_error: "invalid event electionId",
@@ -38,4 +46,7 @@ export const validateBirthdayString = z.string().refine((value) => {
     );
 }, "Invalid date format");
 
-export const userIdSchema = z.coerce.number({invalid_type_error : "id is invalid", required_error : "id is required"})
+export const userIdSchema = z.coerce.number({
+    invalid_type_error: "id is invalid",
+    required_error: "id is required",
+});

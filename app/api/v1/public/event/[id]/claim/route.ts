@@ -1,0 +1,40 @@
+import db from "@/lib/database"
+import { NextRequest, NextResponse } from "next/server"
+import { routeErrorHandler } from "@/errors/route-error-handler"
+
+import { eventIdParamSchema } from "@/validation-schema/api-params"
+import { createIncentiveClaimPublic } from "@/validation-schema/incentive"
+
+type TParams = { params : { id : number } }
+
+export const POST = async ( req : NextRequest, { params } : TParams ) => {
+    try{
+        const { id : eventId } = eventIdParamSchema.parse(params)
+        const data = createIncentiveClaimPublic.parse(await req.json())
+
+        const member = await db.eventAttendees.findUnique({
+            where : {
+               voteOtp : data.otp,
+               eventId_passbookNumber : {
+                eventId,
+                passbookNumber : data.passbookNumber
+               } 
+            }
+        })
+
+        if(!member) 
+            return NextResponse.json({ message : "We could not find you in event member list, please check the passbook number & otp you provide"}, { status : 404 })
+
+        const createClaims = await db.incentiveClaims.create({
+            data : {
+                incentiveId : data.incentiveId,
+                eventAttendeeId : member.id,
+                eventId
+            }
+        })
+
+        return NextResponse.json("Claimed!")
+    }catch(e){
+        return routeErrorHandler(e, req)
+    }
+}

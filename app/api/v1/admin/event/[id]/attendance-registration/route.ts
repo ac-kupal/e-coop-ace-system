@@ -1,15 +1,16 @@
 import db from "@/lib/database"
-import { routeErrorHandler } from "@/errors/route-error-handler";
-import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { eventIdParamSchema, passbookNumberSchema } from "@/validation-schema/commons";
-import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+
+import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { routeErrorHandler } from "@/errors/route-error-handler";
+import { eventIdSchema, passbookNumberSchema } from "@/validation-schema/commons";
 
 type TParams = { params : { id : number }}
 
 export const POST = async (req : NextRequest, { params } : TParams) => {
     try{
-        const eventId = eventIdParamSchema.parse(params.id);
+        const eventId = eventIdSchema.parse(params.id);
         const currentUser = await currentUserOrThrowAuthError();
 
         const passbookNumber = passbookNumberSchema.parse((await req.json()).passbookNumber)

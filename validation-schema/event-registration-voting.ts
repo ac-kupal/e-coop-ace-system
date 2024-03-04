@@ -1,17 +1,9 @@
 import z from "zod";
-import { eventIdParamSchema, validateBirthDay, electionIdParamSchema, passbookNumberSchema, validateBirthdayString } from "./commons"
-
-export const otpSchema = z
-    .string({
-        invalid_type_error: "otp must be valid string",
-        required_error: "otp is required",
-    })
-    .min(6, "otp must be minimum of 6 digits")
-    .max(6, "otp must be maximum of 6 digits");
+import { otpSchema, eventIdSchema, validateBirthDay, electionIdParamSchema, passbookNumberSchema, validateBirthdayString } from "./commons"
 
 // for event registration verification api
 export const attendeeParamsSchema = z.object({
-    id: eventIdParamSchema,
+    id: eventIdSchema,
     passbookNumber: passbookNumberSchema,
 });
 
@@ -38,7 +30,7 @@ export const voterPbSearchSchema = z.object({
 
 // for params
 export const eventElectionParamsSchema = z.object({
-    id: eventIdParamSchema,
+    id: eventIdSchema,
     electionId: electionIdParamSchema,
 });
 

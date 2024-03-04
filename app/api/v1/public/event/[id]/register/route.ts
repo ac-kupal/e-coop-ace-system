@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { attendeeRegisterSchema } from "@/validation-schema/event-registration-voting";
-import  { eventIdParamSchema } from "@/validation-schema/commons"
+import  { eventIdSchema } from "@/validation-schema/commons"
 import { isSameDay } from "date-fns";
 import { TMemberAttendeesMinimalInfo } from "@/types";
 
@@ -11,7 +11,7 @@ type TParams = { params: { id: number } };
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
-        const eventId = eventIdParamSchema.parse(params.id)
+        const eventId = eventIdSchema.parse(params.id)
         const data = await req.json();
 
         const { passbookNumber, birthday } = attendeeRegisterSchema.parse(data)

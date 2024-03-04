@@ -2,7 +2,7 @@ import React from "react";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { allowed } from "@/lib/utils";
 import IncentivesTable from "./_components/incentives-table";
-import { eventIdParamSchema } from "@/validation-schema/commons";
+import { eventIdSchema } from "@/validation-schema/commons";
 
 type Props = { params : { id : number }};
 
@@ -12,7 +12,7 @@ const Branches = async ({ params } : Props) => {
   if (!allowed(["root", "admin"], user.role))
     throw new Error("You don't have access to this page");
   
-  const eventId = eventIdParamSchema.parse(params.id);
+  const eventId = eventIdSchema.parse(params.id);
 
   return (
     <div className="flex p-4 min-h-screen flex-col w-full">

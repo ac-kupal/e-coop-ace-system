@@ -2,14 +2,14 @@ import React from "react";
 import db from "@/lib/database";
 import InvalidElection from "./_components/invalid-election";
 import ValidateVoter from "./_components/validate-voter";
-import { eventIdParamSchema } from "@/validation-schema/commons";
+import { eventIdSchema } from "@/validation-schema/commons";
 
 type Props = {
     params: { id: number };
 };
 
 const ElectionVerifyPage = async ({ params }: Props) => {
-    const validatedEventId = eventIdParamSchema.safeParse(params.id);
+    const validatedEventId = eventIdSchema.safeParse(params.id);
 
     if (!validatedEventId.success) return <InvalidElection />;
 

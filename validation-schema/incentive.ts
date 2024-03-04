@@ -1,5 +1,5 @@
 import z from "zod";
-import { eventIdParamSchema, incentiveAssignIdParamSchema, incentiveIdParamSchema, userIdSchema } from "./commons";
+import { incentiveAssignIdParamSchema, incentiveIdSchema, otpSchema, passbookNumberSchema, userIdSchema } from "./commons";
 
 export const assignedQuantitySchema = z.coerce.number({ invalid_type_error : "invalid alotted", required_error : "alotted is required" })
 
@@ -28,4 +28,12 @@ export const updateIncentiveAssignedSchema = z.object({
 export const createIncentiveClaimAssistSchema = z.object({
     incentiveAssignId : incentiveAssignIdParamSchema,
     eventAttendeeId : z.string({ required_error : "event attendee id is required", invalid_type_error : "invalid event attendee id"}),
+})
+
+
+// for claiming public
+export const createIncentiveClaimPublic = z.object({
+    passbookNumber : passbookNumberSchema,
+    otp : otpSchema,
+    incentiveId : incentiveIdSchema
 })

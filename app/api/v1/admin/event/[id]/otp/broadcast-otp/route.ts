@@ -5,14 +5,14 @@ import { sendMail } from "@/lib/mailer";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { memberEmailSchema } from "@/validation-schema/member";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { eventIdParamSchema } from "@/validation-schema/commons";
+import { eventIdSchema } from "@/validation-schema/commons";
 
 type TParams = { params: { id: number } };
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
         await currentUserOrThrowAuthError();
-        const eventId = eventIdParamSchema.parse(params.id);
+        const eventId = eventIdSchema.parse(params.id);
 
         const event = await db.event.findUnique({ where: { id: eventId } });
 

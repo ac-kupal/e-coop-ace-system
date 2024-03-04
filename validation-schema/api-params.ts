@@ -1,12 +1,16 @@
 import z from "zod";
-import { eventIdParamSchema, incentiveAssignIdParamSchema, incentiveIdParamSchema } from "./commons";
+import { eventIdSchema, incentiveAssignIdParamSchema, incentiveIdSchema } from "./commons";
+
+export const eventIdParamSchema = z.object({
+    id : eventIdSchema
+})
 
 export const eventAndIncentiveParamSchema = z.object({
-    id: eventIdParamSchema,
-    incentiveId: incentiveIdParamSchema,
+    id: eventIdSchema,
+    incentiveId: incentiveIdSchema,
 });
 
 export const incentiveIdAndAssignIdParamSchema = z.object({
-    incentiveId: incentiveIdParamSchema,
+    incentiveId: incentiveIdSchema,
     assignId: incentiveAssignIdParamSchema,
 });

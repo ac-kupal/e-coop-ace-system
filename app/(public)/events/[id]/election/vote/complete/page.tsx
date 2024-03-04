@@ -1,5 +1,5 @@
 import db from "@/lib/database";
-import { eventIdParamSchema } from "@/validation-schema/commons";
+import { eventIdSchema } from "@/validation-schema/commons";
 import React from "react";
 import InvalidElection from "../../_components/invalid-election";
 import { CheckIcon } from "lucide-react";
@@ -11,7 +11,7 @@ type Props = {
 };
 
 const CompletePage = async ({ params }: Props) => {
-  const validateParam = eventIdParamSchema.safeParse(params.id);
+  const validateParam = eventIdSchema.safeParse(params.id);
 
   if (!validateParam.success)
     return (
