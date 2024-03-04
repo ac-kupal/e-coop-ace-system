@@ -35,4 +35,16 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
          return routeErrorHandler(error,req)
        }
    }
+
+export const GET = async function name(req:NextRequest,{params}:TParams) {
+    try {
+      const positionId = Number(params.positionId)
+      validateId(positionId)
+      const findPosition = await db.position.findUnique({where:{id:positionId},})
+      return NextResponse.json(findPosition)     
+      } catch (error) {
+        return routeErrorHandler(error,req)
+      }
+  }
+  
    

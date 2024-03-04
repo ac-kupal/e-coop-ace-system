@@ -30,21 +30,19 @@ export const deletePosition = ( params: { id: number; electionId: number }) => {
    });
    return deletePositionMutation;
 };
-//get all filtered Position
-export const getPosition = (id:number) => {
-const {data,isLoading,isError} = useQuery<TPosition[], string>({
-      queryKey: ["filtered-position-list-query"],
+export const getUniquePosition = ( params: { id: number; electionId: number,positionId:number }) => {
+const {data,isLoading,isError} = useQuery<TPosition>({
+      queryKey: ["position-query"],
       queryFn: async () => {
          try {
-            const response = await axios.get(`/api/v1/position/${id}`);
+            const response = await axios.get(`/api/v1/admin/event/${params.id}/election/${params.electionId}/position/${params.positionId}`);
             return response.data;
          } catch (e) {
             throw handleAxiosErrorMessage(e);
          }
       },
-    
    });
-   return {positions:data ?? [],isError,isLoading} 
+   return {positions:data,isError,isLoading} 
 };
 
 type Props = {
@@ -113,3 +111,4 @@ export const updatePositions = ({onCancelReset,params}:updateProps)=>{
    });
    return updatePosition
 }
+

@@ -1,10 +1,6 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
-import { SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { CalendarIcon, Loader2 } from "lucide-react";
 
@@ -58,8 +54,7 @@ export type EventSchemaType = z.infer<
 >;
 
 const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
-   const router = useRouter();
-   const queryClient = useQueryClient();
+
    const [isElection, setIsElection] = useState(false);
 
    // Create the schema

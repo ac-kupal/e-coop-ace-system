@@ -7,17 +7,17 @@ import {
    getSortedRowModel,
    useReactTable,
 } from "@tanstack/react-table";
-import { getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-import { TCandidatewithPosition } from "@/types";
+import { TCandidate, TCandidateWithEventID, TCandidatewithPosition } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
+import { getUniquePosition } from "@/hooks/api-hooks/position-api-hooks";
 
-export const columns: ColumnDef<TCandidatewithPosition>[] = [
+export const columns: ColumnDef<TCandidateWithEventID>[] = [
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
@@ -73,19 +73,24 @@ export const columns: ColumnDef<TCandidatewithPosition>[] = [
       header: ({ column }) => (
          <DataTableColHeader column={column} title="position" />
       ),
-      cell: ({ row }) => <div className=""> {row.original.position.positionName}</div>,
+      cell: ({ row }) => {
+         const params = {id:row.original.eventId, electionId:row.original.electionId, positionId:row.original.id}
+         const {positions,isLoading} = getUniquePosition(params)
+         return (
+            <div className=""> {positions?.positionName}</div>
+         )
+      },
       enableSorting: false,
       enableHiding: false,
    },
 ];
 
 type Props={ 
-   id:number
+   data:TCandidateWithEventID[]
 }
 
-export const Candidates = ({id}:Props) => {
+export const Candidates = ({data}:Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
-   const { data, isFetching, isLoading, isError } = getCandidates(id);
   
    const table = useReactTable({
       data,
@@ -107,8 +112,6 @@ export const Candidates = ({id}:Props) => {
       <div className="h-fit">
          <DataTable
             className="flex-1 bg-background/50 rounded-2xl"
-            isError={isError}
-            isLoading={isLoading || isFetching}
             table={table}
          />
           <div className="lg:hidden">

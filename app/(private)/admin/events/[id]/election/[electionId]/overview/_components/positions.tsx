@@ -48,12 +48,11 @@ const columns: ColumnDef<TPosition>[] = [
   ];
 
 type Props = {
-   id:number
+   data:TPosition[]
 }
 
-export const Positions = ({id}:Props) => {
+export const Positions = ({data}:Props) => {
      const [globalFilter, setGlobalFilter] = useState<string>("");
-     const { data, isFetching, isLoading, isError } = getPosition(id);
 
      const table = useReactTable({
         data,
@@ -75,8 +74,7 @@ export const Positions = ({id}:Props) => {
         <div className="h-fit">
            <DataTable
               className="flex-1 bg-background/50 rounded-2xl"
-              isError={isError}
-              isLoading={isLoading || isFetching}
+           
               table={table}
            />
            <div className="lg:hidden">

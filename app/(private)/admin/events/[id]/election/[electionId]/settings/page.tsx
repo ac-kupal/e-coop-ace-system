@@ -1,10 +1,7 @@
 "use client";
 import React from "react";
-
-import { TElection } from "@/types";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 import SettingsForm from "./_components/settings-form";
-import { Loader2 } from "lucide-react";
 import NotFound from "../_components/not-found";
 import Loading from "../_components/loading";
 

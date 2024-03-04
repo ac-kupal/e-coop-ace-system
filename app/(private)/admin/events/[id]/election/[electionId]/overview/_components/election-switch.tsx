@@ -9,13 +9,13 @@ import React from "react";
 import { toast } from "sonner";
 
 type Props = {
-   id: number;
    status: ElectionStatus;
    election: TElectionWithPositionsAndCandidates;
+   params: { id: number; electionId: number };
 };
 
-const ElectionSwitch = ({ id, status, election }: Props) => {
-   const promptElection = promptElectionStatus();
+const ElectionSwitch = ({ status, election,params }: Props) => {
+   const promptElection = promptElectionStatus({params});
 
    const isLoading = promptElection.isPending;
 
@@ -40,7 +40,6 @@ const ElectionSwitch = ({ id, status, election }: Props) => {
                      try {
                         promptElection.mutate({
                            status: ElectionStatus.done,
-                           id: id,
                         });
                      } catch (error) {
                         console.log(error);
@@ -66,7 +65,6 @@ const ElectionSwitch = ({ id, status, election }: Props) => {
                         if (allowedToStart) {
                            promptElection.mutate({
                               status: ElectionStatus.live,
-                              id: id,
                            });
                         } else {
                            toast.error(

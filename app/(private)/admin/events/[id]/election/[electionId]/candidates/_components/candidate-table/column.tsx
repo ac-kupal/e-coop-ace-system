@@ -9,7 +9,7 @@ import { TCandidateWithEventID, TCandidatewithPosition } from "@/types";
 import { deleteCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import UpdateCandidateModal from "../modals/update-candidate-modal";
-import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
+import { getUniquePosition } from "@/hooks/api-hooks/position-api-hooks";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 
 const columns: ColumnDef<TCandidateWithEventID>[] = [
@@ -59,9 +59,13 @@ const columns: ColumnDef<TCandidateWithEventID>[] = [
       header: ({ column }) => (
          <DataTableColHeader column={column} title="position" />
       ),
-      cell: ({ row }) => (
-         <div className=""> {row.original.positionId}</div>
-      ),
+      cell: ({ row }) => {
+         const params = {id:row.original.eventId, electionId:row.original.electionId, positionId:row.original.id}
+         const {positions,isLoading} = getUniquePosition(params)
+         return (
+            <div className=""> {positions?.positionName}</div>
+         )
+      },
    },
    {
       id:"edit",

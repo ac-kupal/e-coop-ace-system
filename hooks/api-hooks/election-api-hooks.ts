@@ -5,7 +5,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
+type TParams ={
+   params:{id?:number,electionId?:number}
+}
 export const getElection = (id:number) => {
      const electionId = Number(id)
      const {data, isLoading,error } = useQuery<TElectionWithPositionsAndCandidates>({
@@ -40,19 +42,19 @@ export const hasElection = (id:number) => {
     return { elections: data ?? [], isLoading, error };
 };
 
-export const  promptElectionStatus = () =>{
+export const  promptElectionStatus = ({params}:TParams) =>{
    const router = useRouter()
    const queryClient = useQueryClient()
-   const promptElection = useMutation<ElectionStatus,any,{status:ElectionStatus, id:number}>({
+   const promptElection = useMutation<ElectionStatus,any,{status:ElectionStatus}>({
       mutationKey:["election-prompt-key"],
-      mutationFn:async({status,id})=>{
+      mutationFn:async({status})=>{
          try { 
-            const electionId = Number(id)
-             const response = await axios.patch(`/api/v1/election/${electionId}/switch`,{
+            const electionId = Number(params.electionId)
+             const response = await axios.patch(`/api/v1/admin/event/${params.id}/election/${electionId}/switch`,{
             status:status
             })
            toast.success(`The Election is already  ${status === "live" ? "Live! 🎉":"End"}`);
-           queryClient.invalidateQueries({queryKey: ["election-list-query"],});
+           queryClient.invalidateQueries({queryKey: ["get-election-query"],});
            router.refresh();
            return response.data 
          } catch (e) {
@@ -62,9 +64,7 @@ export const  promptElectionStatus = () =>{
    })
    return promptElection
 }
-type TParams ={
-   params:{id:number,electionId:number}
-}
+
 
 export const getElectionWithPositionAndCandidates = ({params}:TParams) => {
     const { data, isLoading, error } = useQuery<TElectionWithPositionsAndCandidates, any>({
