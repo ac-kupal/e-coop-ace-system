@@ -1,19 +1,15 @@
 "use client"
 import React, { ReactNode } from "react";
 import EventNavBar, { EventRoutes } from "./_components/event-nav/event-nav";
-import ElectionSideBar, { ElectionRoutes } from "./_components/election-sidebar";
+import ElectionSideBar from "./_components/election-sidebar";
 import { usePathname } from "next/navigation";
-import { getElection } from "@/hooks/api-hooks/election-api-hooks";
 
 type Props = { 
     children : ReactNode
-    params:{id:number}
 };
 
-const EventLayout = ( { children,params }: Props) => {
+const EventLayout = ( { children }: Props) => {
 
-    const getUniqueElection = getElection(params.id)
-    const hasElection = !getUniqueElection.data
     const pathname = usePathname();
     const pathSegments = pathname.split('/');
     const lastPath = pathSegments[pathSegments.length - 1];
@@ -27,8 +23,7 @@ const EventLayout = ( { children,params }: Props) => {
             <div className="flex bg-background  border border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl overflow-x-hidden lg:p-8  w-full ">
                <div className="flex w-full px-2 flex-col lg:flex-row">
                 <div>
-                 {!isCurrentPath && <>
-                 {!hasElection && (<ElectionSideBar/>)}
+                 {!isCurrentPath && <>{(<ElectionSideBar/>)}
               </>}
                 </div>
                 <div className="p-5 w-full">

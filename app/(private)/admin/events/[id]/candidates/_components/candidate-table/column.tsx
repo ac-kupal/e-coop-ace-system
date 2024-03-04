@@ -1,113 +1,17 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-
-import { Copy, Loader2, MenuIcon, MoreHorizontal, Pencil, Trash } from "lucide-react";
-
-import { toast } from "sonner";
+import {  Loader2, Trash2Icon } from "lucide-react";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import {
-   DropdownMenu,
-   DropdownMenuContent,
-   DropdownMenuItem,
-   DropdownMenuLabel,
-   DropdownMenuSeparator,
-   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { TCandidatewithPosition } from "@/types";
 import { deleteCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import UpdateCandidateModal from "../modals/update-candidate-modal";
-import { getAllPosition } from "@/hooks/api-hooks/position-api-hooks";
-
-
-const Actions = ({ candidate }: { candidate: TCandidatewithPosition }) => {
-   
-   const [onOpenModal, setOnOpenModal] = useState(false);
-   const deleteOperation = deleteCandidate();
-   const getPositions = getAllPosition()
-   const { onOpen: onOpenConfirmModal } = useConfirmModal();
-
-   if (deleteOperation.isPending)
-      return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
-   return (
-      <DropdownMenu>
-         <UpdateCandidateModal
-            candidate={candidate}
-            positions={getPositions.data}
-            state={onOpenModal}
-            onClose={() => setOnOpenModal(false)}
-         ></UpdateCandidateModal>
-         <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-8 h-8 p-0">
-               <span className="sr-only">Open menu</span>
-               <MenuIcon className="size-7 text-muted-foreground" />
-            </Button>
-         </DropdownMenuTrigger>
-         <DropdownMenuContent className="border-none shadow-2" align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-               className="px-2 gap-x-2"
-               onClick={() => {
-                  navigator.clipboard.writeText(`${candidate.id}`);
-                  toast.success("coppied");
-               }}
-            >
-               {" "}
-               <Copy strokeWidth={2} className="h-4" />
-               Copy candidate ID
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-               onClick={() => {
-                  setOnOpenModal(true);
-               }}
-               className="px-2 gap-x-2"
-            >
-               <Pencil strokeWidth={2} className="h-4" /> Edit Candidate
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-               onClick={() =>
-                  onOpenConfirmModal({
-                     title: "Delete Candidate 🗑️",
-                     description:
-                        "Are you sure to delete this candidate permanently? This cannot be undone.",
-                     onConfirm: () => {
-                        deleteOperation.mutate(candidate.id);
-                     },
-                  })
-               }
-               className="px-2 gap-x-2 text-destructive"
-            >
-               <Trash strokeWidth={2} className="h-4" /> delete
-            </DropdownMenuItem>
-         </DropdownMenuContent>
-      </DropdownMenu>
-   );
-};
+import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
 
 const columns: ColumnDef<TCandidatewithPosition>[] = [
-   {
-      header: ({ column }) => (
-         <DataTableColHeader
-            column={column}
-            className=""
-            title="action"
-         />
-      ),
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => (
-         <div className="flex justify-start">
-            <Actions candidate={row.original} />
-         </div>
-      ),
-   },
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
@@ -157,6 +61,56 @@ const columns: ColumnDef<TCandidatewithPosition>[] = [
       cell: ({ row }) => (
          <div className=""> {row.original.position.positionName}</div>
       ),
+   },
+   {
+      id:"edit",
+      cell:({row})=>{
+         const {positions,isError,isLoading}= getPosition(row.original.electionId)
+         const [onOpenModal, setOnOpenModal] = useState(false);
+         return (
+            <>
+            <UpdateCandidateModal
+               candidate={row.original}
+               positions={positions}
+               state={onOpenModal}
+               onClose={() => setOnOpenModal(false)}
+            />
+            <Button
+               onClick={() => {
+                  setOnOpenModal(true);
+                  console.log(row.original);
+               }}
+               variant={"outline"}
+            >
+               {isLoading ? <Loader2 className=" animate-spin size-4"/>:"edit"}
+            </Button>
+         </>
+         )
+      }
+   },
+   {
+      id: "delete",
+      cell: ({ row }) => {
+         const deleteOperation = deleteCandidate();
+         const { onOpen: onOpenConfirmModal } = useConfirmModal();
+         return (
+            <>
+               <Trash2Icon
+                  onClick={() => {
+                     onOpenConfirmModal({
+                        title: "Delete Candidate 🗑️",
+                        description:
+                           "Are you sure to delete this candidate permanently? This cannot be undone.",
+                        onConfirm: () => {
+                           deleteOperation.mutate(row.original.id);
+                        },
+                     })
+                  }}
+                  className="size-5 text-red-600 hover:scale-105 cursor-pointer"
+               />
+            </>
+         );
+      },
    },
    
 ];

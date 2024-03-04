@@ -29,7 +29,8 @@ const ElectionPage = async ({ params }: Props) => {
 
    return (
       <>
-         <ManageElection id={electionId}></ManageElection>
+          <p>WIP in progress</p>
+         {/* <ManageElection id={electionId}></ManageElection> */}
       </>
    );
 };

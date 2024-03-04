@@ -16,21 +16,17 @@ import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
 import columns from "./column";
 import CreateCandidateModal from "../modals/create-candidate-modal";
-import { getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
-import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
-import { toast } from "sonner";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
+import { TCandidatewithPosition, TPosition } from "@/types";
 type Props = {
-   electionId: number;
+   data: TCandidatewithPosition[];
+   positions:TPosition[];
 };
 
-const CandidateTable = ({ electionId }: Props) => {
+const CandidateTable = ({ data,positions }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
 
-   const { data, isFetching, isLoading, isError, refetch } =
-      getCandidates(electionId);
-   const { data: getPositions } = getPosition(electionId);
    const table = useReactTable({
       data,
       columns,
@@ -46,13 +42,15 @@ const CandidateTable = ({ electionId }: Props) => {
       },
       onGlobalFilterChange: setGlobalFilter,
    });
+   
+
 
    return (
       <div className="flex flex-1 flex-col gap-y-2 ">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
             <CreateCandidateModal
-               positions={getPositions}
-               electionId={electionId}
+               positions={positions}
+               electionId={1}
                state={createPosition}
                onClose={(state) => setCreatePosition(state)}
             />
@@ -69,12 +67,6 @@ const CandidateTable = ({ electionId }: Props) => {
                <DataTableViewOptions table={table} />
                <Button
                   onClick={() => {
-                     if (getPositions.length === 0) {
-                        toast.warning(
-                           "You must need to add POSITION first before adding candidates!"
-                        );
-                        return;
-                     }
                      setCreatePosition(true);
                   }}
                   size="sm"
@@ -89,8 +81,6 @@ const CandidateTable = ({ electionId }: Props) => {
          </div>
          <DataTable
             className="flex-1 bg-background/50 rounded-"
-            isError={isError}
-            isLoading={isLoading || isFetching}
             table={table}
          />
          <div className="lg:hidden">

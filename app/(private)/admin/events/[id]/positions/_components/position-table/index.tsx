@@ -15,19 +15,20 @@ import {
 } from "@tanstack/react-table";
 import SearchInput from "@/components/data-table/table-search-input";
 import { cn } from "@/lib/utils";
-import CreatePostionModal from "../modals/create-position-modal";
-import { getPosition } from "@/hooks/api-hooks/position-api-hooks";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
+import { TPosition } from "@/types";
+import CreatePostionModal from "../modals/create-position-modal";
 
 type Props = {
-   electionId: number | undefined;
+   data:TPosition[]
 };
 
-const PositionTable = ({ electionId }: Props) => {
+const PositionTable = ({ data}: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
 
-   const { data, isFetching, isLoading, isError, refetch } = getPosition(electionId)
+   if(!data) return null
+   
 
    const table = useReactTable({
       data,
@@ -49,7 +50,7 @@ const PositionTable = ({ electionId }: Props) => {
       <div className="flex flex-1 flex-col gap-y-2 ">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
             <CreatePostionModal
-               electionId={electionId}
+               electionId={data[0].id}
                state={createPosition}
                onClose={(state) => setCreatePosition(state)}
             />
@@ -81,8 +82,6 @@ const PositionTable = ({ electionId }: Props) => {
          </div>
          <DataTable
             className="flex-1 bg-background/50 rounded-xl"
-            isError={isError}
-            isLoading={isLoading || isFetching}
             table={table}
          />
           <div className="lg:hidden">

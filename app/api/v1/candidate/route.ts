@@ -7,8 +7,8 @@ import { createCandidateSchema } from "@/validation-schema/candidate";
 export const POST = async (req: NextRequest) => {
    try {
       const candidate: TCreateCandidate = await req.json();
-      createCandidateSchema.parse(candidate);
-      const createPosition = await db.candidate.create({
+      createCandidateSchema.parse(candidate)
+      const createCandidate = await db.candidate.create({
          data: {
             firstName: candidate.firstName,
             lastName: candidate.lastName,
@@ -26,7 +26,7 @@ export const POST = async (req: NextRequest) => {
             },
          },
       });
-      return NextResponse.json(createPosition);
+      return NextResponse.json(createCandidate);
    } catch (error) {
       return routeErrorHandler(error, req);
    }

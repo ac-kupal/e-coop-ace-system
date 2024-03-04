@@ -23,7 +23,7 @@ import {
    SelectValue,
  } from "@/components/ui/select"
 
-import { TCandidate, TPosition } from "@/types";
+import { TCandidate, TCandidatewithPosition, TPosition } from "@/types";
 import { z } from "zod";
 import { useCallback, useEffect } from "react";
 import { updateCandidateSchema } from "@/validation-schema/candidate";
@@ -36,7 +36,7 @@ type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
-   candidate:TCandidate,
+   candidate:TCandidatewithPosition,
    positions:TPosition[]
 };
 
@@ -82,9 +82,11 @@ const UpdateCandidateModal = ({
    const isLoading = updateCandidate.isPending;
    const uploadImage = onUploadImage();
 
-   const isCandidateOnChange = candidateForm.getValues("firstName") === candidate.firstName && candidateForm.getValues("lastName") === candidate.lastName && Number(candidateForm.getValues("positionId")) === candidate.positionId && candidateForm.getValues("picture") === candidate.picture
+   const isCandidateOnChange = candidateForm.watch().firstName === candidate.firstName && candidateForm.watch().lastName === candidate.lastName && Number(candidateForm.watch().positionId) === candidate.positionId && candidateForm.watch().picture === candidate.picture
+
 
    const onSubmit=async(formValues: updateTCandidate)=>{
+   console.log(formValues)
       try {
          if(!imageFile) {
             updateCandidate.mutate({...formValues,picture: candidateForm.getValues("picture"),});
@@ -92,7 +94,7 @@ const UpdateCandidateModal = ({
             const image = await uploadImage.mutateAsync({
                fileName: `${formValues.passbookNumber}`,
                folderGroup: "election-candidates",
-               file: imageFile,
+               file: formValues.picture,
             });
             updateCandidate.mutate({
                ...formValues,
@@ -201,7 +203,6 @@ const UpdateCandidateModal = ({
                         );
                      }}
                   />
-                  <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
                      <Button
                         disabled={isLoading}

@@ -17,7 +17,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
      }
 }
 
-//get Specific Position
+//get manay specific Positions
 export const GET = async function name(req:NextRequest,{params}:TParams) {
   try {
     const electionId = Number(params.id)

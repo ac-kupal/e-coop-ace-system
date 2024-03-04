@@ -76,6 +76,7 @@ const ImportFileModal = ({ state, onClose, onCancel,id }: Props) => {
    const isLoading = createManyMemberMutation.isPending;
 
    const onSubmit = (e: any) => {
+      console.log(Members)
      createManyMemberMutation.mutate({member:Members,eventId:id})
       e.preventDefault();
    };

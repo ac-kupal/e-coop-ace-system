@@ -1,9 +1,7 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -19,11 +17,11 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 
-import { mutationErrorHandler } from "@/errors/mutation-error-handler";
-import { TPosition, TUpdatePosition } from "@/types";
+import { TPosition} from "@/types";
 import { createPositionSchema, updatePositionSchema } from "@/validation-schema/position";
 import { z } from "zod";
 import { useCallback, useEffect } from "react";
+import { updatePositions } from "@/hooks/api-hooks/position-api-hooks";
 
 type Props = {
    state: boolean;
@@ -41,7 +39,6 @@ const UpdatePositionModal = ({
    position,
 }: Props) => {
 
-   const queryClient = useQueryClient();
 
    const positionForm = useForm<updateTPosition>({
       resolver: zodResolver(createPositionSchema),
@@ -57,27 +54,13 @@ const UpdatePositionModal = ({
       defaultValues();
    }, [positionForm, position]);
 
-   const onCancelandReset = () => {
+   const onCancelReset = () => {
       onClose(false);
    };
-   const updatePosition = useMutation<TUpdatePosition, string, unknown>({
-      mutationKey: ["update-position-key"],
-      mutationFn: async (positionData) => {
-         try {
-            const response = await axios.patch(`/api/v1/position/${position.id}`, positionData);
-            return response.data;
-         } catch (e) {
-            mutationErrorHandler(e);
-         }
-      },
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["filtered-position-list-query"] });
-         onCancelandReset();
-         toast.success("position updated successfully");
-      },
-   });
+   const updatePositionMutation = updatePositions({onCancelReset:onCancelReset,positionId:position.id})
 
-   const isLoading = updatePosition.isPending;
+   const isLoading = updatePositionMutation.isPending
+
    return (
       <Dialog
          open={state}
@@ -93,7 +76,7 @@ const UpdatePositionModal = ({
             <Form {...positionForm}>
                <form
                   onSubmit={positionForm.handleSubmit((formValues) => {
-                     updatePosition.mutate(formValues);
+                     updatePositionMutation.mutate(formValues);
                   })}
                   className=" space-y-3"
                >

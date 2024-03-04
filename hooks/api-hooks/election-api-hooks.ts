@@ -1,4 +1,5 @@
-import { TElection, TElectionWithPositionsAndCandidates } from "@/types";
+import { usePositionStore } from "@/stores/use-position-store";
+import { TCandidate, TCandidatewithPosition, TElection, TElectionWithPositionsAndCandidates, TPosition } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { ElectionStatus } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,7 +9,7 @@ import { toast } from "sonner";
 
 export const getElection = (id:number) => {
      const electionId = Number(id)
-     const getElection = useQuery<TElectionWithPositionsAndCandidates>({
+     const {data, isLoading,error } = useQuery<TElectionWithPositionsAndCandidates>({
          queryKey: ["election-list-query"],
          queryFn: async () => {
             try {
@@ -20,12 +21,12 @@ export const getElection = (id:number) => {
             }
          },
       });
-      return getElection
+      return { elections: data ?? [], isLoading, error };
 };
 
 export const hasElection = (id:number) => {
    const electionId = Number(id)
-   const getElection = useQuery<TElection>({
+   const {data, isLoading,error }= useQuery<TElection>({
        queryKey: ["election-list-query"],
        queryFn: async () => {
           try {
@@ -37,7 +38,7 @@ export const hasElection = (id:number) => {
           }
        },
     });
-    return getElection
+    return { elections: data ?? [], isLoading, error };
 };
 
 export const  promptElectionStatus = () =>{
@@ -48,7 +49,7 @@ export const  promptElectionStatus = () =>{
       mutationFn:async({status,id})=>{
          try { 
             const electionId = Number(id)
-             const response = await axios.patch(`/api/v1/election/${electionId}/start`,{
+             const response = await axios.patch(`/api/v1/election/${electionId}/switch`,{
             status:status
             })
            toast.success(`The Election is already  ${status === "live" ? "Live! 🎉":"End"}`);
@@ -62,4 +63,44 @@ export const  promptElectionStatus = () =>{
    })
    return promptElection
 }
-   
+
+export const getPositionsWithElectionId = (id:number) => {
+   const { STPosition, getPositions, setPosition } = usePositionStore();
+   const eventId = Number(id)
+    const { data, isLoading, error } = useQuery<TPosition[]>({
+       queryKey: ["get-filtered-position-query"],
+       queryFn: async () => {
+          try {
+             const response = await axios.get(`/api/v1/election/positions/${eventId}`);
+             setPosition(response.data ?? [])
+             return response.data;
+          } catch (e) {
+             const errorMessage = handleAxiosErrorMessage(e);
+             throw errorMessage;
+          }
+       },
+    });
+    return { positions: data ?? [], isLoading, error };
+};
+
+export const getCandidatesWithElectionId = (id:number) => {
+   const eventId = Number(id)
+    const { data, isLoading, error } = useQuery<TCandidatewithPosition[]>({
+       queryKey: ["get-filtered-candidates-query"],
+       queryFn: async () => {
+          try {
+             const response = await axios.get(`/api/v1/election/candidates/${eventId}`);
+             return response.data;
+          } catch (e) {
+             const errorMessage = handleAxiosErrorMessage(e);
+             throw errorMessage;
+          }
+       },
+    });
+    return { candidates: data ?? [], isLoading, error };
+};
+
+
+
+
+

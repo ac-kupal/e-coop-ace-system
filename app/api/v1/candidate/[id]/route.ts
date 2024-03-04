@@ -21,6 +21,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
 export const GET = async function name(req:NextRequest,{params}:TParams) {
   try {
     const electionId = Number(params.id)
+    console.log(electionId)
     validateId(electionId)
     const getAllCandidate = await db.candidate.findMany(
       {where:

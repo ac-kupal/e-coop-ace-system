@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { TCreatePosition } from "@/types";
 import { createPositionSchema } from "@/validation-schema/position";
 import { z } from "zod";
+import { createPosition } from "@/hooks/api-hooks/position-api-hooks";
 
 type Props = {
    electionId: number | undefined;
@@ -57,28 +58,13 @@ const CreatePostionModal = ({
    const reset = () => {
       positionForm.reset(defaultValues);
    };
-   const onCancelandReset = () => {
+   const onCancelReset = () => {
       reset();
       onClose(false);
    };
-   const createPosition = useMutation<TCreatePosition, string, unknown>({
-      mutationKey: ["create-position-key"],
-      mutationFn: async (data) => {
-         try {
-            const response = await axios.post("/api/v1/position", data);
-            return response.data;
-         } catch (e) {
-            mutationErrorHandler(e);
-         }
-      },
-      onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["filtered-position-list-query"] });
-         onCancelandReset();
-         toast.success("position created successfully");
-      },
-   });
+   const createPositionMutatation = createPosition({onCancelReset})
 
-   const isLoading = createPosition.isPending;
+   const isLoading = createPositionMutatation.isPending;
 
    return (
       <Dialog
@@ -97,7 +83,7 @@ const CreatePostionModal = ({
             <Form {...positionForm}>
                <form
                   onSubmit={positionForm.handleSubmit((formValues) => {
-                     createPosition.mutate(formValues);
+                     createPositionMutatation.mutate(formValues);
                   })}
                   className=" space-y-3"
                >

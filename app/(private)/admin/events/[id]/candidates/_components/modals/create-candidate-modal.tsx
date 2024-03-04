@@ -35,11 +35,11 @@ import {
 } from "@/hooks/api-hooks/image-upload-api-hook";
 
 type Props = {
-   electionId: number | undefined;
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
-   positions: TPosition[];
+   positions:TPosition[];
+   electionId:number
 };
 
 export type createTCandidate = z.infer<typeof createCandidateWithUploadSchema>;
@@ -48,8 +48,8 @@ const CreateCandidateModal = ({
    state,
    onClose,
    onCancel,
-   electionId,
    positions,
+   electionId
 }: Props) => {
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
@@ -57,6 +57,7 @@ const CreateCandidateModal = ({
       maxOptimizedSizeMB: 0.5,
       maxWidthOrHeight: 300,
    });
+  
 
    const defaultValues = {
       firstName: "",
@@ -85,6 +86,7 @@ const CreateCandidateModal = ({
    const uploadImage = onUploadImage();
 
    const onSubmit = async (formValues: createTCandidate) => {
+      console.log(formValues)
       try {
          if(!imageFile) {
             createCandidate.mutate({...formValues,picture: "/images/default.png",});

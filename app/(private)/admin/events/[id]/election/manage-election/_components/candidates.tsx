@@ -7,7 +7,7 @@ import {
    getSortedRowModel,
    useReactTable,
 } from "@tanstack/react-table";
-import { getAllCandidates, getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
+import { getCandidates } from "@/hooks/api-hooks/candidate-api-hooks";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
