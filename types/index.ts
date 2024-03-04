@@ -14,7 +14,7 @@ export * from "./member.types";
 export * from "./incentive.types";
 export * from "./incentive-claims.types";
 export * from "./mail-template.types";
-
+export * from "./election-settings.types"
 export type TApiError = { message: string };
 
 export type TRoute = {

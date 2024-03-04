@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Role, VotingEligibility } from "@prisma/client";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TElection } from "@/types";
+import { SettingsType, TElection } from "@/types";
 import {
    Form,
    FormControl,
@@ -32,10 +32,6 @@ type Props = {
    params:{id:number,electionId:number}
 };
 
-export type SettingsType = {
-   voteEligibility: VotingEligibility;
-   allowBirthdayVerification: boolean;
-};
 
 const SettingsForm = ({ election,params }: Props) => {
    const { onOpen: onOpenConfirmModal } = useConfirmModal();

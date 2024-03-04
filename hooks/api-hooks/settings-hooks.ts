@@ -1,4 +1,4 @@
-import { SettingsType } from "@/app/(private)/admin/events/[id]/settings/_components/settings-form";
+import { SettingsType } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";

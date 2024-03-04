@@ -78,7 +78,8 @@ const Actions = ({ event }: { event: TEventWithElection }) => {
             {event.election && (
                <DropdownMenuItem
                onClick={() => {
-                  router.push(`/admin/events/${event.id}/election/${event.election.id}/overview`);
+                   if(!event.election) return null
+                   router.push(`/admin/events/${event.id}/election/${event.election.id}/overview`);
                }}
                   className="px-2 gap-x-2"
                >
@@ -88,9 +89,9 @@ const Actions = ({ event }: { event: TEventWithElection }) => {
             )}
             {event.election === null ? (
                <DropdownMenuItem
-                  // onClick={() => {
-                  //    router.push(`/admin/events/${event.id}/election/${event.election.id}/overview`);
-                  // }}
+                  onClick={() => {
+                     router.push(`/admin/events/${event.id}/manage-member`);
+                  }}
                   className="px-2 gap-x-2"
                >
                   <Users strokeWidth={2} className="h-4" />
