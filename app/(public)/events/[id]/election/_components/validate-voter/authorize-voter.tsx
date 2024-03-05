@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 
 import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
-import { useVoterAuthorization } from "@/hooks/api-hooks/voter-api-hooks";
+import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 import ErrorAlert from "@/components/error-alert/error-alert";
 
 type Props = {

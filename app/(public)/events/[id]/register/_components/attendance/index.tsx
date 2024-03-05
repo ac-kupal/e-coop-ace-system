@@ -10,15 +10,15 @@ import RegisterAttendance from "./register-attendance";
 import MemberInfoDisplay from "../../../_components/member-info-display";
 
 type Props = {
-    params: { id: string };
+    eventId : number
 };
 
-const Attendance = ({ params }: Props) => {
+const Attendance = ({ eventId }: Props) => {
     const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(null);
 
     if (!member)
         return (
-            <AttendeeSearch params={params} onFound={(member) => setMember(member)} />
+            <AttendeeSearch eventId={eventId} onFound={(member) => setMember(member)} />
         );
 
     return (
@@ -26,11 +26,11 @@ const Attendance = ({ params }: Props) => {
             <MemberInfoDisplay member={member} />
             <div className="flex flex-col items-center">
                 {member.registered ? (
-                    <Link className="mx-auto" href={`/events/${params.id}`}>
+                    <Link className="mx-auto" href={`/events/${eventId}`}>
                         <Button>Go Back to Event</Button>
                     </Link>
                 ) : (
-                    <RegisterAttendance eventId={params.id} member={member} />
+                    <RegisterAttendance eventId={eventId} member={member} />
                 )}
             </div>
         </div>

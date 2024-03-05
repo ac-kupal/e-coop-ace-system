@@ -76,7 +76,7 @@ const EventsNav = ({ eventId }: Props) => {
                 <div className="flex gap-x-4 items-center justify-end">
                     <ModeToggle />
                     <Sheet>
-                        <SheetTrigger>
+                        <SheetTrigger asChild>
                             <Button
                                 className="block md:hidden"
                                 size="icon"

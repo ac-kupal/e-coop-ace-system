@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { passbookSearchSchema } from "@/validation-schema/event-registration-voting";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { searchVoter } from "@/hooks/api-hooks/voter-api-hooks";
+import { searchVoter } from "@/hooks/public-api-hooks/use-vote-api";
 import QrReader from "@/components/qr-reader";
 import ErrorAlert from "@/components/error-alert/error-alert";
 

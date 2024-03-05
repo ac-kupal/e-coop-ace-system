@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-const InvalidElection = ({
+const InvalidPrompt = ({
     message = "invalid election",
     className
 }: {
@@ -18,4 +18,4 @@ const InvalidElection = ({
     );
 };
 
-export default InvalidElection;
+export default InvalidPrompt;

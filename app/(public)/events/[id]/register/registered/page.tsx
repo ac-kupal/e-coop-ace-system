@@ -5,7 +5,7 @@ import db from "@/lib/database";
 import { CheckCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import InvalidEvent from "../../_components/invalid-event";
+import InvalidPrompt from "../../_components/invalid-prompt";
 
 type Props = {
     params: { id: string };
@@ -14,9 +14,9 @@ type Props = {
 const RegisteredPage = async ({ params }: Props) => {
     let id = Number(params.id);
 
-    if (!params.id || isNaN(id)) return <InvalidEvent />;
+    if (!params.id || isNaN(id)) return <InvalidPrompt />;
     const event = await db.event.findUnique({ where: { id, deleted: false } });
-    if (!event) return <InvalidEvent />;
+    if (!event) return <InvalidPrompt />;
 
     return (
         <div className="flex flex-col items-center w-full">

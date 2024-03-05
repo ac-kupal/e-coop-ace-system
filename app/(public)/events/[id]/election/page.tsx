@@ -1,42 +1,22 @@
 import React from "react";
-import db from "@/lib/database";
-import InvalidElection from "./_components/invalid-election";
+
 import ValidateVoter from "./_components/validate-voter";
 import { eventIdSchema } from "@/validation-schema/commons";
+import InvalidElection from "../_components/invalid-prompt";
+import { eventIdParamSchema } from "@/validation-schema/api-params";
+import ElectionHome from "./_components/election-home";
 
 type Props = {
     params: { id: number };
 };
 
-const ElectionVerifyPage = async ({ params }: Props) => {
-    const validatedEventId = eventIdSchema.safeParse(params.id);
+const ElectionVerifyPage = ({ params }: Props) => {
+    const validatedEventId = eventIdParamSchema.safeParse(params);
 
-    if (!validatedEventId.success) return <InvalidElection />;
+    if (!validatedEventId.success)
+        return <InvalidElection message="This election id is invalid" />;
 
-    const election = await db.election.findUnique({
-        where: { eventId: validatedEventId.data },
-        include: { event: true },
-    });
-
-    if (!election) return <InvalidElection />;
-
-    if (election.status === "done")
-        return <InvalidElection message="This election has ended" />;
-
-    if (election.status != "live")
-        return <InvalidElection message="Election is not yet open" />;
-
-    return (
-        <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
-            <p className="text-2xl lg:text-4xl uppercase text-center">
-                {election.electionName}
-            </p>
-            <div className="w-5 h-2 bg-orange-400 rounded-full" />
-            <div className="py-16">
-                <ValidateVoter electionWithEvent={election} />
-            </div>
-        </div>
-    );
+    return <ElectionHome eventId={validatedEventId.data.id} />
 };
 
 export default ElectionVerifyPage;

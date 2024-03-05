@@ -14,4 +14,4 @@ export type TElectionWithPositionAndCandidate = TElection & { positions : TPosit
 export type TElectionWithPositionsAndCandidates = TElection & { positions : TPositionWithCandidatesAndPosition[] } & {candidates: TCandidate[]}
 
 // for public/events election usage
-export type TElectionWithPositionAndCandidates = TElection & { positions : TPositionWithCandidatesAndPosition[] }
+export type TElectionWithEventWithPositionAndCandidates = TElectionWithEvent & { positions : TPositionWithCandidatesAndPosition[] }

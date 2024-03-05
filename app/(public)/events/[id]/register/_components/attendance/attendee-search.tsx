@@ -19,13 +19,13 @@ import { voterPbSearchSchema } from "@/validation-schema/event-registration-voti
 
 type Props = {
     onFound: (member: TMemberAttendeesMinimalInfo) => void;
-    params: { id: string };
+    eventId : number
 };
 
-const AttendeeSearch = ({ onFound, params }: Props) => {
+const AttendeeSearch = ({ onFound, eventId }: Props) => {
     const { searchMember, isPending, isError, error } = useSearchMemberAttendee(
-        params.id,
-        onFound,
+        eventId,
+        onFound
     );
 
     const form = useForm<z.infer<typeof voterPbSearchSchema>>({

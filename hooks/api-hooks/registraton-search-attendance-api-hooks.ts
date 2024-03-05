@@ -33,7 +33,7 @@ export const useSearchMemberAttendee = (eventId : string | number, onFound : (me
     return { searchMember, isPending, isError, error }
 };
 
-export const useRegisterMember = (eventId: string, onRegister: () => void) => {
+export const useRegisterMember = (eventId: number, onRegister: () => void) => {
     const {
         data: registeredMember,
         isPending,
