@@ -14,7 +14,8 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
         const eventId = eventIdSchema.parse(params.id)
 
         const eventAttendees = await db.eventAttendees.findMany({
-            where: { eventId }
+            where: { eventId },
+            orderBy: [ { createdAt: "desc"} , {updatedAt : "desc" } ]
         });
 
         return NextResponse.json(eventAttendees);

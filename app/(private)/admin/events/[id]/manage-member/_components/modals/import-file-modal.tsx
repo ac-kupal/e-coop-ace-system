@@ -1,18 +1,18 @@
 "use client";
-import { CalendarIcon, Loader2, Rows } from "lucide-react";
+import {  Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 
-import { createManyMember, createMember } from "@/hooks/api-hooks/member-api-hook";
-import { read, utils, writeFile } from "xlsx";
+import { createManyMember,  } from "@/hooks/api-hooks/member-api-hook";
+import { read, utils } from "xlsx";
 import { importCSVSchema } from "@/validation-schema/import-csv";
 import { TMember } from "@/types";
-import useSkippedStore from "@/stores/skipped-members-store";
+
 type Props = {
    state: boolean;
    onOpenSkippedModal:(state:boolean)=> void;
@@ -25,7 +25,6 @@ export type TImportSchema = z.infer<typeof importCSVSchema>;
 
 const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Props) => {
    const [Members, setMembers] = useState<TMember[] | any>([]);
-
 
    const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files;
@@ -46,6 +45,7 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
     const onCancelandReset =()=>{
      onClose(false)
      setMembers([])
+
     }
     const onOpenSkippedMember=()=>{
       onOpenSkippedModal(true)
@@ -55,9 +55,9 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
    const isLoading = createManyMemberMutation.isPending;
 
    const onSubmit = (e: any) => {
-      console.log(Members)
+     e.preventDefault();
+     console.log(Members)
      createManyMemberMutation.mutate({member:Members,eventId:id})
-      e.preventDefault();
    };
 
    return (

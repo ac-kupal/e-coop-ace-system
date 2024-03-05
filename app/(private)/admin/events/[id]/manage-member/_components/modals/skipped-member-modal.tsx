@@ -15,7 +15,7 @@ type Props = {
 
 const SkippedMemberModal = ({ state, onClose }: Props) => {
 
-   const { skippedMembers } = useSkippedStore();
+   const { skippedMembers, setSkippedMembers } = useSkippedStore();
 
    const handleExport = () => {
      const worksheet = XLSX.utils.json_to_sheet(skippedMembers);
@@ -39,9 +39,17 @@ const SkippedMemberModal = ({ state, onClose }: Props) => {
                description={`You have imported ${skippedMembers.length} duplicate members; ensure that any duplicate passbook entries are skipped. Please ensure to clean your file before importing.`}
             />
             <p className=" text-sm text-center font-bold">Export this members to edit and import again</p>
-            <Button disabled={skippedMembers.length === 0} onClick={handleExport} variant={"link"}>SkippMemberList.xlsx</Button>
+            <Button disabled={skippedMembers.length === 0} onClick={()=>{
+               handleExport()
+               setSkippedMembers([])
+            }} variant={"link"}>SkippMemberList.xlsx</Button>
             <DialogFooter>
-               <Button disabled={skippedMembers.length === 0} onClick={handleExport}>export</Button>
+               <Button disabled={skippedMembers.length === 0} 
+               onClick={()=>{
+                    handleExport()
+                    setSkippedMembers([])
+                 }}
+               >export</Button>
             </DialogFooter>
          </DialogContent>
       </Dialog>

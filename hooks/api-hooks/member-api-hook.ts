@@ -153,8 +153,8 @@ export const createManyMember = ({ onCancelandReset,onOpenSkippedMember }:  crea
         mutationKey: ["create-member-query"],
         mutationFn: async ({ member, eventId }) => {
             try {
-                const response = await axios.post(
-                    `/api/v1/admin/event/${eventId}/member/import-member`,member);
+                const response = await axios.post( `/api/v1/admin/event/${eventId}/member/import-member`,member);
+               
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -168,7 +168,9 @@ export const createManyMember = ({ onCancelandReset,onOpenSkippedMember }:  crea
             }
         },
         onSuccess:(data)=>{
-            const modifiedMember = data.skippedMembers.map((member:any) => {
+            const skippedMembers = data.skippedMembers
+            const newMembers = data.newMembers
+            const modifiedMember = skippedMembers.map((member:any) => {
                 return {
                         passbookNumber:member.passbookNumber,
                         firstName:member.firstName,
@@ -180,28 +182,23 @@ export const createManyMember = ({ onCancelandReset,onOpenSkippedMember }:  crea
                         emailAddress:member.emailAddress,
                         }
             });
-            if(data.skippedMembers.length > 0){
+            if(skippedMembers.length > 0){
                 onOpenSkippedMember();
                 setSkippedMembers(modifiedMember)
                 queryClient.invalidateQueries({
                     queryKey: ["all-event-members-list-query"],
                 });
-                toast.warning(`${data.skippedMembers.length} Duplicate Found! `);
+                toast.warning(`${skippedMembers.length} Duplicate Found! `);
                 onCancelandReset();
-            }else{
-                queryClient.invalidateQueries({
-                    queryKey: ["all-event-members-list-query"],
-                });
-                toast.success(`Members ${data.newMembers.length} Added successfully`);
-                onCancelandReset();
-            }   
-            if(data.newMembers.length > 0){
+            }  
+            if(newMembers.length > 0){
                 queryClient.invalidateQueries({
                     queryKey: ["all-event-members-list-query"],
                 });  
-                toast.success(`New ${data.newMembers.length} Members Added successfully`);
+                setTimeout(() => {
+                    toast.success(`New ${newMembers.length} Members Added successfully`);
+                }, 1000);
                 onCancelandReset();
-
             }    
         }
     });
