@@ -4,12 +4,12 @@ import db from "@/lib/database"
 import { electionSwitchSchema } from "@/validation-schema/election-switch";
 
 type Tparams= {
-     params:{id:number}
+     params:{id:number,electionId:number}
 }
 
 export const PATCH =async(req:NextRequest,{params}:Tparams)=>{
      try {
-          const electionId = Number(params.id)
+          const electionId = Number(params.electionId)
           const electionStatus = await req.json()
           console.log(electionStatus)
           electionSwitchSchema.parse(electionStatus.status)
@@ -24,6 +24,7 @@ export const PATCH =async(req:NextRequest,{params}:Tparams)=>{
           return NextResponse.json(startElection)
 
      } catch (e) {
+          console.log(e)
          return routeErrorHandler(e,req)
      }
 

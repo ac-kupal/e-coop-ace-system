@@ -1,27 +1,21 @@
 import React from "react";
 import Link from "next/link";
-import db from "@/lib/database";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
-import { TEvent } from "@/types";
+import { TEventWithElection } from "@/types";
 import { cn } from "@/lib/utils";
 
 type Props = {
-    event: TEvent;
+    event: TEventWithElection;
 };
 
-const VoteButton = async ({ event }: Props) => {
+const VoteButton = ({ event }: Props) => {
     if (event.category !== "election") return;
 
-    const eventElection = await db.event.findUnique({
-        where: { id: event.id },
-        include: { election: true },
-    });
+    if (!event || !event.election) return;
 
-    if (!eventElection || !eventElection.election) return;
-
-    const {election} = eventElection;
+    const { election } = event;
 
     const canVote = election.status == "live";
 

@@ -1,12 +1,14 @@
 import z from "zod";
 import React from "react";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Loader2 } from "lucide-react";
+import ReactInputMask from "react-input-mask";
 import { Button } from "@/components/ui/button";
-
-import { TMemberAttendeesMinimalInfo } from "@/types";
-import { useRegisterMember } from "@/hooks/api-hooks/registraton-search-attendance-api-hooks";
+import { Separator } from "@/components/ui/separator";
+import ErrorAlert from "@/components/error-alert/error-alert";
 import {
     Form,
     FormField,
@@ -14,25 +16,20 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { Separator } from "@/components/ui/separator";
-import { useForm } from "react-hook-form";
+
+import { TMemberAttendeesMinimalInfo } from "@/types";
 import { attendeeRegisterFormSchema } from "@/validation-schema/event-registration-voting";
-import { zodResolver } from "@hookform/resolvers/zod";
-import ErrorAlert from "@/components/error-alert/error-alert";
-import ReactInputMask from "react-input-mask";
+import { useRegisterMember } from "@/hooks/public-api-hooks/use-member-api";
 
 type Props = {
-    eventId: string;
+    eventId: number;
     member: TMemberAttendeesMinimalInfo;
 };
 
 const RegisterAttendance = ({ eventId, member }: Props) => {
     const router = useRouter();
 
-    const { registeredMember, isPending, register, isError, error } =
-        useRegisterMember(eventId, () => {
-            router.push(`/events/${eventId}/registered`);
-        });
+    const { registeredMember, isPending, register, isError, error } = useRegisterMember(eventId, () => { router.push(`/events/${eventId}/register/registered`) });
 
     const form = useForm<z.infer<typeof attendeeRegisterFormSchema>>({
         resolver: zodResolver(attendeeRegisterFormSchema),

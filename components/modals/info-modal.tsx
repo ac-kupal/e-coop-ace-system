@@ -19,7 +19,7 @@ const InfoModal = () => {
                 <DialogHeader>
                     <DialogTitle className="font-medium">{infoDatas?.title}</DialogTitle>
                 </DialogHeader>
-                <DialogDescription className="my-4">
+                <DialogDescription className="my-1 text-center lg:text-left lg:my-4">
                         {infoDatas?.description}
                 </DialogDescription>
                 { infoDatas?.component }

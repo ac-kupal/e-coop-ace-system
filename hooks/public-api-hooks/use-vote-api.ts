@@ -9,17 +9,8 @@ import { TElection, TMemberAttendeesMinimalInfo } from "@/types";
 import { chosenCandidateIds } from "@/validation-schema/election";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 
-export const searchVoter = (
-    eventId: number,
-    electionId: number,
-    onFound: (data: TMemberAttendeesMinimalInfo) => void
-) => {
-    const {
-        isPending,
-        mutate: findVoter,
-        isError,
-        error,
-    } = useMutation<TMemberAttendeesMinimalInfo, string, string>({
+export const searchVoter = ( eventId: number, electionId: number, onFound? : (data: TMemberAttendeesMinimalInfo) => void ) => {
+    const { data : voter, isPending, mutate: findVoter, isError, error, } = useMutation<TMemberAttendeesMinimalInfo, string, string>({
         mutationKey: ["member-search"],
         mutationFn: async (passbookNumber) => {
             try {
@@ -35,7 +26,7 @@ export const searchVoter = (
                 );
 
                 const request = await axios.get(url);
-                onFound(request.data);
+                if(onFound) onFound(request.data);
                 return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -49,12 +40,7 @@ export const searchVoter = (
 };
 
 export const loadVoter = (election: TElection) => {
-    const {
-        data: voter,
-        isPending,
-        isError,
-        error,
-    } = useQuery<TMemberAttendeesMinimalInfo, string>({
+    const { data: voter, isPending, isError, error, } = useQuery<TMemberAttendeesMinimalInfo, string>({
         queryKey: ["voter-authorization"],
         queryFn: async () => {
             try {
@@ -80,17 +66,8 @@ export const loadVoter = (election: TElection) => {
     return { voter, isPending, isError, error };
 };
 
-export const useCastVote = (
-    election: TElection,
-    onSuccess?: (data: any) => void
-) => {
-    const {
-        data,
-        isPending: isCasting,
-        isError: isCastError,
-        error: castError,
-        mutate: castVote,
-    } = useMutation<any, string, z.infer<typeof chosenCandidateIds>>({
+export const useCastVote = ( election: TElection, onSuccess?: (data: any) => void ) => {
+    const { data, isPending: isCasting, isError: isCastError, error: castError, mutate: castVote, } = useMutation<any, string, z.infer<typeof chosenCandidateIds>>({
         mutationKey: ["cast-vote"],
         mutationFn: async (chosenCandidatesIds) => {
             try {
@@ -112,23 +89,8 @@ export const useCastVote = (
     return { data, isCasting, isCastError, castError, castVote };
 };
 
-export const useVoterAuthorization = (
-    eventId: number | string,
-    electionId: number | string,
-    voterId: string,
-    onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void
-) => {
-    const {
-        data: authenticatedVoter,
-        isPending,
-        mutate: getAuthorization,
-        isError,
-        error,
-    } = useMutation<
-        TMemberAttendeesMinimalInfo,
-        string,
-        z.infer<typeof voterVerificationFormSchema>
-    >({
+export const useVoterAuthorization = ( eventId: number | string, electionId: number | string, voterId: string, onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void) => {
+    const { data: authenticatedVoter, isPending, mutate: getAuthorization, isError, error, } = useMutation< TMemberAttendeesMinimalInfo, string, z.infer<typeof voterVerificationFormSchema>>({
         mutationKey: ["authorize-voter", voterId],
         mutationFn: async (data) => {
             try {

@@ -1,29 +1,31 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import VoteHeader from "./vote-header";
 import VoteSummary from "./vote-summary";
+import VoteReminder from "./vote-reminder";
 import CandidateList from "./candidate-list";
 import VoteNavControl from "./vote-nav-control";
+import InvalidPrompt from "@/components/invalid-prompt";
 import OnlyLandscape from "@/components/only-landscape";
 import LoadingSpinner from "@/components/loading-spinner";
-import InvalidElection from "../../_components/invalid-election";
 
-import { useCastVote, loadVoter } from "@/hooks/api-hooks/voter-api-hooks";
 
-import {
-    TCandidatewithPosition,
-    TElectionWithPositionAndCandidates,
-} from "@/types";
-import { useRouter } from "next/navigation";
+import { useInfoModal } from "@/stores/use-info-modal-store";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { useCastVote, loadVoter } from "@/hooks/public-api-hooks/use-vote-api";
+import { TCandidatewithPosition, TElectionWithEventWithPositionAndCandidates } from "@/types";
 
 type Props = {
-    election: TElectionWithPositionAndCandidates;
+    election: TElectionWithEventWithPositionAndCandidates;
 };
 
 const VoteWindow = ({ election }: Props) => {
     const router = useRouter();
-    const totalPositions = election.positions.length - 1;
+    const { onOpen } = useConfirmModal();
+    const { onOpen: onOpenInfoModal } = useInfoModal();
+
     const [currentPage, setCurrentPage] = useState(0);
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
@@ -43,6 +45,16 @@ const VoteWindow = ({ election }: Props) => {
         }
     };
 
+
+    useEffect(() => {
+        onOpenInfoModal({
+            title: "Election Reminder",
+            description: "A short reminder before you start to vote",
+            confirmString: "Okay",
+            component: <VoteReminder />
+        });
+    }, []);
+
     if (isPending)
         return (
             <div className="fixed top-1/2 left-auto gap-x-2 rounded-xl flex items-center justify-center px-3 py-1 bg-secondary/40 backdrop-blur-sm">
@@ -54,8 +66,9 @@ const VoteWindow = ({ election }: Props) => {
         );
 
     if (isError && error)
-        return <InvalidElection className="text-lg" message={error} />;
+        return <InvalidPrompt className="text-lg" message={error} />;
 
+    const totalPositions = election.positions.length - 1;
     const currentPosition =
         election.positions[
             currentPage > totalPositions - 1 ? totalPositions : currentPage
@@ -111,7 +124,17 @@ const VoteWindow = ({ election }: Props) => {
                 onBack={() => setCurrentPage((prev) => prev - 1)}
                 onNext={() => setCurrentPage((prev) => prev + 1)}
                 onFinalize={() =>
-                    castVote(votes.map((votedCandidate) => votedCandidate.id))
+                    onOpen({
+                        title: "Cast Vote",
+                        description:
+                            "We suggest that you review your vote first before submitting. If you believe that your selection is correct, you can now proceed on casting your vote.",
+                        confirmString: "Cast Vote",
+                        cancelString: "Review Vote",
+                        onConfirm: () =>
+                            castVote(
+                                votes.map((votedCandidate) => votedCandidate.id)
+                            ),
+                    })
                 }
                 canFinalize={votes.length > 0}
                 canNext={true}

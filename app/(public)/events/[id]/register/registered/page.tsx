@@ -1,11 +1,11 @@
 import React from "react";
-import db from "@/lib/database";
-import InvalidEvent from "../_components/invalid-event";
-import { Avatar } from "@/components/ui/avatar";
-import UserAvatar from "@/components/user-avatar";
-import { CheckCircle } from "lucide-react";
 import Link from "next/link";
+import db from "@/lib/database";
+
+import { CheckCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import InvalidPrompt from "@/components/invalid-prompt";
 
 type Props = {
     params: { id: string };
@@ -14,9 +14,9 @@ type Props = {
 const RegisteredPage = async ({ params }: Props) => {
     let id = Number(params.id);
 
-    if (!params.id || isNaN(id)) return <InvalidEvent />;
+    if (!params.id || isNaN(id)) return <InvalidPrompt />;
     const event = await db.event.findUnique({ where: { id, deleted: false } });
-    if (!event) return <InvalidEvent />;
+    if (!event) return <InvalidPrompt />;
 
     return (
         <div className="flex flex-col items-center w-full">
@@ -25,10 +25,7 @@ const RegisteredPage = async ({ params }: Props) => {
                     <img
                         alt="event cover image"
                         className="z-10 rounded-xl h-[60vh] dark:drop-shadow-sm dark:drop-shadow-foreground w-full object-cover"
-                        src={
-                            event.coverImage ??
-                            "https://cdn.discordapp.com/attachments/955281529481883729/1209463734758809640/Blue__Purple_Gradient_Music_Event_Facebook_Post.jpg?ex=65e703e1&is=65d48ee1&hm=21beacdba6b6c7f167dbbbe425cf93d6b1deeae7dfa75e38d3bdbe45c2201c92&"
-                        }
+                        src={event.coverImage as ""}
                     />
                     <div className="px-8 bg-gradient-to-t from-background to-transparent absolute w-full py-9 bottom-0 left-0  flex gap-y-4">
                         <div className="flex gap-x-4 items-center">

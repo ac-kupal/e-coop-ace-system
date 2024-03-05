@@ -260,3 +260,25 @@ export const useOtpSend = (eventId: number, passbookNumber: string) => {
 
     return { isSendingOtp, sendOtp };
 };
+
+type quorumtype = {
+    totalAttendees: number,
+    totalIsRegistered: number
+    totalMembersVoted:number
+}
+
+export const getMembersQuorum = (id:number) => {
+    const {data,isLoading,isError} = useQuery<quorumtype>({
+        queryKey: ["get-quorum-list-query"],
+        queryFn: async () => {
+            try {
+                const response = await axios.get(`/api/v1/admin/event/${id}/member/quorum`);
+                return response.data;
+            } catch (e) {
+                throw handleAxiosErrorMessage(e);
+            }
+        },
+        refetchInterval: 1 * 30 * 1000
+    });
+    return {members:data,isLoading,isError}
+};

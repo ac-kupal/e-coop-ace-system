@@ -12,21 +12,18 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ErrorAlert from "@/components/error-alert/error-alert";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { useSearchMemberAttendee } from "@/hooks/api-hooks/registraton-search-attendance-api-hooks";
 
 import { TMemberAttendeesMinimalInfo } from "@/types";
 import { voterPbSearchSchema } from "@/validation-schema/event-registration-voting";
+import { useSearchMemberAttendee } from "@/hooks/public-api-hooks/use-member-api";
 
 type Props = {
     onFound: (member: TMemberAttendeesMinimalInfo) => void;
-    params: { id: string };
+    eventId : number
 };
 
-const AttendeeSearch = ({ onFound, params }: Props) => {
-    const { searchMember, isPending, isError, error } = useSearchMemberAttendee(
-        params.id,
-        onFound,
-    );
+const AttendeeSearch = ({ onFound, eventId }: Props) => {
+    const { searchMember, isPending, isError, error } = useSearchMemberAttendee(eventId, onFound);
 
     const form = useForm<z.infer<typeof voterPbSearchSchema>>({
         resolver: zodResolver(voterPbSearchSchema),

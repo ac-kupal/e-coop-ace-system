@@ -6,7 +6,7 @@ type Props = { children : ReactNode};
 const PublicLayout = ( { children }: Props) => {
     return (
         <div className="bg-secondary/40 font-poppins">
-            <NavBar />
+            {/* <NavBar /> */}
             <main className="ml-0 overflow-x-hidden flex-1">
                 {children}
             </main>

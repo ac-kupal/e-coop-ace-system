@@ -1,16 +1,11 @@
 export const dynamic = 'force-dynamic'
+
 import React from "react";
-import db from "@/lib/database";
-import EventCard from "./[id]/_components/event-card";
+
 import PartyPopperSvg from "@/components/custom-svg/party-popper";
+import EventList from "./_components/event-list";
 
-type Props = {};
-
-const EventsPage = async ({}: Props) => {
-  const events = await db.event.findMany({
-    where: { deleted: false },
-    orderBy: [ { createdAt: "desc"} , {date : "desc" } ]
-  });
+const EventsPage = async () => {
 
   return (
     <div className="flex flex-col min-h-screen py-16 lg:py-24 w-full items-center">
@@ -20,16 +15,7 @@ const EventsPage = async ({}: Props) => {
           Upcoming Events
         </p>
       </div>
-      <div className="p-4 grid grid-cols-1 gap-4 md:grid-cols-2 justify-center w-full lg:max-w-[90rem]">
-        {events.map((event) => (
-          <EventCard event={event} key={event.id} />
-        ))}
-      </div>
-      {events.length === 0 && (
-        <div className="h-full w-full flex justify-center items-center">
-          <p>There&#39;s no event here yet 🐧</p>
-        </div>
-      )}
+      <EventList />
     </div>
   );
 };

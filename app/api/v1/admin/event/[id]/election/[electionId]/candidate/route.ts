@@ -1,8 +1,10 @@
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { TCreateCandidate } from "@/types";
+import { TCandidate, TCandidatewithVotes, TCreateCandidate, TPosition, TPositionWithCandidates, TPositionWithCandidatesAndPosition } from "@/types";
 import { createCandidateSchema } from "@/validation-schema/candidate";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database"
+import { parseArgs } from "util";
+import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 
 
 
@@ -35,11 +37,47 @@ export const POST = async (req: NextRequest) => {
      }
   };
   
+type TParams = {
+   params:{id:number,electionId:number}
+} 
 
+type CandidatesDataType = {
+   candidateName: string,
+   totalVotes:number
+}
 
-export const GET = async (req: NextRequest) => {
+export const GET = async (req: NextRequest,{params}:TParams) => {
      try {
-        return NextResponse.json({message:"get Candidate ok"});
+        const electionId  = Number(params.electionId)
+        const positions = await db.position.findMany({
+            where:{
+               electionId:electionId
+            },
+            include:{
+               candidates:{
+                  include:{
+                     votes:true
+                  }
+               }
+            }
+        })
+        const sampleData = positions.map((position:TPositionWithCandidates) => {
+         const candidatesData = position.candidates.map((candidate:any)  => {
+           const totalVotes = candidate.votes.length;
+           return {
+             candidateName: `${candidate.firstName} ${candidate.lastName}`,
+             totalVotes: totalVotes,
+           };
+         });
+     
+         return {
+           positionName: position.positionName,
+           dataSets: candidatesData.map((candidateData:CandidatesDataType) => candidateData.totalVotes),
+           candidatesName: candidatesData.map((candidateData:CandidatesDataType) => candidateData.candidateName)
+           
+         };
+       });
+        return NextResponse.json(sampleData);
      } catch (error) {
         return routeErrorHandler(error, req);
      }
