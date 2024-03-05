@@ -77,7 +77,6 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
            
          };
        });
-         console.log(sampleData)
         return NextResponse.json(sampleData);
      } catch (error) {
         return routeErrorHandler(error, req);
