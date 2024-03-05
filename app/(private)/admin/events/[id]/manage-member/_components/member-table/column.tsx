@@ -2,7 +2,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-import { ClipboardPen, Copy, MenuIcon, Pencil, Send, Trash } from "lucide-react";
+import { ClipboardPen, Copy, Gift, MenuIcon, Pencil, Send, Trash } from "lucide-react";
 
 import { toast } from "sonner";
 import {
@@ -25,14 +25,15 @@ import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import LoadingSpinner from "@/components/loading-spinner";
 import { useAttendanceRegistration } from "@/hooks/api-hooks/attendance-api-hooks";
+import AssistClaimSheet from "../../../../_components/assist-claim-sheet";
 
 const Actions = ({ member }: { member: TMember }) => {
     const { data: session } = useSession();
 
-    const isAdminOrRoot =
-        session?.user.role === "admin" || session?.user.role === "root";
+    const isAdminOrRoot = session?.user.role === "admin" || session?.user.role === "root";
 
     const [onOpenModal, setOnOpenModal] = useState(false);
+    const [claimSheet, setClaimSheet] = useState(false)
     const deleteOperation = deleteMember();
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
@@ -56,7 +57,12 @@ const Actions = ({ member }: { member: TMember }) => {
                 state={onOpenModal}
                 onClose={() => setOnOpenModal(false)}
                 onCancel={() => setOnOpenModal(false)}
-            ></UpdateMemberModal>
+            />
+            <AssistClaimSheet
+                state={claimSheet}
+                onClose={(state)=>setClaimSheet(state)}
+                member={member}
+            />
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
                     <span className="sr-only">Open menu</span>
@@ -86,7 +92,6 @@ const Actions = ({ member }: { member: TMember }) => {
                         toast.success("coppied");
                     }}
                 >
-                    {" "}
                     <Copy strokeWidth={2} className="h-4" />
                     Copy vote OTP
                 </DropdownMenuItem>
@@ -102,13 +107,21 @@ const Actions = ({ member }: { member: TMember }) => {
                 <DropdownMenuItem
                     className="px-2 gap-x-2"
                     onClick={() => {
+                        setClaimSheet(true)
+                    }}
+                >
+                    <Gift strokeWidth={2} className="h-4" />
+                    Incentive Claims
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    className="px-2 gap-x-2"
+                    onClick={() => {
                         navigator.clipboard.writeText(
                             `${format(member.birthday, "PPP")}`
                         );
                         toast.success("coppied");
                     }}
                 >
-                    {" "}
                     <Copy strokeWidth={2} className="h-4" />
                     Copy birthday
                 </DropdownMenuItem>

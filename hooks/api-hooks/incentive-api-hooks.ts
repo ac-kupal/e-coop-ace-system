@@ -5,12 +5,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
     TIncentiveAssigned,
+    TIncentiveClaimsWithIncentiveAndClaimAssistance,
     TIncentiveWithClaimAndAssignedCount,
     TListOfAssigneesWithAssistCount,
     TUserWithAssignedIncentives,
 } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
+import { createAssistedClaimSchema, createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
+import { TIncentiveAssignedToMe } from "@/types/incentive-assigned.types";
 
 export const incentiveListWithClaimCount = (eventId: number) => {
     const { data, isFetching, isLoading, isError, error } = useQuery<
@@ -163,4 +165,64 @@ export const useRevokeAssignIncentive = (eventId : number, incentiveId : number,
     })
 
     return { deleteAssignee, isDeleting }
+}
+
+export const useAssignedIncentiveToMe = (eventId : number, enabled : boolean) => {
+    const {data : assignedToMe, isLoading : isLoadingAssignedToMe} = useQuery<TIncentiveAssignedToMe[], string>({
+        queryKey : ["incentive-assigned-to-me-list"],
+        queryFn : async () => {
+            try{
+                const request = await axios.get(`/api/v1/admin/event/${eventId}/incentives/assigned-to-me`)
+                return request.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        },
+        initialData : [],
+        enabled
+    })
+
+    return { assignedToMe, isLoadingAssignedToMe }
+}
+
+export const useMemberClaimsWithAssistanceList = (eventId : number, memberId : string, enabled : boolean) => {
+    const {data : memberClaims, isLoading : isLoadingMemberClaims} = useQuery<TIncentiveClaimsWithIncentiveAndClaimAssistance[], string>({
+        queryKey : [`incentive-claims-member-${memberId}`],
+        queryFn : async () => {
+            try{
+                const request = await axios.get(`/api/v1/admin/event/${eventId}/member/${memberId}/claims`)
+                return request.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        },
+        initialData : [],
+        enabled
+    })
+
+    return { memberClaims, isLoadingMemberClaims }
+}
+
+export const useCreateClaimAssistance = (eventId : number, onCreate : () => void ) => {
+    const { data : savedEntry, mutate : saveClaimEntries, isPending : isSavingClaim} = useMutation<any, string, z.infer<typeof createAssistedClaimSchema>>({
+        mutationKey : ["create-assist-claim"],
+        mutationFn : async (data) => {
+            try{
+                const request = await axios.post(`/api/v1/admin/event/${eventId}/incentives/claim`, data)
+                toast.success("Claim saved!")
+                onCreate();
+                return request.data
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        }
+    })
+
+    return { savedEntry, saveClaimEntries, isSavingClaim }
 }

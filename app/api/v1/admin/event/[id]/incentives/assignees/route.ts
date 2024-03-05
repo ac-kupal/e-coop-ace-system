@@ -34,7 +34,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 },
                 _count: {
                     select: {
-                        claimsAssisted: true,
+                        claims : true
                     },
                 },
             },

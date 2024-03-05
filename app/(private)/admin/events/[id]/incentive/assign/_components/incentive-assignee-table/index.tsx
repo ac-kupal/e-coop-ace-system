@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
     getCoreRowModel,
     getFilteredRowModel,
@@ -14,8 +14,8 @@ import columns from "./column";
 import { Input } from "@/components/ui/input";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
-import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import { useIncentiveListAssignee } from "@/hooks/api-hooks/incentive-api-hooks";
+import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 
 const IncentiveAssigneeTable = ({ eventId } : { eventId : number }) => {
     const [globalFilter, setGlobalFilter] = React.useState("");

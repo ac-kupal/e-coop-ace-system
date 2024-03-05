@@ -1,6 +1,6 @@
 import db from "@/lib/database"
 import { NextRequest, NextResponse } from "next/server"
-import { currentUserOrThrowAuthError } from "@/lib/auth"
+import { currentUser, currentUserOrThrowAuthError } from "@/lib/auth"
 
 import { routeErrorHandler } from "@/errors/route-error-handler"
 import { eventIdSchema } from "@/validation-schema/commons"
@@ -10,16 +10,50 @@ type TParams = { params : { id : number }}
 export const GET = async (req : NextRequest, { params } : TParams) => {
     try{
         const eventId = eventIdSchema.parse(params.id)
-        const user = await currentUserOrThrowAuthError();
+        const currentUser = await currentUserOrThrowAuthError();
 
-        const assignedIncentives = await db.incentives.findMany({
+        // const assignedIncentives = await db.incentives.findMany({
+        //     select : {
+        //         id : true,
+        //         itemName : true,
+        //         eventId : true,
+        //         assigned : {
+        //             select : {
+        //                 id : true,
+        //                 eventId : true,
+        //                 incentiveId : true
+        //             },
+        //             where : {
+        //                 userId : user.id
+        //             }
+        //         }
+        //     },
+        //     where : {
+        //         eventId,
+        //         assigned : {
+        //             some : {
+        //                 userId : user.id
+        //             }
+        //         } 
+        //     }
+        // })
+
+        const assignedIncentives = await db.incentiveAssigned.findMany({
+            select : {
+                id : true,
+                eventId : true,
+                incentiveId : true,
+                incentive : {
+                    select : {
+                        id : true,
+                        itemName : true,
+                        eventId : true
+                    }
+                }
+            },
             where : {
                 eventId,
-                assigned : {
-                    every : {
-                        userId : user.id
-                    }
-                } 
+                userId : currentUser.id
             }
         })
 

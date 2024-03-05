@@ -7,18 +7,16 @@ export type TIncentiveWithClaimAndAssignedCount = TIncentive & {
     _count: { claimed: number; assigned: number };
 };
 
-
 export type TUserWithAssignedIncentives = TUserMinimalInfo & {
-    assignedIncentive : TIncentiveAssigned[]
-}
-
+    assignedIncentive: TIncentiveAssigned[];
+};
 
 // used in incentive incentive assignee table
 export type TListOfAssigneesWithAssistCount = {
     eventId: number;
     id: number;
     _count: {
-        claimsAssisted: number;
+        claims: number;
     };
     incentive: {
         eventId: number;
@@ -29,4 +27,4 @@ export type TListOfAssigneesWithAssistCount = {
     assignedQuantity: number;
 };
 
-export type TIncentiveAssigned = IncentiveAssigned
+export type TIncentiveAssigned = IncentiveAssigned;

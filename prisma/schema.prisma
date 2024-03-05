@@ -44,7 +44,7 @@ model User {
     assignedIncentive  IncentiveAssigned[]
     assistedAttendance EventAttendees[]
 
-    assistedClaims ClaimAssistance[]
+    assistedClaims IncentiveClaims[]
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -262,25 +262,13 @@ model IncentiveAssigned {
 
     assignedQuantity Int
 
-    claimsAssisted ClaimAssistance[]
+    claims IncentiveClaims[]
 
     updatedAt DateTime @updatedAt
     createdBy Int?
     updatedBy Int?
 
     @@unique([userId, incentiveId])
-}
-
-model ClaimAssistance {
-    id Int @id @default(autoincrement())
-
-    assignedId        Int?
-    assignedIncentive IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: SetNull)
-
-    userId Int?
-    user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-    claims IncentiveClaims[]
 }
 
 model IncentiveClaims {
@@ -295,12 +283,17 @@ model IncentiveClaims {
     eventAttendeeId String
     eventAttendee   EventAttendees @relation(fields: [eventAttendeeId], references: [id], onDelete: Cascade)
 
-    claimAssistanceId Int? // this will indicate it was assisted
-    claimAssistance   ClaimAssistance? @relation(fields: [claimAssistanceId], references: [id])
+    assistedById Int?
+    assistedBy User? @relation(fields: [assistedById], references: [id], onDelete: SetNull)
+
+    assignedId Int?
+    assigned IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: SetNull)
 
     createdBy Int?
     updatedBy Int?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@unique([incentiveId, eventAttendeeId])
 }

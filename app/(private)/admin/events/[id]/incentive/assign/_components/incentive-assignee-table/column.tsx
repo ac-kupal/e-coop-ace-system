@@ -1,25 +1,14 @@
 "use client";
-import { toast } from "sonner";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Copy, MenuIcon, Trash } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
+import UserAvatar from "@/components/user-avatar";
 import LoadingSpinner from "@/components/loading-spinner";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { TListOfAssigneesWithAssistCount } from "@/types";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useRevokeAssignIncentive } from "@/hooks/api-hooks/incentive-api-hooks";
-import UserAvatar from "@/components/user-avatar";
 
 const Actions = ({ assignee }: { assignee: TListOfAssigneesWithAssistCount;}) => {
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
@@ -143,7 +132,7 @@ const columns: ColumnDef<TListOfAssigneesWithAssistCount>[] = [
             <DataTableColHeader column={column} title="Assisted Claims" />
         ),
         cell: ({ row }) => (
-            <div className="">{row.original._count.claimsAssisted}</div>
+            <div className="">{row.original._count.claims}</div>
         ),
     },
 ];

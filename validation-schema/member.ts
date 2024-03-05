@@ -128,14 +128,6 @@ export const updateMemberSchema = z.object({
 });
 
 
-
-
-
-
-
-
-
-
 export const createMemberWithUploadSchema = updateMemberSchema.extend({
    picture: z.any().optional(),
 });
@@ -202,3 +194,5 @@ export const createManySchema = z.object({
 });
 
 export const memberEmailSchema = z.string({ invalid_type_error : "invalid email", required_error : "Email is required"}).email("Email is required");
+
+export const memberIdSchema = z.string({ invalid_type_error : "member id type is invalid", required_error : "member id is required"})

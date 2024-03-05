@@ -4,28 +4,27 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { currentUserOrThrowAuthError } from "@/lib/auth"
 import { routeErrorHandler } from "@/errors/route-error-handler"
-import { eventAndIncentiveParamSchema } from "@/validation-schema/api-params";
-import { createIncentiveClaimAssistSchema } from "@/validation-schema/incentive";
+import { eventIdParamSchema } from "@/validation-schema/api-params";
+import { createAssistedClaimSchema } from "@/validation-schema/incentive";
 
-type TParams = { params: { id: number; incentiveId: number } };
+type TParams = { params: { id: number } };
 
 export const POST = async (req : NextRequest, { params } : TParams ) => {
     try{
-        const { id : eventId, incentiveId } = eventAndIncentiveParamSchema.parse(params)
+        const { id : eventId } = eventIdParamSchema.parse(params);
         const currentUser = await currentUserOrThrowAuthError();
 
-        const data = createIncentiveClaimAssistSchema.parse(await req.json())
+        const { claims } = createAssistedClaimSchema.parse(await req.json());
 
-        const createClaims = await db.incentiveClaims.create({
-            data : {
-                ...data,
-                eventId,
-                incentiveId,
-                createdBy : currentUser.id 
-            } 
+        const createAssistClaims = await db.incentiveClaims.createMany({
+            data : claims.map((claimEntry)=>({
+                ...claimEntry, 
+                assistedById : currentUser.id, 
+                createdBy : currentUser.id
+            }))
         })
 
-        return NextResponse.json(createClaims);
+        return NextResponse.json(createAssistClaims);
     }catch(e){
         if(e instanceof Prisma.PrismaClientKnownRequestError){
             if(e.code === "P2003"){
