@@ -20,7 +20,6 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
  export const PATCH = async (req: NextRequest,{params}:TParams) => {
   try {
      const data  = await req.json();
-     console.log(data)
      createMemberSchema.parse(data)
      const user = await currentUserOrThrowAuthError()
      const memberData = {...data,updatedBy:user.id}

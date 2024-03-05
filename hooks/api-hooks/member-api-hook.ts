@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { TCreateMember, TMember, TMemberAttendeesWithRegistrationAssistance } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
+import useSkippedStore from "@/stores/skipped-members-store";
 
 export const getAllEventMembers = (eventId: number) => {
     const positions = useQuery<TMember[], string>({
@@ -64,6 +65,7 @@ export const deleteMember = () => {
 
 type Props = {
     onCancelandReset: () => void;
+
 };
 
 export const createMember = ({ onCancelandReset }: Props) => {
@@ -134,20 +136,25 @@ export const updateMember = ({ onCancelandReset }: Props) => {
     return updateMember;
 };
 
-export const createManyMember = ({ onCancelandReset }: Props) => {
+type createManyMemberProps = {
+    onCancelandReset: () => void;
+    onOpenSkippedMember: () => void;
+};
+
+export const createManyMember = ({ onCancelandReset,onOpenSkippedMember }:  createManyMemberProps) => {
+    const {setSkippedMembers} = useSkippedStore()
+
     const queryClient = useQueryClient();
     const addMember = useMutation<
         any,
         Error,
         { member: TCreateMember[] | unknown; eventId: number }
     >({
-        mutationKey: ["delete-member-query"],
+        mutationKey: ["create-member-query"],
         mutationFn: async ({ member, eventId }) => {
             try {
                 const response = await axios.post(
-                    `/api/v1/member/bulk-create/${eventId}`,
-                    member
-                );
+                    `/api/v1/admin/event/${eventId}/member/import-member`,member);
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -160,12 +167,42 @@ export const createManyMember = ({ onCancelandReset }: Props) => {
                 throw errorMessage;
             }
         },
-        onSuccess:()=>{
-            queryClient.invalidateQueries({
-                queryKey: ["all-event-members-list-query"],
+        onSuccess:(data)=>{
+            const modifiedMember = data.skippedMembers.map((member:any) => {
+                return {
+                        passbookNumber:member.passbookNumber,
+                        firstName:member.firstName,
+                        middleName:member.middleName,
+                        lastName:member.lastName,
+                        gender:member.gender,
+                        birthday:new Date(member.birthday),
+                        contact:member.contact,
+                        emailAddress:member.emailAddress,
+                        }
             });
-            toast.success("Members Added successfully");
-            onCancelandReset();
+            if(data.skippedMembers.length > 0){
+                onOpenSkippedMember();
+                setSkippedMembers(modifiedMember)
+                queryClient.invalidateQueries({
+                    queryKey: ["all-event-members-list-query"],
+                });
+                toast.warning(`${data.skippedMembers.length} Duplicate Found! `);
+                onCancelandReset();
+            }else{
+                queryClient.invalidateQueries({
+                    queryKey: ["all-event-members-list-query"],
+                });
+                toast.success(`Members ${data.newMembers.length} Added successfully`);
+                onCancelandReset();
+            }   
+            if(data.newMembers.length > 0){
+                queryClient.invalidateQueries({
+                    queryKey: ["all-event-members-list-query"],
+                });  
+                toast.success(`New ${data.newMembers.length} Members Added successfully`);
+                onCancelandReset();
+
+            }    
         }
     });
 

@@ -25,17 +25,21 @@ import {
 
 import { cn } from "@/lib/utils";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
+import SkippedMemberModal from "../modals/skipped-member-modal";
 
 type Props = {
     id: number;
 };
 
 const MemberTable = ({ id }: Props) => {
+
     const [globalFilter, setGlobalFilter] = useState<string>("");
 
     const [createMember, setCreateMember] = useState(false);
 
     const [onImportModal, setOnImportModal] = useState(false);
+
+    const [onSkippedMemberModal,setOnSkippedMemberModal] = useState(false)
 
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
     const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
@@ -69,9 +73,14 @@ const MemberTable = ({ id }: Props) => {
                 />
                 <ImportFileModal
                     id={id}
+                    onOpenSkippedModal={(state) => setOnSkippedMemberModal(state)}
                     state={onImportModal}
                     onClose={(state) => setOnImportModal(state)}
-                ></ImportFileModal>
+                />
+                <SkippedMemberModal
+                  state={onSkippedMemberModal}
+                  onClose={(state) => setOnSkippedMemberModal(state)}
+                />
                 <div className="flex items-center gap-x-4 text-muted-foreground">
                     <div className="relative">
                         <SearchIcon className="absolute  w-4 h-auto top-3 left-2" />

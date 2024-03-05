@@ -1,47 +1,21 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CalendarIcon, Loader2, Rows } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-   Form,
-   FormControl,
-   FormField,
-   FormItem,
-   FormLabel,
-   FormMessage,
-} from "@/components/ui/form";
-import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { EventType, gender } from "@prisma/client";
+
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
-import useImagePick from "@/hooks/use-image-pick";
-import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
-import ImagePick from "@/components/image-pick";
-import { v4 as uuid, v4 } from "uuid";
-import { createMemberWithUploadSchema, memberEmailSchema } from "@/validation-schema/member";
+
 import { createManyMember, createMember } from "@/hooks/api-hooks/member-api-hook";
 import { read, utils, writeFile } from "xlsx";
 import { importCSVSchema } from "@/validation-schema/import-csv";
 import { TMember } from "@/types";
-
+import useSkippedStore from "@/stores/skipped-members-store";
 type Props = {
    state: boolean;
+   onOpenSkippedModal:(state:boolean)=> void;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
    id:number
@@ -49,8 +23,9 @@ type Props = {
 
 export type TImportSchema = z.infer<typeof importCSVSchema>;
 
-const ImportFileModal = ({ state, onClose, onCancel,id }: Props) => {
+const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Props) => {
    const [Members, setMembers] = useState<TMember[] | any>([]);
+
 
    const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files;
@@ -72,7 +47,11 @@ const ImportFileModal = ({ state, onClose, onCancel,id }: Props) => {
      onClose(false)
      setMembers([])
     }
-    const createManyMemberMutation = createManyMember({onCancelandReset}) 
+    const onOpenSkippedMember=()=>{
+      onOpenSkippedModal(true)
+    }
+
+    const createManyMemberMutation = createManyMember({onCancelandReset,onOpenSkippedMember}) 
    const isLoading = createManyMemberMutation.isPending;
 
    const onSubmit = (e: any) => {
