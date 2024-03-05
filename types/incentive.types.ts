@@ -1,5 +1,6 @@
 import { IncentiveAssigned, Incentives } from "@prisma/client";
 import { TUser, TUserMinimalInfo } from "./user.types";
+import { TIncentiveAssigned } from "./incentive-assigned.types";
 
 export type TIncentive = Incentives;
 
@@ -26,8 +27,6 @@ export type TListOfAssigneesWithAssistCount = {
     incentiveId: number;
     assignedQuantity: number;
 };
-
-export type TIncentiveAssigned = IncentiveAssigned;
 
 export type TIncentiveMinimalInfo = {
     id: number;
