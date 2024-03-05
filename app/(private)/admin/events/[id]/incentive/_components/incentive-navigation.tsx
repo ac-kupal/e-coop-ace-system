@@ -25,8 +25,8 @@ const incentiveRoutes = [
         ),
     },
     {
-        name: "Claims Assist",
-        path: "claims",
+        name: "Claims Masterlist",
+        path: "claims-list",
         Icon: (
             <div className="p-1 bg-orange-400 text-white rounded-lg">
                 <HandCoins className="size-4" />

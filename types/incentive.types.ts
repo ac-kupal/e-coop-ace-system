@@ -28,3 +28,8 @@ export type TListOfAssigneesWithAssistCount = {
 };
 
 export type TIncentiveAssigned = IncentiveAssigned;
+
+export type TIncentiveMinimalInfo = {
+    id: number;
+    itemName: string;
+}

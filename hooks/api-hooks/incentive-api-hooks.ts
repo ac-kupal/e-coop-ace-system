@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
     TIncentiveAssigned,
+    TIncentiveClaimsWithIncentiveAndAssistedBy,
     TIncentiveClaimsWithIncentiveAndClaimAssistance,
     TIncentiveWithClaimAndAssignedCount,
     TListOfAssigneesWithAssistCount,
@@ -225,4 +226,23 @@ export const useCreateClaimAssistance = (eventId : number, onCreate : () => void
     })
 
     return { savedEntry, saveClaimEntries, isSavingClaim }
+}
+
+export const useClaimsMasterList = (eventId : number ) => {
+    const { data : claimList, refetch, isFetching, isError, isLoading } = useQuery<TIncentiveClaimsWithIncentiveAndAssistedBy[], string>({
+        queryKey : ["claims-master-list"],
+        queryFn : async () => {
+            try{
+                const request = await axios.get(`/api/v1/admin/event/${eventId}/incentives/claim`)
+                return request.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error("Failed to load claims master list", { action : { label : "try again", onClick : () => refetch() }});
+                throw errorMessage;
+            }
+        },
+        initialData : []
+    })
+
+    return { claimList, refetch, isFetching, isError, isLoading }
 }

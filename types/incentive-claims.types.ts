@@ -1,10 +1,26 @@
 import { IncentiveClaims } from "@prisma/client";
-import { TIncentive } from "./incentive.types";
+import { TIncentive, TIncentiveMinimalInfo } from "./incentive.types";
 import { TIncentiveAssignedWithUserMinimalInfo } from "./incentive-assigned.types";
+import { TUserMinimalInfo } from "./user.types";
+import { TMemberAttendeeMinimalInfo } from "./member-attendees.types";
 
 export type TIncentiveClaims = IncentiveClaims;
 
 export type TIncentiveClaimsWithIncentiveAndClaimAssistance = TIncentiveClaims & {
     assigned : TIncentiveAssignedWithUserMinimalInfo | null,
     incentive : TIncentive 
+}
+
+export type TIncentiveClaimsMinimalInfo = {
+    id: number;
+    eventId: number;
+    eventAttendeeId: string;
+    createdAt: Date;
+    eventAttendee: TMemberAttendeeMinimalInfo;
+}
+
+export type TIncentiveClaimsWithIncentiveAndAssistedBy = TIncentiveClaimsMinimalInfo & {
+    eventAttendee : TMemberAttendeeMinimalInfo,
+    incentive: TIncentiveMinimalInfo,
+    assistedBy : TUserMinimalInfo | null
 }
