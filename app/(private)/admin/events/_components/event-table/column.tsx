@@ -136,7 +136,7 @@ const ViewEventQr = ( { eventWithElection } : { eventWithElection : TEventWithEl
    const { onOpen } = useInfoModal(); 
    const { origin }= useOrigin();
 
-    const eventUrl = `${origin}/events/${eventWithElection.id}`
+    const eventUrl = `${origin}/events/${eventWithElection.id}/register`
 
     return (
          <Button onClick={()=> onOpen({
