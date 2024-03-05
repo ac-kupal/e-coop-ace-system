@@ -67,7 +67,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
    }, [memberForm,member]);
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
-      initialImageURL: !member.picture ? member.picture : memberForm.getValues("picture") ,
+      initialImageURL: !member.picture ?  memberForm.getValues("picture") : member.picture ,
       maxOptimizedSizeMB: 0.5,
       maxWidthOrHeight: 300,
    });
