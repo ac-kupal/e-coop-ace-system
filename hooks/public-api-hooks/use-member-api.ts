@@ -7,8 +7,9 @@ import { handleAxiosErrorMessage } from "@/utils";
 import { attendeeRegisterFormSchema, voterPbSearchSchema } from "@/validation-schema/event-registration-voting";
 import { TMemberAttendeesMinimalInfo } from "@/types";
 
-export const useSearchMemberAttendee = (eventId : string | number, onFound? : (member : TMemberAttendeesMinimalInfo) => void ) => {
+export const useSearchMemberAttendee = (eventId : number, onFound? : (member : TMemberAttendeesMinimalInfo) => void ) => {
     const {
+        data : member,
         isPending,
         mutate: searchMember,
         isError,
@@ -30,7 +31,7 @@ export const useSearchMemberAttendee = (eventId : string | number, onFound? : (m
         },
     });
 
-    return { searchMember, isPending, isError, error }
+    return { member, searchMember, isPending, isError, error }
 };
 
 export const useRegisterMember = (eventId: number, onRegister: () => void) => {

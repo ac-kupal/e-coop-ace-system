@@ -1,10 +1,13 @@
-import db from "@/lib/database";
-import { eventIdSchema } from "@/validation-schema/commons";
 import React from "react";
-import InvalidElection from "../../../_components/invalid-prompt";
-import { CheckIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import db from "@/lib/database";
+
+import { CheckIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import InvalidElection from "@/components/invalid-prompt";
+
+import { eventIdSchema } from "@/validation-schema/commons";
 
 type Props = {
   params: { id: number };

@@ -4,7 +4,7 @@ import { isPast, isSameDay } from "date-fns";
 
 import Attendance from "./attendance";
 import LoadingSpinner from "@/components/loading-spinner";
-import InvalidPrompt from "../../_components/invalid-prompt";
+import InvalidPrompt from "@/components/invalid-prompt";
 
 import { useEvent } from "@/hooks/public-api-hooks/use-events-api";
 

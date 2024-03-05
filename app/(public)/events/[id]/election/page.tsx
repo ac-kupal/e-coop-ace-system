@@ -1,8 +1,6 @@
 import React from "react";
 
-import ValidateVoter from "./_components/validate-voter";
-import { eventIdSchema } from "@/validation-schema/commons";
-import InvalidElection from "../_components/invalid-prompt";
+import InvalidElection from "@/components/invalid-prompt";
 import { eventIdParamSchema } from "@/validation-schema/api-params";
 import ElectionHome from "./_components/election-home";
 

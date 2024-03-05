@@ -3,7 +3,7 @@ import React from 'react'
 
 import VoteWindow from './voting/vote-window'
 import LoadingSpinner from '@/components/loading-spinner'
-import InvalidPrompt from '../../../_components/invalid-prompt'
+import InvalidPrompt from '@/components/invalid-prompt'
 import { useElectionWithEventAndPositionsAndCandidates } from '@/hooks/public-api-hooks/use-election-api'
 
 type Props = {

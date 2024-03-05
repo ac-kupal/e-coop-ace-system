@@ -1,7 +1,7 @@
 import React from "react";
 
 import RegisterHome from "./_components/register-home";
-import InvalidPrompt from "../_components/invalid-prompt";
+import InvalidPrompt from "@/components/invalid-prompt";
 
 import { eventIdParamSchema } from "@/validation-schema/api-params";
 

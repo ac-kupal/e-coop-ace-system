@@ -3,7 +3,7 @@ import React from 'react'
 import LoadingSpinner from '@/components/loading-spinner'
 import { useElection } from '@/hooks/public-api-hooks/use-election-api'
 import ValidateVoter from './validate-voter'
-import InvalidPrompt from '../../_components/invalid-prompt'
+import InvalidPrompt from '@/components/invalid-prompt'
 
 type Props = {
     eventId : number

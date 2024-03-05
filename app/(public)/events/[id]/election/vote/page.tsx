@@ -1,7 +1,7 @@
 import React from "react";
 
 import VoteWindow from "./_components/voting/vote-window";
-import InvalidElection from "../../_components/invalid-prompt";
+import InvalidElection from "@/components/invalid-prompt";
 
 import { eventIdSchema } from "@/validation-schema/commons";
 import VoteHome from "./_components/vote-home";

@@ -1,24 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import VoteHeader from "./vote-header";
 import VoteSummary from "./vote-summary";
+import VoteReminder from "./vote-reminder";
 import CandidateList from "./candidate-list";
 import VoteNavControl from "./vote-nav-control";
+import InvalidPrompt from "@/components/invalid-prompt";
 import OnlyLandscape from "@/components/only-landscape";
 import LoadingSpinner from "@/components/loading-spinner";
 
-import { useCastVote, loadVoter } from "@/hooks/public-api-hooks/use-vote-api";
 
-import {
-    TCandidatewithPosition,
-    TElectionWithEventWithPositionAndCandidates,
-} from "@/types";
-import { useRouter } from "next/navigation";
-import InvalidPrompt from "../../../../_components/invalid-prompt";
-import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useInfoModal } from "@/stores/use-info-modal-store";
-import VoteReminder from "./vote-reminder";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { useCastVote, loadVoter } from "@/hooks/public-api-hooks/use-vote-api";
+import { TCandidatewithPosition, TElectionWithEventWithPositionAndCandidates } from "@/types";
 
 type Props = {
     election: TElectionWithEventWithPositionAndCandidates;

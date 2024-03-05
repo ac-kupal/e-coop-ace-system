@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 
 import VoteButton from "./vote-button";
-import InvalidPrompt from "./invalid-prompt";
+import InvalidPrompt from "@/components/invalid-prompt";
 import DisplayEventQRLink from "./displayed-qr";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/loading-spinner";

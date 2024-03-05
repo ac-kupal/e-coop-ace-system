@@ -5,7 +5,7 @@ import db from "@/lib/database";
 import { CheckCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import InvalidPrompt from "../../_components/invalid-prompt";
+import InvalidPrompt from "@/components/invalid-prompt";
 
 type Props = {
     params: { id: string };
