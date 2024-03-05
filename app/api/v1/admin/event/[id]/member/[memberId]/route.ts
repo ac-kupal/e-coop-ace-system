@@ -1,6 +1,6 @@
 import { routeErrorHandler } from "@/errors/route-error-handler"
 import { currentUserOrThrowAuthError } from "@/lib/auth"
-import { createMemberSchema } from "@/validation-schema/member"
+import { createMemberSchema, createMemberWithUploadSchema } from "@/validation-schema/member"
 import { NextRequest, NextResponse } from "next/server"
 import db from "@/lib/database"
 type TParams = { params: { id: number, memberId:string } };
@@ -20,7 +20,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
  export const PATCH = async (req: NextRequest,{params}:TParams) => {
   try {
      const data  = await req.json();
-     createMemberSchema.parse(data)
+     createMemberWithUploadSchema.parse(data)
      const user = await currentUserOrThrowAuthError()
      const memberData = {...data,updatedBy:user.id}
      const updatedMember = await db.eventAttendees.update({where:{id:params.memberId},data:memberData})

@@ -117,8 +117,7 @@ export const updateMemberSchema = z.object({
       .string({
          required_error: "contact field is required",
          invalid_type_error: "Invalid contact data type",
-      })
-      .min(11, "contact" + commonFieldErrorsMinimum.required_error),
+      }).min(11, "contact number must be 11 characters"),
    eventId: z.coerce
       .number({
          required_error: "event field is required",

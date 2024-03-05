@@ -48,13 +48,6 @@ type Props = {
 export type createTMember = z.infer<typeof createMemberWithUploadSchema>;
 
 const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
-   
-
-   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
-      initialImageURL: !member.picture ? "/images/default.png" : member.picture,
-      maxOptimizedSizeMB: 0.5,
-      maxWidthOrHeight: 300,
-   });
 
    const memberForm = useForm<createTMember>({
       resolver: zodResolver(createMemberWithUploadSchema),
@@ -72,6 +65,14 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
       memberForm.setValue("emailAddress", member.emailAddress);
       memberForm.setValue("eventId", member.eventId);
    }, [memberForm,member]);
+
+   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
+      initialImageURL: !member.picture ? member.picture : memberForm.getValues("picture") ,
+      maxOptimizedSizeMB: 0.5,
+      maxWidthOrHeight: 300,
+   });
+
+   console.log(member.picture)
 
    useEffect(() => {
       defaultValues();
@@ -92,9 +93,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
    const uploadImage = onUploadImage();
 
 
-
    const onSubmit = async (formValues: createTMember) => {
-      console.log(member.picture)
       try {
          if (!imageFile) {
             updateMemberMutation.mutate({

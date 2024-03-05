@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { TCreateMember, TMember, TMemberAttendeesWithRegistrationAssistance } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import useSkippedStore from "@/stores/skipped-members-store";
+import { useRouter } from "next/navigation";
 
 export const getAllEventMembers = (eventId: number) => {
     const positions = useQuery<TMember[], string>({
@@ -105,6 +106,7 @@ export const createMember = ({ onCancelandReset }: Props) => {
 
 export const updateMember = ({ onCancelandReset }: Props) => {
     const queryClient = useQueryClient();
+    const router = useRouter()
     const updateMember = useMutation<any,Error,  { member: TCreateMember, memberId: string, eventId:number }
     >({
         mutationKey: ["update-member-query"],
@@ -130,6 +132,7 @@ export const updateMember = ({ onCancelandReset }: Props) => {
             });
             toast.success("Member updated successfully");
             onCancelandReset();
+            router.refresh()
         }
     });
 
