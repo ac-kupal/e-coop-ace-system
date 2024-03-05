@@ -1,5 +1,5 @@
 import { Position } from "@prisma/client";
-import { TCandidatewithPosition } from ".";
+import { TCandidate, TCandidatewithPosition } from ".";
 
 export type TCreatePosition = {
      positionName:string,
@@ -14,7 +14,16 @@ export type TUpdatePosition = {
 }
 
 export type TPosition = Position
+
 export type TPositionWithEventID = Position & {eventId:number}
+
+export type TPositionWithCandidates= Position & { candidates : TCandidate[] }
+
+export type  BarGraphDataTypes = {
+     positionName:string,
+     dataSets: number[];
+     candidatesName: string[];
+}
 
 // used in public event/[]/election/vote
 export type TPositionWithCandidatesAndPosition = Position & { candidates : TCandidatewithPosition[] }

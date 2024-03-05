@@ -1,5 +1,5 @@
 
-import { Candidate, Position } from "@prisma/client"
+import { Candidate, Position, Votes } from "@prisma/client"
 
 export type TCreateCandidate = {
     firstName:string,
@@ -13,5 +13,7 @@ export type TCreateCandidate = {
 export type TCandidate = Candidate
 
 export type TCandidateWithEventID = Candidate & {position?:Position}  & {eventId:number} 
+
+export type TCandidatewithVotes = TCandidate & {votes:Votes[]}
 
 export type TCandidatewithPosition = Candidate & {position:Position} 
