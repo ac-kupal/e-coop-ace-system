@@ -7,6 +7,7 @@ import {
    CardTitle,
 } from "@/components/ui/card";
 import { getMembersQuorum } from "@/hooks/api-hooks/member-api-hook";
+import { getPositionVotesTotal } from "@/hooks/api-hooks/vote-api-hooks";
 import { Sigma, UsersRound, Vote } from "lucide-react";
 import React from "react";
 type TParams = {
@@ -19,6 +20,8 @@ const QuorumSection = ({ params }: TParams) => {
 
    const percentageAttendanceTotal =(Number(members?.totalIsRegistered) / Number(members?.totalAttendees)) *100;
    const percentageVotersTotal =(Number(members?.totalMembersVoted) / Number(members?.totalAttendees)) *100;
+
+   console.log()
 
    return (
       <div className="w-full flex justify-start space-x-10 p-5">
@@ -35,7 +38,7 @@ const QuorumSection = ({ params }: TParams) => {
                </CardHeader>
                <CardContent>
                   <h1 className="font-bold text-[3rem] text-[#22C55E]">
-                     {Math.trunc(percentageAttendanceTotal)}%
+                     {Math.trunc(isNaN(percentageAttendanceTotal) ? 0 : percentageAttendanceTotal)}%
                   </h1>
                   <CardDescription className="text-md">
                      {members?.totalIsRegistered + " (Total registered)"}{" / "}{members?.totalAttendees + " members"}
@@ -56,7 +59,7 @@ const QuorumSection = ({ params }: TParams) => {
                </CardHeader>
                <CardContent>
                   <h1 className="font-bold text-[3rem] text-[#22C55E]">
-                     {Math.trunc(percentageVotersTotal)}%
+                  {Math.trunc(isNaN(percentageVotersTotal) ? 0 : percentageVotersTotal)}%
                   </h1>
                   <CardDescription className="text-md">
                      {members?.totalMembersVoted + "(Total voters)"}{" / "}{members?.totalAttendees + " members"}
