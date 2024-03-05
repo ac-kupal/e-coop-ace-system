@@ -8,29 +8,3 @@ import { createMemberSchema } from "@/validation-schema/member";
 type TParams = { params: { id: string } };
 
 
-export const DELETE = async function name(req:NextRequest,{params}:TParams) {
-     try {
-      const memberId = params.id
-      const deletePosition = await db.eventAttendees.delete({where:{id:memberId}})
-      return NextResponse.json(deletePosition)     
-      } catch (error) {
-        return routeErrorHandler(error,req)
-      }
- }
-
-
- export const PATCH = async (req: NextRequest,{params}:TParams) => {
-  try {
-     const data  = await req.json();
-     console.log(data)
-     createMemberSchema.parse(data)
-     const user = await currentUserOrThrowAuthError()
-     const memberData = {...data,updatedBy:user.id}
-     const updatedMember = await db.eventAttendees.update({where:{id:params.id},data:memberData})
-     return NextResponse.json(updatedMember)
-  } catch (e) {
-     console.log(e)
-     return routeErrorHandler(e, req);
-  }
-};
- 

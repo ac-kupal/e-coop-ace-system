@@ -49,6 +49,7 @@ export type createTMember = z.infer<typeof createMemberWithUploadSchema>;
 
 const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
    
+
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: !member.picture ? "/images/default.png" : member.picture,
       maxOptimizedSizeMB: 0.5,
@@ -70,11 +71,11 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
       memberForm.setValue("contact", member.contact);
       memberForm.setValue("emailAddress", member.emailAddress);
       memberForm.setValue("eventId", member.eventId);
-   }, [memberForm]);
+   }, [memberForm,member]);
 
    useEffect(() => {
       defaultValues();
-   }, [memberForm, member, defaultValues]);
+   }, [memberForm,member]);
 
    const reset = () => {
       memberForm.reset();
@@ -89,7 +90,9 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
    const updateMemberMutation = updateMember({ onCancelandReset });
 
    const uploadImage = onUploadImage();
-   
+
+
+
    const onSubmit = async (formValues: createTMember) => {
       console.log(member.picture)
       try {
@@ -100,6 +103,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                   picture: member.picture,
                },
                memberId: member.id,
+               eventId:member.eventId
             });
          } else {
             const image = await uploadImage.mutateAsync({
@@ -114,6 +118,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                   picture: !image ? "/images/default.png" : image,
                },
                memberId: member.id,
+               eventId:member.eventId
             });
          }
          resetPicker();

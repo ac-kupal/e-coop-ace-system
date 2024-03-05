@@ -145,7 +145,8 @@ const Actions = ({ member }: { member: TMember }) => {
                                     "Are you sure to delete this member permanently? This cannot be undone.",
                                 onConfirm: () => {
                                     deleteOperation.mutate({
-                                        eventId: member.id,
+                                        eventId: member.eventId,
+                                        memberId:member.id
                                     });
                                 },
                             })

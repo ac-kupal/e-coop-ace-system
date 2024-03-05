@@ -41,12 +41,12 @@ export const getMembers = () => {
 
 export const deleteMember = () => {
     const queryClient = useQueryClient();
-    const deleteMemberMutation = useMutation<any, Error, { eventId: string }>({
+    const deleteMemberMutation = useMutation<any, Error, { eventId: number,memberId:string }>({
         mutationKey: ["delete-member-query"],
-        mutationFn: async ({ eventId }) => {
+        mutationFn: async ({ eventId,memberId }) => {
             try {
                 const response = await axios.delete(
-                    `/api/v1/member/${eventId}`
+                    `/api/v1/admin/event/${eventId}/member/${memberId}`
                 );
                 queryClient.invalidateQueries({
                     queryKey: ["all-event-members-list-query"],
@@ -68,32 +68,34 @@ type Props = {
 
 export const createMember = ({ onCancelandReset }: Props) => {
     const queryClient = useQueryClient();
-    const addMember = useMutation<any, Error, { member: TCreateMember }>({
-        mutationKey: ["delete-member-query"],
-        mutationFn: async ({ member }) => {
+    const addMember = useMutation<any, Error, { member: TCreateMember,eventId:number }>({
+        mutationKey: ["create-member-query"],
+        mutationFn: async ({ member,eventId }) => {
             try {
                 const newBirthday = moment(member.birthday).format(
                     "YYYY-MM-DD HH:mm:ss"
                 );
                 const newMember = { ...member, birthday: newBirthday };
-                const response = await axios.post(`/api/v1/member/`, newMember);
-                queryClient.invalidateQueries({
-                    queryKey: ["all-event-members-list-query"],
-                });
-                toast.success("Member added successfully");
-                onCancelandReset();
+                const response = await axios.post(`/api/v1/admin/event/${eventId}/member/`, newMember);
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage, {
                     action: {
                         label: "try agian",
-                        onClick: () => addMember.mutate({ member }),
+                        onClick: () => addMember.mutate({ member,eventId }),
                     },
                 });
                 throw errorMessage;
             }
         },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({
+                queryKey: ["all-event-members-list-query"],
+            });
+            toast.success("Member added successfully");
+            onCancelandReset();
+        }
     });
 
     return addMember;
@@ -101,23 +103,12 @@ export const createMember = ({ onCancelandReset }: Props) => {
 
 export const updateMember = ({ onCancelandReset }: Props) => {
     const queryClient = useQueryClient();
-    const updateMember = useMutation<
-        any,
-        Error,
-        { member: TCreateMember; memberId: string }
+    const updateMember = useMutation<any,Error,  { member: TCreateMember, memberId: string, eventId:number }
     >({
-        mutationKey: ["delete-member-query"],
-        mutationFn: async ({ member, memberId }) => {
+        mutationKey: ["update-member-query"],
+        mutationFn: async ({ member, memberId, eventId }) => {
             try {
-                const response = await axios.patch(
-                    `/api/v1/member/${memberId}`,
-                    member
-                );
-                queryClient.invalidateQueries({
-                    queryKey: ["all-event-members-list-query"],
-                });
-                toast.success("Member updated successfully");
-                onCancelandReset();
+                const response = await axios.patch(`/api/v1/admin/event/${eventId}/member/${memberId}`,member);
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -125,12 +116,19 @@ export const updateMember = ({ onCancelandReset }: Props) => {
                     action: {
                         label: "try agian",
                         onClick: () =>
-                            updateMember.mutate({ member, memberId }),
+                            updateMember.mutate({ member, memberId,eventId }),
                     },
                 });
                 throw errorMessage;
             }
         },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({
+                queryKey: ["all-event-members-list-query"],
+            });
+            toast.success("Member updated successfully");
+            onCancelandReset();
+        }
     });
 
     return updateMember;
@@ -150,11 +148,6 @@ export const createManyMember = ({ onCancelandReset }: Props) => {
                     `/api/v1/member/bulk-create/${eventId}`,
                     member
                 );
-                queryClient.invalidateQueries({
-                    queryKey: ["all-event-members-list-query"],
-                });
-                toast.success("Member updated successfully");
-                onCancelandReset();
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -167,6 +160,13 @@ export const createManyMember = ({ onCancelandReset }: Props) => {
                 throw errorMessage;
             }
         },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({
+                queryKey: ["all-event-members-list-query"],
+            });
+            toast.success("Members Added successfully");
+            onCancelandReset();
+        }
     });
 
     return addMember;

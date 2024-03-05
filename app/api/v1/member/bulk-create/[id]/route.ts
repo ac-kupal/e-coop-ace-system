@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
       const modifiedMembersData = membersData.map(
          (member:any) => {
             const date = new Date()
-            console.log(member.birthday === undefined)
+            console.log(member.passbookNumber === undefined)
             return {
                ...member,
                firstName:member.firstName === undefined ? "" : member.firstName,

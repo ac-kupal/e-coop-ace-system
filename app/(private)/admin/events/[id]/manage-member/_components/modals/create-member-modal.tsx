@@ -107,6 +107,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                   ...formValues,
                   picture: "/images/default.png",
                },
+               eventId
             });
          } else {
             const image = await uploadImage.mutateAsync({
@@ -119,6 +120,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                   ...formValues,
                   picture: !image ? "/images/default.png" : image,
                },
+               eventId
             });
          }
          resetPicker();

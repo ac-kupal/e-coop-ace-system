@@ -28,5 +28,4 @@ export type TCreateManyMember = {
 }
 
 
-
 export  type TMember = EventAttendees
