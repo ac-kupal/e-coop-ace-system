@@ -24,7 +24,7 @@ export type TRoute = {
     allowedRole: Role[];
 };
 
-export type TElectionRoute = {
+export type TNavListRoute = {
     icon: ReactNode | ReactElement;
     name: string;
     path: string;

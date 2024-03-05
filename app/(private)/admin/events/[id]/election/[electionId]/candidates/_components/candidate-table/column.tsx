@@ -12,6 +12,22 @@ import UpdateCandidateModal from "../modals/update-candidate-modal";
 import { getUniquePosition } from "@/hooks/api-hooks/position-api-hooks";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 
+
+
+
+
+
+
+const getPositionName = ( { candidate } : {candidate : TCandidateWithEventID } ) => {
+   console.log(candidate)
+    return (
+      <div className=""> {candidate.position?.positionName}</div>
+    )
+}
+
+
+
+
 const columns: ColumnDef<TCandidateWithEventID>[] = [
    {
       accessorKey: "id",
@@ -60,11 +76,7 @@ const columns: ColumnDef<TCandidateWithEventID>[] = [
          <DataTableColHeader column={column} title="position" />
       ),
       cell: ({ row }) => {
-         const params = {id:row.original.eventId, electionId:row.original.electionId, positionId:row.original.id}
-         const {positions,isLoading} = getUniquePosition(params)
-         return (
-            <div className=""> {positions?.positionName}</div>
-         )
+        return getPositionName({candidate:row.original})
       },
    },
    {

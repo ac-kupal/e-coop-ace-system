@@ -1,11 +1,11 @@
 "use client"
-import { TElectionRoute } from "@/types";
+import { TNavListRoute } from "@/types";
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 type Props = {
-   route: TElectionRoute;
+   route: TNavListRoute;
    params:{id:number,electionId:number}
 };
 

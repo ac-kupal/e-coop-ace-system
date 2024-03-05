@@ -35,6 +35,7 @@ const {data,isLoading,isError} = useQuery<TPosition>({
       queryKey: ["position-query"],
       queryFn: async () => {
          try {
+            console.log(params)
             const response = await axios.get(`/api/v1/admin/event/${params.id}/election/${params.electionId}/position/${params.positionId}`);
             return response.data;
          } catch (e) {

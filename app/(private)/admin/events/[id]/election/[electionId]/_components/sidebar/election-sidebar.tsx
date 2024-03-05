@@ -1,9 +1,9 @@
 import React from 'react'
-import { TElectionRoute } from '@/types'
+import {  TNavListRoute} from '@/types'
 import { LayoutDashboard, Users, Medal, Settings2, Combine } from 'lucide-react'
 import ElectionSideBarItems from './election-side-bar-item';
 
-export const ElectionRoutes: TElectionRoute[] = [
+export const SideBar:TNavListRoute [] = [
    {
       icon: <LayoutDashboard className="h-5 w-5" />,
       name: "DashBoard",
@@ -38,7 +38,7 @@ type Props = {
 const ElectionSideBar =({params}:Props ) => {
   return (
     <div className="flex flex-row lg:flex-col w-full h-16 py-2 lg:w-[220px] px-3 justify-evenly border border-[#0000000b]  gap-1 lg:gap-5 lg:py-10 bg-secondary  lg:min-h-screen  dark:bg-secondary/50 shadow lg:shadow-md  rounded-3xl lg:justify-start    ">
-    {ElectionRoutes.map((route:TElectionRoute, i) => (
+    {SideBar.map((route:TNavListRoute, i) => (
        <ElectionSideBarItems params={params} route={route} key={i} />
     ))}
  </div>

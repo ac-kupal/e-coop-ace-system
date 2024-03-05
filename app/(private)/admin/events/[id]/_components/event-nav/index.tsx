@@ -1,4 +1,4 @@
-import { TElectionRoute, TEventWithElection } from "@/types";
+import {  TEventWithElection, TNavListRoute } from "@/types";
 import {
     BaggageClaim,
     Gift,
@@ -9,7 +9,7 @@ import {
 import React from "react";
 import EventNavItems from "./event-nav-items";
 
-export const EventRoutes: TElectionRoute[] = [
+export const EventRoutes: TNavListRoute[] = [
     {
         icon: <Users className="size-5" />,
         name: "Members",
@@ -32,7 +32,7 @@ type Props = {
 };
 
 const EventNav = ({ event }: { event: TEventWithElection }) => {
-    const finalRoutes: TElectionRoute[] = [
+    const finalRoutes: TNavListRoute[] = [
         ...EventRoutes,
         ...(event.election
             ? [
@@ -47,7 +47,7 @@ const EventNav = ({ event }: { event: TEventWithElection }) => {
 
     return (
         <div className="flex space-x-1 w-full justify-evenly lg:justify-start ">
-            {finalRoutes.map((route: TElectionRoute, i) => {
+            {finalRoutes.map((route: TNavListRoute, i) => {
                 return <EventNavItems eventId={event.id} route={route} key={i} />;
             })}
         </div>

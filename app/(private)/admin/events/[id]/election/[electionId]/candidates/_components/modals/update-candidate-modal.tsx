@@ -82,6 +82,7 @@ const UpdateCandidateModal = ({
    const isLoading = updateCandidate.isPending;
    const uploadImage = onUploadImage();
 
+
    const isCandidateOnChange = candidateForm.watch().firstName === candidate.firstName && candidateForm.watch().lastName === candidate.lastName && Number(candidateForm.watch().positionId) === candidate.positionId && candidateForm.watch().picture === candidate.picture
 
 
@@ -162,31 +163,33 @@ const UpdateCandidateModal = ({
                   <FormField
                      control={candidateForm.control}
                      name="positionId"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Position </FormLabel>
-                           <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value.toString()}
-                           >
-                              <FormControl>
-                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select a position" />
-                                 </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                 {positions?.map((position) => {
-                                    return (
-                                          <SelectItem key={position.id} value={position.id.toString()}>
-                                             {position.positionName}
-                                          </SelectItem>
-                                    );
-                                 })}
-                              </SelectContent>
-                           </Select>
-                           <FormMessage />
-                        </FormItem>
-                     )}
+                     render={({ field }) => {
+                        return   (
+                           <FormItem>
+                              <FormLabel>Position </FormLabel>
+                              <Select
+                                 onValueChange={field.onChange}
+                                 defaultValue={field.value.toString()}
+                              >
+                                 <FormControl>
+                                    <SelectTrigger>
+                                       <SelectValue placeholder="Select a position" />
+                                    </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                    {positions?.map((position) => {
+                                       return (
+                                             <SelectItem key={position.id} value={position.id.toString()}>
+                                                {position.positionName}
+                                             </SelectItem>
+                                       );
+                                    })}
+                                 </SelectContent>
+                              </Select>
+                              <FormMessage />
+                           </FormItem>
+                        )
+                     } }
                   />
                    <FormField
                      control={candidateForm.control}

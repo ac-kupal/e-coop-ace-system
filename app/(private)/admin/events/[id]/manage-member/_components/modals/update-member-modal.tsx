@@ -238,7 +238,8 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                     <Input
                                        placeholder="enter contact"
                                        className="placeholder:text-foreground/40"
-                                       {...field}
+                                       value={field.value as any}
+                                        onChange={field.onChange}
                                     />
                                  </FormControl>
                                  <FormMessage />
@@ -277,7 +278,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                  <FormLabel>Gender </FormLabel>
                                  <Select
                                     onValueChange={field.onChange}
-                                    defaultValue={field.value}
+                                    defaultValue={field.value as any}
                                  >
                                     <FormControl>
                                        <SelectTrigger>

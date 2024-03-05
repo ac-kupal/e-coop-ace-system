@@ -20,7 +20,11 @@ export const GET =async (req:NextRequest,{params}:TParams)=>{
         where:{id:electionId},
         include:{
           positions:true,
-          candidates:true
+          candidates:{
+            include:{
+              position:true
+            }
+          }
         }
         })
        return NextResponse.json(getElection)

@@ -18,6 +18,7 @@ import columns from "./column";
 import CreateCandidateModal from "../modals/create-candidate-modal";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 import { TCandidateWithEventID, TCandidatewithPosition, TPosition } from "@/types";
+
 type Props = {
    params: { id: number; electionId: number };
    data: TCandidateWithEventID[];

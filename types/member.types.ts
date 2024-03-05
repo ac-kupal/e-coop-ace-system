@@ -18,11 +18,11 @@ export type TCreateManyMember = {
     firstName: string;
     middleName: string;
     lastName: string;
-    gender: $Enums.gender;
-    birthday: Date;
-    contact: string;
+    gender: $Enums.gender | null;
+    birthday: Date | null;
+    contact: string | null;
     picture: string | null;
-    eventId:number;
+    eventId?:number;
     emailAddress:string | null;
     createdBy:number,
 }

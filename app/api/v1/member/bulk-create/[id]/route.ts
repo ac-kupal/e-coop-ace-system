@@ -17,19 +17,23 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
       const modifiedMembersData = membersData.map(
          (member:any) => {
             const date = new Date()
+            console.log(member.birthday === undefined)
             return {
                ...member,
-               passbookNumber:member.passbookNumber === "" || null || undefined ? "" :member.passbookNumber,
+               firstName:member.firstName === undefined ? "" : member.firstName,
+               lastName:member.lastName === undefined ? "" : member.lastName,
+               middleName:member.middleName  ===  undefined? "" : member.middleName,
+               passbookNumber:member.passbookNumber ===  undefined ? "" :member.passbookNumber,
                createdBy: user.id,
-               birthday: ExcelDateToJSDate(member.birthday) === null || "" || undefined ? date : ExcelDateToJSDate(member.birthday),
+               birthday: member.birthday === undefined ? date : ExcelDateToJSDate(member.birthday),
                eventId: id,
-               middleName:member.middleName  === "" || null || undefined ? "" : member.middleName,
-               emailAddress: member.emailAddress  === "" || null || undefined ? "" : member.emailAddress,
-               contact: member.contact === "" || null || undefined ? "" : member.contact.toString(),
+               emailAddress: member.emailAddress  === undefined ? "toUpdate@gmail.com" : member.emailAddress,
+               contact: member.contact ===  undefined ? "" : member.contact.toString(),
                voteOtp: generateOTP(6),
             };
          }
       );
+      console.log(modifiedMembersData)
       modifiedMembersData.forEach((member:any) => {
          createManySchema.parse(member);
       });
