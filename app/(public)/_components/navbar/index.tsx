@@ -8,7 +8,7 @@ import { PartyPopper, QrCode } from "lucide-react";
 
 const routes :  TPublicNavItem[] = [
     { routeName : "Events", path : "/events", Icon : PartyPopper },
-    { routeName : "QRGen", path : "/qr-generator", Icon : QrCode }
+    // { routeName : "QRGen", path : "/qr-generator", Icon : QrCode }
 ]
 
 const NavBar = () => {

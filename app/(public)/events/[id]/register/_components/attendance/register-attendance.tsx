@@ -31,7 +31,7 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
 
     const { registeredMember, isPending, register, isError, error } =
         useRegisterMember(eventId, () => {
-            router.push(`/events/${eventId}/registered`);
+            router.push(`/events/${eventId}/register/registered`);
         });
 
     const form = useForm<z.infer<typeof attendeeRegisterFormSchema>>({

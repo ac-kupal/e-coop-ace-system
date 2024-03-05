@@ -11,9 +11,9 @@ const InvalidEvent = ({
   return (
     <div className="h-dvh w-dvw flex-col gap-y-4 flex items-center justify-center">
       <p>{message}</p>
-      <Button onClick={() => router.back()} variant="secondary">
+      {/* <Button onClick={() => router.back()} variant="secondary">
         Go Back
-      </Button>
+      </Button> */}
     </div>
   );
 };
