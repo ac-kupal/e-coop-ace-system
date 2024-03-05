@@ -72,7 +72,6 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
       maxWidthOrHeight: 300,
    });
 
-   console.log(member.picture)
 
    useEffect(() => {
       defaultValues();
