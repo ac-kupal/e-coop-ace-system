@@ -1,11 +1,17 @@
-import { Incentives } from "@prisma/client";
-import { TUserMinimalInfo } from "./user.types";
+import { IncentiveAssigned, Incentives } from "@prisma/client";
+import { TUser, TUserMinimalInfo } from "./user.types";
 
 export type TIncentive = Incentives;
 
 export type TIncentiveWithClaimAndAssignedCount = TIncentive & {
     _count: { claimed: number; assigned: number };
 };
+
+
+export type TUserWithAssignedIncentives = TUserMinimalInfo & {
+    assignedIncentive : TIncentiveAssigned[]
+}
+
 
 // used in incentive incentive assignee table
 export type TListOfAssigneesWithAssistCount = {
@@ -22,3 +28,5 @@ export type TListOfAssigneesWithAssistCount = {
     incentiveId: number;
     assignedQuantity: number;
 };
+
+export type TIncentiveAssigned = IncentiveAssigned

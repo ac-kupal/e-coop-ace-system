@@ -1,9 +1,8 @@
 "use client";
 import { toast } from "sonner";
-import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Copy, MenuIcon, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { Copy, MenuIcon, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/loading-spinner";
@@ -17,28 +16,41 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { TListOfAssigneesWithAssistCount } from "@/types";
-import { useDeleteIncentive } from "@/hooks/api-hooks/incentive-api-hooks";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { useRevokeAssignIncentive } from "@/hooks/api-hooks/incentive-api-hooks";
 import UserAvatar from "@/components/user-avatar";
 
-const Actions = ({
-    assignee,
-}: {
-    assignee: TListOfAssigneesWithAssistCount;
-}) => {
-    const [modal, setModal] = useState(false);
+const Actions = ({ assignee }: { assignee: TListOfAssigneesWithAssistCount;}) => {
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
+    const { onOpen } = useConfirmModal();
 
-    const { deleteIncentive, isPending } = useDeleteIncentive(
+    const { isDeleting, deleteAssignee } = useRevokeAssignIncentive(
         assignee.eventId,
+        assignee.incentiveId,
         assignee.id
     );
 
-    if (isPending)
-        return (
-            <LoadingSpinner className="h-4 text-foreground/70 animate-spin" />
-        );
+    return (
+        <>
+            {isDeleting ? (<LoadingSpinner />) : 
+            (
+                <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-xl text-sm"
+                    onClick={() => onOpen({
+                        title : "Revoke Incentive Assigment",
+                        description : "You are about to revoke this user from being assigned for this incentive. Are you sure to proceed?",
+                        onConfirm : () => deleteAssignee()
+                    })}
+                    disabled={isDeleting}
+                >
+                    Revoke
+                </Button>
+            )}
+        </>
+    );
 
     return (
         <>
@@ -78,7 +90,8 @@ const Actions = ({
                         }
                         className="px-2 gap-x-2 text-destructive"
                     >
-                        <Trash strokeWidth={2} className="h-4" /> Revoke Assignee
+                        <Trash strokeWidth={2} className="h-4" /> Revoke
+                        Assignee
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -104,7 +117,14 @@ const columns: ColumnDef<TListOfAssigneesWithAssistCount>[] = [
     //     ),
     // },
     {
-        id : "Id",
+        id: "action",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Actions" />
+        ),
+        cell: ({ row }) => <Actions assignee={row.original} />,
+    },
+    {
+        id: "Id",
         accessorKey: "id",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Assign ID" />
@@ -114,7 +134,7 @@ const columns: ColumnDef<TListOfAssigneesWithAssistCount>[] = [
         ),
     },
     {
-        id : "Item Name",
+        id: "Item Name",
         accessorKey: "incentive.itemName",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Incentive Item" />
@@ -124,7 +144,7 @@ const columns: ColumnDef<TListOfAssigneesWithAssistCount>[] = [
         ),
     },
     {
-        id : "User ID",
+        id: "User ID",
         accessorKey: "user.id",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="User ID" />
@@ -136,20 +156,24 @@ const columns: ColumnDef<TListOfAssigneesWithAssistCount>[] = [
         ),
     },
     {
-        id : "User Name",
+        id: "User Name",
         accessorKey: "user.name",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Assigned User" />
         ),
         cell: ({ row }) => (
             <div className="flex gap-x-2 items-center">
-                <UserAvatar className="size-7" src={row.original.user.picture as ''}  fallback={row.original.user.name.substring(0,2)}/>
+                <UserAvatar
+                    className="size-7"
+                    src={row.original.user.picture as ""}
+                    fallback={row.original.user.name.substring(0, 2)}
+                />
                 {row.original.user.name}
             </div>
         ),
     },
     {
-        id : "Assigned Quantity",
+        id: "Assigned Quantity",
         accessorKey: "assignedQuantity",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Assigned Quantity" />
@@ -159,7 +183,7 @@ const columns: ColumnDef<TListOfAssigneesWithAssistCount>[] = [
         ),
     },
     {
-        id : "Assisted Claims",
+        id: "Assisted Claims",
         accessorKey: "_count.claimsAssisted",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Assisted Claims" />
@@ -167,7 +191,7 @@ const columns: ColumnDef<TListOfAssigneesWithAssistCount>[] = [
         cell: ({ row }) => (
             <div className="">{row.original._count.claimsAssisted}</div>
         ),
-    }
+    },
 ];
 
 export default columns;

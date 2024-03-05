@@ -47,6 +47,6 @@ export const validateBirthdayString = z.string().refine((value) => {
 }, "Invalid date format");
 
 export const userIdSchema = z.coerce.number({
-    invalid_type_error: "id is invalid",
-    required_error: "id is required",
+    invalid_type_error: "user is invalid",
+    required_error: "user is required",
 });

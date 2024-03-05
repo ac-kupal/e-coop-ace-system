@@ -22,7 +22,6 @@ export const updateIncentiveAssignedSchema = z.object({
    assignedQuantity : assignedQuantitySchema
 })
 
-
 // for claimings
 export const createIncentiveClaimAssistSchema = z.object({
     incentiveAssignId : incentiveAssignIdParamSchema,

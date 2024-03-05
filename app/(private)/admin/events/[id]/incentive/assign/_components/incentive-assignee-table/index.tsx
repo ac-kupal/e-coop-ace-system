@@ -8,18 +8,16 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 
-import { Plus, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 
 import columns from "./column";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import { incentiveListWithClaimCount, useIncentiveListAssignee } from "@/hooks/api-hooks/incentive-api-hooks";
+import { useIncentiveListAssignee } from "@/hooks/api-hooks/incentive-api-hooks";
 
 const IncentiveAssigneeTable = ({ eventId } : { eventId : number }) => {
-    const [createModal, setCreateModal] = useState(false)
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
@@ -81,14 +79,6 @@ const IncentiveAssigneeTable = ({ eventId } : { eventId : number }) => {
                 </div>
                 <div className="flex items-center gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />
-                    <Button
-                        size="sm"
-                        className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem] bg-[#5B9381] hover:bg-[#5B9381]/70 "
-                        onClick={() => setCreateModal(true)}
-                    >
-                        Add Assignee
-                        <Plus className="w-4 h-4" />
-                    </Button>
                 </div>
             </div>
             <DataTable className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl" isError={isError} isLoading={isLoading || isFetching} table={table} />

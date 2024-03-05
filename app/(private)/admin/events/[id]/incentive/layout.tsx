@@ -9,7 +9,7 @@ type Props = {
 const IncentiveLayout
  = ({ children, params }: Props) => {
   return (
-    <div className="flex flex-col gap-y-4 w-full">
+    <div className="flex flex-col w-full">
         <IncentiveNavigation eventId={params.id} />
         { children }
     </div>

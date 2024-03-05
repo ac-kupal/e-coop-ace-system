@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Copy, MenuIcon, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { Copy, MenuIcon, MoreHorizontal, Pencil, Trash, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/loading-spinner";
@@ -21,13 +21,11 @@ import {
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { TIncentiveWithClaimAndAssignedCount } from "@/types";
 import { useDeleteIncentive } from "@/hooks/api-hooks/incentive-api-hooks";
+import AssignModal from "../modals/assign-modal";
 
-const Actions = ({
-    incentive,
-}: {
-    incentive: TIncentiveWithClaimAndAssignedCount;
-}) => {
+const Actions = ({ incentive }: { incentive: TIncentiveWithClaimAndAssignedCount; }) => {
     const [modal, setModal] = useState(false);
+    const [assign, setAssign] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     const { deleteIncentive, isPending } = useDeleteIncentive(
@@ -47,6 +45,7 @@ const Actions = ({
                 onClose={() => setModal(false)}
                 incentive={incentive}
             />
+            <AssignModal state={assign} eventId={incentive.eventId} incentive={incentive} onClose={(state) => setAssign(state)} />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="w-8 h-8 p-0">
@@ -76,6 +75,12 @@ const Actions = ({
                     >
                         <Pencil strokeWidth={2} className="h-4" /> Edit
                         Incentive
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => setAssign(true)}
+                        className="px-2 gap-x-2"
+                    >
+                        <UserPlus strokeWidth={2} className="h-4" /> Assign
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem

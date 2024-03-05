@@ -15,6 +15,9 @@ export const GET = async (
   try {
     await currentUserOrThrowAuthError();
     const eventId = eventIdSchema.parse(params.id);
+    const searchParams = new URL(req.url).searchParams
+
+    const includeAssignees = searchParams.get("withAssignee") === "true"
 
     const claimsWithClaimAndAssignedCount = await db.incentives.findMany({
       where: { eventId },
@@ -22,18 +25,18 @@ export const GET = async (
         _count: {
           select: { claimed : true, assigned : true }, 
         },
-        // assigned : {
-        //     include : {
-        //         user : {
-        //             select : {
-        //                 id : true,
-        //                 picture : true,
-        //                 name : true,
-        //                 email : true,
-        //             }
-        //         }
-        //     }
-        // }
+        assigned : includeAssignees ? {
+            include : {
+                user : {
+                    select : {
+                        id : true,
+                        picture : true,
+                        name : true,
+                        email : true,
+                    }
+                }
+            }
+        } : false
       },
     });
 
