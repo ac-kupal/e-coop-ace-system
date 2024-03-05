@@ -71,7 +71,7 @@ const MemberSearch = ({ onFound, onSearchAgain, eventId }: Props) => {
                             message={error}
                         />
                     )}
-                    <Button disabled={disabled} className="w-full">
+                    <Button disabled={disabled} className="w-full flex gap-x-2">
                         {isPending && <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />}
                         Get Passbook QR
                     </Button>

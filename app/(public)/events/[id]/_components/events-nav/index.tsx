@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-import { Home, Menu, NotebookPen, QrCode, Vote } from "lucide-react";
+import { Gift, Home, Menu, NotebookPen, QrCode, Vote } from "lucide-react";
 import RouteItem from "./route-item";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import {
@@ -22,7 +22,7 @@ const EventsNav = ({ eventId }: Props) => {
     const eventsNavRoutes = [
         {
             routeName: "Event",
-            path: `/events/${eventId}/`,
+            path: `/events/${eventId}`,
             Icon: (
                 <div className="p-1 bg-sky-400 text-white rounded-lg">
                     <Home className="size-4" />
@@ -44,6 +44,15 @@ const EventsNav = ({ eventId }: Props) => {
             Icon: (
                 <div className="p-1 bg-orange-400 text-white rounded-lg">
                     <Vote className="size-4" />
+                </div>
+            ),
+        },
+        {
+            routeName: "Claim",
+            path: `/events/${eventId}/claim`,
+            Icon: (
+                <div className="p-1 bg-indigo-400 text-white rounded-lg">
+                    <Gift className="size-4" />
                 </div>
             ),
         },

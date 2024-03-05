@@ -7,7 +7,7 @@ type Props = {};
 
 const VoteReminder = (props: Props) => {
     return (
-        <div className="flex flex-1 overflow-scroll max-h-[60vh] flex-col gap-y-4 items-center">
+        <div className="flex flex-1 overflow-y-scroll thin-scroll max-h-[60vh] flex-col gap-y-4 items-center">
             <img
                 alt="art"
                 src="/images/reminder.png"
@@ -15,7 +15,7 @@ const VoteReminder = (props: Props) => {
             />
             <div className="flex flex-col gap-y-2">
                 <div className="flex items-center gap-x-4">
-                    <div className="p-2 bg-yellow-500 text-white rounded-lg">
+                    <div className="p-2 bg-yellow-500 dark:bg-yellow-700 text-white rounded-lg">
                         <RefreshCwOff className="size-4" />
                     </div>
                     <p className="text-sm">
@@ -26,7 +26,7 @@ const VoteReminder = (props: Props) => {
                 </div>
                 <Separator />
                 <div className="flex items-center gap-x-4">
-                    <div className="p-2 bg-yellow-500 text-white rounded-lg">
+                    <div className="p-2 bg-yellow-500 dark:bg-yellow-700 text-white rounded-lg">
                         <Eye className="size-4" />
                     </div>
                     <p className="text-sm">
@@ -37,7 +37,7 @@ const VoteReminder = (props: Props) => {
                 <Separator />
 
                 <div className="flex items-center gap-x-4">
-                    <div className="p-2 bg-yellow-500 text-white rounded-lg">
+                    <div className="p-2 bg-yellow-500 dark:bg-yellow-700 text-white rounded-lg">
                         <UnlockKeyhole className="size-4" />
                     </div>
                     <p className="text-sm">
