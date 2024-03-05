@@ -335,17 +335,6 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                         <Button
                            onClick={(e) => {
                               e.preventDefault();
-                              reset();
-                              resetPicker();
-                           }}
-                           variant={"ghost"}
-                           className="bg-muted/60 hover:bg-muted"
-                        >
-                           clear
-                        </Button>
-                        <Button
-                           onClick={(e) => {
-                              e.preventDefault();
                               onCancelandReset();
                            }}
                            variant={"secondary"}
