@@ -9,8 +9,8 @@ import { TElection, TMemberAttendeesMinimalInfo } from "@/types";
 import { chosenCandidateIds } from "@/validation-schema/election";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 
-export const searchVoter = ( eventId: number, electionId: number, onFound: (data: TMemberAttendeesMinimalInfo) => void ) => {
-    const { isPending, mutate: findVoter, isError, error, } = useMutation<TMemberAttendeesMinimalInfo, string, string>({
+export const searchVoter = ( eventId: number, electionId: number, onFound? : (data: TMemberAttendeesMinimalInfo) => void ) => {
+    const { data : voter, isPending, mutate: findVoter, isError, error, } = useMutation<TMemberAttendeesMinimalInfo, string, string>({
         mutationKey: ["member-search"],
         mutationFn: async (passbookNumber) => {
             try {
@@ -26,7 +26,7 @@ export const searchVoter = ( eventId: number, electionId: number, onFound: (data
                 );
 
                 const request = await axios.get(url);
-                onFound(request.data);
+                if(onFound) onFound(request.data);
                 return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);

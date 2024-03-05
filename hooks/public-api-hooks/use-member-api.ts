@@ -7,7 +7,7 @@ import { handleAxiosErrorMessage } from "@/utils";
 import { attendeeRegisterFormSchema, voterPbSearchSchema } from "@/validation-schema/event-registration-voting";
 import { TMemberAttendeesMinimalInfo } from "@/types";
 
-export const useSearchMemberAttendee = (eventId : string | number, onFound : (member : TMemberAttendeesMinimalInfo) => void ) => {
+export const useSearchMemberAttendee = (eventId : string | number, onFound? : (member : TMemberAttendeesMinimalInfo) => void ) => {
     const {
         isPending,
         mutate: searchMember,
@@ -20,7 +20,7 @@ export const useSearchMemberAttendee = (eventId : string | number, onFound : (me
                 const request = await axios.get(
                     `/api/v1/public/event/${eventId}/event-attendee/${passbookNumber}`,
                 );
-                onFound(request.data);
+                if(onFound) onFound(request.data);
                 return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
