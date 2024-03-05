@@ -12,4 +12,6 @@ export type TCreateCandidate = {
 
 export type TCandidate = Candidate
 
+export type TCandidateWithEventID = Candidate & {position?:Position}  & {eventId:number} 
+
 export type TCandidatewithPosition = Candidate & {position:Position} 

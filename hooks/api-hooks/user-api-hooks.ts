@@ -34,7 +34,7 @@ export const userList = () => {
         queryKey: ["user-list-query"],
         queryFn: async () => {
             try {
-                const response = await axios.get("/api/v1/user");
+                const response = await axios.get("/api/v1/admin/user");
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -59,7 +59,7 @@ export const createUser = ( onCreate : (newUser : TUser) => void ) => {
         mutationKey: ["create-user"],
         mutationFn: async (data) => {
             try {
-                const response = await axios.post("/api/v1/user", { data });
+                const response = await axios.post("/api/v1/admin/user", { data });
                 queryClient.invalidateQueries({ queryKey: ["user-list-query"] });
                 toast.success("User created successfully")
                 onCreate(response.data)

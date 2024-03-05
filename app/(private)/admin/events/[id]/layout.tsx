@@ -1,43 +1,35 @@
-"use client"
+import db from "@/lib/database"
 import React, { ReactNode } from "react";
-import EventNavBar, { EventRoutes } from "./_components/event-nav/event-nav";
-import ElectionSideBar, { ElectionRoutes } from "./_components/election-sidebar";
-import { usePathname } from "next/navigation";
-import { getElection } from "@/hooks/api-hooks/election-api-hooks";
+import EventNav from "./_components/event-nav";
+import { eventIdSchema } from "@/validation-schema/commons";
+import NotFound from "./_components/not-found";
 
-type Props = { 
-    children : ReactNode
-    params:{id:number}
+type Props = {
+   children: ReactNode;
+   params: { id: number; electionId: number };
 };
 
-const EventLayout = ( { children,params }: Props) => {
+const EventLayout = async ({ children, params }: Props) => {
 
-    const getUniqueElection = getElection(params.id)
-    const hasElection = !getUniqueElection.data
-    const pathname = usePathname();
-    const pathSegments = pathname.split('/');
-    const lastPath = pathSegments[pathSegments.length - 1];
-    const isCurrentPath = EventRoutes.find((e)=> e.path === lastPath && e.path !== "election" )
+    const eventIdValidation = eventIdSchema.safeParse(params.id)
 
-    return (
-        <div className="font-poppins pt-5 lg:p-7 h-fit overflow-hidden">
-            <div className="p-5 w-full">
-            <EventNavBar />
-            </div>
-            <div className="flex bg-background  border border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl overflow-x-hidden lg:p-8  w-full ">
-               <div className="flex w-full px-2 flex-col lg:flex-row">
-                <div>
-                 {!isCurrentPath && <>
-                 {!hasElection && (<ElectionSideBar/>)}
-              </>}
-                </div>
-                <div className="p-5 w-full">
-                {children}
-                </div>
-               </div>
-            </div>
-        </div>
-    );
+    if(!eventIdValidation.success) throw eventIdValidation.error.issues[0].message
+
+   const event = await db.event.findUnique({ where : { id : eventIdValidation.data }, include : { election : true }})
+
+   if (!event) return <NotFound />
+
+   
+   return (
+      <div className="font-poppins pt-5 lg:p-7 h-fit overflow-hidden">
+         <div className="p-5 w-full">
+           <EventNav event={event} />
+         </div>
+         <div className="flex bg-background  border border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl overflow-x-hidden lg:p-2  w-full ">
+               {children}
+         </div>
+      </div>
+   );
 };
 
 export default EventLayout;

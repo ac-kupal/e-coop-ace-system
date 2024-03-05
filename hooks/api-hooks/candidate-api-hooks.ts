@@ -4,20 +4,16 @@ import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
 import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import { TCandidatewithPosition, TCreateCandidate, TUpdatePosition } from "@/types";
-
-export const deleteCandidate = () => {
+type TParams = {
+   params:{id:number,electionId:number,candidateId?:number}
+}
+export const deleteCandidate = ({params}:TParams) => {
    const queryClient = useQueryClient();
    const deleteCandidateMutation = useMutation<any, string, number>({
-      mutationKey: ["delete-candidate"],
+      mutationKey: ["delete-candidate-key"],
       mutationFn: async (candidateId) => {
          try {
-            const deleted = await axios.delete(
-               `/api/v1/candidate/${candidateId}`
-            );
-            toast.success("candidate deleted successfully");
-            queryClient.invalidateQueries({
-               queryKey: ["candidate-list-query"],
-            });
+            const deleted = await axios.delete(`/api/v1/admin/event/${params.id}/election/${params.electionId}/candidate/${candidateId}`);
             return deleted.data;
          } catch (e) {
             const errorMessage = handleAxiosErrorMessage(e);
@@ -30,28 +26,42 @@ export const deleteCandidate = () => {
             throw errorMessage;
          }
       },
+      onSuccess: () => {
+         queryClient.invalidateQueries({ queryKey: ["get-election-query"] });
+         toast.success("candidate deleted successfully");
+      },
    });
    return deleteCandidateMutation;
 };
 
 type Props = {
    onCancelandReset: () => void;
+   params:{id:number,electionId:number}
 };
 
-export const useCreateCandidate = ({ onCancelandReset }: Props) => {
+export const useCreateCandidate = ({ onCancelandReset,params }: Props) => {
    const queryClient = useQueryClient();
    const createCandidate = useMutation<TCreateCandidate, string, unknown>({
-      mutationKey: ["create-candidate-key"],
+      mutationKey: ["create-candidate-query"],
       mutationFn: async (data) => {
          try {
-            const response = await axios.post("/api/v1/candidate", data);
+            const response = await axios.post(`/api/v1/admin/event/${params.id}/election/${params.electionId}/candidate/`, data);
+            console.log(response)
             return response.data;
          } catch (e) {
-            mutationErrorHandler(e);
+            console.log(e)
+            const errorMessage = handleAxiosErrorMessage(e);
+            toast.error(errorMessage, {
+               action: {
+                  label: "try agian",
+                  onClick: () => createCandidate.mutate(data),
+               },
+            });
+            throw errorMessage;
          }
       },
       onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["candidate-list-query"] });
+         queryClient.invalidateQueries({ queryKey: ["get-election-query"] });
          onCancelandReset();
          toast.success("candidate created successfully");
       },
@@ -59,42 +69,25 @@ export const useCreateCandidate = ({ onCancelandReset }: Props) => {
    return createCandidate;
 };
 
-export const getCandidates = (electionId: number) => {
-   const getCandidates = useQuery<TCandidatewithPosition[], string>({
-      queryKey: ["candidate-list-query"],
-      queryFn: async () => {
-         try {
-            const response = await axios.get(`/api/v1/candidate/${electionId}`);
-            return response.data;
-         } catch (e) {
-            handleAxiosErrorMessage(e);
-         }
-      },
-      initialData: [],
-   });
-
-   return getCandidates;
-};
 
 type UpdateCandidateProps = {
-   candidateId:number,
    onCancelandReset: () => void;
 }
 
-export const useUpdateCandidate =({candidateId, onCancelandReset}:UpdateCandidateProps)=>{
+export const useUpdateCandidate =({onCancelandReset}:UpdateCandidateProps,{params}:TParams)=>{
    const queryClient = useQueryClient();
    const updateCandidate = useMutation<TUpdatePosition, string, unknown>({
       mutationKey: ["update-candidate-key"],
       mutationFn: async (positionData) => {
          try {
-            const response = await axios.patch(`/api/v1/candidate/${candidateId}`, positionData);
+            const response = await axios.patch(`/api/v1/admin/event/${params.id}/election/${params.electionId}/candidate/${params.candidateId}`, positionData);
             return response.data;
          } catch (e) {
             mutationErrorHandler(e);
          }
       },
       onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ["candidate-list-query"] });
+         queryClient.invalidateQueries({ queryKey: ["get-election-query"] });
          onCancelandReset();
          toast.success("candidate updated successfully");
       },
@@ -104,19 +97,3 @@ export const useUpdateCandidate =({candidateId, onCancelandReset}:UpdateCandidat
 }
 
 
-export const getAllCandidates = () => {
-   const getCandidates = useQuery<TCandidatewithPosition[], string>({
-      queryKey: ["candidate-list-query"],
-      queryFn: async () => {
-         try {
-            const response = await axios.get(`/api/v1/candidate`);
-            return response.data;
-         } catch (e) {
-            handleAxiosErrorMessage(e);
-         }
-      },
-      initialData: [],
-   });
-
-   return getCandidates;
-};

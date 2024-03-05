@@ -18,3 +18,10 @@ export type TMemberAttendeesMinimalInfo = {
 export type TMemberAttendeesWithRegistrationAssistance = TMemberAttendees & {
     registeredBy? : TUserMinimalInfo
 }
+
+export type TMemberAttendeeMinimalInfo = {
+    passbookNumber: string;
+    firstName: string;
+    lastName: string;
+    registered: boolean;
+}

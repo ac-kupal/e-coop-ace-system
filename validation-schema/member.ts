@@ -11,28 +11,89 @@ export const createMemberSchema = z.object({
          required_error: "passBook Number field is required",
          invalid_type_error: "Invalid passBook Number data type",
       })
-      .min(1, commonFieldErrorsMinimum.required_error),
+      .min(1, "passbook" + commonFieldErrorsMinimum.required_error),
 
    firstName: z
       .string({
          required_error: "firstname field is required",
          invalid_type_error: "Invalid firstname data type",
       })
-      .min(1, commonFieldErrorsMinimum.required_error),
+      .min(1,  "firstnam" + commonFieldErrorsMinimum.required_error),
 
    middleName: z
       .string({
          required_error: "middle field is required",
          invalid_type_error: "Invalid middle data type",
       })
-      .min(1, commonFieldErrorsMinimum.required_error),
+      .min(1,  "middleName" + commonFieldErrorsMinimum.required_error),
 
    lastName: z
       .string({
          required_error: "lastname field is required",
          invalid_type_error: "Invalid lastname data type",
       })
-      .min(1, commonFieldErrorsMinimum.required_error),
+      .min(1, "lastName" + commonFieldErrorsMinimum.required_error),
+
+   gender: z.nativeEnum(gender, {
+      required_error: "gender field is required",
+      invalid_type_error: "Invalid gender data type",
+   }),
+
+   birthday: z.coerce.date({
+      required_error: "birthday field is required",
+      invalid_type_error: "Invalid birthday data type",
+   }),
+
+   emailAddress: z
+      .string({
+         required_error: "email field is required",
+         invalid_type_error: "Invalid email data type",
+      })
+      .email("please provide a valid email")
+      .nullable(),
+   contact: z
+      .string({
+         required_error: "contact field is required",
+         invalid_type_error: "Invalid contact data type",
+      })
+      .min(11, commonFieldErrorsMinimum.required_error),
+   eventId: z.coerce
+      .number({
+         required_error: "event field is required",
+         invalid_type_error: "Invalid event data type",
+      })
+      .optional(),
+});
+
+
+export const updateMemberSchema = z.object({
+   passbookNumber: z
+      .string({
+         required_error: "passBook Number field is required",
+         invalid_type_error: "Invalid passBook Number data type",
+      })
+      .min(1,"passbook"+ commonFieldErrorsMinimum.required_error),
+
+   firstName: z
+      .string({
+         required_error: "firstname field is required",
+         invalid_type_error: "Invalid firstname data type",
+      })
+      .min(1, "firstName"+ commonFieldErrorsMinimum.required_error),
+
+   middleName: z
+      .string({
+         required_error: "middle field is required",
+         invalid_type_error: "Invalid middle data type",
+      })
+      .min(1, "middleName" + commonFieldErrorsMinimum.required_error),
+
+   lastName: z
+      .string({
+         required_error: "lastname field is required",
+         invalid_type_error: "Invalid lastname data type",
+      })
+      .min(1, "lastName" + commonFieldErrorsMinimum.required_error),
 
    gender: z.nativeEnum(gender, {
       required_error: "gender field is required",
@@ -56,8 +117,7 @@ export const createMemberSchema = z.object({
       .string({
          required_error: "contact field is required",
          invalid_type_error: "Invalid contact data type",
-      })
-      .min(11, commonFieldErrorsMinimum.required_error),
+      }).min(11, "contact number must be 11 characters"),
    eventId: z.coerce
       .number({
          required_error: "event field is required",
@@ -66,7 +126,8 @@ export const createMemberSchema = z.object({
       .optional(),
 });
 
-export const createMemberWithUploadSchema = createMemberSchema.extend({
+
+export const createMemberWithUploadSchema = updateMemberSchema.extend({
    picture: z.any().optional(),
 });
 
@@ -132,3 +193,5 @@ export const createManySchema = z.object({
 });
 
 export const memberEmailSchema = z.string({ invalid_type_error : "invalid email", required_error : "Email is required"}).email("Email is required");
+
+export const memberIdSchema = z.string({ invalid_type_error : "member id type is invalid", required_error : "member id is required"})

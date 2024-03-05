@@ -41,7 +41,10 @@ model User {
     branch Branch @relation(fields: [branchId], references: [id])
     role   Role   @default(staff)
 
+    assignedIncentive  IncentiveAssigned[]
     assistedAttendance EventAttendees[]
+
+    assistedClaims IncentiveClaims[]
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -101,8 +104,10 @@ model Event {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    attendees  EventAttendees[]
-    incentives Incentives[]
+    incentiveAssigned IncentiveAssigned[]
+    attendees         EventAttendees[]
+    incentives        Incentives[]
+    incentivesClaims  IncentiveClaims[]
 }
 
 enum gender {
@@ -127,14 +132,14 @@ model EventAttendees {
     eventId Int
     event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-    registered Boolean  @default(false)
+    registered Boolean @default(false)
     voted      Boolean @default(false)
     voteOtp    String?
 
     registrationAssistId Int?
-    registeredBy User? @relation(fields: [registrationAssistId], references: [id], onDelete: SetNull)
+    registeredBy         User? @relation(fields: [registrationAssistId], references: [id], onDelete: SetNull)
 
-    votes Votes[]
+    votes            Votes[]
     incentiveClaimed IncentiveClaims[]
 
     createdAt DateTime @default(now())
@@ -163,8 +168,6 @@ model Election {
     electionName String
     status       ElectionStatus
 
-    // settings - add other settings here
-    // who can vote
     allowBirthdayVerification Boolean           @default(false)
     voteEligibility           VotingEligibility @default(MIGS)
 
@@ -230,32 +233,67 @@ model Incentives {
     id Int @id @default(autoincrement())
 
     itemName String
-    allotted Int
     eventId  Int
 
-    event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-    claimed   IncentiveClaims[]
+    event   Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    claimed IncentiveClaims[]
+
+    assigned IncentiveAssigned[]
 
     createdBy Int?
     updatedBy Int?
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model IncentiveAssigned {
+    id Int @id @default(autoincrement())
+
+    // assigned user
+    userId Int
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    eventId Int
+    event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+    incentiveId Int
+    incentive   Incentives @relation(fields: [incentiveId], references: [id], onDelete: Cascade)
+
+    assignedQuantity Int
+
+    claims IncentiveClaims[]
+
+    updatedAt DateTime @updatedAt
+    createdBy Int?
+    updatedBy Int?
+
+    @@unique([userId, incentiveId])
 }
 
 model IncentiveClaims {
     id Int @id @default(autoincrement())
 
     incentiveId Int
-    incentive Incentives @relation(fields: [incentiveId], references: [id], onDelete: Cascade)
+    incentive   Incentives @relation(fields: [incentiveId], references: [id], onDelete: Cascade)
+
+    eventId Int
+    event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
     eventAttendeeId String
-    eventAttendee EventAttendees @relation(fields : [eventAttendeeId], references: [id], onDelete: Cascade)
+    eventAttendee   EventAttendees @relation(fields: [eventAttendeeId], references: [id], onDelete: Cascade)
 
-    createdBy  Int?
-    assistedBy Int?
-    updatedBy  Int?
+    assistedById Int?
+    assistedBy User? @relation(fields: [assistedById], references: [id], onDelete: SetNull)
+
+    assignedId Int?
+    assigned IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: SetNull)
+
+    createdBy Int?
+    updatedBy Int?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@unique([incentiveId, eventAttendeeId])
 }

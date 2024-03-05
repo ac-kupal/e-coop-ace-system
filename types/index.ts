@@ -14,6 +14,8 @@ export * from "./member.types";
 export * from "./incentive.types";
 export * from "./incentive-claims.types";
 export * from "./mail-template.types";
+export * from "./election-settings.types";
+export * from "./incentive-assigned.types";
 
 export type TApiError = { message: string };
 
@@ -24,7 +26,7 @@ export type TRoute = {
     allowedRole: Role[];
 };
 
-export type TElectionRoute = {
+export type TNavListRoute = {
     icon: ReactNode | ReactElement;
     name: string;
     path: string;

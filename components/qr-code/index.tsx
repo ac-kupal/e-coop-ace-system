@@ -1,11 +1,14 @@
-import React, { useRef } from "react";
+import { toast } from "sonner";
+import React, { useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import * as htmlToImage from "html-to-image";
 
-import { cn } from "@/lib/utils";
 import { Download, QrCodeIcon } from "lucide-react";
-import { Button } from "../ui/button";
-import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+
+import { cn } from "@/lib/utils";
+import LoadingSpinner from "../loading-spinner";
 
 type Props = {
     value: string;
@@ -23,24 +26,29 @@ const QrCode = ({
     themeResponsive = false,
     showDownload = false,
 }: Props) => {
+    const [renderingDownloadQR, setRenderingDownloadQR] = useState(false)
     const qrRef = useRef<HTMLDivElement>(null);
     const downloadName = fileName || value
 
     const downloadQRCode = () => {
         if (!qrRef.current) return;
+        setRenderingDownloadQR(true)
 
         htmlToImage
             .toJpeg(qrRef.current, { quality: 0.95 })
-            .then(function(dataUrl) {
+            .then((dataUrl) => {
                 var link = document.createElement("a");
                 link.download = `${downloadName}.jpeg`;
                 link.href = dataUrl;
                 link.click();
                 toast.success("QR Code downloaded");
+
             })
-            .catch(function(error) {
+            .catch((error) => {
                 toast.error("Could not generated QR Code");
-            });
+            }).finally(()=>{
+                setRenderingDownloadQR(false)
+            })
     };
 
     return (
@@ -74,10 +82,10 @@ const QrCode = ({
             {showDownload && (
                 <Button
                     onClick={downloadQRCode}
-                    disabled={!value || value.length === 0}
+                    disabled={!value || value.length === 0 || renderingDownloadQR}
                     className="gap-x-2 rounded-full"
                 >
-                    <Download className="size-4" strokeWidth={1} /> Download QR
+                    { renderingDownloadQR ? <LoadingSpinner /> : <Download className="size-4" strokeWidth={1} /> } Download QR
                 </Button>
             )}
         </div>

@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import ModalProvider from "@/providers/modal-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import QueryClientProviderWrapper from "@/providers/query-client-provider-wrapper";
+import { AlertTriangle, BadgeInfo, Check, Loader2, XCircle } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -32,7 +33,16 @@ export default function RootLayout({
                         enableSystem
                     >
                         <ModalProvider />
-                        <Toaster richColors closeButton />
+                        <Toaster
+                            richColors
+                            closeButton
+                            toastOptions={{
+                                classNames: {
+                                    title: "text-sm",
+                                    
+                                },
+                            }}
+                        />
                         <div className="font-inter">{children}</div>
                     </ThemeProvider>
                 </QueryClientProviderWrapper>

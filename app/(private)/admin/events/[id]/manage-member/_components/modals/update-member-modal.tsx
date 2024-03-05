@@ -48,12 +48,6 @@ type Props = {
 export type createTMember = z.infer<typeof createMemberWithUploadSchema>;
 
 const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
-   
-   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
-      initialImageURL: !member.picture ? "/images/default.png" : member.picture,
-      maxOptimizedSizeMB: 0.5,
-      maxWidthOrHeight: 300,
-   });
 
    const memberForm = useForm<createTMember>({
       resolver: zodResolver(createMemberWithUploadSchema),
@@ -70,11 +64,18 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
       memberForm.setValue("contact", member.contact);
       memberForm.setValue("emailAddress", member.emailAddress);
       memberForm.setValue("eventId", member.eventId);
-   }, [memberForm]);
+   }, [memberForm,member]);
+
+   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
+      initialImageURL: !member.picture ?  memberForm.getValues("picture") : member.picture ,
+      maxOptimizedSizeMB: 0.5,
+      maxWidthOrHeight: 300,
+   });
+
 
    useEffect(() => {
       defaultValues();
-   }, [memberForm, member, defaultValues]);
+   }, [memberForm,member]);
 
    const reset = () => {
       memberForm.reset();
@@ -89,9 +90,9 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
    const updateMemberMutation = updateMember({ onCancelandReset });
 
    const uploadImage = onUploadImage();
-   
+
+
    const onSubmit = async (formValues: createTMember) => {
-      console.log(member.picture)
       try {
          if (!imageFile) {
             updateMemberMutation.mutate({
@@ -100,6 +101,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                   picture: member.picture,
                },
                memberId: member.id,
+               eventId:member.eventId
             });
          } else {
             const image = await uploadImage.mutateAsync({
@@ -114,6 +116,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                   picture: !image ? "/images/default.png" : image,
                },
                memberId: member.id,
+               eventId:member.eventId
             });
          }
          resetPicker();
@@ -238,7 +241,8 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                     <Input
                                        placeholder="enter contact"
                                        className="placeholder:text-foreground/40"
-                                       {...field}
+                                       value={field.value as any}
+                                        onChange={field.onChange}
                                     />
                                  </FormControl>
                                  <FormMessage />
@@ -277,7 +281,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                  <FormLabel>Gender </FormLabel>
                                  <Select
                                     onValueChange={field.onChange}
-                                    defaultValue={field.value}
+                                    defaultValue={field.value as any}
                                  >
                                     <FormControl>
                                        <SelectTrigger>
@@ -326,17 +330,6 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                   </div>
                   <div>
                      <div className="flex justify-end gap-x-2">
-                        <Button
-                           onClick={(e) => {
-                              e.preventDefault();
-                              reset();
-                              resetPicker();
-                           }}
-                           variant={"ghost"}
-                           className="bg-muted/60 hover:bg-muted"
-                        >
-                           clear
-                        </Button>
                         <Button
                            onClick={(e) => {
                               e.preventDefault();

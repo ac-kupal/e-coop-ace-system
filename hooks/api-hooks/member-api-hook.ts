@@ -5,6 +5,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { TCreateMember, TMember, TMemberAttendeesWithRegistrationAssistance } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
+import useSkippedStore from "@/stores/skipped-members-store";
+import { useRouter } from "next/navigation";
 
 export const getAllEventMembers = (eventId: number) => {
     const positions = useQuery<TMember[], string>({
@@ -41,12 +43,12 @@ export const getMembers = () => {
 
 export const deleteMember = () => {
     const queryClient = useQueryClient();
-    const deleteMemberMutation = useMutation<any, Error, { eventId: string }>({
+    const deleteMemberMutation = useMutation<any, Error, { eventId: number,memberId:string }>({
         mutationKey: ["delete-member-query"],
-        mutationFn: async ({ eventId }) => {
+        mutationFn: async ({ eventId,memberId }) => {
             try {
                 const response = await axios.delete(
-                    `/api/v1/member/${eventId}`
+                    `/api/v1/admin/event/${eventId}/member/${memberId}`
                 );
                 queryClient.invalidateQueries({
                     queryKey: ["all-event-members-list-query"],
@@ -64,36 +66,39 @@ export const deleteMember = () => {
 
 type Props = {
     onCancelandReset: () => void;
+
 };
 
 export const createMember = ({ onCancelandReset }: Props) => {
     const queryClient = useQueryClient();
-    const addMember = useMutation<any, Error, { member: TCreateMember }>({
-        mutationKey: ["delete-member-query"],
-        mutationFn: async ({ member }) => {
+    const addMember = useMutation<any, Error, { member: TCreateMember,eventId:number }>({
+        mutationKey: ["create-member-query"],
+        mutationFn: async ({ member,eventId }) => {
             try {
                 const newBirthday = moment(member.birthday).format(
                     "YYYY-MM-DD HH:mm:ss"
                 );
                 const newMember = { ...member, birthday: newBirthday };
-                const response = await axios.post(`/api/v1/member/`, newMember);
-                queryClient.invalidateQueries({
-                    queryKey: ["all-event-members-list-query"],
-                });
-                toast.success("Member added successfully");
-                onCancelandReset();
+                const response = await axios.post(`/api/v1/admin/event/${eventId}/member/`, newMember);
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage, {
                     action: {
                         label: "try agian",
-                        onClick: () => addMember.mutate({ member }),
+                        onClick: () => addMember.mutate({ member,eventId }),
                     },
                 });
                 throw errorMessage;
             }
         },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({
+                queryKey: ["all-event-members-list-query"],
+            });
+            toast.success("Member added successfully");
+            onCancelandReset();
+        }
     });
 
     return addMember;
@@ -101,23 +106,13 @@ export const createMember = ({ onCancelandReset }: Props) => {
 
 export const updateMember = ({ onCancelandReset }: Props) => {
     const queryClient = useQueryClient();
-    const updateMember = useMutation<
-        any,
-        Error,
-        { member: TCreateMember; memberId: string }
+    const router = useRouter()
+    const updateMember = useMutation<any,Error,  { member: TCreateMember, memberId: string, eventId:number }
     >({
-        mutationKey: ["delete-member-query"],
-        mutationFn: async ({ member, memberId }) => {
+        mutationKey: ["update-member-query"],
+        mutationFn: async ({ member, memberId, eventId }) => {
             try {
-                const response = await axios.patch(
-                    `/api/v1/member/${memberId}`,
-                    member
-                );
-                queryClient.invalidateQueries({
-                    queryKey: ["all-event-members-list-query"],
-                });
-                toast.success("Member updated successfully");
-                onCancelandReset();
+                const response = await axios.patch(`/api/v1/admin/event/${eventId}/member/${memberId}`,member);
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -125,36 +120,44 @@ export const updateMember = ({ onCancelandReset }: Props) => {
                     action: {
                         label: "try agian",
                         onClick: () =>
-                            updateMember.mutate({ member, memberId }),
+                            updateMember.mutate({ member, memberId,eventId }),
                     },
                 });
                 throw errorMessage;
             }
         },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({
+                queryKey: ["all-event-members-list-query"],
+            });
+            toast.success("Member updated successfully");
+            onCancelandReset();
+            router.refresh()
+        }
     });
 
     return updateMember;
 };
 
-export const createManyMember = ({ onCancelandReset }: Props) => {
+type createManyMemberProps = {
+    onCancelandReset: () => void;
+    onOpenSkippedMember: () => void;
+};
+
+export const createManyMember = ({ onCancelandReset,onOpenSkippedMember }:  createManyMemberProps) => {
+    const {setSkippedMembers} = useSkippedStore()
+
     const queryClient = useQueryClient();
     const addMember = useMutation<
         any,
         Error,
         { member: TCreateMember[] | unknown; eventId: number }
     >({
-        mutationKey: ["delete-member-query"],
+        mutationKey: ["create-member-query"],
         mutationFn: async ({ member, eventId }) => {
             try {
-                const response = await axios.post(
-                    `/api/v1/member/bulk-create/${eventId}`,
-                    member
-                );
-                queryClient.invalidateQueries({
-                    queryKey: ["all-event-members-list-query"],
-                });
-                toast.success("Member updated successfully");
-                onCancelandReset();
+                const response = await axios.post( `/api/v1/admin/event/${eventId}/member/import-member`,member);
+               
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -167,6 +170,40 @@ export const createManyMember = ({ onCancelandReset }: Props) => {
                 throw errorMessage;
             }
         },
+        onSuccess:(data)=>{
+            const skippedMembers = data.skippedMembers
+            const newMembers = data.newMembers
+            const modifiedMember = skippedMembers.map((member:any) => {
+                return {
+                        passbookNumber:member.passbookNumber,
+                        firstName:member.firstName,
+                        middleName:member.middleName,
+                        lastName:member.lastName,
+                        gender:member.gender,
+                        birthday:new Date(member.birthday),
+                        contact:member.contact,
+                        emailAddress:member.emailAddress,
+                        }
+            });
+            if(skippedMembers.length > 0){
+                onOpenSkippedMember();
+                setSkippedMembers(modifiedMember)
+                queryClient.invalidateQueries({
+                    queryKey: ["all-event-members-list-query"],
+                });
+                toast.warning(`${skippedMembers.length} Duplicate Found! `);
+                onCancelandReset();
+            }  
+            if(newMembers.length > 0){
+                queryClient.invalidateQueries({
+                    queryKey: ["all-event-members-list-query"],
+                });  
+                setTimeout(() => {
+                    toast.success(`New ${newMembers.length} Members Added successfully`);
+                }, 1000);
+                onCancelandReset();
+            }    
+        }
     });
 
     return addMember;

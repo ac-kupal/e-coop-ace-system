@@ -12,7 +12,7 @@ export const deleteEvent = () => {
       mutationKey: ["delete-event"],
       mutationFn: async (eventId) => {
          try {
-            const deleted = await axios.delete(`/api/v1/event/${eventId}`);
+            const deleted = await axios.delete(`/api/v1/admin/event/${eventId}`);
             toast.success("Event deleted successfully");
             queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
             return deleted.data;
@@ -36,7 +36,7 @@ export const getAllEvent = () => {
       queryKey: ["event-list-query"],
       queryFn: async () => {
          try {
-            const response = await axios.get("/api/v1/event");
+            const response = await axios.get("/api/v1/admin/event");
             return response.data;
          } catch (e) {
             const errorMessage = handleAxiosErrorMessage(e);
@@ -83,7 +83,7 @@ export const useCreateEvent = ({ onCancelandReset }: Props) => {
       mutationKey: ["create-event"],
       mutationFn: async (data) => {
          try {
-            const response = await axios.post("/api/v1/event", { data });
+            const response = await axios.post("/api/v1/admin/event", { data });
             return response.data;
          } catch (e) {
             mutationErrorHandler(e);
@@ -94,7 +94,7 @@ export const useCreateEvent = ({ onCancelandReset }: Props) => {
          onCancelandReset();
          toast.success("Event created successfully");
          if (!data.election) return;
-         router.push(`/admin/events/${data.id}/election`);
+         router.push(`/admin/events/${data.id}/election/${data.election.id}/overview`);
       },
    });
 
@@ -107,7 +107,7 @@ export const updateEvent = ({ onCancelandReset, id }: Props) => {
       mutationKey: ["update-event"],
       mutationFn: async (data) => {
          try {
-            const response = await axios.patch(`/api/v1/event/${id}`, data);
+            const response = await axios.patch(`/api/v1/admin/event/${id}`, data);
             return response.data;
          } catch (e) {
             mutationErrorHandler(e);
