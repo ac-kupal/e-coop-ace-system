@@ -40,7 +40,7 @@ const Actions = ({ assignee }: { assignee: TListOfAssigneesWithAssistCount;}) =>
                     variant="outline"
                     className="rounded-xl text-sm"
                     onClick={() => onOpen({
-                        title : "Revoke Incentive Assigment",
+                        title : "Revoke Incentive Assigment 🗑️",
                         description : "You are about to revoke this user from being assigned for this incentive. Are you sure to proceed?",
                         onConfirm : () => deleteAssignee()
                     })}
@@ -49,52 +49,6 @@ const Actions = ({ assignee }: { assignee: TListOfAssigneesWithAssistCount;}) =>
                     Revoke
                 </Button>
             )}
-        </>
-    );
-
-    return (
-        <>
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="w-8 h-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MenuIcon className="size-7 text-muted-foreground" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                    className="border-none shadow-2"
-                    align="end"
-                >
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        className="px-2 gap-x-2"
-                        onClick={() => {
-                            navigator.clipboard.writeText(`${assignee.id}`);
-                            toast.success("coppied");
-                        }}
-                    >
-                        <Copy strokeWidth={2} className="h-4" />
-                        Copy Incentive ID
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() =>
-                            onOpenConfirmModal({
-                                title: "Delete Incentive 🗑️",
-                                description:
-                                    "Are you sure to delete this incentive?",
-                                onConfirm: () => {
-                                    deleteIncentive();
-                                },
-                            })
-                        }
-                        className="px-2 gap-x-2 text-destructive"
-                    >
-                        <Trash strokeWidth={2} className="h-4" /> Revoke
-                        Assignee
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
         </>
     );
 };
