@@ -7,10 +7,10 @@ export type TCreateMember = {
     lastName: string;
     gender: $Enums.gender;
     birthday: Date;
-    contact: string;
+    contact?: string;
     picture: string | null;
     eventId?:number;
-    emailAddress:string | null;
+    emailAddress?:string | null;
 }
 
 export type TCreateManyMember = {

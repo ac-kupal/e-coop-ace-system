@@ -5,7 +5,7 @@ import { routeErrorHandler } from "@/errors/route-error-handler";
 import { eventIdSchema } from "@/validation-schema/commons";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { generateOTP } from "@/lib/server-utils";
-import { createMemberSchema } from "@/validation-schema/member";
+import { createMemberSchema, createMemberWithUploadSchema } from "@/validation-schema/member";
 
 type TParams = { params: { id: number } };
 
@@ -40,7 +40,7 @@ export const POST = async (req: NextRequest) => {
           birthday: newBirthday,
        };
  
-       createMemberSchema.parse(memberData);
+       createMemberWithUploadSchema.parse(memberData);
        
        const newMember = await db.eventAttendees.create({ data: memberData });
  

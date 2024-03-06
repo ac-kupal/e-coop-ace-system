@@ -31,8 +31,6 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-
-import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import { updateEventSchema } from "@/validation-schema/event";
 import { z } from "zod";
 import { useCallback, useEffect } from "react";

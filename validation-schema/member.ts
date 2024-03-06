@@ -50,13 +50,15 @@ export const createMemberSchema = z.object({
          invalid_type_error: "Invalid email data type",
       })
       .email("please provide a valid email")
+      .optional()
       .nullable(),
    contact: z
       .string({
          required_error: "contact field is required",
          invalid_type_error: "Invalid contact data type",
       })
-      .min(11, commonFieldErrorsMinimum.required_error),
+      .min(11, commonFieldErrorsMinimum.required_error)
+      .optional(),
    eventId: z.coerce
       .number({
          required_error: "event field is required",
@@ -110,14 +112,14 @@ export const updateMemberSchema = z.object({
          required_error: "email field is required",
          invalid_type_error: "Invalid email data type",
       })
-      .min(1, "email is required")
       .email("please provide a valid email")
+      .optional()
       .nullable(),
    contact: z
       .string({
          required_error: "contact field is required",
          invalid_type_error: "Invalid contact data type",
-      }).min(11, "contact number must be 11 characters"),
+      }).optional(),
    eventId: z.coerce
       .number({
          required_error: "event field is required",

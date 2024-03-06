@@ -1,16 +1,11 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
-import { SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { CalendarIcon, Loader2 } from "lucide-react";
+import {  Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import { Input } from "@/components/ui/input";
@@ -24,31 +19,23 @@ import {
 } from "@/components/ui/form";
 
 import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import {
    Select,
    SelectContent,
    SelectItem,
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { EventType, gender } from "@prisma/client";
-import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import {  gender } from "@prisma/client";
+import React, {  useRef } from "react";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
-import { v4 as uuid, v4 } from "uuid";
+import { v4 } from "uuid";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
 import { createMember } from "@/hooks/api-hooks/member-api-hook";
 import InputMask from "react-input-mask";
+import ModalHead from "@/components/modals/modal-head";
 
 type Props = {
    state: boolean;
@@ -99,7 +86,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
    const uploadImage = onUploadImage();
 
    const onSubmit = async (formValues: createTMember) => {
-      // console.log(formValues);
+       console.log(formValues);
       try {
          if (!imageFile) {
             createMemberMutation.mutate({
