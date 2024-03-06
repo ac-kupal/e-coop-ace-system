@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { TIncentiveClaimsWithIncentiveAndAssistedBy } from "@/types";
+import { TIncentiveClaimsWithIncentiveAttendeeAssistedBy } from "@/types";
 import { useDeleteIncentive } from "@/hooks/api-hooks/incentive-api-hooks";
 import UserAvatar from "@/components/user-avatar";
 import { format } from "date-fns";
 
-const Actions = ({ incentive }: { incentive: TIncentiveClaimsWithIncentiveAndAssistedBy; }) => {
+const Actions = ({ incentive }: { incentive: TIncentiveClaimsWithIncentiveAttendeeAssistedBy; }) => {
     const [modal, setModal] = useState(false);
     const [assign, setAssign] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
@@ -99,7 +99,7 @@ const Actions = ({ incentive }: { incentive: TIncentiveClaimsWithIncentiveAndAss
     );
 };
 
-const columns: ColumnDef<TIncentiveClaimsWithIncentiveAndAssistedBy>[] = [
+const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
     // {
     //     id: "actions",
     //     enableHiding: false,
