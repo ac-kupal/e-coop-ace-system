@@ -7,9 +7,9 @@ export type TMemberAttendees = EventAttendees;
 export type TMemberAttendeesMinimalInfo = {
     id : string;
     firstName: string;
-    middleName: string;
+    middleName: string | null;
     lastName: string;
-    contact: string;
+    contact: string | null;
     picture: string | null;
     passbookNumber : string;
     registered: boolean;
