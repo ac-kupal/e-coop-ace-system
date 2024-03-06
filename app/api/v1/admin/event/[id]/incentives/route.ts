@@ -6,48 +6,47 @@ import { routeErrorHandler } from "@/errors/route-error-handler";
 import { eventIdSchema } from "@/validation-schema/commons";
 import { createIncentiveSchema } from "@/validation-schema/incentive";
 
-type TParams = { params: { id: number } }
+type TParams = { params: { id: number } };
 
-export const GET = async (
-  req: NextRequest,
-  { params }: TParams,
-) => {
-  try {
-    await currentUserOrThrowAuthError();
-    const eventId = eventIdSchema.parse(params.id);
-    const searchParams = new URL(req.url).searchParams
+export const GET = async (req: NextRequest, { params }: TParams) => {
+    try {
+        await currentUserOrThrowAuthError();
+        const eventId = eventIdSchema.parse(params.id);
+        const searchParams = new URL(req.url).searchParams;
 
-    const includeAssignees = searchParams.get("withAssignee") === "true"
+        const includeAssignees = searchParams.get("withAssignee") === "true";
 
-    const claimsWithClaimAndAssignedCount = await db.incentives.findMany({
-      where: { eventId },
-      include: {
-        _count: {
-          select: { claimed : true, assigned : true }, 
-        },
-        assigned : includeAssignees ? {
-            include : {
-                user : {
-                    select : {
-                        id : true,
-                        picture : true,
-                        name : true,
-                        email : true,
-                    }
-                }
-            }
-        } : false
-      },
-    });
+        const claimsWithClaimAndAssignedCount = await db.incentives.findMany({
+            where: { eventId },
+            include: {
+                _count: {
+                    select: { claimed: true, assigned: true },
+                },
+                assigned: includeAssignees
+                    ? {
+                          include: {
+                              user: {
+                                  select: {
+                                      id: true,
+                                      picture: true,
+                                      name: true,
+                                      email: true,
+                                  },
+                              },
+                          },
+                      }
+                    : false,
+            },
+        });
 
-    return NextResponse.json(claimsWithClaimAndAssignedCount);
-  } catch (e) {
-    return routeErrorHandler(e, req);
-  }
+        return NextResponse.json(claimsWithClaimAndAssignedCount);
+    } catch (e) {
+        return routeErrorHandler(e, req);
+    }
 };
 
-export const POST = async (req :NextRequest, { params } : TParams) => {
-    try{
+export const POST = async (req: NextRequest, { params }: TParams) => {
+    try {
         const user = await currentUserOrThrowAuthError();
         const eventId = eventIdSchema.parse(params.id);
         let { data } = await req.json();
@@ -55,15 +54,15 @@ export const POST = async (req :NextRequest, { params } : TParams) => {
         const validatedData = createIncentiveSchema.parse(data);
 
         const newIncentive = await db.incentives.create({
-            data : {
-                ...validatedData, 
+            data: {
+                ...validatedData,
                 eventId,
-                createdBy : user.id
-            }
-        })
+                createdBy: user.id,
+            },
+        });
 
-        return NextResponse.json(newIncentive)
-    }catch(e){
+        return NextResponse.json(newIncentive);
+    } catch (e) {
         return routeErrorHandler(e, req);
     }
-}
+};

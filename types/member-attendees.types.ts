@@ -1,5 +1,6 @@
 import { EventAttendees } from "@prisma/client";
 import { TUserMinimalInfo } from "./user.types";
+import { TIncentiveClaimsWithIncentiveAndAssisted } from "./incentive-claims.types";
 
 export type TMemberAttendees = EventAttendees;
 
@@ -24,4 +25,8 @@ export type TMemberAttendeeMinimalInfo = {
     firstName: string;
     lastName: string;
     registered: boolean;
+}
+
+export type TMemberAttendeesMinimalInfoWithClaims = TMemberAttendeesMinimalInfo & {
+    incentiveClaimed : TIncentiveClaimsWithIncentiveAndAssisted[]
 }

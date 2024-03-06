@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
     TIncentiveAssigned,
-    TIncentiveClaimsWithIncentiveAndAssistedBy,
+    TIncentiveClaimsWithIncentiveAttendeeAssistedBy,
     TIncentiveClaimsWithIncentiveAndClaimAssistance,
     TIncentiveWithClaimAndAssignedCount,
     TListOfAssigneesWithAssistCount,
@@ -229,7 +229,7 @@ export const useCreateClaimAssistance = (eventId : number, onCreate : () => void
 }
 
 export const useClaimsMasterList = (eventId : number ) => {
-    const { data : claimList, refetch, isFetching, isError, isLoading } = useQuery<TIncentiveClaimsWithIncentiveAndAssistedBy[], string>({
+    const { data : claimList, refetch, isFetching, isError, isLoading } = useQuery<TIncentiveClaimsWithIncentiveAttendeeAssistedBy[], string>({
         queryKey : ["claims-master-list"],
         queryFn : async () => {
             try{

@@ -4,8 +4,48 @@ import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { handleAxiosErrorMessage } from "@/utils"
-import { TMemberAttendeesMinimalInfo } from "@/types";
+import { TIncentiveClaimsWithIncentiveAndAssisted, TIncentiveMinimalInfo2, TMemberAttendeesMinimalInfo } from "@/types";
 import { createPublicClaimAuthorizationSchema } from "@/validation-schema/incentive";
+
+export const useMyClaims = (eventId : number, enabled : boolean) => {
+    const { data : myClaims, isLoading : isLoadingClaims, isError, error } = useQuery<TIncentiveClaimsWithIncentiveAndAssisted[], string>({
+        queryKey : ["my-claimed-incentives"],
+        queryFn : async () => {
+            try{
+                const request = await axios.get(`/api/v1/public/event/${eventId}/claim/my-claims`)
+                return request.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        },
+        initialData : [],
+        enabled
+    })
+
+    return { myClaims, isLoadingClaims, isError, error }
+}
+
+export const useClaimablesList = (eventId : number, enabled : boolean) => {
+    const { data : claimables, isLoading : isLoadingClaimables, isError, error } = useQuery<TIncentiveMinimalInfo2[], string>({
+        queryKey : ["incentives-claimable"],
+        queryFn : async () => {
+            try{
+                const request = await axios.get(`/api/v1/public/event/${eventId}/incentives/`)
+                return request.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        },
+        initialData : [],
+        enabled
+    })
+
+    return { claimables, isLoadingClaimables, isError, error }
+}
 
 
 export const useClaimAuth = (eventId : number) => {
