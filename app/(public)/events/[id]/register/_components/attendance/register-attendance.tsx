@@ -48,7 +48,7 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit((pb) => register(pb))}
-                        className="space-y-4"
+                        className="space-y-4 px-2"
                     >
                         <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
                             <Separator className="w-1/2" /> or{" "}

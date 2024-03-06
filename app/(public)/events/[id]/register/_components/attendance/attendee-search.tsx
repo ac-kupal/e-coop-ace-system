@@ -80,7 +80,7 @@ const AttendeeSearch = ({ onFound, eventId }: Props) => {
                             form.setValue("passbookNumber", val);
                             searchMember({ passbookNumber : val });
                         }}
-                        className="size-[400px] bg-background overflow-clip rounded-xl"
+                        className="size-[320px] md:size-[400px] bg-background overflow-clip rounded-xl"
                     />
                 </form>
             </Form>

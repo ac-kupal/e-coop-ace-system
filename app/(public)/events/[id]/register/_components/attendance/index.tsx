@@ -22,9 +22,9 @@ const Attendance = ({ eventId }: Props) => {
         );
 
     return (
-        <div className="flex flex-col gap-y-16">
+        <div className="flex flex-col  px-8 gap-y-16">
             <MemberInfoDisplay member={member} />
-            <div className="flex flex-col items-center">
+            <div className="flex px-2 flex-col items-center">
                 {member.registered ? (
                     <Link className="mx-auto" href={`/events/${eventId}`}>
                         <Button>Go Back to Event</Button>

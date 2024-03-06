@@ -77,7 +77,7 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                             form.setValue("passbookNumber", val);
                             findVoter(val);
                         }}
-                        className="size-[400px] bg-background overflow-clip rounded-xl"
+                        className="size-[320px] md:size-[400px] bg-background overflow-clip rounded-xl"
                     />
                 </form>
             </Form>
