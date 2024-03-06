@@ -37,6 +37,4 @@ export type TSkippedMembers = {
     emailAddress:string | undefined;
 }
 
-
-
 export  type TMember = EventAttendees

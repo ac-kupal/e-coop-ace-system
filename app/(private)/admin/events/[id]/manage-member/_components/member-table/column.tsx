@@ -2,7 +2,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-import { ClipboardPen, Copy, Gift, MenuIcon, Pencil, Send, Trash } from "lucide-react";
+import { ClipboardPen, Copy, Gift, MenuIcon, Pencil, Send, Trash, Vote } from "lucide-react";
 
 import { toast } from "sonner";
 import {
@@ -26,6 +26,7 @@ import { useSession } from "next-auth/react";
 import LoadingSpinner from "@/components/loading-spinner";
 import { useAttendanceRegistration } from "@/hooks/api-hooks/attendance-api-hooks";
 import AssistClaimSheet from "../../../../_components/assist-claim-sheet";
+import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 
 const Actions = ({ member }: { member: TMember }) => {
     const { data: session } = useSession();
@@ -34,8 +35,8 @@ const Actions = ({ member }: { member: TMember }) => {
 
     const [onOpenModal, setOnOpenModal] = useState(false);
     const [claimSheet, setClaimSheet] = useState(false)
-    const deleteOperation = deleteMember();
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
+    const deleteOperation = deleteMember();
 
     const { isSendingOtp, sendOtp } = useOtpSend(
         member.eventId,
@@ -128,15 +129,33 @@ const Actions = ({ member }: { member: TMember }) => {
                 {!member.registered && (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
-                        onClick={() => {
-                            registerAttendance();
-                        }}
+                        onClick={()=> onOpenConfirmModal({
+                            title : "Register Member",
+                            description : "You are about to register this member, registration serves as attendance as well, are you sure?",
+                            onConfirm : () => registerAttendance(),
+                            confirmString : "Register"
+                        })}
                     >
                         <ClipboardPen strokeWidth={2} className="h-4" />
                         Register Member
                     </DropdownMenuItem>
                 )}
+                {!member.voted && (
+                    <DropdownMenuItem
+                        className="px-2 gap-x-2"
+                        onClick={()=> onOpenConfirmModal({
+                            title : "Assist Vote",
+                            description : "You are about to assist this member on voting, it will redirect to a new window for voting. Are you sure to assist this member on voting?",
+                            onConfirm : () => {
 
+                            },
+                            confirmString : "Vote"
+                        })}
+                    >
+                        <Vote strokeWidth={2} className="h-4" />
+                        Assist Vote
+                    </DropdownMenuItem>
+                )}
                 {isAdminOrRoot && (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"

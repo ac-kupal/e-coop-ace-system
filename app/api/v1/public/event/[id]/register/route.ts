@@ -28,6 +28,8 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         if (!memberAttendee)
             return NextResponse.json({ message: "Not found, for verification" },{ status: 404 });
 
+        console.log(birthday, memberAttendee.birthday, birthday.toDateString(), memberAttendee.birthday.toDateString(), isSameDay(birthday, memberAttendee.birthday))
+
         if(!isSameDay(birthday, memberAttendee.birthday)) 
             return NextResponse.json({ message : "Wrong birthday, please try again"}, { status : 403 })
 

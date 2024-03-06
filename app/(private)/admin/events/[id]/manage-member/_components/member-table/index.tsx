@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
-import { Mails, Plus, QrCode, ScanLine, SearchIcon, Send } from "lucide-react";
+import { Mails, Plus, ScanLine, SearchIcon, Send } from "lucide-react";
 
 import columns from "./column";
 import { Button } from "@/components/ui/button";

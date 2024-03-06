@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { isPast, isSameDay } from "date-fns";
+import { isSameDay } from "date-fns";
 
 import Attendance from "./attendance";
 import LoadingSpinner from "@/components/loading-spinner";
