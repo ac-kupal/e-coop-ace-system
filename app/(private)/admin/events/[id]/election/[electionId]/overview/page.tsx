@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import ElectionSwitch from './_components/election-switch';
 import ElectionDetails from './_components/election-details';
-import { TCandidateWithEventID } from '@/types';
 import Header from '../_components/header';
+import { TCandidatewithPosition } from '@/types';
 
 type Props = {
   params: { id: number; electionId: number };
@@ -20,29 +20,17 @@ type Props = {
 const page = ({params}:Props) => {
   
   const { elections, isLoading, error } = getElectionWithPositionAndCandidates({params});
-  const [data, setData] = useState<TCandidateWithEventID[]>([]);
-
-  useEffect(() => {
-     if (elections && elections?.candidates) {
-        setData(
-           elections.candidates.map((candidate) => ({
-              ...candidate,
-              eventId: params.id,
-           }))
-        );
-     }
-  }, [elections, params.id]);
 
   if (isLoading)return (  <Loading/>);
   
   if(!elections) return <NotFound></NotFound>
-  
+  if(!elections.candidates) return <NotFound></NotFound>
 
   const isLive = elections.status === "live";
   const isPending = elections.status === "pending";
   const isEnded = elections.status === "done";
-
-
+  
+  console.log(elections.candidates)
 
   return (
     <div className='space-y-2 relative '>
@@ -87,13 +75,14 @@ const page = ({params}:Props) => {
             <Users className="size-5 text-green-700" />
             <h1 className="font-medium">Candidates</h1>
          </div>
-      <Candidates data={data} ></Candidates>
+      <Candidates data={elections?.candidates} ></Candidates>
       <div className="w-full flex space-x-3 justify-start px-2">
             <Accessibility className="size-7 text-green-700" />
             <h1 className="font-medium">Positions</h1>
          </div>
       <Positions data={elections.positions} ></Positions>
     </div>
+
   )
 }
 

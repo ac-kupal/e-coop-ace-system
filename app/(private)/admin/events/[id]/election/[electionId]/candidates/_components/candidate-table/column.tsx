@@ -9,13 +9,13 @@ import UpdateCandidateModal from "../modals/update-candidate-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
-import { TCandidateWithEventID, TCandidatewithPosition } from "@/types";
+import {  TCandidatewithPositionwithEventId } from "@/types";
 import { deleteCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 
 
-const columns: ColumnDef<TCandidateWithEventID>[] = [
+const columns: ColumnDef<TCandidatewithPositionwithEventId>[] = [
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
@@ -62,7 +62,8 @@ const columns: ColumnDef<TCandidateWithEventID>[] = [
       header: ({ column }) => (
          <DataTableColHeader column={column} title="position" />
       ),
-      cell: ({ row }) => {
+      cell: ({ row }) =>
+      {
         return <div> {row.original.position?.positionName}</div>
       },
    },

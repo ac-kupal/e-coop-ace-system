@@ -17,19 +17,18 @@ import { cn } from "@/lib/utils";
 import columns from "./column";
 import CreateCandidateModal from "../modals/create-candidate-modal";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
-import { TCandidateWithEventID, TCandidatewithPosition, TPosition } from "@/types";
+import {  TCandidatewithPositionwithEventId, TPosition } from "@/types";
 import { toast } from "sonner";
 
 type Props = {
    params: { id: number; electionId: number };
-   data: TCandidateWithEventID[];
+   data: TCandidatewithPositionwithEventId[]; 
    positions:TPosition[] | undefined;
 };
 
 const CandidateTable = ({ data,positions,params }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
-
 
    const table = useReactTable({
       data,
@@ -47,8 +46,6 @@ const CandidateTable = ({ data,positions,params }: Props) => {
       onGlobalFilterChange: setGlobalFilter,
    });
    
-
-
    return (
       <div className="flex flex-1 flex-col gap-y-2 ">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">

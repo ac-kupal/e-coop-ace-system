@@ -79,7 +79,7 @@ const CreatePostionModal = ({
          <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
           
             <ModalHead
-               title="Create Position"
+               title="Add Position"
                description="You are about to create a position. you must need to provide atleast 1 number of seats!"
             />
             <Form {...positionForm}>

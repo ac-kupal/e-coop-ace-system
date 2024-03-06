@@ -10,14 +10,14 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-import { TCandidate, TCandidateWithEventID, TCandidatewithPosition } from "@/types";
+import {TCandidatewithPosition } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 import { getUniquePosition } from "@/hooks/api-hooks/position-api-hooks";
 
-export const columns: ColumnDef<TCandidateWithEventID>[] = [
+export const columns: ColumnDef<TCandidatewithPosition>[] = [
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
@@ -74,10 +74,8 @@ export const columns: ColumnDef<TCandidateWithEventID>[] = [
          <DataTableColHeader column={column} title="position" />
       ),
       cell: ({ row }) => {
-         const params = {id:row.original.eventId, electionId:row.original.electionId, positionId:row.original.id}
-         const {positions,isLoading} = getUniquePosition(params)
          return (
-            <div className=""> {positions?.positionName}</div>
+            <div className=""> {row.original.position?.positionName}</div>
          )
       },
       enableSorting: false,
@@ -86,10 +84,12 @@ export const columns: ColumnDef<TCandidateWithEventID>[] = [
 ];
 
 type Props={ 
-   data:TCandidateWithEventID[]
+   data:TCandidatewithPosition[]
 }
 
 export const Candidates = ({data}:Props) => {
+
+
    const [globalFilter, setGlobalFilter] = useState<string>("");
   
    const table = useReactTable({

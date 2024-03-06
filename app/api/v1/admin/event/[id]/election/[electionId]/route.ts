@@ -5,7 +5,7 @@ import { routeErrorHandler } from "@/errors/route-error-handler";
 import { electionSettingSchema } from "@/validation-schema/election-settings";
 
 type TParams = {
-  params:{electionId:number}
+  params:{electionId:number,id:number}
 }
 
 export const POST = (req:NextRequest)=>{
@@ -15,7 +15,9 @@ export const POST = (req:NextRequest)=>{
 export const GET =async (req:NextRequest,{params}:TParams)=>{
   try {
        const electionId = Number(params.electionId)
+       const id = Number(params.id)
        validateId(electionId)
+       validateId(id)
        const getElection = await db.election.findUnique({
         where:{id:electionId},
         include:{
@@ -25,9 +27,19 @@ export const GET =async (req:NextRequest,{params}:TParams)=>{
               position:true
             }
           }
-        }
+         }
         })
-       return NextResponse.json(getElection)
+      //   elections.candidates.map((candidate) => ({
+      //     ...candidate,
+      //     eventId: params.id,
+      //  }))
+
+        // return NextResponse.json({
+        //   election:getElection,
+        //   candidates: getElection?.candidates.map((candidates:any)=>({...candidates,event:id}))
+        // })
+        
+        return NextResponse.json(getElection)   
     } catch (error) {
        return routeErrorHandler(error, req);
     }
