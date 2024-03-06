@@ -1,13 +1,16 @@
 import React from "react";
 import LoadingSpinner from "@/components/loading-spinner";
-import { useClaimAuth, useMyClaims } from "@/hooks/public-api-hooks/use-claim-api";
+import { useClaimAuth, useClaimablesList, useMyClaims } from "@/hooks/public-api-hooks/use-claim-api";
 import ValidateClaim from "./validate-claim";
+import AvailableClaims from "./available-claims";
+import MyClaims from "./my-claims";
 
 type Props = { eventId: number };
 
 const ClaimWindow = ({ eventId }: Props) => {
     const { myInfo, isLoading, isError, error } = useClaimAuth(eventId);
     const { myClaims, isLoadingClaims } = useMyClaims(eventId, myInfo !== undefined)
+    const { claimables, isLoadingClaimables } = useClaimablesList(eventId, myInfo !== undefined)
 
     if (isLoading)
         return (
@@ -18,7 +21,10 @@ const ClaimWindow = ({ eventId }: Props) => {
 
     if (!myInfo) return <ValidateClaim eventId={eventId} />;
 
-    return <div>claim page currently not yet available</div>;
+    return <div className="w-full max-w-4xl flex flex-col lg:flex-row gap-x-2">
+        <AvailableClaims claimables={claimables} />
+        <MyClaims myClaims={myClaims} />
+    </div>;
 };
 
 export default ClaimWindow;
