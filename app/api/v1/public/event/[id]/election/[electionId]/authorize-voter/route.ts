@@ -11,15 +11,10 @@ type TParams = { params: { id: number; passbookNumber: number } };
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
-        const { id: eventId, electionId } =
-            eventElectionParamsSchema.parse(params);
-        const { otp, birthday, passbookNumber } = voterVerificationSchema.parse(
-            await req.json()
-        );
+        const { id: eventId, electionId } = eventElectionParamsSchema.parse(params);
+        const { otp, birthday, passbookNumber } = voterVerificationSchema.parse(await req.json());
 
-        const election = await db.election.findUnique({
-            where: { eventId, id: electionId },
-        });
+        const election = await db.election.findUnique({ where: { eventId, id: electionId } });
 
         if (election?.status !== "live")
             return NextResponse.json(
@@ -62,6 +57,12 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 { message: "Invalid birthdate, please try again" },
                 { status: 400 }
             );
+        
+        if(election.voteEligibility === "REGISTERED" && !voter.registered) 
+            return NextResponse.json({ message : "Sorry you are not registered" }, { status : 403 })
+
+        if(election.voteEligibility === "MARKED_CANVOTE" && !voter.canVote) 
+            return NextResponse.json({ message : "Sorry you are not marked as 'can vote'" }, { status : 403 })
 
         const authorizationContent: TVoteAuthorizationPayload = {
             eventId,
