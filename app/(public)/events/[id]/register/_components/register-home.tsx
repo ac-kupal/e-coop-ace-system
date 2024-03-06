@@ -29,11 +29,11 @@ const RegisterHome = ({ eventId }: Props) => {
 
     return (
         <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
-            <p className="text-2xl lg:text-4xl uppercase text-center">
+            <p className="text-lg lg:text-4xl uppercase text-center">
                 {event.title}
             </p>
             <div className="w-5 h-2 bg-orange-400 rounded-full" />
-            <div className="py-16">
+            <div className="py-8 lg:py-16">
                 <Attendance eventId={eventId} />
             </div>
         </div>

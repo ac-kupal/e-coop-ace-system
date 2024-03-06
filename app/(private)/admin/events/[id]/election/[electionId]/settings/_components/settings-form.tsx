@@ -65,7 +65,7 @@ const SettingsForm = ({ election,params }: Props) => {
       console.log(formValues)
       onOpenConfirmModal({
          title: "Update Election Settings ",
-         description: "Are you sure you want to udapte this Election",
+         description: "Are you sure you want to update this Election",
          onConfirm: () => {
             updateSettings.mutate({
                data: formValues,

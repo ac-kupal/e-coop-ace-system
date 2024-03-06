@@ -41,7 +41,13 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
         },
     });
 
-    const { authenticatedVoter, getAuthorization, isPending, isError, error } = useVoterAuthorization(electionWithEvent.eventId, electionWithEvent.id, voter.id, onAuthorize);
+    const { authenticatedVoter, getAuthorization, isPending, isError, error } =
+        useVoterAuthorization(
+            electionWithEvent.eventId,
+            electionWithEvent.id,
+            voter.id,
+            onAuthorize
+        );
 
     const onSubmit = (values: TForm) => {
         getAuthorization(values);
@@ -51,35 +57,13 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
 
     return (
         <div className="flex flex-col items-center gap-y-4">
-            <p>This step is for verification before we authorize you to vote</p>
+            <p className="text-sm lg:text-base text-center text-foreground/60 pb-4">This step is for verification before we authorize you to vote</p>
             <div className="space-y-4 max-w-sm">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
-                        <FormField
-                            control={form.control}
-                            name="birthday"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel className="flex justify-between">
-                                        <h1>Birthday</h1>{" "}
-                                        <span className="text-[12px] italic text-muted-foreground">
-                                            mm/dd/yyyy
-                                        </span>
-                                    </FormLabel>
-                                    <ReactInputMask
-                                        disabled={disabled}
-                                        {...field}
-                                        mask="99/99/9999"
-                                        placeholder="input birthday"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                    />
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="otp"
@@ -96,15 +80,43 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                                 </FormItem>
                             )}
                         />
-
-                        { isError && error && <ErrorAlert title="Voter Check Error" message={error} /> }
+                        {electionWithEvent.allowBirthdayVerification && (
+                            <FormField
+                                control={form.control}
+                                name="birthday"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel className="flex justify-between">
+                                            <h1>Birthday</h1>{" "}
+                                            <span className="text-[12px] italic text-muted-foreground">
+                                                mm/dd/yyyy
+                                            </span>
+                                        </FormLabel>
+                                        <ReactInputMask
+                                            disabled={disabled}
+                                            {...field}
+                                            mask="99/99/9999"
+                                            placeholder="input birthday"
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+                        {isError && error && (
+                            <ErrorAlert
+                                title="Voter Check Error"
+                                message={error}
+                            />
+                        )}
 
                         <Button
                             disabled={disabled}
                             className="w-full"
                             type="submit"
                         >
-                            {isPending || authenticatedVoter !== undefined? (
+                            {isPending || authenticatedVoter !== undefined ? (
                                 <Loader2
                                     className="h-3 w-3 animate-spin"
                                     strokeWidth={1}
