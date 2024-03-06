@@ -1,6 +1,6 @@
 import { routeErrorHandler } from "@/errors/route-error-handler"
 import { currentUserOrThrowAuthError } from "@/lib/auth"
-import { createMemberSchema, createMemberWithUploadSchema } from "@/validation-schema/member"
+import { createMemberWithUploadSchema } from "@/validation-schema/member"
 import { NextRequest, NextResponse } from "next/server"
 import db from "@/lib/database"
 type TParams = { params: { id: number, memberId:string } };

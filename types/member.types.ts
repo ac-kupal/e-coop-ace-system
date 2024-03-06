@@ -3,12 +3,12 @@ import { $Enums, EventAttendees } from "@prisma/client";
 export type TCreateMember = {
     passbookNumber: string;
     firstName: string;
-    middleName: string;
+    middleName?: string;
     lastName: string;
     gender: $Enums.gender;
-    birthday: Date;
+    birthday?: Date | null;
     contact?: string;
-    picture: string | null;
+    picture?: string | null;
     eventId?:number;
     emailAddress?:string | null;
 }

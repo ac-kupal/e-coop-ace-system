@@ -114,18 +114,6 @@ const Actions = ({ member }: { member: TMember }) => {
                     <Gift strokeWidth={2} className="h-4" />
                     Incentive Claims
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                    className="px-2 gap-x-2"
-                    onClick={() => {
-                        navigator.clipboard.writeText(
-                            `${format(member.birthday, "PPP")}`
-                        );
-                        toast.success("coppied");
-                    }}
-                >
-                    <Copy strokeWidth={2} className="h-4" />
-                    Copy birthday
-                </DropdownMenuItem>
                 {!member.registered && (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
@@ -266,7 +254,7 @@ const columns: ColumnDef<TMember>[] = [
             <DataTableColHeader column={column} title="birthday" />
         ),
         cell: ({ row }) => (
-            <div className="">{moment(row.original.birthday).format("LL")}</div>
+            <div className="">{!row.original.birthday ? "":moment(row.original.birthday).format("LL")}</div>
         ),
     },
     {

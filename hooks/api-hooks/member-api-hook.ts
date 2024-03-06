@@ -78,7 +78,7 @@ export const createMember = ({ onCancelandReset }: Props) => {
                 const newBirthday = moment(member.birthday).format(
                     "YYYY-MM-DD HH:mm:ss"
                 );
-                const newMember = { ...member, birthday: newBirthday };
+                const newMember = { ...member, birthday: !member.birthday ? undefined : newBirthday };
                 const response = await axios.post(`/api/v1/admin/event/${eventId}/member/`, newMember);
                 return response.data;
             } catch (e) {

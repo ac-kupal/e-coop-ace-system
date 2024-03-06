@@ -2,7 +2,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,7 @@ import useImagePick from "@/hooks/use-image-pick";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
 import { v4 } from "uuid";
-import { createMemberWithUploadSchema } from "@/validation-schema/member";
+import {  updateMemberWithUploadSchema } from "@/validation-schema/member";
 import { updateMember } from "@/hooks/api-hooks/member-api-hook";
 import { TMember } from "@/types";
 import InputMask from "react-input-mask";
@@ -45,23 +44,23 @@ type Props = {
    onCancel?: () => void;
    member: TMember;
 };
-export type createTMember = z.infer<typeof createMemberWithUploadSchema>;
+export type createTMember = z.infer<typeof updateMemberWithUploadSchema>;
 
 const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
 
    const memberForm = useForm<createTMember>({
-      resolver: zodResolver(createMemberWithUploadSchema),
+      resolver: zodResolver(updateMemberWithUploadSchema),
    });
 
    const defaultValues = useCallback(() => {
       memberForm.setValue("passbookNumber", member.passbookNumber);
       memberForm.setValue("firstName", member.firstName);
-      memberForm.setValue("middleName", member.middleName);
+      memberForm.setValue("middleName", undefined);
       memberForm.setValue("lastName", member.lastName);
       memberForm.setValue("gender", member.gender);
-      memberForm.setValue("birthday", member.birthday);
+      memberForm.setValue("birthday", undefined);
       memberForm.setValue("picture",member.picture)
-      memberForm.setValue("contact", member.contact);
+      memberForm.setValue("contact", undefined);
       memberForm.setValue("emailAddress", member.emailAddress);
       memberForm.setValue("eventId", member.eventId);
    }, [memberForm,member]);

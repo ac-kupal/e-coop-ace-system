@@ -119,11 +119,11 @@ model EventAttendees {
     id             String   @id @default(uuid())
     passbookNumber String
     firstName      String
-    middleName     String
+    middleName     String?  
     lastName       String
     gender         gender
-    birthday       DateTime
-    contact        String
+    birthday       DateTime?
+    contact        String?
     picture        String?  @default("/images/default-avatar.png")
     emailAddress   String?
 
