@@ -33,11 +33,9 @@ export const POST = async (req: NextRequest,{params}:TCreateCandidateParams) => 
          (e) => e.passbookNumber === candidate.passbookNumber
       );
       
-
       if(!!isExistOnMigs == false){
         throw new Error("The candidate must either exist among the members or be a member of MIGS")
       }
-      console.log(!!isExistOnMigs)
 
         const createCandidate = await db.candidate.create({
            data: {
@@ -91,18 +89,20 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
          const candidatesData = position.candidates.map((candidate:any)  => {
            const totalVotes = candidate.votes.length;
            return {
+             ...candidate,
              candidateName: `${candidate.firstName} ${candidate.lastName}`,
              totalVotes: totalVotes,
            };
          });
-     
          return {
            positionName: position.positionName,
            dataSets: candidatesData.map((candidateData:CandidatesDataType) => candidateData.totalVotes),
-           candidatesName: candidatesData.map((candidateData:CandidatesDataType) => candidateData.candidateName)
-           
+           candidatesName: candidatesData.map((candidateData:CandidatesDataType) => candidateData.candidateName),
+           candidatesInfo: candidatesData
          };
        });
+         console.log(sampleData)
+       
         return NextResponse.json(sampleData);
      } catch (error) {
         return routeErrorHandler(error, req);

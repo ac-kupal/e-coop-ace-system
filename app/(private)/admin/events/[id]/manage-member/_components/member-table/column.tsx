@@ -27,6 +27,7 @@ import LoadingSpinner from "@/components/loading-spinner";
 import { useAttendanceRegistration } from "@/hooks/api-hooks/attendance-api-hooks";
 import AssistClaimSheet from "../../../../_components/assist-claim-sheet";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
+import { cn } from "@/lib/utils";
 
 const Actions = ({ member }: { member: TMember }) => {
     const { data: session } = useSession();
@@ -277,6 +278,23 @@ const columns: ColumnDef<TMember>[] = [
             <DataTableColHeader column={column} title="gender" />
         ),
         cell: ({ row }) => <div className="">{row.original.gender}</div>,
+    },
+    {
+        id: "voted",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Voted" />
+        ),
+        cell: ({ row }) => (
+            <div className="">
+                {row.original.voted ? (
+                    <Badge className={cn("bg-green-500 text-accent border-0")} >
+                        voted
+                    </Badge>
+                ) : (
+                    <Badge variant={"secondary"} className={cn(" bg-secondary")} >Unvoted</Badge>
+                )}
+            </div>
+        ),
     },
     {
         id: "registered",

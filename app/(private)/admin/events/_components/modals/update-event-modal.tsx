@@ -65,21 +65,25 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
    });
 
    const isEventOnChange =
-      eventForm.getValues("title") === event.title &&
-      eventForm.getValues("description") === event.description &&
-      eventForm.getValues("location") === event.location &&
-      eventForm.getValues("coverImage") === event.coverImage;
-   const defaultValues = useCallback(() => {
+      eventForm.watch("title") === event.title &&
+      eventForm.watch("description") === event.description &&
+      eventForm.watch("location") === event.location &&
+      eventForm.watch("date") === event.date &&
+      eventForm.watch("coverImage") === event.coverImage;
+
+
+   
+      const defaultValues = useCallback(() => {
       eventForm.setValue("title", event.title);
       eventForm.setValue("description", event.description);
       eventForm.setValue("location", event.location);
       eventForm.setValue("date", event.date);
       eventForm.setValue("coverImage", event.coverImage);
-   }, [eventForm, event]);
+   }, [event]);
 
    useEffect(() => {
       defaultValues();
-   }, [eventForm, event, defaultValues]);
+   }, [event]);
 
    const onCancelandReset = () => {
       eventForm.reset();
@@ -96,7 +100,7 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
          if (!imageFile) {
             updateEventMutation.mutate({
                ...formValues,
-               coverImage: "/images/default.png",
+               coverImage: eventForm.getValues("coverImage"),
             });
          } else {
             const image = await uploadImage.mutateAsync({
@@ -104,10 +108,14 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                folderGroup: "event",
                file: formValues.coverImage,
             });
-            updateEventMutation.mutate({
+
+            console.log("image: ", image)
+
+            updateEventMutation.mutateAsync({
                ...formValues,
-               coverImage: !image ? "/images/default.png" : image,
+               coverImage: image,
             });
+
          }
          resetPicker();
       } catch (error) {
@@ -251,16 +259,6 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                   />
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
-                     <Button
-                        disabled={isLoading}
-                        onClick={(e) => {
-                           e.preventDefault();
-                        }}
-                        variant={"ghost"}
-                        className="bg-muted/60 hover:bg-muted"
-                     >
-                        clear
-                     </Button>
                      <Button
                         disabled={isLoading}
                         onClick={(e) => {

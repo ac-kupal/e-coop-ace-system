@@ -37,6 +37,7 @@ import { useInfoModal } from "@/stores/use-info-modal-store";
 import QrViewContent from "@/components/modals/modal-content/qr-view-content";
 import useOrigin from "@/hooks/use-origin";
 import CopyURL from "@/components/copy-url";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Actions = ({ event }: { event: TEventWithElection }) => {
    const router = useRouter();
@@ -168,9 +169,23 @@ const columns: ColumnDef<TEventWithElection>[] = [
    {
       accessorKey: "id",
       header: ({ column }) => <DataTableColHeader column={column} title="id" />,
-      cell: ({ row }) => (
-         <div className="font-medium uppercase">{row.original.id}</div>
-      ),
+      cell: ({ row }) => {
+         const img =
+         row.original.coverImage === null
+             ? "/images/default.png"
+             : row.original.coverImage;
+         return(
+            <div className="flex items-center space-x-2">
+            <Avatar>
+                <AvatarImage src={img} />
+                <AvatarFallback className="bg-primary text-accent">
+                    {row.original.title.charAt(0).toUpperCase()}
+                </AvatarFallback>
+            </Avatar>
+            <h1 className="font-medium">{row.original.title}</h1>
+        </div>
+         )
+      },
       enableSorting: false,
       enableHiding: false,
    },
