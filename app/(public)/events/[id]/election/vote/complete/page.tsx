@@ -5,7 +5,7 @@ import db from "@/lib/database";
 import { CheckIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import InvalidElection from "@/components/invalid-prompt";
+import InvalidPrompt from "@/components/invalid-prompt";
 
 import { eventIdSchema } from "@/validation-schema/commons";
 
@@ -19,7 +19,7 @@ const CompletePage = async ({ params }: Props) => {
   if (!validateParam.success)
     return (
       <div className="flex flex-col items-center justify-center min-h-dvh">
-        <InvalidElection message={validateParam.error.issues[0].message} />
+        <InvalidPrompt message={validateParam.error.issues[0].message} />
       </div>
     );
 
@@ -31,7 +31,7 @@ const CompletePage = async ({ params }: Props) => {
   if (!election)
     return (
       <div className="flex flex-col items-center justify-center min-h-dvh">
-        <InvalidElection message="Election was not found" />
+        <InvalidPrompt message="Election was not found" />
       </div>
     );
 

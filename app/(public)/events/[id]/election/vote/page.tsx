@@ -1,7 +1,7 @@
 import React from "react";
 
 import VoteWindow from "./_components/voting/vote-window";
-import InvalidElection from "@/components/invalid-prompt";
+import InvalidPrompt from "@/components/invalid-prompt";
 
 import { eventIdSchema } from "@/validation-schema/commons";
 import VoteHome from "./_components/vote-home";
@@ -15,7 +15,7 @@ const VotePage = ({ params }: Props) => {
     const parsedParams = eventIdParamSchema.safeParse(params);
 
     if (!parsedParams.success)
-        return <InvalidElection message="Invalid election id" />;
+        return <InvalidPrompt message="Invalid election id" />;
 
     return <VoteHome eventId={parsedParams.data.id}/>
 };
