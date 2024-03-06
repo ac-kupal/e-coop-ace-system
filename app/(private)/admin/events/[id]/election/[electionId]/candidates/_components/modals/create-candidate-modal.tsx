@@ -86,7 +86,7 @@ const CreateCandidateModal = ({
    const uploadImage = onUploadImage();
 
    const onSubmit = async (formValues: createTCandidate) => {
-      console.log(formValues)
+      //console.log(formValues)
       try {
          if(!imageFile) {
             createCandidate.mutate({...formValues,picture: "/images/default.png",});

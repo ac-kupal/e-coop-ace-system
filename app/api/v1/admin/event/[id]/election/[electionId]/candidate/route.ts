@@ -5,13 +5,40 @@ import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database"
 import { parseArgs } from "util";
 import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
+import { validateId } from "@/lib/server-utils";
+import { ZodError, z } from "zod";
 
 
-
-export const POST = async (req: NextRequest) => {
+type TCreateCandidateParams = {
+   params: { id: number; electionId: number; candidateId: number };
+};
+export const POST = async (req: NextRequest,{params}:TCreateCandidateParams) => {
      try {
         const candidate: TCreateCandidate = await req.json();
         createCandidateSchema.parse(candidate)
+
+        z.string().parse(candidate.passbookNumber)
+
+      const eventId = params.id
+
+      validateId(eventId);
+
+      const getMemberAttendees = await db.eventAttendees.findMany({
+         where: {
+            eventId: Number(eventId),
+         },
+      });
+
+      const isExistOnMigs = getMemberAttendees.find(
+         (e) => e.passbookNumber === candidate.passbookNumber
+      );
+      
+
+      if(!!isExistOnMigs == false){
+        throw new Error("The candidate must either exist among the members or be a member of MIGS")
+      }
+      console.log(!!isExistOnMigs)
+
         const createCandidate = await db.candidate.create({
            data: {
               firstName: candidate.firstName,
@@ -32,7 +59,6 @@ export const POST = async (req: NextRequest) => {
         });
         return NextResponse.json(createCandidate);
      } catch (error) {
-          console.log(error)
         return routeErrorHandler(error, req);
      }
   };

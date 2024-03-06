@@ -22,6 +22,7 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
 //get many candidate based on id
 export const GET = async function name(req:NextRequest,{params}:TParams) {
   try {
+
     const electionId = Number(params.candidateId)
     console.log(electionId)
     validateId(electionId)

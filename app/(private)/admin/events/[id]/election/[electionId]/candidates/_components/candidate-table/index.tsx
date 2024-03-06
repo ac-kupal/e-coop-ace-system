@@ -18,6 +18,7 @@ import columns from "./column";
 import CreateCandidateModal from "../modals/create-candidate-modal";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 import { TCandidateWithEventID, TCandidatewithPosition, TPosition } from "@/types";
+import { toast } from "sonner";
 
 type Props = {
    params: { id: number; electionId: number };
@@ -70,6 +71,10 @@ const CandidateTable = ({ data,positions,params }: Props) => {
                <DataTableViewOptions table={table} />
                <Button
                   onClick={() => {
+                     if(positions?.length === 0){
+                        toast.warning("You will not be able to add a candidate if the position is empty.")
+                        return
+                     }
                      setCreatePosition(true);
                   }}
                   size="sm"
