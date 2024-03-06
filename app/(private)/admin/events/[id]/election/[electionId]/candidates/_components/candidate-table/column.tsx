@@ -1,23 +1,19 @@
 "use client";
-import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-import {  Loader2, Trash2Icon } from "lucide-react";
-import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+
+import {  Loader2, Trash2Icon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import UpdateCandidateModal from "../modals/update-candidate-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
+
 import { TCandidateWithEventID, TCandidatewithPosition } from "@/types";
 import { deleteCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import UpdateCandidateModal from "../modals/update-candidate-modal";
-import { getUniquePosition } from "@/hooks/api-hooks/position-api-hooks";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 
-
-const getPositionName = ( { candidate } : {candidate : TCandidateWithEventID } ) => {
-    return (
-      <div className=""> {candidate.position?.positionName}</div>
-    )
-}
 
 const columns: ColumnDef<TCandidateWithEventID>[] = [
    {
@@ -62,12 +58,12 @@ const columns: ColumnDef<TCandidateWithEventID>[] = [
       cell: ({ row }) => <div className=""> {row.original.passbookNumber}</div>,
    },
    {
-      accessorKey: "position",
+      accessorKey: "position.positionName",
       header: ({ column }) => (
          <DataTableColHeader column={column} title="position" />
       ),
       cell: ({ row }) => {
-        return getPositionName({candidate:row.original})
+        <div> {row.original.position?.positionName as ""}</div>
       },
    },
    {
