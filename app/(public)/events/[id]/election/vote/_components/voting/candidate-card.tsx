@@ -31,7 +31,7 @@ const CandidateCard = ({
     return (
         <div
             className={cn(
-                "p-1 lg:p-4 w-full relative md:w-[12.5%] lg:w-1/6 space-y-4 duration-300 cursor-hover selection:bg-background/10 cursor-pointer",
+                "p-1 lg:p-4 relative w-[12.5%] lg:w-1/6 space-y-4 duration-300 cursor-hover selection:bg-background/10 cursor-pointer",
                 !canSelect && !isChosen && "cursor-not-allowed opacity-50 ",
             )}
             onClick={handleClick}
@@ -44,7 +44,7 @@ const CandidateCard = ({
                     )}
                 >
                     <img
-                        className="h-[100px] w-full lg:h-[200px] pointer-events-none rounded-none object-cover"
+                        className="h-[80px] xs:h-[100px] w-full lg:h-[200px] pointer-events-none rounded-none object-cover"
                         src={picture ?? "/images/default-avatar.png"}
                     />
                 </div>
