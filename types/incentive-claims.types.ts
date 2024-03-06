@@ -24,3 +24,10 @@ export type TIncentiveClaimsWithIncentiveAndAssistedBy = TIncentiveClaimsMinimal
     incentive: TIncentiveMinimalInfo,
     assistedBy : TUserMinimalInfo | null
 }
+
+// for claim auth for public
+export type TIncentiveClaimAuth = {
+    eventId: number;
+    attendeeId: string;
+    passbookNumber: string;
+};

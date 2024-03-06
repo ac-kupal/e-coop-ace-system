@@ -2,6 +2,8 @@ import { ZodError } from "zod";
 import { AuthenticationError } from "./auth-error";
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
+import { revokeClaimAuth } from "@/app/api/v1/public/event/[id]/claim/service";
+import { ClaimAuthError } from "./claim-auth-error";
 
 export const routeErrorHandler = (e: unknown, req: NextRequest) => {
     if (e instanceof ZodError)
@@ -26,6 +28,12 @@ export const routeErrorHandler = (e: unknown, req: NextRequest) => {
                 { message: "The data you are trying to update doesn't exist" },
                 { status: 400 }
             );
+    }
+
+    if(e instanceof ClaimAuthError){
+        const response = NextResponse.json({ message : e.message }, { status : e.status })
+        revokeClaimAuth(response)
+        return response
     }
 
     console.error(`ERROR : ${req.url} - [${req}]: ${e}`);

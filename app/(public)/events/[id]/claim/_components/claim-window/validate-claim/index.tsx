@@ -1,47 +1,43 @@
 import z from "zod";
 import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Loader2 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
-import { TMemberAttendeesMinimalInfo } from "@/types";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { passbookSearchSchema } from "@/validation-schema/event-registration-voting";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { searchVoter } from "@/hooks/public-api-hooks/use-vote-api";
 import QrReader from "@/components/qr-reader";
 import ErrorAlert from "@/components/error-alert/error-alert";
+import { createPublicClaimAuthorizationSchema } from "@/validation-schema/incentive";
+import { useCreateClaimAuth } from "@/hooks/public-api-hooks/use-claim-api";
 
-type Props = {
-    eventId: number;
-    electionId: number;
-    onFound: (voter: TMemberAttendeesMinimalInfo) => void;
-};
+type Props = { eventId: number };
 
-type TPassbookForm = z.infer<typeof passbookSearchSchema>;
+type TClaimValidateForm = z.infer<typeof createPublicClaimAuthorizationSchema>;
 
-const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
-    const form = useForm<TPassbookForm>({
-        resolver: zodResolver(passbookSearchSchema),
+const ValidateClaim = ({ eventId }: Props) => {
+    const form = useForm<TClaimValidateForm>({
+        resolver: zodResolver(createPublicClaimAuthorizationSchema),
         defaultValues: {
             passbookNumber: "",
+            otp : ""
         },
     });
 
     form.watch("passbookNumber");
 
-    const { isPending, findVoter, isError, error } = searchVoter(eventId, electionId, onFound);
+    const { authorize, isPending, isError, error } = useCreateClaimAuth(eventId);
     const disabled = isPending;
 
     return (
         <div className="flex flex-col items-center gap-y-4">
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit((pb) => findVoter(pb.passbookNumber))}
+                    onSubmit={form.handleSubmit((formValues) => authorize(formValues))}
                     className="space-y-4"
                 >
                     <FormField
@@ -56,16 +52,33 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                                         {...field}
                                     />
                                 </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="otp"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <Input
+                                        disabled={disabled}
+                                        placeholder="OTP"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
 
-                    { isError && error && <ErrorAlert title="Search failed" message={error}/> }
+                    { isError && error && <ErrorAlert title="Claim Authorization Failed" message={error}/> }
                     <Button disabled={disabled} className="w-full" type="submit">
                         {isPending ? (
                             <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
                         ) : (
-                            "Find"
+                            "Proceed"
                         )}
                     </Button>
                     <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
@@ -74,10 +87,14 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                     <QrReader
                         qrReaderOption="HTML5QrScanner"
                         onRead={(val: string) => {
+                            if(!val || val.length === 0) return;
                             form.setValue("passbookNumber", val);
-                            findVoter(val);
+                            authorize({
+                                passbookNumber: val,
+                                otp : form.getValues("otp")
+                            })
                         }}
-                        className="size-[400px] bg-background overflow-clip rounded-xl"
+                        className="size-[320px] md:size-[400px] bg-background overflow-clip rounded-xl"
                     />
                 </form>
             </Form>
@@ -85,4 +102,4 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
     );
 };
 
-export default VoterSearch;
+export default ValidateClaim;
