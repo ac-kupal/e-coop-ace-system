@@ -1,88 +1,84 @@
-"use client"
+"use client";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  scales,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { faker } from '@faker-js/faker';
-import Header from '../../_components/header';
+   Chart as ChartJS,
+   CategoryScale,
+   LinearScale,
+   BarElement,
+   Title,
+   Tooltip,
+   Legend,
+   scales,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { faker } from "@faker-js/faker";
+import Header from "../../_components/header";
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
+   CategoryScale,
+   LinearScale,
+   BarElement,
+   Title,
+   Tooltip,
+   Legend
 );
 
-type Props={
-   positionName: string,
-   labels: string[],
-   dataSet: number[]
-}
+type Props = {
+   positionName: string;
+   labels: string[];
+   dataSet: number[];
+};
 
-const BarGraphContainer = ({positionName,labels,dataSet}:Props) => {
-      const options = {
-          indexAxis: 'y' as const,
-          elements: {
-            bar: {
-              borderWidth: 2,
+const BarGraphContainer = ({ positionName, labels, dataSet }: Props) => {
+   const options = {
+      indexAxis: "y" as const,
+      elements: {
+         bar: {
+            borderWidth: 2,
+         },
+      },
+      responsive: true,
+      plugins: {
+         legend: {
+            position: "right" as const,
+         },
+      },
+      scales: {
+         x: {
+            ticks: {
+               font: {
+                  size: 20,
+               },
             },
-          },
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'right' as const,
+         },
+         y: {
+            ticks: {
+               font: {
+                  size: 20,
+               },
             },
-            
-          },
-          scales: {
-            x: {
-                ticks: {
-                    font: {
-                        size: 20,
-                    },
-                }
-            },
-            y: {
-                ticks: {
-                    font: {
-                        size: 20,
-                    }
-                }
-            }                       
-          }
-        };
-                
-      const data = {
-          labels,
-          datasets: [
-            {
-              label: 'Dataset 1',
-              data: dataSet,
-              borderColor: 'rgb(21, 128, 61)',
-              backgroundColor: 'rgb(34, 197, 94)',
-            },
-          ],
-        };
-        
+         },
+      },
+   };
 
-
-  return (
-    <div className='w-full min-w-xs'>
-         <div className='text-center'>
-         <Header text={positionName}></Header>
+   const data = {
+      labels,
+      datasets: [
+         {
+            label: "Total Votes",
+            data: dataSet,
+            borderColor: "rgb(21, 128, 61)",
+            backgroundColor: "rgb(34, 197, 94)",
+         },
+      ],
+   };
+   return (
+      <div className="w-full min-w-xs">
+         <div className="text-center">
+            <Header text={positionName}></Header>
          </div>
          <Bar options={options} data={data} />
-    </div>
-  )
-}
+      </div>
+   );
+};
 
-export default BarGraphContainer
+export default BarGraphContainer;

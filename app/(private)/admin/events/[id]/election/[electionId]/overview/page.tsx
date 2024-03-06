@@ -77,7 +77,6 @@ const page = ({params}:Props) => {
             </Badge>
          )}
       <Header text="Overview"></Header>
-      <p className=" text-sm italic text-muted-foreground">Note: You will not be able to start the election if there are no candidates and the position is empty.</p>
       <ElectionSwitch
             election={elections}
             status={elections.status}

@@ -23,7 +23,9 @@ export const BarGraphSection = ({ params }: TParams) => {
 
    if (isLoading) return <Loading></Loading>;
    if (isError) return <NotFound></NotFound>;
-   
+
+   console.log(votes)
+
    if(votes?.length === 0) return <div className="w-full h-[50vh] flex justify-center items-center">
          <div className="flex flex-col items-center space-y-2">
             <p className="font-bold text-[5rem]">🍃</p>
@@ -41,7 +43,7 @@ export const BarGraphSection = ({ params }: TParams) => {
                                  key={index}
                                  positionName={position.positionName}
                                  dataSet={position.dataSets}
-                                 labels={position.candidatesName}
+                                 labels={position.candidateNameWithNumeric}
                               ></BarGraphContainer>
                      </div>
                   </CarouselItem>

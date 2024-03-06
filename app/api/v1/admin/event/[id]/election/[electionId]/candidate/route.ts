@@ -68,6 +68,8 @@ type TParams = {
 type CandidatesDataType = {
    candidateName: string,
    totalVotes:number
+   candidateNameWithNumeric: string,
+   
 }
 
 export const GET = async (req: NextRequest,{params}:TParams) => {
@@ -90,6 +92,7 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
            const totalVotes = candidate.votes.length;
            return {
              ...candidate,
+             candidateNameWithNumeric: `${candidate.firstName} ${candidate.lastName} ${"("+totalVotes+")"}`,
              candidateName: `${candidate.firstName} ${candidate.lastName}`,
              totalVotes: totalVotes,
            };
@@ -98,11 +101,10 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
            positionName: position.positionName,
            dataSets: candidatesData.map((candidateData:CandidatesDataType) => candidateData.totalVotes),
            candidatesName: candidatesData.map((candidateData:CandidatesDataType) => candidateData.candidateName),
-           candidatesInfo: candidatesData
+           candidateNameWithNumeric:candidatesData.map((candidatesData:CandidatesDataType)=> candidatesData.candidateNameWithNumeric),
+           candidatesInfo: candidatesData,
          };
        });
-         console.log(sampleData)
-       
         return NextResponse.json(sampleData);
      } catch (error) {
         return routeErrorHandler(error, req);

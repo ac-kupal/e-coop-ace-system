@@ -23,6 +23,7 @@ export type  BarGraphDataTypes = {
      positionName:string,
      dataSets: number[];
      candidatesName: string[];
+     candidateNameWithNumeric: string[];
 }
 
 // used in public event/[]/election/vote

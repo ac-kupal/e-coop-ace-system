@@ -212,7 +212,7 @@ const columns: ColumnDef<TMember>[] = [
                             {row.original.firstName.charAt(0).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
-                    <h1 className="font-medium">{row.original.firstName}</h1>
+                    <h1 className="font-medium">{row.original.firstName.toUpperCase()}</h1>
                 </div>
             );
         },
@@ -222,14 +222,14 @@ const columns: ColumnDef<TMember>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="last Name" />
         ),
-        cell: ({ row }) => <div className=""> {row.original.lastName}</div>,
+        cell: ({ row }) => <div className=""> {row.original.lastName.toUpperCase()}</div>,
     },
     {
         accessorKey: "middleName",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="middle" />
         ),
-        cell: ({ row }) => <div className="">{row.original.middleName}</div>,
+        cell: ({ row }) => <div className="">{row.original.middleName?.toUpperCase()}</div>,
     },
     {
         accessorKey: "passbookNumber",
