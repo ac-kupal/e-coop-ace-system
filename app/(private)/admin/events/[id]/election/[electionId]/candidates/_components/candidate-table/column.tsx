@@ -63,7 +63,7 @@ const columns: ColumnDef<TCandidateWithEventID>[] = [
          <DataTableColHeader column={column} title="position" />
       ),
       cell: ({ row }) => {
-        <div> {row.original.position?.positionName as ""}</div>
+        return <div> {row.original.position?.positionName}</div>
       },
    },
    {
