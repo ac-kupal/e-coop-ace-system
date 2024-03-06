@@ -1,3 +1,4 @@
+import { boolean } from "zod";
 import db from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,7 +7,6 @@ import { eventIdSchema } from "@/validation-schema/commons";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { generateOTP } from "@/lib/server-utils";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
-import { boolean } from "zod";
 
 type TParams = { params: { id: number } };
 
@@ -16,6 +16,15 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
 
         const eventAttendees = await db.eventAttendees.findMany({
             where: { eventId },
+            include : { event : {
+                select : {
+                    election : {
+                        select : { 
+                            id : true
+                        }
+                    }
+                }
+            } },
             orderBy: [ { createdAt: "desc"} , {updatedAt : "desc" } ]
         });
 

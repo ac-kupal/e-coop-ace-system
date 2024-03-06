@@ -1,15 +1,17 @@
+import z from "zod";
 import axios from "axios";
 import moment from "moment";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TCreateMember, TMember, TMemberAttendeesWithRegistrationAssistance } from "@/types";
+import { TCreateMember, TMember, TMemberAttendeesMinimalInfo, TMemberAttendeesWithRegistrationAssistance, TMemberWithEventElectionId } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import useSkippedStore from "@/stores/skipped-members-store";
 import { useRouter } from "next/navigation";
+import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 
 export const getAllEventMembers = (eventId: number) => {
-    const positions = useQuery<TMember[], string>({
+    const positions = useQuery<TMemberWithEventElectionId[], string>({
         queryKey: ["all-event-members-list-query"],
         queryFn: async () => {
             try {
@@ -281,4 +283,27 @@ export const getMembersQuorum = (id:number) => {
         refetchInterval: 1 * 30 * 1000
     });
     return {members:data,isLoading,isError}
+};
+
+export const useVoterAuthorizationAssist = ( eventId: number, voterId: string, onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void) => {
+    const { data: authenticatedVoter, isPending, mutate: getAuthorization, isError, error, } = useMutation< TMemberAttendeesMinimalInfo, string, z.infer<typeof voterVerificationFormSchema>>({
+        mutationKey: ["authorize-voter", voterId],
+        mutationFn: async (data) => {
+            try {
+                const request = await axios.post(
+                    `/api/v1/admin/event/${eventId}/election/${eventId}/assist-authorize-voter`,
+                    data,
+                    { withCredentials: true }
+                );
+                onAuthorize(request.data);
+                return request.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        },
+    });
+
+    return { authenticatedVoter, isPending, getAuthorization, isError, error };
 };

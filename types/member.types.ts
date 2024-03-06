@@ -38,3 +38,11 @@ export type TSkippedMembers = {
 }
 
 export  type TMember = EventAttendees
+
+export type TMemberWithEventElectionId = EventAttendees & {
+    event: {
+        election: {
+            id: number;
+        } | null;
+    }
+}

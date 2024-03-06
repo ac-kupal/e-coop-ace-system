@@ -14,35 +14,45 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import moment from "moment";
-import { TMember } from "@/types";
+import { TMemberWithEventElectionId } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { deleteMember, useOtpSend } from "@/hooks/api-hooks/member-api-hook";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UpdateMemberModal from "../modals/update-member-modal";
 import { useState } from "react";
-import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import LoadingSpinner from "@/components/loading-spinner";
 import { useAttendanceRegistration } from "@/hooks/api-hooks/attendance-api-hooks";
 import AssistClaimSheet from "../../../../_components/assist-claim-sheet";
-import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 import { cn } from "@/lib/utils";
+import useOrigin from "@/hooks/use-origin";
+import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 
-const Actions = ({ member }: { member: TMember }) => {
+const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
     const { data: session } = useSession();
+    const origin = useOrigin();
 
     const isAdminOrRoot = session?.user.role === "admin" || session?.user.role === "root";
 
     const [onOpenModal, setOnOpenModal] = useState(false);
     const [claimSheet, setClaimSheet] = useState(false)
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
+
+    // custom no join
+    // const { getAuthorization } = useVoterAuthorizationAssist(member.eventId, member.id, (voter) => window.open(`${origin}/events/${member.eventId}/election/vote`));
+    
+    const { election } = member.event
+
+    const { getAuthorization } = useVoterAuthorization(member.eventId, election? election.id : '', member.id, (voter)=> window.open(`/events/${member.eventId}/election/vote`));
+
     const deleteOperation = deleteMember();
 
     const { isSendingOtp, sendOtp } = useOtpSend(
         member.eventId,
         member.passbookNumber
     );
+
     const { registerAttendance, registerPending } = useAttendanceRegistration(
         member.eventId,
         member.passbookNumber
@@ -129,14 +139,14 @@ const Actions = ({ member }: { member: TMember }) => {
                         Register Member
                     </DropdownMenuItem>
                 )}
-                {!member.voted && (
+                {!member.voted && member.event.election && (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
                         onClick={()=> onOpenConfirmModal({
                             title : "Assist Vote",
                             description : "You are about to assist this member on voting, it will redirect to a new window for voting. Are you sure to assist this member on voting?",
                             onConfirm : () => {
-
+                                getAuthorization({ otp : member.voteOtp ?? "", passbookNumber : member.passbookNumber, birthday : member.birthday !== null ? new Date(member.birthday).toISOString() : undefined })
                             },
                             confirmString : "Vote"
                         })}
@@ -182,7 +192,7 @@ const Actions = ({ member }: { member: TMember }) => {
     );
 };
 
-const columns: ColumnDef<TMember>[] = [
+const columns: ColumnDef<TMemberWithEventElectionId>[] = [
     {
         id: "actions",
         header: ({ column }) => (

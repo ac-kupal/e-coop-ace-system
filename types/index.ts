@@ -39,4 +39,5 @@ export type TVoteAuthorizationPayload = {
     electionId: number;
     attendeeId: string;
     passbookNumber: string;
+    assisted? : boolean;
 };

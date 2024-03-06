@@ -72,7 +72,9 @@ export const useCreateClaimAuth = (eventId : number) => {
         mutationKey : ["create-claim-auth"],
         mutationFn : async (credentials) => {
             try{
-                const request = await axios.post(`/api/v1/public/event/${eventId}/claim/authorize-claim`, credentials)
+                const request = await axios.post(`/api/v1/public/event/${eventId}/claim/authorize-claim`, credentials,
+                    { withCredentials: true }
+                )
                 queryClient.invalidateQueries({ queryKey : ['my-claim-minimal-info']})
                 return request.data
             }catch(e){
