@@ -5,6 +5,7 @@ import {
     ListChecks,
     Users,
     Vote,
+    Wrench,
 } from "lucide-react";
 import React from "react";
 import EventNavItems from "./event-nav-items";
@@ -24,6 +25,11 @@ export const EventRoutes: TNavListRoute[] = [
         icon: <Gift className="size-5" />,
         name: "Incentive",
         path: "incentive",
+    },
+    {
+        icon: <Wrench className="size-5" />,
+        name: "Event Settings",
+        path: "event-settings",
     }
 ];
 

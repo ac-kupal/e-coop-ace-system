@@ -5,6 +5,7 @@ const commonFieldErrors = {
    required_error: "This field is required",
    invalid_type_error: "Invalid data type",
 };
+
 const commonFieldErrorsMinimum = {
    required_error: "Field must contain at least 1 character(s)",
 };

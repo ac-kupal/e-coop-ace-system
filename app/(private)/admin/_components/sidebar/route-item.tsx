@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { user } from "next-auth";
 import { usePathname } from "next/navigation";
 
 import { TRoute } from "@/types";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type Props = {

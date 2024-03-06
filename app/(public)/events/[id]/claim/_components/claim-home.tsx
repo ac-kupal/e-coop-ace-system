@@ -4,6 +4,7 @@ import LoadingSpinner from '@/components/loading-spinner'
 import { useElection } from '@/hooks/public-api-hooks/use-election-api'
 import ValidateVoter from './validate-voter'
 import InvalidPrompt from '@/components/invalid-prompt'
+import ClaimWindow from './claim-window'
 
 type Props = {
     eventId : number
@@ -31,7 +32,7 @@ const ClaimHome = ({ eventId }: Props) => {
             <div className="w-5 h-2 bg-orange-400 rounded-full" />
             <div className="py-16">
                 {/* <ValidateVoter electionWithEvent={election} /> */}
-                under development
+                <ClaimWindow eventId={eventId} />
             </div>
         </div>
     );
