@@ -20,6 +20,7 @@ import {
 import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 import ErrorAlert from "@/components/error-alert/error-alert";
+import { cn } from "@/lib/utils";
 
 type Props = {
     voter: TMemberAttendeesMinimalInfo;
@@ -73,6 +74,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                                         <Input
                                             disabled={disabled}
                                             placeholder="6 digit OTP"
+                                            className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
                                             {...field}
                                         />
                                     </FormControl>
@@ -97,7 +99,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                                             {...field}
                                             mask="99/99/9999"
                                             placeholder="input birthday"
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", "text-xl text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70")}
                                         />
                                         <FormMessage />
                                     </FormItem>

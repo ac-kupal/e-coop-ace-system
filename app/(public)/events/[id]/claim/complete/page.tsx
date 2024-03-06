@@ -54,8 +54,8 @@ const CompletePage = async ({ params }: Props) => {
         </div>
 
         <p className="text-lg">Incentive claim complete</p>
-        <p className="text-foreground/80">
-          Your claimed has been completed, you can get the actual items on the admin.
+        <p className="text-foreground/80 text-center">
+          Your completed you incentive claims, you can get the actual items on the admin.
         </p>
         <Link
           className=""

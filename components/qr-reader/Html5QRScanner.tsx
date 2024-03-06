@@ -18,7 +18,7 @@ const Html5QRScanner = ({ className, onRead, onErr }: Props) => {
     if (!ref.current) {
       ref.current = new Html5QrcodeScanner(
         qrcodeRegionId,
-        { fps: 60, qrbox: 250, disableFlip: false },
+        { fps: 60, qrbox: 280, disableFlip: false },
         false,
       );
     }

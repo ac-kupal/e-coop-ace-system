@@ -42,7 +42,7 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit((pb) => findVoter(pb.passbookNumber))}
-                    className="space-y-4"
+                    className="flex flex-col items-center gap-y-4"
                 >
                     <FormField
                         control={form.control}
@@ -53,6 +53,7 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                                     <Input
                                         disabled={disabled}
                                         placeholder="Enter Passbook Number"
+                                        className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
                                         {...field}
                                     />
                                 </FormControl>
@@ -77,7 +78,7 @@ const VoterSearch = ({ eventId, electionId, onFound }: Props) => {
                             form.setValue("passbookNumber", val);
                             findVoter(val);
                         }}
-                        className="size-[320px] md:size-[400px] bg-background overflow-clip rounded-xl"
+                        className="size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl"
                     />
                 </form>
             </Form>

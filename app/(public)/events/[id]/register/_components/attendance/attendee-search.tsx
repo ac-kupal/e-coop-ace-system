@@ -39,7 +39,7 @@ const AttendeeSearch = ({ onFound, eventId }: Props) => {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit((pbForm) => searchMember(pbForm))}
-                    className="space-y-4"
+                    className="flex flex-col items-center gap-y-4"
                 >
                     <FormField
                         control={form.control}
@@ -50,6 +50,7 @@ const AttendeeSearch = ({ onFound, eventId }: Props) => {
                                     <Input
                                         disabled={disabled}
                                         placeholder="Enter Passbook Number"
+                                        className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
                                         {...field}
                                     />
                                 </FormControl>
@@ -80,7 +81,7 @@ const AttendeeSearch = ({ onFound, eventId }: Props) => {
                             form.setValue("passbookNumber", val);
                             searchMember({ passbookNumber : val });
                         }}
-                        className="size-[320px] md:size-[400px] bg-background overflow-clip rounded-xl"
+                        className="size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl"
                     />
                 </form>
             </Form>

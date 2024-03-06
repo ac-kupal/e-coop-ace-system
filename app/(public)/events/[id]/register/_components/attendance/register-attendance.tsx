@@ -20,6 +20,7 @@ import {
 import { TMemberAttendeesMinimalInfo } from "@/types";
 import { attendeeRegisterFormSchema } from "@/validation-schema/event-registration-voting";
 import { useRegisterMember } from "@/hooks/public-api-hooks/use-member-api";
+import { cn } from "@/lib/utils";
 
 type Props = {
     eventId: number;
@@ -69,7 +70,7 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
                                         {...field}
                                         mask="99/99/9999"
                                         placeholder="input birthday"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50", "text-xl text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70")}
                                     />
                                     <FormMessage />
                                 </FormItem>

@@ -28,7 +28,7 @@ const ValidateVoter = ({ electionWithEvent }: Props) => {
         );
 
     return (
-        <div className="flex flex-col gap-y-2 lg:gap-y-16">
+        <div className="flex flex-col px-8 gap-y-2 lg:gap-y-16">
             <MemberInfoDisplay member={voter} />
             <div className="flex flex-col items-center">
                 {voter.voted ? (

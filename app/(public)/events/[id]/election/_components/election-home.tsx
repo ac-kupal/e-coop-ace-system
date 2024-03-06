@@ -24,12 +24,12 @@ const ElectionHome = ({ eventId }: Props) => {
         return <InvalidPrompt message="Election is not yet open" />;
 
     return (
-        <div className="flex flex-col py-16 lg:py-20 px-5 gap-y-6 min-h-screen w-full items-center">
-            <p className="text-lg lg:text-4xl uppercase text-center">
+        <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
+            <p className="text-2xl lg:text-4xl uppercase text-center">
                 {election.electionName}
             </p>
             <div className="w-5 h-2 bg-orange-400 rounded-full" />
-            <div className="py-2">
+            <div className="py-8 lg:py-16">
                 <ValidateVoter electionWithEvent={election} />
             </div>
         </div>
