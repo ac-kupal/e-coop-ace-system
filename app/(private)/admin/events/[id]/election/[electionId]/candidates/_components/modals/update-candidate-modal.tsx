@@ -23,7 +23,7 @@ import {
    SelectValue,
  } from "@/components/ui/select"
 
-import { TCandidate, TCandidateWithEventID, TCandidatewithPosition, TPosition } from "@/types";
+import { TCandidate, TCandidatewithPosition, TCandidatewithPositionwithEventId, TPosition } from "@/types";
 import { z } from "zod";
 import { useCallback, useEffect } from "react";
 import { candidateId, updateCandidateSchema } from "@/validation-schema/candidate";
@@ -36,7 +36,7 @@ type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
-   candidate:TCandidateWithEventID,
+   candidate:TCandidatewithPositionwithEventId,
    positions:TPosition[] | undefined
 };
 

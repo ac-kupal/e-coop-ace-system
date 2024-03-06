@@ -158,6 +158,7 @@ export const createManySchema = z.object({
          required_error: "middle name is Requried",
          invalid_type_error: "Invalid middle data type",
       })
+      .optional()
       .nullable(),
    lastName: z
       .string({
@@ -186,7 +187,6 @@ export const createManySchema = z.object({
          required_error: "email is Requried",
          invalid_type_error: "Invalid email data type",
       })
-      .email("please provide a valid email")
       .optional()
       .nullable(),
    contact: z

@@ -56,7 +56,6 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
 
    const onSubmit = (e: any) => {
      e.preventDefault();
-     console.log(Members)
      createManyMemberMutation.mutate({member:Members,eventId:id})
    };
 
