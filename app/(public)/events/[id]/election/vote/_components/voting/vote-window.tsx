@@ -1,10 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import VoteHeader from "./vote-header";
 import VoteSummary from "./vote-summary";
-import VoteReminder from "./vote-reminder";
 import CandidateList from "./candidate-list";
 import VoteNavControl from "./vote-nav-control";
 import InvalidPrompt from "@/components/invalid-prompt";
@@ -45,15 +44,6 @@ const VoteWindow = ({ election }: Props) => {
         }
     };
 
-
-    useEffect(() => {
-        onOpenInfoModal({
-            title: "Election Reminder",
-            description: "A short reminder before you start to vote",
-            confirmString: "Okay",
-            component: <VoteReminder />
-        });
-    }, []);
 
     if (isPending)
         return (

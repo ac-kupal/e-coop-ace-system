@@ -1,8 +1,9 @@
 import React from "react";
 
+import ClaimHome from "./_components/claim-home";
 import InvalidPrompt from "@/components/invalid-prompt";
 import { eventIdParamSchema } from "@/validation-schema/api-params";
-import ClaimHome from "./_components/claim-home";
+import IncentiveGiftSvg from "@/components/custom-svg/incentive-gift";
 
 type Props = {
     params: { id: number };
@@ -14,7 +15,15 @@ const ClaimPage = ({ params }: Props) => {
     if (!validatedEventId.success)
         return <InvalidPrompt message="This election id is invalid" />;
 
-    return <ClaimHome eventId={validatedEventId.data.id} />
+    return (
+        <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
+            <IncentiveGiftSvg className="mx-auto size-16 lg:size-32" />
+            <p className="text-xl lg:text-2xl text-center pb-8 lg:pb-12">
+                Claim Incentives
+            </p>
+            <ClaimHome eventId={validatedEventId.data.id} />
+        </div>
+    );
 };
 
 export default ClaimPage;

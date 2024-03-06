@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { handleAxiosErrorMessage } from "@/utils"
 import { TIncentiveClaimsWithIncentiveAndAssisted, TIncentiveMinimalInfo2, TMemberAttendeesMinimalInfo } from "@/types";
-import { createPublicClaimAuthorizationSchema } from "@/validation-schema/incentive";
+import { createIncentiveClaimPublic, createPublicClaimAuthorizationSchema } from "@/validation-schema/incentive";
 
 export const useMyClaims = (eventId : number, enabled : boolean) => {
     const { data : myClaims, isLoading : isLoadingClaims, isError, error } = useQuery<TIncentiveClaimsWithIncentiveAndAssisted[], string>({
@@ -47,7 +47,6 @@ export const useClaimablesList = (eventId : number, enabled : boolean) => {
     return { claimables, isLoadingClaimables, isError, error }
 }
 
-
 export const useClaimAuth = (eventId : number) => {
     const { data : myInfo, isLoading, isPending, isError, error }  = useQuery<TMemberAttendeesMinimalInfo, string>({
         queryKey : ["my-claim-minimal-info"],
@@ -85,4 +84,46 @@ export const useCreateClaimAuth = (eventId : number) => {
     })
 
     return { myInfo, authorize, isPending, isError, error }
+}
+
+export const useClaim = (eventId : number) => {
+    const queryClient = useQueryClient();
+
+    const { data, mutate : claim , isPending : isClaimPending, error, isError } = useMutation<string, string, z.infer<typeof createIncentiveClaimPublic>>({
+        mutationKey : ["incentive-claim-mutation"],
+        mutationFn : async (data) => { 
+            try{
+                const request = await axios.post(`/api/v1/public/event/${eventId}/claim`, data)
+                queryClient.invalidateQueries({ queryKey : ["my-claimed-incentives"]})
+                toast.success(request.data);
+                return request.data
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw e;
+            }
+        }
+    })
+
+    return { data, claim, isClaimPending, error, isError }
+}
+
+export const useClaimComplete = (eventId : number, onCompleteClaim? : () => void) => {
+    const { data, mutate : completeClaim } = useMutation<string, string>({
+        mutationKey : ["incentive-claim-mutation"],
+        mutationFn : async (data) => { 
+            try{
+                const request = await axios.delete(`/api/v1/public/event/${eventId}/claim/revoke-claim`)
+                toast.success(request.data);
+                if(onCompleteClaim) onCompleteClaim();
+                return request.data
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw e;
+            }
+        }
+    })
+
+    return { data, completeClaim }
 }

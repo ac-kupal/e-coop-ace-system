@@ -38,8 +38,6 @@ export const createAssistedClaimSchema = z.object({
 
 // for claiming public
 export const createIncentiveClaimPublic = z.object({
-    passbookNumber : passbookNumberSchema,
-    otp : otpSchema, // dont do this
     incentiveId : incentiveIdSchema
 })
 
