@@ -77,7 +77,7 @@ const EventsNav = ({ eventId }: Props) => {
                     <span className="text-xs lg:text-lg">e</span>Coop ACE &nbsp;
                     <span className="hidden md:block">System</span>
                 </Link>
-                <div className="md:flex hidden items-center text-foreground/60 gap-y-2 md:gap-x-5 justify-center">
+                <div className="lg:flex hidden items-center text-foreground/60 gap-y-2 md:gap-x-5 justify-center">
                     {eventsNavRoutes.map((route) => (
                         <RouteItem key={route.path} {...route} />
                     ))}
@@ -87,7 +87,7 @@ const EventsNav = ({ eventId }: Props) => {
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button
-                                className="block md:hidden"
+                                className="block lg:hidden"
                                 size="icon"
                                 variant="ghost"
                             >
