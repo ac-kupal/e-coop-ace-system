@@ -46,14 +46,14 @@ const BarGraphContainer = ({ positionName, labels, dataSet }: Props) => {
          x: {
             ticks: {
                font: {
-                  size: 20,
+                  size: 16,
                },
             },
          },
          y: {
             ticks: {
                font: {
-                  size: 20,
+                  size: 16,
                },
             },
          },
@@ -72,7 +72,7 @@ const BarGraphContainer = ({ positionName, labels, dataSet }: Props) => {
       ],
    };
    return (
-      <div className="w-full min-w-xs">
+      <div className="w-full">
          <div className="text-center">
             <Header text={positionName}></Header>
          </div>

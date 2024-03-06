@@ -28,8 +28,8 @@ const page = async({ params }: TParams) => {
                <h1 className="font-medium">Positions</h1>
             </div>
          </div>
-         <div className="flex w-full border px-5 overflow-y-auto rounded-3xl lg:p-5 justify-center  bg-secondary/20">
-            <BarGraphSection params={params}></BarGraphSection>
+         <div className="flex w-full  px-5 overflow-y-auto rounded-3xl lg:p-5 lg:justify-center  bg-secondary/20">
+            <BarGraphSection params={params}/>
          </div>
       </div>
    );

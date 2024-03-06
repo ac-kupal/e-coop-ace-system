@@ -21,10 +21,10 @@ const QuorumSection = ({ params }: TParams) => {
    if(isLoading) return <Loading></Loading>
 
    if (!members) return null;
-
+   
+   
    const percentageAttendanceTotal =(Number(members?.totalIsRegistered) / Number(members?.totalAttendees)) *100;
    const percentageVotersTotal =(Number(members?.totalMembersVoted) / Number(members?.totalAttendees)) *100;
-
 
    return (
       <div className="min-w-[200px] flex justify-start flex-col lg:justify-start  xl:flex-row   space-x-0 xl:space-x-10 p-5">

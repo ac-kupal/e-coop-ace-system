@@ -37,7 +37,7 @@ type Props = {
 
 const ElectionSideBar =({params}:Props ) => {
   return (
-    <div className="flex flex-row lg:flex-col w-full h-full py-2 lg:w-[220px] px-3 justify-evenly border border-[#0000000b]  gap-1 lg:gap-5 lg:py-10 bg-secondary  lg:min-h-screen  dark:bg-secondary/50 shadow lg:shadow-md  rounded-3xl lg:justify-start    ">
+    <div className="flex flex-row lg:flex-col w-full h-full py-2 md:w-[220px] px-3 justify-evenly border border-[#0000000b]  gap-1 lg:gap-5 lg:py-10 bg-secondary  lg:min-h-screen  dark:bg-secondary/50 shadow lg:shadow-md  rounded-3xl lg:justify-start    ">
     {SideBar.map((route:TNavListRoute, i) => (
        <ElectionSideBarItems params={params} route={route} key={i} />
     ))}
