@@ -43,7 +43,7 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
 
     return (
         <div className="flex flex-col items-center gap-y-4">
-            <p>Please input your birth date so we can verify if it is you.</p>
+            <p className="text-sm lg:text-base text-center text-foreground/60">Please input your birth date so we can verify if it is you.</p>
             <div className="space-y-4 max-w-sm">
                 <Form {...form}>
                     <form
