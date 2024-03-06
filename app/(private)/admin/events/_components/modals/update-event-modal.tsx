@@ -218,7 +218,7 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                                     mode="single"
                                     selected={field.value}
                                     onSelect={field.onChange}
-                                    disabled={(date) => date > new Date()}
+                                    disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
                                     captionLayout="dropdown-buttons"
                                     fromYear={1900}
                                     toYear={new Date().getFullYear()}

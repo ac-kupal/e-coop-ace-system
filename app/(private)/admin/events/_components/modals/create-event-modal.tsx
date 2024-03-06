@@ -142,7 +142,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
                   onSubmit={eventForm.handleSubmit(onSubmit)}
                   className="flex flex-col space-y-3 w-full overflow-auto overflow-y-auto"
                >
-                  <div className="flex flex-col lg:flex-row lg:space-x-5">
+                  <div className="flex flex-col px-2 lg:flex-row lg:space-x-5">
                   <div className="w-full  space-y-2 lg:space-y-5 ">
                      <FormField
                         control={eventForm.control}
@@ -230,7 +230,7 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
                                        selected={field.value}
                                        onSelect={field.onChange}
                                        captionLayout="dropdown-buttons"
-                                       disabled={(date) => date < new Date()}
+                                       disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
                                        fromYear={1900}
                                        toYear={new Date().getFullYear()}
                                        initialFocus
