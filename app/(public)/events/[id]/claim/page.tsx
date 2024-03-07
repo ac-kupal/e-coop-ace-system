@@ -1,4 +1,5 @@
 import React from "react";
+import { Metadata } from "next";
 
 import ClaimHome from "./_components/claim-home";
 import InvalidPrompt from "@/components/invalid-prompt";
@@ -7,6 +8,10 @@ import IncentiveGiftSvg from "@/components/custom-svg/incentive-gift";
 
 type Props = {
     params: { id: number };
+};
+
+export const metadata: Metadata = {
+    title: "Claim",
 };
 
 const ClaimPage = ({ params }: Props) => {

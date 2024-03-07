@@ -1,8 +1,9 @@
 import db from "@/lib/database"
 import React, { ReactNode } from "react";
+
+import NotFound from "./_components/not-found";
 import EventNav from "./_components/event-nav";
 import { eventIdSchema } from "@/validation-schema/commons";
-import NotFound from "./_components/not-found";
 
 type Props = {
    children: ReactNode;
@@ -25,7 +26,7 @@ const EventLayout = async ({ children, params }: Props) => {
          <div className="p-5 w-full">
            <EventNav event={event} />
          </div>
-         <div className="flex bg-background  border border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl overflow-x-hidden lg:p-2  w-full ">
+         <div className="flex bg-background border border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl overflow-x-hidden lg:p-2  w-full ">
                {children}
          </div>
       </div>

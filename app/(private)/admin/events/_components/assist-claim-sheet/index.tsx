@@ -60,8 +60,8 @@ const AssistClaimSheet = ({ state, onClose, member }: Props) => {
                         <p className="text-lg font-medium">{`${member.firstName} ${member.lastName}`}</p>
                     </div>
                 </SheetHeader>
-                <div className="flex flex-col gap-y-4 px-2 pt-8 flex-1 overflow-y-scroll thin-scroll">
-                    { isLoadingMemberClaims ? <LoadingSpinner /> : <IncentiveAssigned
+                <div className="flex flex-col gap-y-4 w-full px-2 pt-8 flex-1 overflow-y-scroll thin-scroll">
+                    { isLoadingMemberClaims ? <LoadingSpinner className="mx-auto" /> : <IncentiveAssigned
                         member={member}
                         onAdd={onAdd}
                         onRemove={onRemove}

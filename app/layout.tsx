@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/sonner";
 import ModalProvider from "@/providers/modal-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import QueryClientProviderWrapper from "@/providers/query-client-provider-wrapper";
-import { AlertTriangle, BadgeInfo, Check, Loader2, XCircle } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -16,7 +15,10 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-    title: "ACE System",
+    title: {
+        default : "ACE System",
+        template : "ACE System: %s"
+    },
     description: "Attendance Capturing and Election System",
 };
 
@@ -25,7 +27,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={`${poppins.variable} ${inter.variable}`}>
+            <body className={`${poppins.variable} ${inter.variable} thin-scroll`}>
                 <QueryClientProviderWrapper>
                     <ThemeProvider
                         attribute="class"

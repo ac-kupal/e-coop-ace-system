@@ -169,7 +169,7 @@ export const useRevokeAssignIncentive = (eventId : number, incentiveId : number,
 }
 
 export const useAssignedIncentiveToMe = (eventId : number, enabled : boolean) => {
-    const {data : assignedToMe, isLoading : isLoadingAssignedToMe} = useQuery<TIncentiveAssignedToMe[], string>({
+    const {data : assignedToMe, isFetching : isLoadingAssignedToMe} = useQuery<TIncentiveAssignedToMe[], string>({
         queryKey : ["incentive-assigned-to-me-list"],
         queryFn : async () => {
             try{
@@ -189,7 +189,7 @@ export const useAssignedIncentiveToMe = (eventId : number, enabled : boolean) =>
 }
 
 export const useMemberClaimsWithAssistanceList = (eventId : number, memberId : string, enabled : boolean) => {
-    const {data : memberClaims, isLoading : isLoadingMemberClaims} = useQuery<TIncentiveClaimsWithIncentiveAndClaimAssistance[], string>({
+    const {data : memberClaims, isPending : isLoadingMemberClaims} = useQuery<TIncentiveClaimsWithIncentiveAndClaimAssistance[], string>({
         queryKey : [`incentive-claims-member-${memberId}`],
         queryFn : async () => {
             try{
