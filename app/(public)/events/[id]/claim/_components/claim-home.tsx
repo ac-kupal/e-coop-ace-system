@@ -68,6 +68,7 @@ const ClaimHome = ({ eventId }: Props) => {
                     </p>
                 ) : (
                     <ClaimWindow
+                        member={myInfo}
                         eventId={eventId}
                         myClaims={myClaims}
                         claimables={claimables}

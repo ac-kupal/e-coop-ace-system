@@ -56,7 +56,7 @@ export const useClaimAuth = (eventId : number) => {
                 return request.data
             }catch(e){
                 const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage);
+                //toast.error(errorMessage);
                 throw errorMessage;
             }
         },
@@ -111,12 +111,16 @@ export const useClaim = (eventId : number) => {
 }
 
 export const useClaimComplete = (eventId : number, onCompleteClaim? : () => void) => {
+    const queryClient = useQueryClient();
     const { data, mutate : completeClaim } = useMutation<string, string>({
         mutationKey : ["incentive-claim-mutation"],
         mutationFn : async (data) => { 
             try{
                 const request = await axios.delete(`/api/v1/public/event/${eventId}/claim/revoke-claim`)
                 toast.success(request.data);
+
+                queryClient.invalidateQueries({ queryKey : ["my-claim-minimal-info"]})
+
                 if(onCompleteClaim) onCompleteClaim();
                 return request.data
             }catch(e){

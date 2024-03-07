@@ -1,4 +1,4 @@
-import { Incentives } from "@prisma/client";
+import { ClaimRequirements, Incentives } from "@prisma/client";
 import { TUserMinimalInfo } from "./user.types";
 import { TIncentiveAssigned } from "./incentive-assigned.types";
 
@@ -37,4 +37,5 @@ export type TIncentiveMinimalInfo2 = {
     id: number;
     itemName: string;
     eventId : number;
+    claimRequirement : ClaimRequirements;
 }

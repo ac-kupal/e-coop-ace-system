@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Gift, Minus, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -36,8 +36,6 @@ const IncentiveAssigned = ({ eventId, member, state, newClaimEntries, claimedInc
 
                     const satisfied = isSatisfiedClaimRequirements(incentiveAssigned.incentive.claimRequirement, member)
 
-                    console.log(satisfied)
-
                     return (
                         <div
                             key={incentiveAssigned.id}
@@ -47,7 +45,7 @@ const IncentiveAssigned = ({ eventId, member, state, newClaimEntries, claimedInc
                                 return inNewEntry ? onRemove(incentiveAssigned.incentiveId) : 
                                 onAdd({ assignedId : incentiveAssigned.id, eventAttendeeId : member.id, eventId, incentiveId : incentiveAssigned.incentiveId }) 
                             }}
-                            className={cn("p-2 ring-2 ring-blue-400/20 group ease-in cursor-pointer duration-100 hover:ring-blue-400/70 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-background dark:from-secondary to-[#f5f1fd] rounded-xl items-center gap-x-4 flex justify-start", inNewEntry && "ring-yellow-400/40 hover:ring-yellow-400", !satisfied && "ring-rose-400/40 hover:ring-rose-400")}
+                            className={cn("p-2 ring-2 ring-blue-400/20 group ease-in cursor-pointer duration-100 hover:ring-blue-400/70 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-background dark:from-secondary to-[#f5f1fd] rounded-xl items-center gap-x-4 flex justify-start", inNewEntry && "ring-yellow-400/40 hover:ring-yellow-400", !satisfied && "ring-rose-400/40 hover:ring-rose-400 opacity-50")}
                         >
                             <div className={cn("p-2 rounded-xl duration-300 bg-sky-300 text-white", inNewEntry && "bg-yellow-400", !satisfied && "bg-rose-400")}>
                                 <Gift className="size-8" strokeWidth={1} />
