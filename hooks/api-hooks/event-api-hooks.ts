@@ -102,6 +102,7 @@ export const useCreateEvent = ({ onCancelandReset }: Props) => {
 };
 
 export const updateEvent = ({ onCancelandReset, id }: Props) => {
+   const router = useRouter()
    const queryClient = useQueryClient();
    const createEvent = useMutation<TEventWithElection, string, any>({
       mutationKey: ["update-event"],
@@ -117,6 +118,8 @@ export const updateEvent = ({ onCancelandReset, id }: Props) => {
          queryClient.invalidateQueries({ queryKey: ["event-list-query"] });
          onCancelandReset();
          toast.success("Event updated successfully");
+         router.refresh()
+         console.log(router.refresh())
       },
    });
 

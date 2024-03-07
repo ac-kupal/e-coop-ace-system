@@ -10,7 +10,9 @@ type TParams = {
 };
 
 const page = async({ params }: TParams) => {
+   
    const eventId = Number(params.id)
+   
    z.coerce.number().parse(eventId)
 
    const Election = await db.election.findUnique({where:{eventId:eventId}})

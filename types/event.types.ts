@@ -28,6 +28,7 @@ export type TUpdateEvent = {
    description: string;
    date: Date;
    location: string;
+   coverImage:string;
 };
 
 export type TEvent = Event;

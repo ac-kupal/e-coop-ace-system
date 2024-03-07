@@ -176,12 +176,12 @@ const columns: ColumnDef<TEventWithElection>[] = [
              : row.original.coverImage;
          return(
             <div className="flex items-center space-x-2">
-            {/* <Avatar>
+            <Avatar>
                 <AvatarImage src={img} />
                 <AvatarFallback className="bg-primary text-accent">
                     {row.original.title.charAt(0).toUpperCase()}
                 </AvatarFallback>
-            </Avatar> */}
+            </Avatar>
             <h1 className="font-medium">{row.original.title}</h1>
         </div>
          )

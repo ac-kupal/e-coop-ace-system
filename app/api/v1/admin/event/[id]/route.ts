@@ -23,6 +23,7 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
              location: data.location,
              date: data.date,
              updatedBy: user.id,
+             coverImage:data.coverImage
           },
        });
 

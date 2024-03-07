@@ -44,6 +44,7 @@ import { useCreateEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
 import { v4 as uuid, v4 } from "uuid";
+import { TEvent } from "@/types";
 type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
@@ -53,7 +54,7 @@ export type EventSchemaType = z.infer<
    ReturnType<typeof createEventWithElectionWithUploadSchema>
 >;
 
-const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
+const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
 
    const [isElection, setIsElection] = useState(false);
 
@@ -95,12 +96,6 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
 
    const onSubmit = async (formValues: EventSchemaType) => {
       try {
-         if (!imageFile) {
-            createEvent.mutate({
-               ...formValues,
-               coverImage: "/images/default.png",
-            });
-         } else {
             const image = await uploadImage.mutateAsync({
                fileName: `${v4()}`,
                folderGroup: "event",
@@ -110,8 +105,8 @@ const CreateEventModal = ({ state, onClose, onCancel }: Props) => {
                ...formValues,
                coverImage: !image ? "/images/default.png" : image,
             });
-         }
          resetPicker();
+
       } catch (error) {
          console.log(error);
       }

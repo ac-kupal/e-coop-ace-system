@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -23,10 +22,10 @@ import {
    SelectValue,
  } from "@/components/ui/select"
 
-import { TCandidate, TCandidatewithPosition, TCandidatewithPositionwithEventId, TPosition } from "@/types";
+import { TCandidatewithPositionwithEventId, TPosition } from "@/types";
 import { z } from "zod";
 import { useCallback, useEffect } from "react";
-import { candidateId, updateCandidateSchema } from "@/validation-schema/candidate";
+import { updateCandidateSchema } from "@/validation-schema/candidate";
 import { useUpdateCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
 import useImagePick from "@/hooks/use-image-pick";
 import ImagePick from "@/components/image-pick";
@@ -90,7 +89,7 @@ const UpdateCandidateModal = ({
    console.log(formValues)
       try {
          if(!imageFile) {
-            updateCandidate.mutate({...formValues,picture: candidateForm.getValues("picture"),});
+            updateCandidate.mutate({...formValues, picture: candidateForm.getValues("picture"),});
          }else{
             const image = await uploadImage.mutateAsync({
                fileName: `${formValues.passbookNumber}`,
@@ -111,7 +110,7 @@ const UpdateCandidateModal = ({
    return (
       <Dialog
          open={state}
-         onOpenChange={(state) => {
+         onOpenChange={() => {
             onCancelandReset()
             resetPicker()
          }}

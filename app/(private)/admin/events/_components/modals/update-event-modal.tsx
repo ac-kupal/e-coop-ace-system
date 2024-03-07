@@ -1,18 +1,11 @@
 "use client";
-import axios from "axios";
-import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import { CalendarIcon, Loader2 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-
 import { Input } from "@/components/ui/input";
 import {
    Form,
@@ -22,7 +15,6 @@ import {
    FormLabel,
    FormMessage,
 } from "@/components/ui/form";
-
 import {
    Popover,
    PopoverContent,
@@ -37,7 +29,7 @@ import { useCallback, useEffect } from "react";
 import { TEventWithElection } from "@/types";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import useImagePick from "@/hooks/use-image-pick";
-import { v4 as uuid, v4 } from "uuid";
+import { v4  } from "uuid";
 import { updateEvent } from "@/hooks/api-hooks/event-api-hooks";
 import ImagePick from "@/components/image-pick";
 
@@ -50,7 +42,6 @@ type Props = {
 type TUpdateEventSchema = z.infer<typeof updateEventSchema>;
 
 const UpdateEventModal = ({ event, state, onClose }: Props) => {
-   const queryClient = useQueryClient();
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: !event.coverImage
@@ -64,36 +55,37 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
       resolver: zodResolver(updateEventSchema),
    });
 
-   const isEventOnChange =
-      eventForm.watch("title") === event.title &&
-      eventForm.watch("description") === event.description &&
-      eventForm.watch("location") === event.location &&
-      eventForm.watch("date") === event.date &&
-      eventForm.watch("coverImage") === event.coverImage;
-
-
-   
-      const defaultValues = useCallback(() => {
+   const defaultValues = useCallback(() => {
       eventForm.setValue("title", event.title);
       eventForm.setValue("description", event.description);
       eventForm.setValue("location", event.location);
       eventForm.setValue("date", event.date);
       eventForm.setValue("coverImage", event.coverImage);
-   }, [event]);
+   }, [event, eventForm]);
 
    useEffect(() => {
       defaultValues();
-   }, [event]);
+   }, [event, eventForm]);
 
    const onCancelandReset = () => {
       eventForm.reset();
       onClose(false);
+      console.log("hello")
    };
 
-   const uploadImage = onUploadImage();
    const updateEventMutation = updateEvent({ onCancelandReset, id: event.id });
+   
+   const uploadImage = onUploadImage();
 
    const isLoading = updateEventMutation.isPending;
+
+   const isEventOnChange =
+   eventForm.watch().title === event.title &&
+   eventForm.watch().description === event.description &&
+   eventForm.watch().location === event.location &&
+   eventForm.watch().date === event.date &&
+   eventForm.watch().coverImage === event.coverImage;
+
 
    const onSubmit = async (formValues: TUpdateEventSchema) => {
       try {
@@ -102,22 +94,20 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                ...formValues,
                coverImage: eventForm.getValues("coverImage"),
             });
+             resetPicker();
          } else {
             const image = await uploadImage.mutateAsync({
                fileName: `${v4()}`,
                folderGroup: "event",
                file: formValues.coverImage,
             });
-
-            console.log("image: ", image)
-
-            updateEventMutation.mutateAsync({
+            updateEventMutation.mutate({
                ...formValues,
-               coverImage: image,
+               coverImage: !image ? "/images/default.png" : image,
             });
-
+            console.log(image)
+            resetPicker();
          }
-         resetPicker();
       } catch (error) {
          console.log(error);
       }
@@ -224,7 +214,14 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                                     mode="single"
                                     selected={field.value}
                                     onSelect={field.onChange}
-                                    disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
+                                    disabled={(date) =>
+                                       date <
+                                       new Date(
+                                          new Date().setDate(
+                                             new Date().getDate() - 1
+                                          )
+                                       )
+                                    }
                                     captionLayout="dropdown-buttons"
                                     fromYear={1900}
                                     toYear={new Date().getFullYear()}
@@ -263,6 +260,7 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                         disabled={isLoading}
                         onClick={(e) => {
                            e.preventDefault();
+                           onClose(false)
                         }}
                         variant={"secondary"}
                         className="bg-muted/60 hover:bg-muted"
