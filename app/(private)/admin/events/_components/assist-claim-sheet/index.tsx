@@ -22,6 +22,7 @@ import LoadingSpinner from "@/components/loading-spinner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
+import UserAvatar from "@/components/user-avatar";
 
 type Props = {
     state: boolean;
@@ -50,14 +51,18 @@ const AssistClaimSheet = ({ state, onClose, member }: Props) => {
         <Sheet open={state} onOpenChange={onClose}>
             <SheetContent className="border-none w-full max-w-[98vw] flex flex-col h-screen lg:max-w-[40vw]">
                 <SheetHeader>
-                    <SheetTitle>Incentive Claim Sheet</SheetTitle>
-                    <SheetDescription>
-                        Claim entry for this member
+                    <SheetTitle className="text-center">Incentive Claim Sheet</SheetTitle>
+                    <SheetDescription className="text-center">
+                        You are assisting this member to claim incentive
                     </SheetDescription>
+                    <div className="flex flex-col items-center gap-y-4">
+                        <UserAvatar className="size-24 lg:size-32" src={member.picture as ""} fallback={`${member.firstName.charAt(0)}${member.lastName.charAt(0)}`} />
+                        <p className="text-lg font-medium">{`${member.firstName} ${member.lastName}`}</p>
+                    </div>
                 </SheetHeader>
                 <div className="flex flex-col gap-y-4 px-2 pt-8 flex-1 overflow-y-scroll thin-scroll">
-                    <IncentiveAssigned
-                        attendeeId={member.id}
+                    { isLoadingMemberClaims ? <LoadingSpinner /> : <IncentiveAssigned
+                        member={member}
                         onAdd={onAdd}
                         onRemove={onRemove}
                         newClaimEntries={newEntries.map(
@@ -68,7 +73,7 @@ const AssistClaimSheet = ({ state, onClose, member }: Props) => {
                         )}
                         state={state}
                         eventId={member.eventId}
-                    />
+                    />}
                     <div
                         className={cn(
                             "flex gap-x-2 justify-end duration-150 ease-out opacity-0",

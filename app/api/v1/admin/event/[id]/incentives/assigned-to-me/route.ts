@@ -47,7 +47,8 @@ export const GET = async (req : NextRequest, { params } : TParams) => {
                     select : {
                         id : true,
                         itemName : true,
-                        eventId : true
+                        eventId : true,
+                        claimRequirement : true
                     }
                 }
             },

@@ -1,8 +1,9 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { TIncentiveClaimsWithIncentiveAndClaimAssistance } from "@/types";
-import { Check, Gift } from "lucide-react";
 import React from "react";
+
+import { Check, Gift } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+import { TIncentiveClaimsWithIncentiveAndClaimAssistance } from "@/types";
 
 type Props = {
     existingClaims : TIncentiveClaimsWithIncentiveAndClaimAssistance[]
