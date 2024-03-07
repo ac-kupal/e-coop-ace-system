@@ -76,8 +76,8 @@ const AssignModal = ({ state, onClose, eventId, incentive }: Props) => {
         <Dialog open={state} onOpenChange={(state) => reset()}>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
                 <ModalHead
-                    title="Create Incentive"
-                    description="Incentives are items that is given away on the event."
+                    title="Assign Incentive"
+                    description="Assign incentives to specific staff/admin. You can provide an amount assigned to them."
                 />
                 <Form {...form}>
                     <form
