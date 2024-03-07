@@ -229,6 +229,12 @@ model Votes {
     election  Election       @relation(fields: [electionId], references: [id])
 }
 
+enum ClaimRequirements {
+    REGISTERED
+    VOTED
+    REGISTERED_VOTED
+}
+
 model Incentives {
     id Int @id @default(autoincrement())
 
@@ -239,6 +245,8 @@ model Incentives {
     claimed IncentiveClaims[]
 
     assigned IncentiveAssigned[]
+
+    claimRequirement ClaimRequirements? @default(REGISTERED)
 
     createdBy Int?
     updatedBy Int?

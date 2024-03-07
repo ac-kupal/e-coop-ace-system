@@ -144,6 +144,17 @@ const columns: ColumnDef<TIncentiveWithClaimAndAssignedCount>[] = [
         ),
     },
     {
+        accessorKey: "claimRequirement",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Claim Requirement" />
+        ),
+        cell: ({ row }) => (
+            <div className="flex gap-x-2 items-center">
+                {row.original.claimRequirement}
+            </div>
+        ),
+    },
+    {
         accessorKey: "allotted",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Assigned Staff" />

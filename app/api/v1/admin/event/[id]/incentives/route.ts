@@ -37,6 +37,9 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                       }
                     : false,
             },
+            orderBy : {
+                createdAt : "desc"
+            }
         });
 
         return NextResponse.json(claimsWithClaimAndAssignedCount);

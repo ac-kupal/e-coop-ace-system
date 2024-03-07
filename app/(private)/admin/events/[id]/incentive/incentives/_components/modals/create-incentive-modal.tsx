@@ -15,9 +15,11 @@ import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -27,6 +29,7 @@ import {
 import { TBranch, TIncentive } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createIncentiveSchema } from "@/validation-schema/incentive";
+import { ClaimRequirements } from "@prisma/client";
 
 
 type Props = {
@@ -45,7 +48,8 @@ const CreateIncentiveModal = ({ state, onClose, eventId, onCancel, onCreate }: P
     const form = useForm<createTIncentives>({
         resolver: zodResolver(createIncentiveSchema),
         defaultValues: {
-            itemName : ""
+            itemName : "",
+            claimRequirement : "REGISTERED"
         },
     });
 
@@ -94,6 +98,7 @@ const CreateIncentiveModal = ({ state, onClose, eventId, onCancel, onCreate }: P
                         <FormField
                             control={form.control}
                             name="itemName"
+                            disabled={isLoading}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Item Name</FormLabel>
@@ -104,6 +109,29 @@ const CreateIncentiveModal = ({ state, onClose, eventId, onCancel, onCreate }: P
                                             {...field}
                                         />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="claimRequirement"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Claim Requirement</FormLabel>
+                                    <Select disabled={isLoading} onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a requirement" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value={ClaimRequirements.REGISTERED}>{ClaimRequirements.REGISTERED}</SelectItem>
+                                            <SelectItem value={ClaimRequirements.VOTED}>{ClaimRequirements.VOTED}</SelectItem>
+                                            <SelectItem value={ClaimRequirements.REGISTERED_VOTED}>{ClaimRequirements.REGISTERED_VOTED}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormDescription>Only member who satisfy this requirement can claim</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}

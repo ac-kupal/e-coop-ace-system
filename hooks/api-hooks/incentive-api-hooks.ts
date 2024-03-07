@@ -12,7 +12,7 @@ import {
     TUserWithAssignedIncentives,
 } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { createAssistedClaimSchema, createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
+import { claimIdSchema, createAssistedClaimSchema, createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
 import { TIncentiveAssignedToMe } from "@/types/incentive-assigned.types";
 
 export const incentiveListWithClaimCount = (eventId: number) => {
@@ -245,4 +245,29 @@ export const useClaimsMasterList = (eventId : number ) => {
     })
 
     return { claimList, refetch, isFetching, isError, isLoading }
+}
+
+export const useClaimDelete = (eventId : number, onDelete? : () => void ) => {
+    const queryClient = useQueryClient()
+    const { data : deletedClaim, mutate : deleteClaim, isPending : isDeletingClaim } = useMutation<any, string, number>({
+        mutationKey : ["delete-claim"],
+        mutationFn : async (claimId) => {
+            try{
+                const request = await axios.delete(`/api/v1/admin/event/${eventId}/incentives/claim/${claimId}`)
+                toast.success("Claim Deleted")
+
+                if(onDelete) onDelete()
+
+                queryClient.invalidateQueries({ queryKey : ["claims-master-list"]})
+
+                return request.data
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        }
+    })
+
+    return { deletedClaim, deleteClaim, isDeletingClaim }
 }

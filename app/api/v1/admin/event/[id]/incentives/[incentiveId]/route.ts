@@ -3,9 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import {
-  updateIncentiveSchema,
-} from "@/validation-schema/incentive";
+import { updateIncentiveSchema } from "@/validation-schema/incentive";
 import { eventAndIncentiveParamSchema } from "@/validation-schema/api-params";
 
 type TParams = { params: { id: number; incentiveId: number } };
@@ -14,8 +12,9 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
   try {
     const user = await currentUserOrThrowAuthError();
     const { id: eventId, incentiveId } = eventAndIncentiveParamSchema.parse(params);
-    const { data: unparsedData } = await req.json();
-
+    
+    const unparsedData = await req.json();
+    console.log("REceiven", unparsedData, updateIncentiveSchema)
     const data = updateIncentiveSchema.parse(unparsedData);
 
     const updatedIncentives = await db.incentives.update({

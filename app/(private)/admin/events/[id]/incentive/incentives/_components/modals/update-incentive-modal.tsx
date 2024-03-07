@@ -13,11 +13,14 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 import { Input } from "@/components/ui/input";
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -28,6 +31,7 @@ import { TBranch, TIncentive } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { updateIncentiveSchema } from "@/validation-schema/incentive";
 import { useEffect } from "react";
+import { ClaimRequirements } from "@prisma/client";
 
 
 type Props = {
@@ -46,7 +50,8 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
     const form = useForm<updateTIncentives>({
         resolver: zodResolver(updateIncentiveSchema),
         defaultValues: {
-            itemName : incentive.itemName 
+            itemName : incentive.itemName,
+            claimRequirement : incentive.claimRequirement ?? "REGISTERED"
         },
     });
 
@@ -63,7 +68,7 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
         mutationKey: ["update-incentive"],
         mutationFn: async (data) => {
             try {
-                const response = await axios.patch(`/api/admin/v1/event/${incentive.eventId}/incentives/${incentive.id}`, { data });
+                const response = await axios.patch(`/api/v1/admin/event/${incentive.eventId}/incentives/${incentive.id}`, data);
 
                 queryClient.invalidateQueries({ queryKey: ["incentive-withclaimcount-list"] });
                 if (onCreate !== undefined) onCreate(response.data);
@@ -109,6 +114,29 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
                                             {...field}
                                         />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="claimRequirement"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Claim Requirement</FormLabel>
+                                    <Select disabled={isLoading} onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a requirement" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value={ClaimRequirements.REGISTERED}>{ClaimRequirements.REGISTERED}</SelectItem>
+                                            <SelectItem value={ClaimRequirements.VOTED}>{ClaimRequirements.VOTED}</SelectItem>
+                                            <SelectItem value={ClaimRequirements.REGISTERED_VOTED}>{ClaimRequirements.REGISTERED_VOTED}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormDescription>Only member who satisfy this requirement can claim</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
