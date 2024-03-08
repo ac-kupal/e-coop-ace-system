@@ -15,7 +15,7 @@ const MemberInfoDisplay = ({ member }: Props) => {
                 <p><span className="text-foreground/60 mr-6">PB No &nbsp;:</span>{`${member.passbookNumber}`}</p>
                 <div className="flex items-center gap-x-2">
                     { member.registered && <p className="text-green-400">REGISTERED</p> }
-                    { member.voted && <p className="text-green-400">{ member.voted && <span className="text-foreground">&</span>} VOTED</p> }
+                    { member.voted && <p className="text-green-400">{ member.voted && member.registered && <span className="text-foreground">&</span>} VOTED</p> }
                 </div>
             </div>
         </div>

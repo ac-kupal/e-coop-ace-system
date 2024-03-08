@@ -1,8 +1,8 @@
 import React from 'react'
-import MemberTable from './_components/member-table'
+
 import { getEventId } from '@/services/event'
-import { CodeSquare } from 'lucide-react'
 import NotFound from '../_components/not-found'
+import MemberTable from './_components/member-table'
 
 type Props = {
   params:{id:number}
