@@ -147,6 +147,10 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
                 )}
             </div>
         ),
+        filterFn: (row, id, value) => {
+            if(row.original.registeredBy) return value.includes(row.original.registeredBy.id.toString())
+            return false;
+        }
     },
     {
         accessorKey: "contact",

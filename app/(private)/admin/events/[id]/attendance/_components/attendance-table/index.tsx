@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
     getCoreRowModel,
     getFilteredRowModel,
@@ -8,7 +8,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, User } from "lucide-react";
 
 import columns from "./column";
 import { Input } from "@/components/ui/input";
@@ -17,12 +17,24 @@ import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 
 import { useAttendanceList } from "@/hooks/api-hooks/attendance-api-hooks";
+import { useSession } from "next-auth/react";
+import { userList } from "@/hooks/api-hooks/user-api-hooks";
+import { DataTableFacetedFilter } from "@/components/data-table/data-table-facited-filter";
 
 const AttendanceTable = ({ eventId } : { eventId : number }) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
     const { attendanceList, isLoading, isError, isFetching } = useAttendanceList(eventId);
+
+    const { data : users } = userList(); 
+    const { data : userData } = useSession();
+    const myFilter = userData && userData.user? [{
+        label: "You",
+        value: userData.user.id.toString(),
+        icon: User,
+    }] : []
+
 
     const table = useReactTable({
         data : attendanceList,
@@ -78,6 +90,22 @@ const AttendanceTable = ({ eventId } : { eventId : number }) => {
                             className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
+                    {
+                        userData && userData.user.role !== "staff" && (
+                            <DataTableFacetedFilter
+                                options={[
+                                    ...myFilter,
+                                    ...users.filter((user)=> user.id !== userData.user.id ).map((user)=>({
+                                        label: user.name,
+                                        value: user.id.toString(),
+                                        icon: User
+                                    }))
+                                ]}
+                                column={table.getColumn("registered by")}
+                                title="Registered by"
+                            />
+                        )
+                    }
                 </div>
                 <div className="flex items-center gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />
