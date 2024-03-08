@@ -22,7 +22,7 @@ const page = ({ params }: Props) => {
    return (
       <div>
            <Header text="Manage Candidates"></Header>
-         <CandidateTable eventId={params.id} params={params} positions={elections?.positions} data={candidates}></CandidateTable>
+         <CandidateTable params={params} positions={elections?.positions} data={candidates}></CandidateTable>
       </div>
    );
 };
