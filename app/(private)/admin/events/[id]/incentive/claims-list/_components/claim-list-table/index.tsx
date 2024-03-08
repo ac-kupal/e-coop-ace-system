@@ -59,8 +59,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
               ]
             : [];
 
-    const { claimList, isError, isLoading, isFetching } =
-        useClaimsMasterList(eventId);
+    const { claimList, isError, isLoading, isFetching } = useClaimsMasterList(eventId);
 
     const table = useReactTable({
         data: claimList,
@@ -74,7 +73,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
         },
         initialState: {
             pagination: { pageIndex: 0, pageSize: 20 },
-            columnVisibility: { "Claim Id": false },
+            columnVisibility: { "Claim Id": false, "Claim Mode" : false },
         },
         onGlobalFilterChange: setGlobalFilter,
     });
@@ -99,7 +98,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
             <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
-                <div className="flex items-center gap-x-4 text-muted-foreground">
+                <div className="flex items-center gap-x-2 text-muted-foreground">
                     <div className="relative text-white flex">
                         <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                         <Input
@@ -115,9 +114,9 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                     {data && data.user.role !== "staff" && (
                         <>
                             <DataTableFacetedFilter
+                                title="Claim Mode"
                                 options={claimFromFilter}
                                 column={table.getColumn("Claim Mode")}
-                                title="Claim Mode"
                             />
                             <DataTableFacetedFilter
                                 options={[
@@ -129,7 +128,19 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                                     }))
                                 ]}
                                 column={table.getColumn("Assisted By")}
-                                title="Assiste by"
+                                title="Assisted by"
+                            />
+                            <DataTableFacetedFilter
+                                options={[
+                                    ...myFilter,
+                                    ...users.filter((user)=> user.id !== data.user.id ).map((user)=>({
+                                        label: user.name,
+                                        value: user.id.toString(),
+                                        icon: User
+                                    }))
+                                ]}
+                                column={table.getColumn("Released By")}
+                                title="Released by"
                             />
                         </>
                     )}

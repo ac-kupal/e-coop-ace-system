@@ -15,6 +15,7 @@ import {
 } from "@/hooks/public-api-hooks/use-claim-api";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useQueryClient } from "@tanstack/react-query";
+import ClaimerCard from "./claimer-card";
 
 type Props = {
     eventId: number;
@@ -23,18 +24,18 @@ type Props = {
 const ClaimHome = ({ eventId }: Props) => {
     const router = useRouter();
     const queryClient = useQueryClient();
+
     const { onOpen } = useConfirmModal();
-    const { myInfo, isLoading, isError, error } = useClaimAuth(eventId);
-    const { myClaims, isLoadingClaims } = useMyClaims(eventId, myInfo !== undefined);
-    const { claimables, isLoadingClaimables } = useClaimablesList(eventId,myInfo !== undefined);
-
+    const { myInfo, isLoading } = useClaimAuth(eventId);
+    const { myClaims, isLoadingClaims } = useMyClaims( eventId,myInfo !== undefined);
     const { completeClaim } = useClaimComplete(eventId, () => router.push("claim/complete"));
+    const { claimables, isLoadingClaimables } = useClaimablesList( eventId, myInfo !== undefined);
 
-    useEffect(()=>{
+    useEffect(() => {
         return () => {
-            queryClient.removeQueries({queryKey : ["my-claim-minimal-info"]})
-        }
-    }, [])
+            queryClient.removeQueries({ queryKey: ["my-claim-minimal-info"] });
+        };
+    }, []);
 
     if (isLoading)
         return (
@@ -60,40 +61,42 @@ const ClaimHome = ({ eventId }: Props) => {
         );
 
     return (
-        
-            <div className="w-full max-w-md lg:max-w-2xl py-8 gap-y-8 flex flex-col">
-                {!isLoadingClaims && claimables.length === 0 ? (
-                    <p className="text-sm text-cemter">
-                        Seems like there&apos;s no incentives in this event
-                    </p>
-                ) : (
+        <div className="w-full max-w-md lg:max-w-2xl py-8 gap-y-8 flex flex-col">
+            {!isLoadingClaims && claimables.length === 0 ? (
+                <p className="text-sm text-cemter">
+                    Seems like there&apos;s no incentives in this event
+                </p>
+            ) : (
+                <>
+                    <ClaimerCard claimer={myInfo} />
                     <ClaimWindow
                         member={myInfo}
                         eventId={eventId}
                         myClaims={myClaims}
                         claimables={claimables}
                     />
+                </>
+            )}
+            {!isLoadingClaims &&
+                !isLoadingClaimables &&
+                claimables.length === myClaims.length && (
+                    <p className="text-foreground/70 text-sm text-center">
+                        You already claimed all of incentives
+                    </p>
                 )}
-                {!isLoadingClaims &&
-                    !isLoadingClaimables &&
-                    claimables.length === myClaims.length && (
-                        <p className="text-foreground/70 text-sm text-center">
-                            You already claimed all of incentives
-                        </p>
-                    )}
-                <Button
-                    onClick={() =>
-                        onOpen({
-                            title: "Exit Claim",
-                            description: "Are you sure to exit claim page?",
-                            onConfirm: () => completeClaim(),
-                        })
-                    }
-                    size="lg"
-                >
-                    Exit Claim
-                </Button>
-            </div>
+            <Button
+                onClick={() =>
+                    onOpen({
+                        title: "Exit Claim",
+                        description: "Are you sure to exit claim page?",
+                        onConfirm: () => completeClaim(),
+                    })
+                }
+                size="lg"
+            >
+                Exit Claim
+            </Button>
+        </div>
     );
 };
 

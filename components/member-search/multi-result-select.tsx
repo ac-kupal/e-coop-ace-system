@@ -18,7 +18,7 @@ const MultiResultSelect = ({ results, onPick }: Props) => {
         <div className="w-full">
             <p className="text-foreground/70 text-sm">Search matched : <span className="text-foreground font-medium">{results.length}</span></p>
         </div>
-        <div className="flex flex-col gap-y-4 max-h-[60vh] w-full">
+        <div className="flex flex-col gap-y-4 max-h-[60vh] overflow-y-scroll thin-scroll py-8 w-full">
             {
                 results.map((member)=>(
                     <div 

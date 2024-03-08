@@ -25,3 +25,27 @@ export const DELETE = async ( req : NextRequest , { params } : TParams) => {
         return routeErrorHandler(e, req)
     }
 }
+
+// for releasing of claims that is claimed online
+export const PATCH = async ( req : NextRequest , { params } : TParams ) => {
+    try{
+        const currentUser = await currentUserOrThrowAuthError();
+        const { id : eventId, claimId } = eventIdAndClaimIdParamSchema.parse(params);
+
+        const updatedClaimEntry = await db.incentiveClaims.update({
+            where : {
+                id : claimId, 
+                eventId
+            },
+            data : {
+                released : true,
+                releasedAt : new Date(),
+                releasedById : currentUser.id
+            }
+        })
+
+        return NextResponse.json(updatedClaimEntry)
+    }catch(e){
+        return routeErrorHandler(e, req);
+    }
+}

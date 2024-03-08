@@ -23,6 +23,8 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 eventId: true,
                 createdAt: true,
                 eventAttendeeId: true,
+                released : true,
+                releasedAt : true,
                 eventAttendee: {
                     select: {
                         passbookNumber: true,
@@ -34,7 +36,15 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 incentive : {
                     select : {
                         id : true,
-                        itemName : true
+                        itemName : true,
+                    }
+                },
+                releasedBy : {
+                    select : {
+                        id: true,
+                        picture: true,
+                        name: true,
+                        email: true,
                     }
                 },
                 assistedBy: {
@@ -62,12 +72,17 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         const { claims } = createAssistedClaimSchema.parse(await req.json());
 
         const createAssistClaims = await db.incentiveClaims.createMany({
-            data: claims.map((claimEntry) => ({
+            data: 
+            
+            claims.map((claimEntry) => ({
                 ...claimEntry,
                 eventId,
                 assistedById: currentUser.id,
                 createdBy: currentUser.id,
-            })),
+                released : true,
+                releasedAt : new Date(),
+                releasedById : currentUser.id
+            }))
         });
 
         return NextResponse.json(createAssistClaims);

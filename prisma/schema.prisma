@@ -45,7 +45,7 @@ model User {
     assistedAttendance EventAttendees[]
 
     assistedClaims IncentiveClaims[] @relation("AssistedClaims")
-    approvedClaims IncentiveClaims[] @relation("ApprovedClaims")
+    releasedClaims IncentiveClaims[] @relation("ReleasedClaims")
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -298,9 +298,10 @@ model IncentiveClaims {
     assignedId Int?
     assigned   IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: SetNull)
 
-    approved     Boolean? @default(false)
-    approvedById Int?
-    approvedBy   User?    @relation("ApprovedClaims", fields: [approvedById], references: [id])
+    released     Boolean?  @default(false)
+    releasedById Int?
+    releasedBy   User?     @relation("ReleasedClaims", fields: [releasedById], references: [id])
+    releasedAt   DateTime?
 
     createdBy Int?
     updatedBy Int?

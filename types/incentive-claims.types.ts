@@ -16,12 +16,15 @@ export type TIncentiveClaimsMinimalInfo = {
     eventId: number;
     eventAttendeeId: string;
     createdAt: Date;
+    released : boolean;
+    releasedAt : Date;
     eventAttendee: TMemberAttendeeMinimalInfo;
 }
 
 export type TIncentiveClaimsWithIncentiveAttendeeAssistedBy = TIncentiveClaimsMinimalInfo & {
     eventAttendee : TMemberAttendeeMinimalInfo,
     incentive: TIncentiveMinimalInfo,
+    releasedBy : TUserMinimalInfo | null,
     assistedBy : TUserMinimalInfo | null
 }
 

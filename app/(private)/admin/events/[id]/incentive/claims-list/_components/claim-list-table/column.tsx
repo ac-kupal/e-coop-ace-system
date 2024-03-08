@@ -10,7 +10,7 @@ import LoadingSpinner from "@/components/loading-spinner";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { useClaimDelete } from "@/hooks/api-hooks/incentive-api-hooks";
+import { useClaimDelete, useClaimRelease } from "@/hooks/api-hooks/incentive-api-hooks";
 import { TIncentiveClaimsWithIncentiveAttendeeAssistedBy } from "@/types";
 
 const Actions = ({ incentive }: { incentive: TIncentiveClaimsWithIncentiveAttendeeAssistedBy }) => {
@@ -40,6 +40,29 @@ const Actions = ({ incentive }: { incentive: TIncentiveClaimsWithIncentiveAttend
     );
 };
 
+const ReleaseAction = ({ incentiveClaim } : { incentiveClaim : TIncentiveClaimsWithIncentiveAttendeeAssistedBy }) => {
+    const { onOpen } = useConfirmModal();
+    const { releaseClaim, isReleasing } = useClaimRelease(incentiveClaim.eventId);
+
+    return (
+        <Button
+        size="sm"
+        variant="outline"
+        className="rounded-2xl flex gap-x-2 items-center"
+        onClick={() =>
+            onOpen({
+                title: "Release Claim",
+                description: "By releasing this claim, you are confirming that the member has received this item.",
+                onConfirm: () => releaseClaim(incentiveClaim.id)
+            })
+        }
+    >
+        { isReleasing && <LoadingSpinner /> }
+        Pending
+    </Button>
+    )
+}
+
 const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
     {
         id: "actions",
@@ -56,6 +79,21 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
                 <Actions incentive={row.original} />
             </div>
         ),
+    },
+    {
+        id: "Status",
+        accessorKey: "released",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Status" />
+        ),
+        cell: ({ row }) => (
+            <div className="font-medium uppercase">
+                {
+                    row.original.released ? <p className="text-primary">Released</p>: <ReleaseAction incentiveClaim={row.original} />
+                }
+            </div>
+        ),
+        enableSorting : false
     },
     {
         id: "Claim Id",
@@ -110,7 +148,7 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
         ),
         cell: ({ row }) => (
             <div className="flex gap-x-2 items-center">
-                {row.original.eventAttendee.firstName}
+                {row.original.eventAttendee.lastName}
             </div>
         ),
     },
@@ -144,13 +182,51 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
         ),
         filterFn: (row, id, value) => {
             if(row.original.assistedBy === null) return false;
-            if(value.includes("Anyone")) return true;
-
             return value.includes(row.original.assistedBy.id.toString())
         }
     },
     {
         id: "Claim Mode",
+        filterFn: (row, id, value) => {
+            if(value.includes("Assisted") && row.original.assistedBy !== null) return true;
+            if(value.includes("Online") && !row.original.assistedBy) return true;
+            return false
+        }
+    },
+    {
+        id: "Released By",
+        accessorKey: "releasedBy.name",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Released By" />
+        ),
+        cell: ({ row }) => (
+            <div className="flex ">
+                {row.original.releasedBy ? (
+                    <div className="px-2 text-sm py-1 flex items-center justify-center gap-x-2 rounded-full bg-secondary text-[#457f5a] dark:text-[#68ca93]">
+                        <UserAvatar
+                            className="size-4"
+                            src={row.original.releasedBy.picture as ""}
+                            fallback={row.original.releasedBy.name.substring(
+                                0,
+                                2
+                            )}
+                        />
+                        {row.original.releasedBy.name}
+                    </div>
+                ) : (
+                    <div className="px-2 text-sm py-1 flex items-center gap-x-2 rounded-full">
+                        -
+                    </div>
+                )}
+            </div>
+        ),
+        filterFn: (row, id, value) => {
+            if(row.original.assistedBy === null) return false;
+            return value.includes(row.original.assistedBy.id.toString())
+        }
+    },
+    {
+        id: "Claim Date",
         accessorKey: "createdAt",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Claimed Date" />
@@ -158,11 +234,16 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
         cell: ({ row }) => (
             <div>{format(row.original.createdAt, "MMM dd yyyy hh:mm a")}</div>
         ),
-        filterFn: (row, id, value) => {
-            if(row.original.assistedBy) return value.includes('Assisted')
-            if(row.original.assistedBy === null) return value.includes('Online')
-            return false;
-        }
+    },
+    {
+        id: "Released Date",
+        accessorKey: "releasedAt",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Released Date" />
+        ),
+        cell: ({ row }) => (
+            <div>{row.original.releasedAt ? format(row.original.releasedAt, "MMM dd yyyy hh:mm a") : "-"}</div>
+        ),
     },
 ];
 

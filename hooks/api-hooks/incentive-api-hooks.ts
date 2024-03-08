@@ -12,7 +12,7 @@ import {
     TUserWithAssignedIncentives,
 } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { claimIdSchema, createAssistedClaimSchema, createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
+import { createAssistedClaimSchema, createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
 import { TIncentiveAssignedToMe } from "@/types/incentive-assigned.types";
 
 export const incentiveListWithClaimCount = (eventId: number) => {
@@ -270,4 +270,25 @@ export const useClaimDelete = (eventId : number, onDelete? : () => void ) => {
     })
 
     return { deletedClaim, deleteClaim, isDeletingClaim }
+}
+
+export const useClaimRelease = ( eventId : number ) => {
+    const queryClient = useQueryClient();
+
+    const { mutate : releaseClaim, isPending : isReleasing } = useMutation<any, string, number>({
+        mutationKey : ["release-claim"],
+        mutationFn : async (claimId) => {
+            try{
+                const request = await axios.patch(`/api/v1/admin/event/${eventId}/incentives/claim/${claimId}`);
+                toast.success("Claim released successfully")
+                queryClient.invalidateQueries({ queryKey : ["claims-master-list"]})
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        }
+    })
+
+    return { releaseClaim, isReleasing }
 }

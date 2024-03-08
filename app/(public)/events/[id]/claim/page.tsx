@@ -23,7 +23,7 @@ const ClaimPage = ({ params }: Props) => {
     return (
         <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">
             <IncentiveGiftSvg className="mx-auto size-16 lg:size-32" />
-            <p className="text-xl lg:text-2xl text-center pb-8 lg:pb-12">
+            <p className="text-xl lg:text-2xl text-center">
                 Claim Incentives
             </p>
             <ClaimHome eventId={validatedEventId.data.id} />
