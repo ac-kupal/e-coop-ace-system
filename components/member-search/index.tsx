@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ErrorAlert from "@/components/error-alert/error-alert";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
 import { TMemberAttendeesMinimalInfo } from "@/types";
 import { voterPbSearchSchema } from "@/validation-schema/event-registration-voting";
@@ -59,12 +59,12 @@ const MemberSearch = ({ eventId, onFound }: Props) => {
                                 control={form.control}
                                 name="passbookNumber"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="flex-1">
                                         <FormControl>
                                             <Input
                                                 disabled={disabled}
                                                 placeholder="Enter Passbook Number"
-                                                className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
+                                                className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -82,8 +82,8 @@ const MemberSearch = ({ eventId, onFound }: Props) => {
                                         <FormControl>
                                             <Input
                                                 disabled={disabled}
-                                                placeholder="Enter Name"
-                                                className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
+                                                placeholder="Enter Firstname & Lastname"
+                                                className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -94,12 +94,13 @@ const MemberSearch = ({ eventId, onFound }: Props) => {
                         )}
                         <Button size="icon" onClick={(e)=>{
                             e.preventDefault();
-
                             form.reset();
-
                             setSearchMode(!searchMode)
                         }}><ArrowLeftRight className="size-4" /></Button>
                     </div>
+                    {
+                        !searchMode && <FormDescription className="text-xs text-center">Please separate your first name and last name with comma</FormDescription>
+                    }
                     {isError && error && (
                         <ErrorAlert
                             className="w-full"

@@ -37,6 +37,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 },
             });
         } else if (nameSearch) {
+            const [firstName, lastName] = nameSearch.split(", ")
             result = await db.eventAttendees.findMany({
                 select: {
                     id: true,
@@ -50,13 +51,10 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     voted: true,
                 },
                 where: {
-                    OR: nameSearch.split(" ").map(term => ({
-                        OR: [
-                            { firstName: { equals: term, mode: "insensitive" } },
-//                            { middleName: { contains: term, mode: "insensitive" } },
-                            { lastName: { equals: term, mode: "insensitive" } }
+                        AND: [
+                            { firstName: { contains: firstName , mode: "insensitive" } },
+                            { lastName: { contains: lastName, mode: "insensitive" } }
                         ]
-                    }))
                 },
             });
         }else{
