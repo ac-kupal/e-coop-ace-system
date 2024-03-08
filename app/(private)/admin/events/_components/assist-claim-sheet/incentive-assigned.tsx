@@ -35,6 +35,7 @@ const IncentiveAssigned = ({ eventId, member, state, newClaimEntries, claimedInc
                     const inNewEntry = newClaimEntries.includes(incentiveAssigned.incentiveId);
 
                     const satisfied = isSatisfiedClaimRequirements(incentiveAssigned.incentive.claimRequirement, member)
+                    console.log(member.firstName, member.voted, member.registered, incentiveAssigned.incentive.claimRequirement, " -> ", satisfied)
 
                     return (
                         <div

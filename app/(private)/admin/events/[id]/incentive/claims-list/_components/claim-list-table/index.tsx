@@ -114,7 +114,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                     </div>
                     {data && data.user.role !== "staff" && (
                         <>
-                            <div className="flex items-center w-full overflow-x-scroll flex-1 gap-x-2 justify-center md:justify-between">
+                            <div className="flex items-center w-full overflow-x-scroll lg:overflow-visible thin-scroll flex-1 gap-x-2 justify-center md:justify-between">
                                 <div className="flex items-center gap-x-2">
                                     <DataTableFacetedFilter
                                         title="Claim Mode"
