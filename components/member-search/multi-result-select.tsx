@@ -35,7 +35,7 @@ const MultiResultSelect = ({ results, onPick }: Props) => {
                                 <p className="text-sm inline-flex"><span className="text-foreground/60">Passbook :&nbsp;</span><span>{member.passbookNumber}</span></p>
                             </div>
                         </div>
-                        <Button size="sm" variant="secondary" className="opacity-10 ease-in bg-transparent group-hover:opacity-100" >Select</Button>
+                        <Button size="sm" className="opacity-10 ease-in bg-transparent text-foreground hover:bg-transparent group-hover:opacity-100" >Select</Button>
                     </div>
                 ))
             }
