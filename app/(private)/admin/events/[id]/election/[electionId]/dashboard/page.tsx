@@ -1,10 +1,9 @@
-import { Accessibility, Sigma } from "lucide-react";
+import { Accessibility } from "lucide-react";
 import Header from "../_components/header";
 import { BarGraphSection } from "./_components/bar-graph-section";
 import QuorumSection from "./_components/quorum-section";
 import db from "@/lib/database"
 import { z } from "zod";
-import NotFound from "../_components/not-found";
 type TParams = {
    params: { id: number; electionId: number };
 };
@@ -16,11 +15,13 @@ const page = async({ params }: TParams) => {
    z.coerce.number().parse(eventId)
 
    const Election = await db.election.findUnique({where:{eventId:eventId}})
-   if(!Election) return <NotFound></NotFound>
+   
 
    return (
       <div>
-         <Header text={Election?.electionName}></Header>
+         {Election && 
+            <Header text={Election?.electionName}></Header>
+         }
          <QuorumSection params={params}></QuorumSection>
          <div className="w-full flex space-x-3 justify-start px-2">
             <div className="flex space-x-2 items-center py-5">

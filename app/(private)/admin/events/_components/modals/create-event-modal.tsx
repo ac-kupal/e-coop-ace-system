@@ -94,19 +94,26 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
 
    const uploadImage = onUploadImage();
 
+
    const onSubmit = async (formValues: EventSchemaType) => {
       try {
-            const image = await uploadImage.mutateAsync({
-               fileName: `${v4()}`,
-               folderGroup: "event",
-               file: formValues.coverImage,
-            });
-            createEvent.mutate({
-               ...formValues,
-               coverImage: !image ? "/images/default.png" : image,
-            });
-         resetPicker();
-
+            if(!imageFile){
+               createEvent.mutate({
+                  ...formValues,
+                  coverImage: "/images/default.png" ,
+               });
+            }else{
+               const image = await uploadImage.mutateAsync({
+                  fileName: `${v4()}`,
+                  folderGroup: "event",
+                  file: formValues.coverImage,
+               });
+               createEvent.mutate({
+                  ...formValues,
+                  coverImage: !image ? "/images/default.png" : image,
+               });
+            }
+          resetPicker()
       } catch (error) {
          console.log(error);
       }
@@ -129,7 +136,7 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
             )}
          >
             <ModalHead
-               title="Create Event"
+               title="Add Event"
                description="Creating an event will also generate an election. The election may be optional as well."
             />
             <Form {...eventForm}>
@@ -301,7 +308,7 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
                         render={({ field }) => {
                            return (
                               <FormItem>
-                                 <FormLabel>Profile</FormLabel>
+                                 <FormLabel>Cover</FormLabel>
                                  <FormControl>
                                     <>
                                        <ImagePick

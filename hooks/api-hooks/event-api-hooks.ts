@@ -84,6 +84,7 @@ export const useCreateEvent = ({ onCancelandReset }: Props) => {
       mutationFn: async (data) => {
          try {
             const response = await axios.post("/api/v1/admin/event", { data });
+            console.log(response.data)
             return response.data;
          } catch (e) {
             mutationErrorHandler(e);
