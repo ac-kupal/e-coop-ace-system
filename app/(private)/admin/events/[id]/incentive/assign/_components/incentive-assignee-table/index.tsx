@@ -74,7 +74,7 @@ const IncentiveAssigneeTable = ({ eventId }: { eventId: number }) => {
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
             <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
-                <div className="flex items-center gap-x-4 text-muted-foreground">
+                <div className="flex items-center flex-wrap gap-x-4 text-muted-foreground">
                     <div className="relative text-white">
                         <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                         <Input

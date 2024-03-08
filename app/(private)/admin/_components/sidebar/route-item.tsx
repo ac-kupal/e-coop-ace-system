@@ -29,10 +29,10 @@ const RouteItem = ({ currentUser, route }: Props) => {
                 isCurrentPath && "text-background bg-primary dark:text-white hover:bg-primary/90"
             )}
         >
-            <div className={`w-fit h-fit ${isCurrentPath ? "text-accent dark:text-white": "text-accent-foreground"} `}>
+            <span className={`w-fit h-fit ${isCurrentPath ? "text-accent dark:text-white": "text-accent-foreground"} `}>
                 {icon}
-            </div>
-            <p>{name}</p>
+            </span>
+            <span>{name}</span>
         </Link>
     );
 };

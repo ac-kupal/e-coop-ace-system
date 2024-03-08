@@ -22,6 +22,7 @@ const MultiResultSelect = ({ results, onPick }: Props) => {
             {
                 results.map((member)=>(
                     <div 
+                        key={member.id}
                         onClick={()=>onPick(member)}
                         className="cursor-pointer group flex px-3 py-2 items-center w-full gap-x-2 duration-100 ease-in rounded-xl bg-secondary/70 hover:bg-secondary">
                         <div className="flex-1 flex items-center gap-x-2">

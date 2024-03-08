@@ -45,7 +45,7 @@ const claimFromFilter: FacetedOptionType[] = [
 const ClaimListTable = ({ eventId }: { eventId: number }) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
-    const { data : users } = userList();
+    const { data: users } = userList();
     const { data } = useSession();
 
     const myFilter =
@@ -59,7 +59,8 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
               ]
             : [];
 
-    const { claimList, isError, isLoading, isFetching } = useClaimsMasterList(eventId);
+    const { claimList, isError, isLoading, isFetching } =
+        useClaimsMasterList(eventId);
 
     const table = useReactTable({
         data: claimList,
@@ -73,7 +74,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
         },
         initialState: {
             pagination: { pageIndex: 0, pageSize: 20 },
-            columnVisibility: { "Claim Id": false, "Claim Mode" : false },
+            columnVisibility: { "Claim Id": false, "Claim Mode": false },
         },
         onGlobalFilterChange: setGlobalFilter,
     });
@@ -97,9 +98,9 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
 
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
-                <div className="flex items-center gap-x-2 text-muted-foreground">
-                    <div className="relative text-white flex">
+            <div className="flex w-full flex-wrap items-center justify-start gap-x-2 lg:justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
+                <div className="flex flex-1 items-center gap-x-2 gap-y-1  overflow-hidden flex-wrap text-muted-foreground">
+                    <div className="relative text-white flex w-full md:w-fit">
                         <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                         <Input
                             ref={onFocusSearch}
@@ -113,40 +114,54 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                     </div>
                     {data && data.user.role !== "staff" && (
                         <>
-                            <DataTableFacetedFilter
-                                title="Claim Mode"
-                                options={claimFromFilter}
-                                column={table.getColumn("Claim Mode")}
-                            />
-                            <DataTableFacetedFilter
-                                options={[
-                                    ...myFilter,
-                                    ...users.filter((user)=> user.id !== data.user.id ).map((user)=>({
-                                        label: user.name,
-                                        value: user.id.toString(),
-                                        icon: User
-                                    }))
-                                ]}
-                                column={table.getColumn("Assisted By")}
-                                title="Assisted by"
-                            />
-                            <DataTableFacetedFilter
-                                options={[
-                                    ...myFilter,
-                                    ...users.filter((user)=> user.id !== data.user.id ).map((user)=>({
-                                        label: user.name,
-                                        value: user.id.toString(),
-                                        icon: User
-                                    }))
-                                ]}
-                                column={table.getColumn("Released By")}
-                                title="Released by"
-                            />
+                            <div className="flex items-center w-full overflow-x-scroll flex-1 gap-x-2 justify-center md:justify-between">
+                                <div className="flex items-center gap-x-2">
+                                    <DataTableFacetedFilter
+                                        title="Claim Mode"
+                                        options={claimFromFilter}
+                                        column={table.getColumn("Claim Mode")}
+                                    />
+                                    <DataTableFacetedFilter
+                                        options={[
+                                            ...myFilter,
+                                            ...users
+                                                .filter(
+                                                    (user) =>
+                                                        user.id !== data.user.id
+                                                )
+                                                .map((user) => ({
+                                                    label: user.name,
+                                                    value: user.id.toString(),
+                                                    icon: User,
+                                                })),
+                                        ]}
+                                        column={table.getColumn("Assisted By")}
+                                        title="Assisted by"
+                                    />
+                                    <DataTableFacetedFilter
+                                        options={[
+                                            ...myFilter,
+                                            ...users
+                                                .filter(
+                                                    (user) =>
+                                                        user.id !== data.user.id
+                                                )
+                                                .map((user) => ({
+                                                    label: user.name,
+                                                    value: user.id.toString(),
+                                                    icon: User,
+                                                })),
+                                        ]}
+                                        column={table.getColumn("Released By")}
+                                        title="Released by"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-x-2 md:gap-x-4">
+                                    <DataTableViewOptions table={table} />
+                                </div>
+                            </div>
                         </>
                     )}
-                </div>
-                <div className="flex items-center gap-x-2 md:gap-x-4">
-                    <DataTableViewOptions table={table} />
                 </div>
             </div>
             <DataTable

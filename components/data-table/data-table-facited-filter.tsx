@@ -50,7 +50,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     variant="outline"
                     size="sm"
                     className={cn(
-                        "border-dashed text-foreground/80 hover:text-foreground hover:bg-secondary border-primary/50 bg-secondary/80 rounded-xl",
+                        "px-1 border-dashed text-foreground/80 hover:text-foreground hover:bg-secondary border-primary/50 bg-secondary/80 rounded-xl",
                         className
                     )}
                 >
