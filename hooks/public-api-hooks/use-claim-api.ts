@@ -56,7 +56,6 @@ export const useClaimAuth = (eventId : number) => {
                 return request.data
             }catch(e){
                 const errorMessage = handleAxiosErrorMessage(e);
-                //toast.error(errorMessage);
                 throw errorMessage;
             }
         },

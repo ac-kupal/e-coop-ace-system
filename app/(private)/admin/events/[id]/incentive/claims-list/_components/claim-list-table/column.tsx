@@ -1,43 +1,19 @@
 "use client";
-import { toast } from "sonner";
-import { useState } from "react";
+import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 
-import {
-    Copy,
-    MenuIcon,
-    Pencil,
-    TabletSmartphone,
-    Trash,
-    UserPlus,
-} from "lucide-react";
+import { TabletSmartphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import UserAvatar from "@/components/user-avatar";
 import LoadingSpinner from "@/components/loading-spinner";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { useClaimDelete } from "@/hooks/api-hooks/incentive-api-hooks";
 import { TIncentiveClaimsWithIncentiveAttendeeAssistedBy } from "@/types";
-import {
-    useClaimDelete,
-    useDeleteIncentive,
-} from "@/hooks/api-hooks/incentive-api-hooks";
-import UserAvatar from "@/components/user-avatar";
-import { format } from "date-fns";
 
-const Actions = ({
-    incentive,
-}: {
-    incentive: TIncentiveClaimsWithIncentiveAttendeeAssistedBy;
-}) => {
+const Actions = ({ incentive }: { incentive: TIncentiveClaimsWithIncentiveAttendeeAssistedBy }) => {
     const { onOpen } = useConfirmModal();
 
     const { deleteClaim, isDeletingClaim } = useClaimDelete(incentive.eventId);
@@ -168,7 +144,7 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
         ),
     },
     {
-        id: "Claim Date",
+        id: "Claim Mode",
         accessorKey: "createdAt",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Claimed Date" />
@@ -176,6 +152,11 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
         cell: ({ row }) => (
             <div>{format(row.original.createdAt, "MMM dd yyyy hh:mm a")}</div>
         ),
+        filterFn: (row, id, value) => {
+            if(row.original.assistedBy) return value.includes('Assisted')
+            if(row.original.assistedBy === null) return value.includes('Online')
+            return false;
+        }
     },
 ];
 

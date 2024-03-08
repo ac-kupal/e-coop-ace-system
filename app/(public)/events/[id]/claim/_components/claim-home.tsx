@@ -1,18 +1,18 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 import ClaimWindow from "./claim-window";
+import { Button } from "@/components/ui/button";
 import ValidateClaim from "./claim-window/validate-claim";
 import LoadingSpinner from "@/components/loading-spinner";
+
 import {
     useClaimAuth,
     useClaimComplete,
     useClaimablesList,
     useMyClaims,
 } from "@/hooks/public-api-hooks/use-claim-api";
-import { Button } from "@/components/ui/button";
-import IncentiveGiftSvg from "@/components/custom-svg/incentive-gift";
-import { useRouter } from "next/navigation";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 
 type Props = {
