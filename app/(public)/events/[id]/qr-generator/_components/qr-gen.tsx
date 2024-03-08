@@ -39,7 +39,7 @@ const QrGen = ({ eventId } : { eventId : number }) => {
         )
          :
          (
-            <MemberSearch eventId={eventId} onFound={(member)=>setMember(member)} />
+            <MemberSearch disableQr eventId={eventId} onFound={(member)=>setMember(member)} />
          )
       }
       {/* <div className="flex flex-col items-center gap-y-8 pb-4">

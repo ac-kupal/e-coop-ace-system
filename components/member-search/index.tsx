@@ -10,7 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ErrorAlert from "@/components/error-alert/error-alert";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormMessage,
+} from "@/components/ui/form";
 
 import { TMemberAttendeesMinimalInfo } from "@/types";
 import { voterPbSearchSchema } from "@/validation-schema/event-registration-voting";
@@ -19,12 +26,14 @@ import MultiResultSelect from "./multi-result-select";
 
 type Props = {
     eventId: number;
+    disableQr?: boolean;
     onFound: (member: TMemberAttendeesMinimalInfo) => void;
 };
 
-const MemberSearch = ({ eventId, onFound }: Props) => {
+const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
     const [searchMode, setSearchMode] = useState(true);
-    const { searchResults, searchMember, isPending, isError, error, reset } = useSearchMemberAttendee(eventId, onFound);
+    const { searchResults, searchMember, isPending, isError, error, reset } =
+        useSearchMemberAttendee(eventId, onFound);
 
     const form = useForm<z.infer<typeof voterPbSearchSchema>>({
         resolver: zodResolver(voterPbSearchSchema),
@@ -36,12 +45,13 @@ const MemberSearch = ({ eventId, onFound }: Props) => {
 
     const disabled = isPending;
 
-    if(searchResults) return (
-        <div className="flex flex-col items-center gap-y-4">
-            <MultiResultSelect onPick={onFound} results={searchResults} />
-            <Button onClick={()=>reset()}>Search Again</Button>
-        </div>
-    )
+    if (searchResults)
+        return (
+            <div className="flex flex-col items-center gap-y-4">
+                <MultiResultSelect onPick={onFound} results={searchResults} />
+                <Button onClick={() => reset()}>Search Again</Button>
+            </div>
+        );
 
     return (
         <div className="flex flex-col items-center gap-y-4">
@@ -92,15 +102,23 @@ const MemberSearch = ({ eventId, onFound }: Props) => {
                                 )}
                             />
                         )}
-                        <Button size="icon" onClick={(e)=>{
-                            e.preventDefault();
-                            form.reset();
-                            setSearchMode(!searchMode)
-                        }}><ArrowLeftRight className="size-4" /></Button>
+                        <Button
+                            size="icon"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                form.reset();
+                                setSearchMode(!searchMode);
+                            }}
+                        >
+                            <ArrowLeftRight className="size-4" />
+                        </Button>
                     </div>
-                    {
-                        !searchMode && <FormDescription className="text-xs text-center">Please separate your first name and last name with comma</FormDescription>
-                    }
+                    {!searchMode && (
+                        <FormDescription className="text-xs text-center">
+                            Please separate your first name and last name with
+                            comma
+                        </FormDescription>
+                    )}
                     {isError && error && (
                         <ErrorAlert
                             className="w-full"
@@ -118,19 +136,23 @@ const MemberSearch = ({ eventId, onFound }: Props) => {
                             "Find"
                         )}
                     </Button>
-                    <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
-                        <Separator className="w-1/2" /> or{" "}
-                        <Separator className="w-1/2" />
-                    </div>
-                    <QrReader
-                        qrReaderOption="HTML5QrScanner"
-                        onRead={(val: string) => {
-                            if (val.length === 0) return;
-                            form.setValue("passbookNumber", val);
-                            searchMember({ passbookNumber: val });
-                        }}
-                        className="size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl"
-                    />
+                    {!disableQr && (
+                        <>
+                            <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
+                                <Separator className="w-1/2" /> or{" "}
+                                <Separator className="w-1/2" />
+                            </div>
+                            <QrReader
+                                qrReaderOption="HTML5QrScanner"
+                                onRead={(val: string) => {
+                                    if (val.length === 0) return;
+                                    form.setValue("passbookNumber", val);
+                                    searchMember({ passbookNumber: val });
+                                }}
+                                className="size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl"
+                            />
+                        </>
+                    )}
                 </form>
             </Form>
         </div>
