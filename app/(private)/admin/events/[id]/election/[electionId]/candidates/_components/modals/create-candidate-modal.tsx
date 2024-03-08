@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import {
+   CreateCandidatePositionValidation,
    createCandidateWithUploadSchema,
 } from "@/validation-schema/candidate";
 import {
@@ -27,21 +28,23 @@ import {
 } from "@/components/ui/select";
 import { useCreateCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
 import { TMemberWithEventElectionId, TPosition } from "@/types";
-import {
-   onUploadImage,
-} from "@/hooks/api-hooks/image-upload-api-hook";
+import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import EventAttendeesTable from "../attendees-table";
+import { useState } from "react";
+import { toast } from "sonner";
 
 type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
-   positions:TPosition[] | undefined;
+   positions: TPosition[] | undefined;
    params: { id: number; electionId: number };
-   data:TMemberWithEventElectionId[]
+   data: TMemberWithEventElectionId[];
 };
 
-export type createTCandidate = z.infer<typeof createCandidateWithUploadSchema>;
+export type createTCandidate = z.infer<
+   typeof CreateCandidatePositionValidation
+>;
 
 const CreateCandidateModal = ({
    state,
@@ -49,19 +52,17 @@ const CreateCandidateModal = ({
    onCancel,
    positions,
    params,
-   data
+   data,
 }: Props) => {
-
+   const [selectedMembers, setSelectedMembers] =
+      useState<TMemberWithEventElectionId>();
+   const [selectedPosition, setSelectedPosition] = useState<number>(0);
    const defaultValues = {
-      firstName: "",
-      lastName: "",
-      passbookNumber: "",
-      electionId: params.electionId,
       positionId: 0,
    };
 
    const candidateForm = useForm<createTCandidate>({
-      resolver: zodResolver(createCandidateWithUploadSchema),
+      resolver: zodResolver(CreateCandidatePositionValidation),
       defaultValues: defaultValues,
    });
 
@@ -72,13 +73,23 @@ const CreateCandidateModal = ({
       reset();
       onClose(false);
    };
-   const createCandidate = useCreateCandidate({ onCancelandReset,params });
+   const createCandidate = useCreateCandidate({ onCancelandReset, params });
 
    const uploadImage = onUploadImage();
 
    const onSubmit = async (formValues: createTCandidate) => {
-      //console.log(formValues)
-    
+      if (!selectedMembers) {
+         toast.error("Please select Members First!");
+         return;
+      }
+      createCandidate.mutate({
+         firstName: selectedMembers?.firstName,
+         lastName: selectedMembers?.lastName,
+         passbookNumber: selectedMembers?.passbookNumber,
+         picture: selectedMembers?.picture,
+         electionId: selectedMembers?.event.election?.id,
+         positionId: formValues.positionId,
+      });
    };
    const isUploading = uploadImage.isPending;
    const isLoading = createCandidate.isPending;
@@ -101,62 +112,10 @@ const CreateCandidateModal = ({
                   onSubmit={candidateForm.handleSubmit(onSubmit)}
                   className=" space-y-3"
                >
-                  {/* <FormField
-                     control={candidateForm.control}
-                     name="firstName"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>First Name</FormLabel>
-                           <FormControl>
-                              <Input
-                                 placeholder="enter candidate name"
-                                 className="placeholder:text-foreground/40"
-                                 {...field}
-                              />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-                  <FormField
-                     control={candidateForm.control}
-                     name="lastName"
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>Last Name</FormLabel>
-                           <FormControl>
-                              <Input
-                                 placeholder="enter candidate last name"
-                                 className="placeholder:text-foreground/40"
-                                 {...field}
-                              />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-                  <FormField
-                     control={candidateForm.control}
-                     name="passbookNumber"
-                     render={({ field }) => {
-                        return (
-                           <FormItem>
-                              <FormLabel>Passbook No.</FormLabel>
-                              <FormControl>
-                                 <Input
-                                    placeholder="enter passbook number of candidate"
-                                    className="placeholder:text-foreground/40"
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        );
-                     }}
-                  /> */}
-
-                  <EventAttendeesTable data={data} ></EventAttendeesTable>
-
+                  <EventAttendeesTable
+                     setSelectedMembers={setSelectedMembers}
+                     data={data}
+                  ></EventAttendeesTable>
                   <FormField
                      control={candidateForm.control}
                      name="positionId"

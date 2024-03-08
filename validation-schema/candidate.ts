@@ -28,6 +28,19 @@ export const createCandidateSchema = z.object({
    }).int(),
 });
 
+export const CreateCandidatePositionValidation = z.object({
+   positionId: z.coerce.number({
+      required_error: "Please select an email to display",
+      invalid_type_error: "Invalid data type",
+   }).int().refine(
+      e => e !== 0,
+      {
+         message: "Please Select a Position",
+      }
+   )
+});
+
+
 export const updateCandidateSchema = createCandidateSchema.extend({
    picture: z.any().refine((file: File | undefined | null) => file !== undefined && file !== null, {
       message: "Image File is required",

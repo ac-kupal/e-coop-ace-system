@@ -68,32 +68,6 @@ const columns: ColumnDef<TCandidatewithPositionwithEventId>[] = [
       },
    },
    {
-      id:"edit",
-      cell:({row})=>{
-         const params = {id:row.original.eventId,electionId:row.original.electionId }
-         const { elections, isLoading, error } = getElectionWithPositionAndCandidates({params});
-         const [onOpenModal, setOnOpenModal] = useState(false);
-         return (
-            <>
-            <UpdateCandidateModal
-               candidate={row.original}
-               positions={elections?.positions}
-               state={onOpenModal}
-               onClose={() => setOnOpenModal(false)}
-            />
-            <Button
-               onClick={() => {
-                  setOnOpenModal(true);
-               }}
-               variant={"outline"}
-            >
-               {isLoading ? <Loader2 className=" animate-spin size-4"/>:"edit"}
-            </Button>
-         </>
-         )
-      }
-   },
-   {
       id: "delete",
       cell: ({ row }) => {
          const params = {id:row.original.eventId,electionId:row.original.electionId }

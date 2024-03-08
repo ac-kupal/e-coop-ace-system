@@ -19,20 +19,19 @@ import CreateCandidateModal from "../modals/create-candidate-modal";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 import {  TCandidatewithPositionwithEventId, TPosition } from "@/types";
 import { toast } from "sonner";
-import { getAllEventMembers } from "@/hooks/api-hooks/member-api-hook";
+import { FilteredEventMembersForCandidateSelection, getAllEventMembers } from "@/hooks/api-hooks/member-api-hook";
 
 type Props = {
    params: { id: number; electionId: number };
    data: TCandidatewithPositionwithEventId[]; 
    positions:TPosition[] | undefined;
-   eventId:number
 };
 
-const CandidateTable = ({ data,positions,params,eventId }: Props) => {
+const CandidateTable = ({ data,positions,params}: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createPosition, setCreatePosition] = useState(false);
 
-   const {data:Members,isError,isLoading} = getAllEventMembers(eventId)
+   const {data:Members,isError,isLoading} =  FilteredEventMembersForCandidateSelection(params.id,params.electionId)
 
    const table = useReactTable({
       data,

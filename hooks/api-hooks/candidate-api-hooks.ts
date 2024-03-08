@@ -45,9 +45,8 @@ export const useCreateCandidate = ({ onCancelandReset,params }: Props) => {
       mutationKey: ["create-candidate-query"],
       mutationFn: async (data) => {
          try {
-            const response = await axios.post(`/api/v1/admin/event/${params.id}/election/${params.electionId}/candidate/`, data);
-            console.log(response)
-            return response.data;
+             const response = await axios.post(`/api/v1/admin/event/${params.id}/election/${params.electionId}/candidate/`, data);
+             return response.data;
          } catch (e) {
             console.log(e)
             const errorMessage = handleAxiosErrorMessage(e);
@@ -62,6 +61,7 @@ export const useCreateCandidate = ({ onCancelandReset,params }: Props) => {
       },
       onSuccess: () => {
          queryClient.invalidateQueries({ queryKey: ["get-election-query"] });
+         queryClient.invalidateQueries({ queryKey: ["membersOnCandidate-list-query"] });
          onCancelandReset();
          toast.success("candidate created successfully");
       },

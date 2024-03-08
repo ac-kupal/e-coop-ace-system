@@ -28,6 +28,24 @@ export const getAllEventMembers = (eventId: number) => {
     return members;
 };
 
+export const FilteredEventMembersForCandidateSelection = (eventId: number,electionId:number) => {
+    const members = useQuery<TMemberWithEventElectionId[], string>({
+        queryKey: ["membersOnCandidate-list-query"],
+        queryFn: async () => {
+            try {
+                console.log(eventId,electionId)
+                const response = await axios.get(`/api/v1/admin/event/${eventId}/election/${electionId}/select-candidate`
+                );
+                return response.data;
+            } catch (e) {
+                throw handleAxiosErrorMessage(e);
+            }
+        },
+        initialData: [],
+    });
+    return members;
+};
+
 
 export const deleteMember = () => {
     const queryClient = useQueryClient();

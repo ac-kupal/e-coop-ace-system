@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SearchIcon } from "lucide-react";
 import DataTable from "@/components/data-table/data-table";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
@@ -17,9 +17,10 @@ import {   TMemberWithEventElectionId } from "@/types";
 
 type Props = {
    data:TMemberWithEventElectionId[]
+   setSelectedMembers: Dispatch<SetStateAction<TMemberWithEventElectionId | undefined>>
 };
 
-const EventAttendeesTable = ({ data }: Props) => {
+const EventAttendeesTable = ({ data,setSelectedMembers }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    
    const table = useReactTable({
@@ -37,10 +38,14 @@ const EventAttendeesTable = ({ data }: Props) => {
       },
       onGlobalFilterChange: setGlobalFilter,
       enableMultiRowSelection:false,
-
+      
    });
    const selectedCandidates = table.getSelectedRowModel().flatRows.map(({ original }) => original);
-   console.log(selectedCandidates[0])
+
+   useEffect(()=>{
+      setSelectedMembers(selectedCandidates[0])
+   },[table.getState()])
+
   
    return (
       <div className="flex flex-1 flex-col gap-y-2 max-h-[40vh] overflow-auto ">
@@ -54,18 +59,13 @@ const EventAttendeesTable = ({ data }: Props) => {
                   ></SearchInput>
                </div>
             </div>
-            <div className="flex items-center gap-x-2 md:gap-x-4">
-               <DataTableViewOptions table={table} />
-            </div>
          </div>
          <DataTable
             className="flex-1 bg-background/50 rounded-"
             table={table}
          />
-         <div className="lg:hidden">
-            <DataTableBasicPagination2 table={table} />
-         </div>
-         <div className="hidden lg:block">
+       
+         <div className="">
             <DataTableBasicPagination2  table={table} />
          </div>
       </div>
