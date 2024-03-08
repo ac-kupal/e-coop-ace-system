@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 
-import VoterSearch from "./voter-search";
 import AuthorizeVoter from "./authorize-voter";
 import MemberInfoDisplay from "../../../_components/member-info-display";
 
@@ -9,6 +8,7 @@ import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import MemberSearch from "@/components/member-search";
 
 type Props = {
     electionWithEvent: TElectionWithEvent;
@@ -18,14 +18,7 @@ const ValidateVoter = ({ electionWithEvent }: Props) => {
     const router = useRouter();
     const [voter, setVoter] = useState<TMemberAttendeesMinimalInfo | null>(null);
 
-    if (!voter)
-        return (
-            <VoterSearch
-                eventId={electionWithEvent.event.id}
-                electionId={electionWithEvent.id}
-                onFound={(voter) => setVoter(voter)}
-            />
-        );
+    if (!voter) return (<MemberSearch eventId={electionWithEvent.eventId} onFound={(member) => setVoter(member)} />);
 
     return (
         <div className="flex flex-col px-8 gap-y-2 lg:gap-y-16">

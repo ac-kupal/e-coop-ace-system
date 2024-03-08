@@ -9,36 +9,6 @@ import { TElection, TMemberAttendeesMinimalInfo } from "@/types";
 import { chosenCandidateIds } from "@/validation-schema/election";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 
-export const searchVoter = ( eventId: number, electionId: number, onFound? : (data: TMemberAttendeesMinimalInfo) => void ) => {
-    const { data : voter, isPending, mutate: findVoter, isError, error, } = useMutation<TMemberAttendeesMinimalInfo, string, string>({
-        mutationKey: ["member-search"],
-        mutationFn: async (passbookNumber) => {
-            try {
-                if (passbookNumber === null || passbookNumber.length === 0)
-                    return;
-
-                const url = qs.stringifyUrl(
-                    {
-                        url: `/api/v1/public/event/${eventId}/election/${electionId}/voter-search`,
-                        query: { passbookNumber },
-                    },
-                    { skipNull: true }
-                );
-
-                const request = await axios.get(url);
-                if(onFound) onFound(request.data);
-                return request.data;
-            } catch (e) {
-                const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage);
-                throw errorMessage;
-            }
-        },
-    });
-
-    return { isPending, findVoter, isError, error };
-};
-
 export const loadVoter = (election: TElection) => {
     const { data: voter, isPending, isError, error, } = useQuery<TMemberAttendeesMinimalInfo, string>({
         queryKey: ["voter-authorization"],

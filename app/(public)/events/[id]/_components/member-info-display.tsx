@@ -13,7 +13,10 @@ const MemberInfoDisplay = ({ member }: Props) => {
             <div className="sapce-y-2 md:space-y-4 text-lg md:text-xl p-4 lg:text-5xl">
                 <p><span className="text-foreground/60 mr-6">Name :</span>{`${member.firstName} ${member.middleName} ${member.lastName}`}</p>
                 <p><span className="text-foreground/60 mr-6">PB No &nbsp;:</span>{`${member.passbookNumber}`}</p>
-                { member.registered && <p className="text-green-400">REGISTERED</p> }
+                <div className="flex items-center gap-x-2">
+                    { member.registered && <p className="text-green-400">REGISTERED</p> }
+                    { member.voted && <p className="text-green-400">{ member.voted && <span className="text-foreground">&</span>} VOTED</p> }
+                </div>
             </div>
         </div>
   )

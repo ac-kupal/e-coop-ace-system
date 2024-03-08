@@ -1,5 +1,5 @@
 import z from "zod";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,51 +12,52 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 
 import QrReader from "@/components/qr-reader";
 import ErrorAlert from "@/components/error-alert/error-alert";
-import { createPublicClaimAuthorizationSchema } from "@/validation-schema/incentive";
+import { createPublicClaimAuthorizationFormSchema, createPublicClaimAuthorizationSchema } from "@/validation-schema/incentive";
 import { useCreateClaimAuth } from "@/hooks/public-api-hooks/use-claim-api";
+import { TMemberAttendeesMinimalInfo } from "@/types";
+import MemberSearch from "@/components/member-search";
+import UserAvatar from "@/components/user-avatar";
 
 type Props = { eventId: number };
 
 type TClaimValidateForm = z.infer<typeof createPublicClaimAuthorizationSchema>;
 
 const ValidateClaim = ({ eventId }: Props) => {
+    const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(null)
+
     const form = useForm<TClaimValidateForm>({
-        resolver: zodResolver(createPublicClaimAuthorizationSchema),
+        resolver: zodResolver(createPublicClaimAuthorizationFormSchema),
         defaultValues: {
-            passbookNumber: "",
             otp : ""
         },
     });
 
-    form.watch("passbookNumber");
-
     const { authorize, isPending, isError, error } = useCreateClaimAuth(eventId);
     const disabled = isPending;
 
+    if(!member) return <MemberSearch eventId={eventId} onFound={(member) => setMember(member)} />
+
     return (
         <div className="flex flex-col items-center gap-y-4">
+            <div className="group flex px-3 py-2 items-center w-full gap-x-2 duration-100 ease-in rounded-xl bg-secondary/70 hover:bg-secondary">
+                <div className="flex-1 flex items-center gap-x-2">
+                    <UserAvatar 
+                        src={member.picture as ""} 
+                        fallback={`${member.firstName.charAt(0)} ${member.lastName.charAt(0)}`} 
+                        className="size-12"
+                    />
+                    <div className="flex flex-col">
+                        <p>{`${member.firstName} ${member.lastName}`}</p>
+                        <p className="text-sm inline-flex"><span className="text-foreground/60">Passbook :&nbsp;</span><span>{member.passbookNumber}</span></p>
+                    </div>
+                </div>
+                <Button size="sm" className="opacity-10 ease-in bg-transparent group-hover:opacity-100" onClick={()=>setMember(null)} >Cancel</Button>
+            </div>
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit((formValues) => authorize(formValues))}
+                    onSubmit={form.handleSubmit((formValues) => authorize({...formValues, passbookNumber : member.passbookNumber}))}
                     className="flex flex-col items-center gap-y-4"
                 >
-                    <FormField
-                        control={form.control}
-                        name="passbookNumber"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input
-                                        disabled={disabled}
-                                        placeholder="Enter Passbook Number"
-                                        className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                     <FormField
                         control={form.control}
                         name="otp"
@@ -80,25 +81,9 @@ const ValidateClaim = ({ eventId }: Props) => {
                         {isPending ? (
                             <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
                         ) : (
-                            "Proceed"
+                            "Proceed to Claim"
                         )}
                     </Button>
-                    <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
-                        <Separator className="w-1/2" /> or <Separator className="w-1/2" />
-                    </div>
-                    <QrReader
-                        qrReaderOption="HTML5QrScanner"
-                        onRead={(val: string) => {
-                            if(!val || val.length === 0) return;
-                            form.setValue("passbookNumber", val);
-                            authorize({
-                                passbookNumber: val,
-                                otp : form.getValues("otp")
-                            })
-                        }}
-                        // className="h-[340px] w-full sm:size-[400px] bg-background overflow-clip rounded-xl"
-                        className="size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl"
-                    />
                 </form>
             </Form>
         </div>

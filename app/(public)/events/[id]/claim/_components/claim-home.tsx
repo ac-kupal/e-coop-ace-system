@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import ClaimWindow from "./claim-window";
@@ -14,6 +14,7 @@ import {
     useMyClaims,
 } from "@/hooks/public-api-hooks/use-claim-api";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
     eventId: number;
@@ -21,20 +22,19 @@ type Props = {
 
 const ClaimHome = ({ eventId }: Props) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const { onOpen } = useConfirmModal();
     const { myInfo, isLoading, isError, error } = useClaimAuth(eventId);
-    const { myClaims, isLoadingClaims } = useMyClaims(
-        eventId,
-        myInfo !== undefined
-    );
-    const { claimables, isLoadingClaimables } = useClaimablesList(
-        eventId,
-        myInfo !== undefined
-    );
+    const { myClaims, isLoadingClaims } = useMyClaims(eventId, myInfo !== undefined);
+    const { claimables, isLoadingClaimables } = useClaimablesList(eventId,myInfo !== undefined);
 
-    const { completeClaim } = useClaimComplete(eventId, () =>
-        router.push("claim/complete")
-    );
+    const { completeClaim } = useClaimComplete(eventId, () => router.push("claim/complete"));
+
+    useEffect(()=>{
+        return () => {
+            queryClient.removeQueries({queryKey : ["my-claim-minimal-info"]})
+        }
+    }, [])
 
     if (isLoading)
         return (

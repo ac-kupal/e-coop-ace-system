@@ -44,6 +44,10 @@ export const createIncentiveClaimPublic = z.object({
     incentiveId : incentiveIdSchema
 })
 
+export const createPublicClaimAuthorizationFormSchema = z.object({
+    otp : otpSchema,
+})
+
 export const createPublicClaimAuthorizationSchema = z.object({
     passbookNumber : passbookNumberSchema,
     otp : otpSchema,

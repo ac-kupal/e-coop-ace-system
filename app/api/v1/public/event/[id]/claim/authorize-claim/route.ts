@@ -28,7 +28,7 @@ export const POST = async ( req : NextRequest, { params } : TParams) => {
             }
         })
 
-        if(!member) return NextResponse.json({ message : "Member not found, please make sure OTP and Passbook is correct"}, { status : 404 })
+        if(!member) return NextResponse.json({ message : "Invalid OTP"}, { status : 404 })
 
         const response = NextResponse.json(member)
         createClaimAuth(response, eventId, member)

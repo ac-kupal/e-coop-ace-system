@@ -59,7 +59,8 @@ export const useClaimAuth = (eventId : number) => {
                 throw errorMessage;
             }
         },
-        retry : 0
+        retry : 0,
+        refetchOnWindowFocus : false
     })
 
     return { myInfo, isLoading, isPending, isError, error }
@@ -116,7 +117,6 @@ export const useClaimComplete = (eventId : number, onCompleteClaim? : () => void
         mutationFn : async (data) => { 
             try{
                 const request = await axios.delete(`/api/v1/public/event/${eventId}/claim/revoke-claim`)
-                toast.success(request.data);
 
                 queryClient.invalidateQueries({ queryKey : ["my-claim-minimal-info"]})
 
