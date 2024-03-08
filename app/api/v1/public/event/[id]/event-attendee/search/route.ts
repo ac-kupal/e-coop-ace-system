@@ -52,9 +52,9 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 where: {
                     OR: nameSearch.split(" ").map(term => ({
                         OR: [
-                            { firstName: { contains: term, mode: "insensitive" } },
-                            { middleName: { contains: term, mode: "insensitive" } },
-                            { lastName: { contains: term, mode: "insensitive" } }
+                            { firstName: { equals: term, mode: "insensitive" } },
+//                            { middleName: { contains: term, mode: "insensitive" } },
+                            { lastName: { equals: term, mode: "insensitive" } }
                         ]
                     }))
                 },
