@@ -4,14 +4,14 @@ import moment from "moment";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TCreateMember, TMember, TMemberAttendeesMinimalInfo, TMemberAttendeesWithRegistrationAssistance, TMemberWithEventElectionId } from "@/types";
+import { TCreateMember, TMemberAttendeesMinimalInfo, TMemberWithEventElectionId } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import useSkippedStore from "@/stores/skipped-members-store";
 import { useRouter } from "next/navigation";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 
 export const getAllEventMembers = (eventId: number) => {
-    const positions = useQuery<TMemberWithEventElectionId[], string>({
+    const members = useQuery<TMemberWithEventElectionId[], string>({
         queryKey: ["all-event-members-list-query"],
         queryFn: async () => {
             try {
@@ -25,23 +25,9 @@ export const getAllEventMembers = (eventId: number) => {
         },
         initialData: [],
     });
-    return positions;
+    return members;
 };
 
-export const getMembers = () => {
-    const getAllMember = useQuery<TMember[]>({
-        queryKey: ["get-all-member-list-query"],
-        queryFn: async () => {
-            try {
-                const response = await axios.get(`/api/v1/member/`);
-                return response.data;
-            } catch (e) {
-                throw handleAxiosErrorMessage(e);
-            }
-        },
-    });
-    return getAllMember;
-};
 
 export const deleteMember = () => {
     const queryClient = useQueryClient();

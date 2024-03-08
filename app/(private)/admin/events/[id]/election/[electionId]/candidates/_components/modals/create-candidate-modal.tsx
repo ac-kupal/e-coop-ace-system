@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import {
    Form,
    FormControl,
@@ -27,12 +26,11 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { useCreateCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
-import { TPosition } from "@/types";
-import ImagePick from "@/components/image-pick";
-import useImagePick from "@/hooks/use-image-pick";
+import { TMemberWithEventElectionId, TPosition } from "@/types";
 import {
    onUploadImage,
 } from "@/hooks/api-hooks/image-upload-api-hook";
+import EventAttendeesTable from "../attendees-table";
 
 type Props = {
    state: boolean;
@@ -40,6 +38,7 @@ type Props = {
    onCancel?: () => void;
    positions:TPosition[] | undefined;
    params: { id: number; electionId: number };
+   data:TMemberWithEventElectionId[]
 };
 
 export type createTCandidate = z.infer<typeof createCandidateWithUploadSchema>;
@@ -49,21 +48,14 @@ const CreateCandidateModal = ({
    onClose,
    onCancel,
    positions,
-   params
+   params,
+   data
 }: Props) => {
-
-   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
-      initialImageURL: "/images/default.png",
-      maxOptimizedSizeMB: 0.5,
-      maxWidthOrHeight: 300,
-   });
-  
 
    const defaultValues = {
       firstName: "",
       lastName: "",
       passbookNumber: "",
-      picture: imageFile,
       electionId: params.electionId,
       positionId: 0,
    };
@@ -78,7 +70,6 @@ const CreateCandidateModal = ({
    };
    const onCancelandReset = () => {
       reset();
-      resetPicker();
       onClose(false);
    };
    const createCandidate = useCreateCandidate({ onCancelandReset,params });
@@ -87,27 +78,11 @@ const CreateCandidateModal = ({
 
    const onSubmit = async (formValues: createTCandidate) => {
       //console.log(formValues)
-      try {
-         if(!imageFile) {
-            createCandidate.mutate({...formValues,picture: "/images/default.png",});
-         }else{
-            const image = await uploadImage.mutateAsync({
-               fileName: `${formValues.passbookNumber}`,
-               folderGroup: "election-candidates",
-               file: imageFile,
-            });
-            createCandidate.mutate({
-               ...formValues,
-               picture: !image ? "/images/default.png" : image,
-            });
-         }
-         resetPicker();
-      } catch (error) {
-         console.log(error);
-      }
+    
    };
    const isUploading = uploadImage.isPending;
    const isLoading = createCandidate.isPending;
+
    return (
       <Dialog
          open={state}
@@ -116,7 +91,7 @@ const CreateCandidateModal = ({
             reset();
          }}
       >
-         <DialogContent className="border-none shadow-2 sm:rounded-2xl overflow-y-auto lg:overflow-hidden max-h-[600px] lg:max-h-[900px] max-w-[600px] font-inter">
+         <DialogContent className="border-none shadow-2 sm:rounded-2xl overflow-y-auto lg:overflow-hidden max-h-[600px] lg:max-h-fit max-w-fit font-inter">
             <ModalHead
                title="Add Candidate"
                description="You are about to create a candidate for this elections and the profile can be optional."
@@ -126,7 +101,7 @@ const CreateCandidateModal = ({
                   onSubmit={candidateForm.handleSubmit(onSubmit)}
                   className=" space-y-3"
                >
-                  <FormField
+                  {/* <FormField
                      control={candidateForm.control}
                      name="firstName"
                      render={({ field }) => (
@@ -178,7 +153,10 @@ const CreateCandidateModal = ({
                            </FormItem>
                         );
                      }}
-                  />
+                  /> */}
+
+                  <EventAttendeesTable data={data} ></EventAttendeesTable>
+
                   <FormField
                      control={candidateForm.control}
                      name="positionId"
@@ -211,37 +189,8 @@ const CreateCandidateModal = ({
                         </FormItem>
                      )}
                   />
-                  <FormField
-                     control={candidateForm.control}
-                     name="picture"
-                     render={({ field }) => {
-                        return (
-                           <FormItem>
-                              <FormLabel>Profile</FormLabel>
-                              <FormControl>
-                                 <>
-                                 <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL} onChange={async (e)=> {field.onChange(await onSelectImage(e))}} />
-                                 </>
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        );
-                     }}
-                  />
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
-                     <Button
-                        disabled={isLoading}
-                        onClick={(e) => {
-                           e.preventDefault();
-                           reset();
-                           resetPicker();
-                        }}
-                        variant={"ghost"}
-                        className="bg-muted/60 hover:bg-muted"
-                     >
-                        clear
-                     </Button>
                      <Button
                         disabled={isLoading}
                         onClick={(e) => {

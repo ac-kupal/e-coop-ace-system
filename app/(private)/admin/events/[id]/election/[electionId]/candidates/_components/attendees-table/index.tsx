@@ -1,9 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { Plus, SearchIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { SearchIcon } from "lucide-react";
 import DataTable from "@/components/data-table/data-table";
-import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import {
    getCoreRowModel,
@@ -13,27 +11,17 @@ import {
    useReactTable,
 } from "@tanstack/react-table";
 import SearchInput from "@/components/data-table/table-search-input";
-import { cn } from "@/lib/utils";
 import columns from "./column";
-import CreateCandidateModal from "../modals/create-candidate-modal";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
-import {  TCandidatewithPositionwithEventId, TPosition } from "@/types";
-import { toast } from "sonner";
-import { getAllEventMembers } from "@/hooks/api-hooks/member-api-hook";
+import {   TMemberWithEventElectionId } from "@/types";
 
 type Props = {
-   params: { id: number; electionId: number };
-   data: TCandidatewithPositionwithEventId[]; 
-   positions:TPosition[] | undefined;
-   eventId:number
+   data:TMemberWithEventElectionId[]
 };
 
-const CandidateTable = ({ data,positions,params,eventId }: Props) => {
+const EventAttendeesTable = ({ data }: Props) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
-   const [createPosition, setCreatePosition] = useState(false);
-
-   const {data:Members,isError,isLoading} = getAllEventMembers(eventId)
-
+   
    const table = useReactTable({
       data,
       columns,
@@ -48,19 +36,15 @@ const CandidateTable = ({ data,positions,params,eventId }: Props) => {
          pagination: { pageIndex: 0, pageSize: 20 },
       },
       onGlobalFilterChange: setGlobalFilter,
-   });
-   
+      enableMultiRowSelection:false,
 
+   });
+   const selectedCandidates = table.getSelectedRowModel().flatRows.map(({ original }) => original);
+   console.log(selectedCandidates[0])
+  
    return (
-      <div className="flex flex-1 flex-col gap-y-2 ">
+      <div className="flex flex-1 flex-col gap-y-2 max-h-[40vh] overflow-auto ">
          <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
-            <CreateCandidateModal
-               positions={positions}
-               params={params}
-               data={Members}
-               state={createPosition}
-               onClose={(state) => setCreatePosition(state)}
-            />
             <div className="flex items-center gap-x-4 text-muted-foreground">
                <div className="relative">
                   <SearchIcon className="absolute text-muted-forground  w-4 h-auto top-3 left-2" />
@@ -72,22 +56,6 @@ const CandidateTable = ({ data,positions,params,eventId }: Props) => {
             </div>
             <div className="flex items-center gap-x-2 md:gap-x-4">
                <DataTableViewOptions table={table} />
-               <Button
-                  onClick={() => {
-                     if(positions?.length === 0){
-                        toast.warning("You will not be able to add a candidate if the position is empty.")
-                        return
-                     }
-                     setCreatePosition(true);
-                  }}
-                  size="sm"
-                  className={cn(
-                     "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                  )}
-               >
-                  Add Candidate
-                  <Plus className="w-4 h-4" />
-               </Button>
             </div>
          </div>
          <DataTable
@@ -98,10 +66,10 @@ const CandidateTable = ({ data,positions,params,eventId }: Props) => {
             <DataTableBasicPagination2 table={table} />
          </div>
          <div className="hidden lg:block">
-            <DataTablePagination pageSizes={[5, 10, 15]} table={table} />
+            <DataTableBasicPagination2  table={table} />
          </div>
       </div>
    );
 };
 
-export default CandidateTable;
+export default EventAttendeesTable;

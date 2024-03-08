@@ -1,11 +1,11 @@
 "use client";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 import React, { useEffect, useState } from "react";
-import CandidateTable from "./_components/candidate-table";
 import Loading from "../_components/loading";
 import Header from "../_components/header";
 import { TCandidatewithPosition } from "@/types";
 import NotFound from "../_components/not-found";
+import CandidateTable from "./_components/candidate-table";
 type Props = {
    params: { id: number; electionId: number };
 };
@@ -22,7 +22,7 @@ const page = ({ params }: Props) => {
    return (
       <div>
            <Header text="Manage Candidates"></Header>
-         <CandidateTable params={params} positions={elections?.positions} data={candidates}></CandidateTable>
+         <CandidateTable eventId={params.id} params={params} positions={elections?.positions} data={candidates}></CandidateTable>
       </div>
    );
 };
