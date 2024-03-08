@@ -12,12 +12,12 @@ type TParams = { params: { id: number } };
 export const GET = async (req: NextRequest, { params }: TParams) => {
     try {
         const { id: eventId } = eventIdParamSchema.parse(params);
-        await currentUserOrThrowAuthError();
+        const currentUser = await currentUserOrThrowAuthError();
+
+        const where = currentUser.role === "staff" ? { eventId, assistedById : currentUser.id } : { eventId }
 
         const claimMasterList = await db.incentiveClaims.findMany({
-            where: {
-                eventId,
-            },
+            where,
             select: {
                 id: true,
                 eventId: true,

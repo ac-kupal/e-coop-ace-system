@@ -1,4 +1,5 @@
 "use client";
+import { useSession } from "next-auth/react";
 import React, { useEffect, useRef } from "react";
 import {
     getCoreRowModel,
@@ -8,7 +9,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, User, Users } from "lucide-react";
 
 import columns from "./column";
 import { Input } from "@/components/ui/input";
@@ -16,10 +17,18 @@ import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import { useIncentiveListAssignee } from "@/hooks/api-hooks/incentive-api-hooks";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
+import { DataTableFacetedFilter } from "@/components/data-table/data-table-facited-filter";
 
-const IncentiveAssigneeTable = ({ eventId } : { eventId : number }) => {
+const IncentiveAssigneeTable = ({ eventId }: { eventId: number }) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
+
+    const { data : userData } = useSession();
+    const myFilter = userData && userData.user? [{
+        label: "You",
+        value: userData.user.id.toString(),
+        icon: User,
+    }] : []
 
     const { data, isFetching, isLoading, isError } = useIncentiveListAssignee(eventId);
 
@@ -33,12 +42,12 @@ const IncentiveAssigneeTable = ({ eventId } : { eventId : number }) => {
         state: {
             globalFilter,
         },
-        initialState : {
-            pagination : { pageIndex : 0, pageSize : 20 },
-            columnVisibility : {
-                id : false,
-                "User ID" : false,
-            }
+        initialState: {
+            pagination: { pageIndex: 0, pageSize: 20 },
+            columnVisibility: {
+                id: false,
+                "User ID": false,
+            },
         },
         onGlobalFilterChange: setGlobalFilter,
     });
@@ -76,13 +85,33 @@ const IncentiveAssigneeTable = ({ eventId } : { eventId : number }) => {
                             className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
+                    <DataTableFacetedFilter
+                            options={[
+                                ...myFilter,
+                                {
+                                    label: "Anyone",
+                                    value: "Anyone",
+                                    icon: Users,
+                                }
+                            ]}
+                            column={table.getColumn("User ID")}
+                            title="Assigned to"
+                        />
                 </div>
                 <div className="flex items-center gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />
                 </div>
             </div>
-            <DataTable className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl" isError={isError} isLoading={isLoading || isFetching} table={table} />
-            <DataTablePagination pageSizes={[20,40,60,80,100]} table={table}/>
+            <DataTable
+                className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl"
+                isError={isError}
+                isLoading={isLoading || isFetching}
+                table={table}
+            />
+            <DataTablePagination
+                pageSizes={[20, 40, 60, 80, 100]}
+                table={table}
+            />
         </div>
     );
 };

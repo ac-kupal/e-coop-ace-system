@@ -142,6 +142,13 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
                 )}
             </div>
         ),
+        filterFn: (row, id, value) => {
+            if(value.includes("Anyone")) return true;
+
+            if(row.original.assistedBy === null) return false;
+            
+            return value.includes(row.original.assistedBy.id.toString())
+        }
     },
     {
         id: "Claim Mode",

@@ -97,6 +97,11 @@ const columns: ColumnDef<TListOfAssigneesWithAssistCount>[] = [
                 {row.original.user.id}
             </div>
         ),
+        filterFn: (row, id, value) => {
+            if(value.includes("Anyone")) return true;
+
+            return value.includes(row.original.user.id.toString())
+        }
     },
     {
         id: "User Name",
