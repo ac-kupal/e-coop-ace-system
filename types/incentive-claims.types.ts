@@ -37,5 +37,6 @@ export type TIncentiveClaimAuth = {
 
 export type TIncentiveClaimsWithIncentiveAndAssisted = TIncentive & {
     incentive: TIncentiveMinimalInfo,
-    assistedBy : TUserMinimalInfo | null
+    assistedBy : TUserMinimalInfo | null,
+    releasedBy : TUserMinimalInfo | null
 }

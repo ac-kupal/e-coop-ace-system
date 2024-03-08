@@ -31,11 +31,7 @@ const ClaimHome = ({ eventId }: Props) => {
     const { completeClaim } = useClaimComplete(eventId, () => router.push("claim/complete"));
     const { claimables, isLoadingClaimables } = useClaimablesList( eventId, myInfo !== undefined);
 
-    useEffect(() => {
-        return () => {
-            queryClient.removeQueries({ queryKey: ["my-claim-minimal-info"] });
-        };
-    }, []);
+    useEffect(() => { return () => { queryClient.removeQueries({ queryKey: ["my-claim-minimal-info"] }) } }, []);
 
     if (isLoading)
         return (

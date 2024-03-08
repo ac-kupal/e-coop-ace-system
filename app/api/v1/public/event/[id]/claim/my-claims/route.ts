@@ -11,7 +11,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
     try {
         const { id } = eventIdParamSchema.parse(params);
 
-        const { eventId, attendeeId, passbookNumber } = await validateClaimAuth(req, id);
+        const { eventId, attendeeId } = await validateClaimAuth(req, id);
 
         const myClaims = await db.incentiveClaims.findMany({
             where : {
@@ -33,6 +33,14 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                         email: true,
                     },
                 },
+                releasedBy : {
+                    select : { 
+                        id: true,
+                        picture: true,
+                        name: true,
+                        email: true,
+                    }
+                }
             }
         })
 

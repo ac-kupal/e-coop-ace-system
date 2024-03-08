@@ -53,12 +53,13 @@ const ReleaseAction = ({ incentiveClaim } : { incentiveClaim : TIncentiveClaimsW
             onOpen({
                 title: "Release Claim",
                 description: "By releasing this claim, you are confirming that the member has received this item.",
-                onConfirm: () => releaseClaim(incentiveClaim.id)
+                onConfirm: () => releaseClaim(incentiveClaim.id),
+                confirmString : "Release"
             })
         }
     >
         { isReleasing && <LoadingSpinner /> }
-        Pending
+        <span className="text-orange-400">Pending Release</span>
     </Button>
     )
 }
@@ -221,8 +222,8 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
             </div>
         ),
         filterFn: (row, id, value) => {
-            if(row.original.assistedBy === null) return false;
-            return value.includes(row.original.assistedBy.id.toString())
+            if(row.original.releasedBy === null) return false;
+            return value.includes(row.original.releasedBy.id.toString())
         }
     },
     {
