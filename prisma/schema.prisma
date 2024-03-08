@@ -44,7 +44,8 @@ model User {
     assignedIncentive  IncentiveAssigned[]
     assistedAttendance EventAttendees[]
 
-    assistedClaims IncentiveClaims[]
+    assistedClaims IncentiveClaims[] @relation("AssistedClaims")
+    approvedClaims IncentiveClaims[] @relation("ApprovedClaims")
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -116,15 +117,15 @@ enum gender {
 }
 
 model EventAttendees {
-    id             String   @id @default(uuid())
+    id             String    @id @default(uuid())
     passbookNumber String
     firstName      String
-    middleName     String?  
+    middleName     String?
     lastName       String
     gender         gender
     birthday       DateTime?
     contact        String?
-    picture        String?  @default("/images/default-avatar.png")
+    picture        String?   @default("/images/default-avatar.png")
     emailAddress   String?
 
     canVote Boolean @default(true)
@@ -292,10 +293,14 @@ model IncentiveClaims {
     eventAttendee   EventAttendees @relation(fields: [eventAttendeeId], references: [id], onDelete: Cascade)
 
     assistedById Int?
-    assistedBy User? @relation(fields: [assistedById], references: [id], onDelete: SetNull)
+    assistedBy   User? @relation("AssistedClaims", fields: [assistedById], references: [id], onDelete: SetNull)
 
     assignedId Int?
-    assigned IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: SetNull)
+    assigned   IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: SetNull)
+
+    approved     Boolean? @default(false)
+    approvedById Int?
+    approvedBy   User?    @relation("ApprovedClaims", fields: [approvedById], references: [id])
 
     createdBy Int?
     updatedBy Int?
