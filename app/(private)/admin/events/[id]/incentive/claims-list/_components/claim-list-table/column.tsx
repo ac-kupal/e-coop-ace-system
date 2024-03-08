@@ -58,7 +58,7 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
         ),
     },
     {
-        id: "Id",
+        id: "Claim Id",
         accessorKey: "id",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Claim ID" />
@@ -143,10 +143,9 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
             </div>
         ),
         filterFn: (row, id, value) => {
+            if(row.original.assistedBy === null) return false;
             if(value.includes("Anyone")) return true;
 
-            if(row.original.assistedBy === null) return false;
-            
             return value.includes(row.original.assistedBy.id.toString())
         }
     },

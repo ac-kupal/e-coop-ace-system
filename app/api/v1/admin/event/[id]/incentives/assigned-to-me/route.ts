@@ -1,6 +1,6 @@
 import db from "@/lib/database"
 import { NextRequest, NextResponse } from "next/server"
-import { currentUser, currentUserOrThrowAuthError } from "@/lib/auth"
+import { currentUserOrThrowAuthError } from "@/lib/auth"
 
 import { routeErrorHandler } from "@/errors/route-error-handler"
 import { eventIdSchema } from "@/validation-schema/commons"
@@ -11,32 +11,6 @@ export const GET = async (req : NextRequest, { params } : TParams) => {
     try{
         const eventId = eventIdSchema.parse(params.id)
         const currentUser = await currentUserOrThrowAuthError();
-
-        // const assignedIncentives = await db.incentives.findMany({
-        //     select : {
-        //         id : true,
-        //         itemName : true,
-        //         eventId : true,
-        //         assigned : {
-        //             select : {
-        //                 id : true,
-        //                 eventId : true,
-        //                 incentiveId : true
-        //             },
-        //             where : {
-        //                 userId : user.id
-        //             }
-        //         }
-        //     },
-        //     where : {
-        //         eventId,
-        //         assigned : {
-        //             some : {
-        //                 userId : user.id
-        //             }
-        //         } 
-        //     }
-        // })
 
         const assignedIncentives = await db.incentiveAssigned.findMany({
             select : {

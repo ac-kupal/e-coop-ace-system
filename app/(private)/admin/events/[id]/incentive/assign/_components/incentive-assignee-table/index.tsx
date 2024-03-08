@@ -18,12 +18,14 @@ import DataTablePagination from "@/components/data-table/data-table-pagination";
 import { useIncentiveListAssignee } from "@/hooks/api-hooks/incentive-api-hooks";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-facited-filter";
+import { userList } from "@/hooks/api-hooks/user-api-hooks";
 
 const IncentiveAssigneeTable = ({ eventId }: { eventId: number }) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
     const { data : userData } = useSession();
+    const { data : users } = userList(); 
     const myFilter = userData && userData.user? [{
         label: "You",
         value: userData.user.id.toString(),
@@ -85,18 +87,22 @@ const IncentiveAssigneeTable = ({ eventId }: { eventId: number }) => {
                             className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
-                    <DataTableFacetedFilter
-                            options={[
-                                ...myFilter,
-                                {
-                                    label: "Anyone",
-                                    value: "Anyone",
-                                    icon: Users,
-                                }
-                            ]}
-                            column={table.getColumn("User ID")}
-                            title="Assigned to"
-                        />
+                    {
+                        userData && userData.user.role !== "staff" && (
+                            <DataTableFacetedFilter
+                                options={[
+                                    ...myFilter,
+                                    ...users.filter((user)=> user.id !== userData.user.id ).map((user)=>({
+                                        label: user.name,
+                                        value: user.id.toString(),
+                                        icon: User
+                                    }))
+                                ]}
+                                column={table.getColumn("User ID")}
+                                title="Assigned to"
+                            />
+                        )
+                    }
                 </div>
                 <div className="flex items-center gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />

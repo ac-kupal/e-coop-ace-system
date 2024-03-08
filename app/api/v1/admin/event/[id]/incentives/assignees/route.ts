@@ -10,7 +10,9 @@ type TParams = { params: { id: number } };
 export const GET = async (req: NextRequest, { params }: TParams) => {
     try {
         const { id: eventId } = eventIdParamSchema.parse(params);
-        await currentUserOrThrowAuthError();
+        const currentUser = await currentUserOrThrowAuthError();
+
+        const where = currentUser.role !== "staff" ? { eventId } :  { eventId, userId : currentUser.id }
 
         const listOfAssignees = await db.incentiveAssigned.findMany({
             select: {
@@ -38,9 +40,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                     },
                 },
             },
-            where: {
-                eventId,
-            },
+            where 
         });
 
         return NextResponse.json(listOfAssignees);

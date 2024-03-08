@@ -27,6 +27,7 @@ import {
     FacetedOptionType,
 } from "@/components/data-table/data-table-facited-filter";
 import { useSession } from "next-auth/react";
+import { userList } from "@/hooks/api-hooks/user-api-hooks";
 
 const claimFromFilter: FacetedOptionType[] = [
     {
@@ -44,6 +45,7 @@ const claimFromFilter: FacetedOptionType[] = [
 const ClaimListTable = ({ eventId }: { eventId: number }) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
+    const { data : users } = userList();
     const { data } = useSession();
 
     const myFilter =
@@ -72,7 +74,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
         },
         initialState: {
             pagination: { pageIndex: 0, pageSize: 20 },
-            columnVisibility: { Id: false },
+            columnVisibility: { "Claim Id": false },
         },
         onGlobalFilterChange: setGlobalFilter,
     });
@@ -111,24 +113,26 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                         />
                     </div>
                     {data && data.user.role !== "staff" && (
-                        <DataTableFacetedFilter
-                            options={claimFromFilter}
-                            column={table.getColumn("Claim Mode")}
-                            title="Claim Mode"
-                        />
+                        <>
+                            <DataTableFacetedFilter
+                                options={claimFromFilter}
+                                column={table.getColumn("Claim Mode")}
+                                title="Claim Mode"
+                            />
+                            <DataTableFacetedFilter
+                                options={[
+                                    ...myFilter,
+                                    ...users.filter((user)=> user.id !== data.user.id ).map((user)=>({
+                                        label: user.name,
+                                        value: user.id.toString(),
+                                        icon: User
+                                    }))
+                                ]}
+                                column={table.getColumn("Assisted By")}
+                                title="Assiste by"
+                            />
+                        </>
                     )}
-                    <DataTableFacetedFilter
-                        options={[
-                            ...myFilter,
-                            {
-                                label: "Anyone",
-                                value: "Anyone",
-                                icon: Users,
-                            },
-                        ]}
-                        column={table.getColumn("Assisted By")}
-                        title="Assiste by"
-                    />
                 </div>
                 <div className="flex items-center gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />

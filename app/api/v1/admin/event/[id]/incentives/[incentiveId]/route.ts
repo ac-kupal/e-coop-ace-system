@@ -14,7 +14,6 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
     const { id: eventId, incentiveId } = eventAndIncentiveParamSchema.parse(params);
     
     const unparsedData = await req.json();
-    console.log("REceiven", unparsedData, updateIncentiveSchema)
     const data = updateIncentiveSchema.parse(unparsedData);
 
     const updatedIncentives = await db.incentives.update({
@@ -33,7 +32,7 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
 
 export const DELETE = async (req: NextRequest, { params }: TParams) => {
   try {
-    const user = currentUserOrThrowAuthError();
+    await currentUserOrThrowAuthError();
     const { id: eventId, incentiveId } = eventAndIncentiveParamSchema.parse(params);
 
     const incentive = await db.incentives.findUnique({
