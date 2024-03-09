@@ -3,7 +3,13 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { ArrowLeftRight, Loader2 } from "lucide-react";
+import {
+    ArrowLeftRight,
+    Asterisk,
+    CaseSensitive,
+    Hash,
+    Loader2,
+} from "lucide-react";
 
 import QrReader from "@/components/qr-reader";
 import { Input } from "@/components/ui/input";
@@ -23,6 +29,7 @@ import { TMemberAttendeesMinimalInfo } from "@/types";
 import { voterPbSearchSchema } from "@/validation-schema/event-registration-voting";
 import { useSearchMemberAttendee } from "@/hooks/public-api-hooks/use-member-api";
 import MultiResultSelect from "./multi-result-select";
+import ActionTooltip from "../action-tooltip";
 
 type Props = {
     eventId: number;
@@ -57,12 +64,10 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
         <div className="flex flex-col items-center gap-y-4">
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit((pbForm) =>
-                        searchMember(pbForm)
-                    )}
+                    onSubmit={form.handleSubmit((pbForm) => searchMember(pbForm))}
                     className="flex flex-col items-center gap-y-4"
                 >
-                    <div className="flex items-center gap-x-1">
+                    <div className="relative">
                         {searchMode ? (
                             <FormField
                                 key="passbook search"
@@ -74,7 +79,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                             <Input
                                                 disabled={disabled}
                                                 placeholder="Enter Passbook Number"
-                                                className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
+                                                className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -93,7 +98,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                             <Input
                                                 disabled={disabled}
                                                 placeholder="Enter Firstname & Lastname"
-                                                className="text-2xl py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
+                                                className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -102,23 +107,52 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                 )}
                             />
                         )}
-                        <div
-                            className="rounded-lg p-2 group bg-primary/60 group hover:bg-primary/40 cursor-pointer duration-150 ease-in text-foreground"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                form.reset();
-                                setSearchMode(!searchMode);
-                            }}
+                        <ActionTooltip
+                            side="top"
+                            align="center"
+                            content={
+                                searchMode ? "Switch to name search" : "Switch to pasbook seach"
+                            }
                         >
-                            <ArrowLeftRight className="size-6 duration-300 group-hover:rotate-180" strokeWidth={1} />
-                        </div>
+                            <div
+                                className="rounded-lg absolute top-2 right-2 backdrop-blur-sm p-1 group bg-stone-700/60 group hover:bg-stone-700 cursor-pointer duration-150 ease-in text-foreground"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    form.reset();
+                                    setSearchMode(!searchMode);
+                                }}
+                            >
+                                {searchMode ? (
+                                    <Asterisk
+                                        className="size-6 text-foreground/60 duration-300 group-hover:text-foreground"
+                                        strokeWidth={2}
+                                    />
+                                ) : (
+                                    <CaseSensitive
+                                        className="size-6 text-foreground/60 duration-300 group-hover:text-foreground"
+                                        strokeWidth={2}
+                                    />
+                                )}
+                            </div>
+                        </ActionTooltip>
                     </div>
-                    {!searchMode && (
-                        <FormDescription className="text-xs text-center">
-                            Please separate your first name and last name with
-                            comma
-                        </FormDescription>
-                    )}
+                    {!searchMode ? (
+                        <>
+                            <FormDescription className="text-sm text-center">
+                                Please separate your first name and last name with comma.
+                            </FormDescription>
+                            <FormDescription className="font-medium text-foreground/40">
+                                Ex: John Leo, Cruz
+                            </FormDescription>
+                        </>
+                    ) : (
+<FormDescription className="text-sm text-center">
+                               Enter your valid passbook number 
+                            </FormDescription>
+
+                        )
+
+                    }
                     {isError && error && (
                         <ErrorAlert
                             className="w-full"
@@ -128,10 +162,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                     )}
                     <Button disabled={disabled} className="w-full">
                         {isPending ? (
-                            <Loader2
-                                className="h-3 w-3 animate-spin"
-                                strokeWidth={1}
-                            />
+                            <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
                         ) : (
                             "Find"
                         )}
