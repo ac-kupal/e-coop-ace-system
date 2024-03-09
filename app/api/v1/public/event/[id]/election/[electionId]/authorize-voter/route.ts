@@ -14,15 +14,10 @@ type TParams = { params: { id: number; passbookNumber: number } };
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
-        const { id: eventId, electionId } =
-            eventElectionParamsSchema.parse(params);
-        const { otp, birthday, passbookNumber } = voterVerificationSchema.parse(
-            await req.json()
-        );
+        const { id: eventId, electionId } = eventElectionParamsSchema.parse(params);
+        const { otp, birthday, passbookNumber } = voterVerificationSchema.parse(await req.json());
 
-        const election = await db.election.findUnique({
-            where: { eventId, id: electionId },
-        });
+        const election = await db.election.findUnique({where: { eventId, id: electionId } });
 
         if (election?.status !== "live")
             return NextResponse.json(
@@ -51,7 +46,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 { status: 403 }
             );
 
-        if (voter.voteOtp == null || voter.voteOtp !== otp)
+        if (voter.voteOtp == null || voter.voteOtp.toUpperCase() !== otp)
             return NextResponse.json(
                 { message: "Invalid OTP" },
                 { status: 403 }
@@ -71,6 +66,8 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         // Regardless, it was implemented instead, so I wrap it to skip all member who dont have date
         // of birth even if the elction settings require birthday. 
+        // Therefore even if the election was requiring them to provide bday, those members who dont have birthdate will skip
+        // this step automatically :(
         if (election.allowBirthdayVerification && voter.birthday !== null) {
             if (!birthday || !isSameDay(voter.birthday, birthday))
                 return NextResponse.json(

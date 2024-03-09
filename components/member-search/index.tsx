@@ -102,16 +102,16 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                 )}
                             />
                         )}
-                        <Button
-                            size="icon"
+                        <div
+                            className="rounded-lg p-2 group bg-primary/60 group hover:bg-primary/40 cursor-pointer duration-150 ease-in text-foreground"
                             onClick={(e) => {
                                 e.preventDefault();
                                 form.reset();
                                 setSearchMode(!searchMode);
                             }}
                         >
-                            <ArrowLeftRight className="size-4" />
-                        </Button>
+                            <ArrowLeftRight className="size-6 duration-300 group-hover:rotate-180" strokeWidth={1} />
+                        </div>
                     </div>
                     {!searchMode && (
                         <FormDescription className="text-xs text-center">

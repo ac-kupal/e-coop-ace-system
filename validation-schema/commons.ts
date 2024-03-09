@@ -13,7 +13,7 @@ export const otpSchema = z
         required_error: "otp is required",
     })
     .min(6, "otp must be minimum of 6 digits")
-    .max(6, "otp must be maximum of 6 digits");
+    .max(6, "otp must be maximum of 6 digits").transform((val) => val.toUpperCase())
 
 export const eventIdSchema = z.coerce.number({
     invalid_type_error: "invalid event id",

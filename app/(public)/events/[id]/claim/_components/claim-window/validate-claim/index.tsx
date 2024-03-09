@@ -1,7 +1,7 @@
 import z from "zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { OTPInput, SlotProps} from 'input-otp'
+import { OTPInput, SlotProps } from "input-otp";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Loader2 } from "lucide-react";
@@ -92,6 +92,9 @@ const ValidateClaim = ({ eventId }: Props) => {
                   <OTPInput
                     {...field}
                     maxLength={6}
+                    onComplete={()=> {
+                        authorize({ otp : form.getValues("otp"), passbookNumber : member.passbookNumber })
+                    }} 
                     inputMode="text"
                     pattern="^[a-zA-Z0-9]+$"
                     containerClassName="group flex items-center has-[:disabled]:opacity-30"
@@ -102,7 +105,7 @@ const ValidateClaim = ({ eventId }: Props) => {
                             <OtpSlot key={idx} {...slot} />
                           ))}
                         </div>
-                        <div className="w-5 mx-2 h-2 bg-secondary rounded-full"/>
+                        <div className="w-5 mx-2 h-2 bg-secondary rounded-full" />
                         <div className="flex">
                           {slots.slice(3).map((slot, idx) => (
                             <OtpSlot key={idx} {...slot} />

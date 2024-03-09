@@ -73,6 +73,10 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                     <OTPInput
                       {...field}
                       maxLength={6}
+                      onComplete={()=>{ 
+                        if(!electionWithEvent.allowBirthdayVerification)
+                            onSubmit({ passbookNumber : voter.passbookNumber, otp : form.getValues("otp") })
+                      }}
                       inputMode="text"
                       pattern="^[a-zA-Z0-9]+$"
                       containerClassName="group flex items-center has-[:disabled]:opacity-30"
