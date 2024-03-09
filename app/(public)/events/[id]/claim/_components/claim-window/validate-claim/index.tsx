@@ -1,7 +1,7 @@
 import z from "zod";
+import { OTPInput } from "input-otp";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { OTPInput, SlotProps } from "input-otp";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Loader2 } from "lucide-react";
@@ -31,9 +31,7 @@ type Props = { eventId: number };
 type TClaimValidateForm = z.infer<typeof createPublicClaimAuthorizationSchema>;
 
 const ValidateClaim = ({ eventId }: Props) => {
-  const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(
-    null,
-  );
+  const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(null);
 
   const form = useForm<TClaimValidateForm>({
     resolver: zodResolver(createPublicClaimAuthorizationFormSchema),
@@ -43,6 +41,8 @@ const ValidateClaim = ({ eventId }: Props) => {
   });
 
   const { authorize, isPending, isError, error } = useCreateClaimAuth(eventId);
+
+
   const disabled = isPending;
 
   if (!member)
@@ -70,7 +70,10 @@ const ValidateClaim = ({ eventId }: Props) => {
         <Button
           size="sm"
           className="opacity-10 ease-in bg-transparent text-foreground hover:bg-transparent group-hover:opacity-100"
-          onClick={() => setMember(null)}
+          onClick={() => {
+            form.reset();
+            setMember(null)
+          }}
         >
           Cancel
         </Button>
@@ -91,6 +94,7 @@ const ValidateClaim = ({ eventId }: Props) => {
                 <FormControl>
                   <OTPInput
                     {...field}
+                    autoFocus
                     maxLength={6}
                     onComplete={()=> {
                         authorize({ otp : form.getValues("otp"), passbookNumber : member.passbookNumber })

@@ -1,4 +1,5 @@
 import z from "zod";
+import { OTPInput } from "input-otp";
 import { useForm } from "react-hook-form";
 import ReactInputMask from "react-input-mask";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import OtpSlot from "@/components/otp-input/otp-slot";
+import ErrorAlert from "@/components/error-alert/error-alert";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 import {
   Form,
@@ -16,12 +19,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import { cn } from "@/lib/utils";
 import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
-import ErrorAlert from "@/components/error-alert/error-alert";
-import { cn } from "@/lib/utils";
-import { OTPInput } from "input-otp";
-import OtpSlot from "@/components/otp-input/otp-slot";
 
 type Props = {
   voter: TMemberAttendeesMinimalInfo;
@@ -55,6 +55,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
 
   const disabled = isPending || authenticatedVoter !== undefined;
 
+
   return (
     <div className="flex flex-col items-center gap-y-4">
       <p className="text-sm lg:text-base text-center text-foreground/60 pb-4">
@@ -72,6 +73,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                   <FormControl>
                     <OTPInput
                       {...field}
+                      autoFocus
                       maxLength={6}
                       onComplete={()=>{ 
                         if(!electionWithEvent.allowBirthdayVerification)
