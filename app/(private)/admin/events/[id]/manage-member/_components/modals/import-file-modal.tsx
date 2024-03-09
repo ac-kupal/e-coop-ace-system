@@ -79,6 +79,9 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
                   onChange={handleImport}
                   accept=".xlsx, .xls, .csv, .xlm"
                />
+               {isLoading && <>
+                  <p className=" text-center m-2 animate-pulse text-primary text-sm">Importing! Please Wait..</p>
+               </>}
                <div className="flex justify-end gap-x-2">
                   <Button
                      onClick={(e) => {
@@ -90,7 +93,7 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
                   >
                      cancel
                   </Button>
-                  <Button disabled={Members.length === 0 ? true:false} type="submit">
+                  <Button disabled={Members.length === 0 ? true:false } type="submit">
                      {isLoading ? (
                         <Loader2
                            className="h-3 w-3 animate-spin"

@@ -208,6 +208,10 @@ export const createManyMember = ({ onCancelandReset,onOpenSkippedMember }:  crea
                     toast.success(`New ${newMembers.length} Members Added successfully`);
                 }, 1000);
                 onCancelandReset();
+            }else{
+                setTimeout(() => {
+                    toast.info(`No new members added!`);
+                }, 3000);
             }    
         }
     });
