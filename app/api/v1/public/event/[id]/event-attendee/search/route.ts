@@ -37,7 +37,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 },
             });
         } else if (nameSearch) {
-            const [firstName, lastName] = nameSearch.split(", ")
+            const [lastName, firstName] = nameSearch.split(", ")
             result = await db.eventAttendees.findMany({
                 select: {
                     id: true,

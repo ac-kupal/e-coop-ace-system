@@ -97,7 +97,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                     <FormControl>
                       <Input
                         disabled={disabled}
-                        placeholder="Enter Firstname & Lastname"
+                        placeholder="Enter last name &amp; first name"
                         className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                         {...field}
                       />
@@ -139,10 +139,10 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
           {!searchMode ? (
             <>
               <FormDescription className="text-sm text-center">
-                Please separate your first name and last name with comma.
+                Please separate your last name and first name with a comma ","
               </FormDescription>
               <FormDescription className="font-medium text-foreground/40">
-                Ex: John Leo, Cruz
+                Ex: Gonzales, John Christian 
               </FormDescription>
             </>
           ) : (
