@@ -14,7 +14,26 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
         const { id: eventId } = eventIdParamSchema.parse(params);
         const currentUser = await currentUserOrThrowAuthError();
 
-        const where = currentUser.role === "staff" ? { eventId, assistedById : currentUser.id } : { eventId }
+        const assignedIncentivesToMe = await db.incentiveAssigned.findMany({
+            select : {
+                incentiveId : true,
+            },
+            where : {
+                eventId,
+                userId : currentUser.id
+            }
+        })
+
+        const where = currentUser.role === "staff" ? { 
+            eventId,
+            AND : [
+                { OR : [
+                    { assistedById : currentUser.id },
+                    { assistedById : { equals : null }}
+                ] },
+                { incentiveId : { in : assignedIncentivesToMe.map((incentive)=> incentive.incentiveId) }}
+            ]
+         } : { eventId }
 
         const claimMasterList = await db.incentiveClaims.findMany({
             where,
@@ -23,7 +42,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 eventId: true,
                 createdAt: true,
                 eventAttendeeId: true,
-                released : true,
+                claimedOnline : true,
                 releasedAt : true,
                 eventAttendee: {
                     select: {
@@ -37,14 +56,6 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                     select : {
                         id : true,
                         itemName : true,
-                    }
-                },
-                releasedBy : {
-                    select : {
-                        id: true,
-                        picture: true,
-                        name: true,
-                        email: true,
                     }
                 },
                 assistedBy: {

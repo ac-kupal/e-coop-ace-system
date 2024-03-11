@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { currentUserOrThrowAuthError } from "@/lib/auth"
 import { routeErrorHandler } from "@/errors/route-error-handler"
 import { eventIdAndClaimIdParamSchema } from "@/validation-schema/api-params"
+import { claimReleaseSchema } from "@/validation-schema/incentive"
 
 type TParams = { params : { id : number, claimId : number }}
 
@@ -31,6 +32,19 @@ export const PATCH = async ( req : NextRequest , { params } : TParams ) => {
     try{
         const currentUser = await currentUserOrThrowAuthError();
         const { id : eventId, claimId } = eventIdAndClaimIdParamSchema.parse(params);
+        const { incentiveItemId } = claimReleaseSchema.parse(await req.json())
+
+        const assignedItem = await db.incentiveAssigned.findUnique({ 
+            where : {
+                userId_incentiveId : {
+                    userId : currentUser.id,
+                    incentiveId : incentiveItemId
+                }
+            }
+        })
+
+        if(!assignedItem) 
+            return NextResponse.json({ message : "Sorry, you cannot release this because you are not assigned for this incentive."}, { status : 403 })
 
         const updatedClaimEntry = await db.incentiveClaims.update({
             where : {
@@ -38,9 +52,9 @@ export const PATCH = async ( req : NextRequest , { params } : TParams ) => {
                 eventId
             },
             data : {
-                released : true,
+                assignedId : assignedItem.id,
                 releasedAt : new Date(),
-                releasedById : currentUser.id
+                assistedById : currentUser.id
             }
         })
 

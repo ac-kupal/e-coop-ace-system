@@ -33,14 +33,6 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                         email: true,
                     },
                 },
-                releasedBy : {
-                    select : { 
-                        id: true,
-                        picture: true,
-                        name: true,
-                        email: true,
-                    }
-                }
             }
         })
 

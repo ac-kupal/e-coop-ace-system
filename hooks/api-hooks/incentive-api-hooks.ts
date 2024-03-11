@@ -12,7 +12,7 @@ import {
     TUserWithAssignedIncentives,
 } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { createAssistedClaimSchema, createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
+import { claimReleaseSchema, createAssistedClaimSchema, createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
 import { TIncentiveAssignedToMe } from "@/types/incentive-assigned.types";
 
 export const incentiveListWithClaimCount = (eventId: number) => {
@@ -272,14 +272,14 @@ export const useClaimDelete = (eventId : number, onDelete? : () => void ) => {
     return { deletedClaim, deleteClaim, isDeletingClaim }
 }
 
-export const useClaimRelease = ( eventId : number ) => {
+export const useClaimRelease = ( eventId : number, claimId : number ) => {
     const queryClient = useQueryClient();
 
-    const { mutate : releaseClaim, isPending : isReleasing } = useMutation<any, string, number>({
+    const { mutate : releaseClaim, isPending : isReleasing } = useMutation<any, string, z.infer<typeof claimReleaseSchema>>({
         mutationKey : ["release-claim"],
-        mutationFn : async (claimId) => {
+        mutationFn : async (payload) => {
             try{
-                const request = await axios.patch(`/api/v1/admin/event/${eventId}/incentives/claim/${claimId}`);
+                const request = await axios.patch(`/api/v1/admin/event/${eventId}/incentives/claim/${claimId}`, payload);
                 toast.success("Claim released successfully")
                 queryClient.invalidateQueries({ queryKey : ["claims-master-list"]})
             }catch(e){

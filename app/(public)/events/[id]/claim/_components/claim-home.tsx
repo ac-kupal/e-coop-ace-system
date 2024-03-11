@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import ClaimWindow from "./claim-window";
+import ClaimerCard from "./claimer-card";
 import { Button } from "@/components/ui/button";
 import ValidateClaim from "./claim-window/validate-claim";
 import LoadingSpinner from "@/components/loading-spinner";
@@ -15,7 +16,6 @@ import {
 } from "@/hooks/public-api-hooks/use-claim-api";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useQueryClient } from "@tanstack/react-query";
-import ClaimerCard from "./claimer-card";
 
 type Props = {
     eventId: number;

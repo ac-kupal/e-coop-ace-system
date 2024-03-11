@@ -1,4 +1,5 @@
 "use client";
+import { useSession } from "next-auth/react";
 import React, { useEffect, useRef } from "react";
 import {
     getCoreRowModel,
@@ -13,7 +14,6 @@ import {
     MonitorSmartphone,
     SearchIcon,
     User,
-    Users,
 } from "lucide-react";
 
 import columns from "./column";
@@ -21,12 +21,12 @@ import { Input } from "@/components/ui/input";
 import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import { useClaimsMasterList } from "@/hooks/api-hooks/incentive-api-hooks";
 import {
     DataTableFacetedFilter,
     FacetedOptionType,
 } from "@/components/data-table/data-table-facited-filter";
-import { useSession } from "next-auth/react";
+
+import { useClaimsMasterList } from "@/hooks/api-hooks/incentive-api-hooks";
 import { userList } from "@/hooks/api-hooks/user-api-hooks";
 
 const claimFromFilter: FacetedOptionType[] = [
@@ -59,8 +59,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
               ]
             : [];
 
-    const { claimList, isError, isLoading, isFetching } =
-        useClaimsMasterList(eventId);
+    const { claimList, isError, isLoading, isFetching } = useClaimsMasterList(eventId);
 
     const table = useReactTable({
         data: claimList,
@@ -74,7 +73,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
         },
         initialState: {
             pagination: { pageIndex: 0, pageSize: 20 },
-            columnVisibility: { "Claim Id": false, "Claim Mode": false },
+            columnVisibility: { "Claim Id": false},
         },
         onGlobalFilterChange: setGlobalFilter,
     });
@@ -137,23 +136,6 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                                         ]}
                                         column={table.getColumn("Assisted By")}
                                         title="Assisted by"
-                                    />
-                                    <DataTableFacetedFilter
-                                        options={[
-                                            ...myFilter,
-                                            ...users
-                                                .filter(
-                                                    (user) =>
-                                                        user.id !== data.user.id
-                                                )
-                                                .map((user) => ({
-                                                    label: user.name,
-                                                    value: user.id.toString(),
-                                                    icon: User,
-                                                })),
-                                        ]}
-                                        column={table.getColumn("Released By")}
-                                        title="Released by"
                                     />
                                 </div>
                                 <div className="flex items-center gap-x-2 md:gap-x-4">

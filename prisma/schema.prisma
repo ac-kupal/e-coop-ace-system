@@ -45,7 +45,6 @@ model User {
     assistedAttendance EventAttendees[]
 
     assistedClaims IncentiveClaims[] @relation("AssistedClaims")
-    releasedClaims IncentiveClaims[] @relation("ReleasedClaims")
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
@@ -292,16 +291,14 @@ model IncentiveClaims {
     eventAttendeeId String
     eventAttendee   EventAttendees @relation(fields: [eventAttendeeId], references: [id], onDelete: Cascade)
 
+    claimedOnline Boolean @default(false) // if claimed online
+
     assistedById Int?
     assistedBy   User? @relation("AssistedClaims", fields: [assistedById], references: [id], onDelete: SetNull)
 
     assignedId Int?
     assigned   IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: SetNull)
-
-    released     Boolean?  @default(false)
-    releasedById Int?
-    releasedBy   User?     @relation("ReleasedClaims", fields: [releasedById], references: [id])
-    releasedAt   DateTime?
+    releasedAt DateTime? // if claimed online, it should be released when they claim their incentives.
 
     createdBy Int?
     updatedBy Int?

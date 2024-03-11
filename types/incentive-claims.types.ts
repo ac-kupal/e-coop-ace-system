@@ -16,7 +16,7 @@ export type TIncentiveClaimsMinimalInfo = {
     eventId: number;
     eventAttendeeId: string;
     createdAt: Date;
-    released : boolean;
+    claimedOnline : boolean;
     releasedAt : Date;
     eventAttendee: TMemberAttendeeMinimalInfo;
 }
@@ -24,7 +24,6 @@ export type TIncentiveClaimsMinimalInfo = {
 export type TIncentiveClaimsWithIncentiveAttendeeAssistedBy = TIncentiveClaimsMinimalInfo & {
     eventAttendee : TMemberAttendeeMinimalInfo,
     incentive: TIncentiveMinimalInfo,
-    releasedBy : TUserMinimalInfo | null,
     assistedBy : TUserMinimalInfo | null
 }
 
@@ -38,5 +37,4 @@ export type TIncentiveClaimAuth = {
 export type TIncentiveClaimsWithIncentiveAndAssisted = TIncentive & {
     incentive: TIncentiveMinimalInfo,
     assistedBy : TUserMinimalInfo | null,
-    releasedBy : TUserMinimalInfo | null
 }

@@ -35,6 +35,10 @@ export const claimsEntrySchema = z.object({
     assignedId : z.coerce.number({invalid_type_error : "invalid assigned id", required_error : "assign id is required"}),
 })
 
+export const claimReleaseSchema = z.object({
+    incentiveItemId : incentiveIdSchema
+})
+
 export const createAssistedClaimSchema = z.object({
     claims : z.array(claimsEntrySchema)
 })

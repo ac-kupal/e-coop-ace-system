@@ -72,43 +72,20 @@ const ClaimWindow = ({ eventId, member, claimables, myClaims }: Props) => {
                             </p>
                         </div>
                         {claimed?.assistedBy && (
-                                <div className="flex items-center gap-x-2">
-                                    <UserAvatar
-                                        className="size-6"
-                                        src={claimed.assistedBy.picture as ""}
-                                        fallback={claimed.assistedBy.name.substring(
-                                            0,
-                                            2
-                                        )}
-                                    />
-                                    <p className="text-xs">
-                                        {claimed.assistedBy.name}
-                                    </p>
-                                </div>
+                            <div className="flex items-center gap-x-2">
+                                <UserAvatar
+                                    className="size-6"
+                                    src={claimed.assistedBy.picture as ""}
+                                    fallback={claimed.assistedBy.name.substring(
+                                        0,
+                                        2
+                                    )}
+                                />
+                                <p className="text-xs">
+                                    {claimed.assistedBy.name}
+                                </p>
+                            </div>
                         )}
-                        {
-                            !claimed?.assistedBy && isClaimed && (
-                                <>
-                                    {
-                                        claimed.releasedBy ? 
-                                        (<div className="flex items-center gap-x-2">
-                                            <UserAvatar
-                                                className="size-6"
-                                                src={claimed.releasedBy.picture as ""}
-                                                fallback={claimed.releasedBy.name.substring(
-                                                    0,
-                                                    2
-                                                )}
-                                            />
-                                            <p className="text-xs">
-                                                {claimed.releasedBy.name}
-                                            </p>
-                                        </div>) : 
-                                        (<p className="text-sm animate-pulse text-orange-400">pending release</p>)
-                                    }
-                                </>
-                            )
-                        }
                         {isClaimed ? (
                             <Badge
                                 variant="default"
