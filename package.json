@@ -7,13 +7,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "db": "prisma studio",
-    "db-mig-dev": "prisma migrate dev",
-    "db-mig-dep": "prisma migrate dep",
-    "db-gen": "prisma generate",
+    "dbm-dev": "prisma migrate dev",
     "push-gen": "prisma db push && prisma generate",
-    "push-reset": "prisma db push --force-reset",
-    "push-gen-dev": "prisma db push && prisma generate && next dev",
-    "push-reset-gen": "prisma db push --force-reset && prisma generate",
     "lint": "next lint"
   },
   "dependencies": {

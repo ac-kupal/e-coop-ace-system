@@ -3,13 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import {
-  ArrowLeftRight,
-  Asterisk,
-  CaseSensitive,
-  Hash,
-  Loader2,
-} from "lucide-react";
+import { Asterisk, CaseSensitive, Loader2 } from "lucide-react";
 
 import QrReader from "@/components/qr-reader";
 import { Input } from "@/components/ui/input";
@@ -30,6 +24,8 @@ import { voterPbSearchSchema } from "@/validation-schema/event-registration-voti
 import { useSearchMemberAttendee } from "@/hooks/public-api-hooks/use-member-api";
 import MultiResultSelect from "./multi-result-select";
 import ActionTooltip from "../action-tooltip";
+import { useEventSettingsPublic } from "@/hooks/public-api-hooks/use-events-api";
+import { MemberSearchMode } from "@prisma/client";
 
 type Props = {
   eventId: number;
@@ -38,9 +34,12 @@ type Props = {
 };
 
 const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
-  const [searchMode, setSearchMode] = useState(true);
+  const [searchMode, setSearchMode] = useState<MemberSearchMode>("ByPassbook");
   const { searchResults, searchMember, isPending, isError, error, reset } =
     useSearchMemberAttendee(eventId, onFound);
+  const {} = useEventSettingsPublic(eventId, (settings) => {
+    setSearchMode(settings.defaultMemberSearchMode);
+  });
 
   const form = useForm<z.infer<typeof voterPbSearchSchema>>({
     resolver: zodResolver(voterPbSearchSchema),
@@ -68,7 +67,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
           className="flex flex-col items-center gap-y-4"
         >
           <div className="relative">
-            {searchMode ? (
+            {searchMode === "ByPassbook" && (
               <FormField
                 key="passbook search"
                 control={form.control}
@@ -87,7 +86,8 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                   </FormItem>
                 )}
               />
-            ) : (
+            )}
+            {searchMode === "ByName" && (
               <FormField
                 key="name search"
                 control={form.control}
@@ -110,28 +110,21 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
             <ActionTooltip
               side="top"
               align="center"
-              content={
-                searchMode ? "Switch to name search" : "Switch to pasbook seach"
-              }
+              content="Change search mode"
             >
               <div
                 className="rounded-lg text-white/70 dark:hover:text-foreground hover:text-white dark:text-foreground/60 absolute top-2 right-2 backdrop-blur-sm p-1 group bg-stone-700/60 group hover:bg-stone-700 cursor-pointer duration-150 ease-in"
                 onClick={(e) => {
                   e.preventDefault();
                   form.reset();
-                  setSearchMode(!searchMode);
+                  setSearchMode( searchMode === "ByPassbook" ? "ByName" : "ByPassbook" )
                 }}
               >
-                {searchMode ? (
-                  <Asterisk
-                    className="size-6"
-                    strokeWidth={2}
-                  />
-                ) : (
-                  <CaseSensitive
-                    className="size-6"
-                    strokeWidth={2}
-                  />
+                {searchMode === "ByPassbook" && (
+                  <Asterisk className="size-6" strokeWidth={2} />
+                )}
+                {searchMode === "ByName" && (
+                  <CaseSensitive className="size-6" strokeWidth={2} />
                 )}
               </div>
             </ActionTooltip>
@@ -142,7 +135,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                 Please separate your last name and first name with a comma ","
               </FormDescription>
               <FormDescription className="font-medium text-foreground/40">
-                Ex: Gonzales, John Christian 
+                Ex: Gonzales, John Christian
               </FormDescription>
             </>
           ) : (

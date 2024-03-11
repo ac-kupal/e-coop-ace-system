@@ -82,6 +82,11 @@ enum EventType {
     event
 }
 
+enum MemberSearchMode {
+    ByPassbook
+    ByName
+}
+
 model Event {
     id          Int       @id @default(autoincrement())
     title       String
@@ -91,7 +96,9 @@ model Event {
     category    EventType
     coverImage  String?   @default("/images/default.png")
 
+    // Event Settings
     registrationOnEvent Boolean? @default(true)
+    defaultMemberSearchMode MemberSearchMode? @default(ByPassbook)
 
     deleted Boolean
 
