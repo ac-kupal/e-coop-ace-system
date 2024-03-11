@@ -7,7 +7,6 @@ type Props = {
 }
 
 const LoadingSpinner = ({ className, strokeWidth } : Props) => {
-
     return <Loader2 className={cn("size-4 animate-spin text-foreground/70", className)} strokeWidth={strokeWidth} />
 }
 

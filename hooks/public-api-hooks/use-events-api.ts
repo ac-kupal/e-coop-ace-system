@@ -2,7 +2,7 @@ import axios from "axios"
 import { toast } from "sonner"
 import { useQuery } from "@tanstack/react-query"
 
-import { TEvent, TEventWithElection } from "@/types"
+import { TEvent, TEventSettings, TEventWithElection } from "@/types"
 import { handleAxiosErrorMessage } from "@/utils"
 
 export const useEventList = () => {
@@ -42,4 +42,25 @@ export const useEvent = ( eventId : number ) => {
     })
 
     return { event, isFetching, isLoading }
+}
+
+export const useEventSettingsPublic = (eventId: number, onLoad? : (eventSettings : TEventSettings) => void ) => {
+    const { data: existingSettings, isLoading, isRefetching } = useQuery<TEventSettings, string>({
+        queryKey: [`event-${eventId}-settings-public`],
+        queryFn: async () => {
+            try {
+                const request = await axios.get(`/api/v1/public/event/${eventId}/settings`)
+                if(onLoad) onLoad(request.data);
+                return request.data
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        },
+        initialData: { registrationOnEvent: true, defaultMemberSearchMode: "ByPassbook" },
+        refetchOnWindowFocus : false
+    })
+
+    return { existingSettings, isLoading, isRefetching }
 }
