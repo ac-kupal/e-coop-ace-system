@@ -115,7 +115,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
               }
             >
               <div
-                className="rounded-lg absolute top-2 right-2 backdrop-blur-sm p-1 group bg-stone-700/60 group hover:bg-stone-700 cursor-pointer duration-150 ease-in text-foreground"
+                className="rounded-lg text-white/70 dark:hover:text-foreground hover:text-white dark:text-foreground/60 absolute top-2 right-2 backdrop-blur-sm p-1 group bg-stone-700/60 group hover:bg-stone-700 cursor-pointer duration-150 ease-in"
                 onClick={(e) => {
                   e.preventDefault();
                   form.reset();
@@ -124,12 +124,12 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
               >
                 {searchMode ? (
                   <Asterisk
-                    className="size-6 text-foreground/60 duration-300 group-hover:text-foreground"
+                    className="size-6"
                     strokeWidth={2}
                   />
                 ) : (
                   <CaseSensitive
-                    className="size-6 text-foreground/60 duration-300 group-hover:text-foreground"
+                    className="size-6"
                     strokeWidth={2}
                   />
                 )}
