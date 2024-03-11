@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Mails, Plus, ScanLine, SearchIcon, Send } from "lucide-react";
 
@@ -26,12 +26,14 @@ import {
 import { cn } from "@/lib/utils";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import SkippedMemberModal from "../modals/skipped-member-modal";
+import { Input } from "@/components/ui/input";
 
 type Props = {
     id: number;
 };
 
 const MemberTable = ({ id }: Props) => {
+    const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
     const [globalFilter, setGlobalFilter] = useState<string>("");
 
@@ -63,6 +65,24 @@ const MemberTable = ({ id }: Props) => {
         },
         onGlobalFilterChange: setGlobalFilter,
     });
+
+    useEffect(() => {
+        const shortCutCommand = (event: KeyboardEvent) => {
+            if (
+                (event.ctrlKey && event.key === "k") ||
+                (event.altKey && event.key === "k") ||
+                (event.metaKey && event.key === "k")
+            ) {
+                event.preventDefault();
+                onFocusSearch.current?.focus();
+            }
+        };
+        window.addEventListener("keydown", shortCutCommand);
+        return () => {
+            window.removeEventListener("keydown", shortCutCommand);
+        };
+    }, []);
+    
     return (
         <div className=" space-y-5">
             <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2  bg-primary dark:border dark:bg-secondary/70 ">
@@ -81,14 +101,17 @@ const MemberTable = ({ id }: Props) => {
                   state={onSkippedMemberModal}
                   onClose={(state) => setOnSkippedMemberModal(state)}
                 />
-                <div className="flex items-center gap-x-4 text-muted-foreground">
-                    <div className="relative">
-                        <SearchIcon className="absolute  w-4 h-auto top-3 left-2" />
-                        <SearchInput
-                            setGlobalFilter={(e) => setGlobalFilter(e)}
-                            globalFilter={globalFilter}
+                <div className="flex relative items-center gap-x-4 text-muted-foreground">
+                 <SearchIcon className="absolute w-4 h-auto top-3 text-white left-2" />
+                        <Input
+                            ref={onFocusSearch}
+                            placeholder="Search..."
+                            value={globalFilter}
+                            onChange={(event) =>
+                                setGlobalFilter(event.target.value)
+                            }
+                            className="w-full pl-8 bg-transparent text-white border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
-                    </div>
                     <ActionTooltip content="Scan Passbook Number">
                         <Button variant="ghost" size="icon" className="cursor-pointer bg-transparent " onClick={()=> onOpenQR({ onRead : (val) => setGlobalFilter(val) }) } >
                             <ScanLine className="size-4" />
