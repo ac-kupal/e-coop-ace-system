@@ -65,7 +65,7 @@ const MemberTable = ({ id }: Props) => {
     });
     return (
         <div className=" space-y-5">
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-secondary/50 ">
+            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2  bg-primary dark:border dark:bg-secondary/70 ">
                 <CreateMemberModal
                     eventId={id}
                     state={createMember}
@@ -95,7 +95,7 @@ const MemberTable = ({ id }: Props) => {
                         </Button>
                     </ActionTooltip>
                 </div>
-                <div className="flex items-center flex-1 overflow-y-scroll gap-x-2 md:gap-x-4">
+                <div className="flex items-center flex-1 gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />
                     <ActionTooltip
                         side="top"
@@ -150,12 +150,12 @@ const MemberTable = ({ id }: Props) => {
                 </div>
             </div>
             <DataTable
-                className="flex-1 bg-background/50 rounded-xl py-5 overflow-y-auto max-h-[70vh] overflow-auto overscroll-y-none"
+                className="py-5 overflow-y-auto h-full overflow-auto overscroll-y-none flex-1 bg-background dark:bg-secondary/30 rounded-2xl"
                 isError={isError}
                 isLoading={isLoading || isFetching}
                 table={table}
             />
-            <div className="lg:hidden">
+            <div className="lg:hidden ">
                 <DataTableBasicPagination2 table={table} />
             </div>
             <div className="hidden lg:block">
