@@ -207,7 +207,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
     {
         accessorKey: "firstName",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="first Name" />
+            <DataTableColHeader column={column} title="First Name" />
         ),
         cell: ({ row }) => {
             const img =
@@ -230,21 +230,21 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
     {
         accessorKey: "lastName",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="last Name" />
+            <DataTableColHeader column={column} title="Last Name" />
         ),
         cell: ({ row }) => <div className=""> {row.original.lastName.toUpperCase()}</div>,
     },
     {
         accessorKey: "middleName",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="middle" />
+            <DataTableColHeader column={column} title="Middle" />
         ),
         cell: ({ row }) => <div className="">{row.original.middleName?.toUpperCase()}</div>,
     },
     {
         accessorKey: "passbookNumber",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="passbook N0." />
+            <DataTableColHeader column={column} title="Passbook N0." />
         ),
         cell: ({ row }) => (
             <div className="">{row.original.passbookNumber}</div>
@@ -253,7 +253,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
     {
         accessorKey: "voteOtp",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="vote OTP" />
+            <DataTableColHeader column={column} title="Vote OTP" />
         ),
         cell: ({ row }) => <div className="">{row.original.voteOtp}</div>,
     },
@@ -262,7 +262,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         accessorKey: "birthday",
         enableHiding: true,
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="birthday" />
+            <DataTableColHeader column={column} title="Birthday" />
         ),
         cell: ({ row }) => (
             <div className="">{!row.original.birthday ? "":moment(row.original.birthday).format("LL")}</div>
@@ -271,26 +271,28 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
     {
         accessorKey: "contact",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="contact" />
+            <DataTableColHeader column={column} title="Contact" />
         ),
         cell: ({ row }) => <div className="">{row.original.contact}</div>,
     },
     {
         accessorKey: "emailAddress",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="email" />
+            <DataTableColHeader column={column} title="Email" />
         ),
         cell: ({ row }) => <div className="">{row.original.emailAddress}</div>,
     },
     {
         accessorKey: "gender",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="gender" />
+            <DataTableColHeader column={column} title="Gender" />
         ),
         cell: ({ row }) => <div className="">{row.original.gender}</div>,
+        enableHiding:true,
+        enableSorting:false
     },
     {
-        id: "voted",
+        accessorKey: "voted",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Voted" />
         ),
@@ -305,11 +307,13 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
                 )}
             </div>
         ),
+        enableHiding:true,
+        enableSorting:false
     },
     {
-        id: "registered",
+        accessorKey: "registered",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Registered" />
+            <DataTableColHeader column={column} title="Status" />
         ),
         cell: ({ row }) => (
             <div className="">
@@ -322,6 +326,8 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
                 )}
             </div>
         ),
+        enableHiding:true,
+        enableSorting:false
     },
 ];
 
