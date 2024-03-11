@@ -5,6 +5,7 @@ import { createManySchema } from "@/validation-schema/member";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database";
 import { gender } from "@prisma/client";
+import { register } from "module";
 
 type MemberData = {
     firstName: string;
@@ -18,6 +19,7 @@ type MemberData = {
     contact?: string;
     voteOtp: string;
     gender: gender
+    registered:boolean
 };
 
 type FilteredMembers = {
@@ -39,6 +41,7 @@ const mapAndFilterDuplicates = (membersData: any[], user: { id: number }, id: nu
         emailAddress: member.emailAddress ?? "",
         contact: member.contact?.toString() ?? "",
         voteOtp: generateOTP(6),
+        registered:member.registered && member.registered.trim().toLowerCase() === "registered",
     }));
 
     const passbookMap = new Map<string | undefined, boolean>();
