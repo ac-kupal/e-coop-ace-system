@@ -19,8 +19,9 @@ export const updateElectionSettings = ({params}:TParams) => {
         mutationKey: ["update-settings"],
         mutationFn: async ({data}) => {
            try {
-            console.log(params)
-              const response = await axios.patch(`/api/v1/admin/event/${params.id}/election/${params.electionId}`,data);
+              const eventId = Number(params.id)
+              const electionId = Number(params.electionId)         
+              const response = await axios.patch(`/api/v1/admin/event/${eventId}/election/${electionId}`,data);
               toast.success("Election updated successfully");
               queryClient.invalidateQueries({queryKey: ["get-election-query"],});
               router.refresh();

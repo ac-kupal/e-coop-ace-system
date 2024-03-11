@@ -151,6 +151,12 @@ model EventAttendees {
     @@unique([eventId, passbookNumber])
 }
 
+enum VotingConfiguration {
+    ALLOW_SKIP
+    ATLEAST_ONE
+    REQUIRE_ALL
+}
+
 enum ElectionStatus {
     pending
     live
@@ -170,6 +176,7 @@ model Election {
 
     allowBirthdayVerification Boolean           @default(false)
     voteEligibility           VotingEligibility @default(MIGS)
+    voteConfiguration VotingConfiguration @default(ALLOW_SKIP)
 
     positions  Position[] // 1st to create
     candidates Candidate[] // 2nd

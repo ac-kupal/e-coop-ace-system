@@ -1,6 +1,6 @@
 import { electionSettingSchema } from "@/validation-schema/election-settings";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Role, VotingEligibility } from "@prisma/client";
+import { VotingEligibility, VotingConfiguration } from "@prisma/client";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { SettingsType, TElection } from "@/types";
@@ -37,6 +37,7 @@ const SettingsForm = ({ election,params }: Props) => {
    const { onOpen: onOpenConfirmModal } = useConfirmModal();
    const [voteEligibility,setVoteEligibility] = useState<VotingEligibility>(election.voteEligibility)
    const [allowBirthday,setAllowBirthday] = useState<boolean>(election.allowBirthdayVerification)
+   const [voteConfiguration,setVoteConfiguration] = useState<VotingConfiguration>(election.voteConfiguration)
     
    const settingsForm = useForm<SettingsType>({
       resolver: zodResolver(electionSettingSchema),
@@ -47,9 +48,10 @@ const SettingsForm = ({ election,params }: Props) => {
          "allowBirthdayVerification",
          election.allowBirthdayVerification
       );
+      settingsForm.setValue("voteConfiguration", election.voteConfiguration)
    }, [settingsForm, election]);
 
-   const isSettingChange = voteEligibility === election.voteEligibility && allowBirthday === election.allowBirthdayVerification
+   const isSettingChange = voteEligibility === election.voteEligibility && allowBirthday === election.allowBirthdayVerification && voteConfiguration === election.voteConfiguration
    
    useEffect(() => {
       defaultValues();
@@ -62,7 +64,7 @@ const SettingsForm = ({ election,params }: Props) => {
    const isLoading = updateSettings.isPending 
 
    const onSubmit = (formValues: z.infer<typeof electionSettingSchema>) => {
-      console.log(formValues)
+      //console.log(formValues)
       onOpenConfirmModal({
          title: "Update Election Settings ",
          description: "Are you sure you want to update this Election",
@@ -110,6 +112,43 @@ const SettingsForm = ({ election,params }: Props) => {
                                     <SelectItem value={VotingEligibility.MIGS}>{VotingEligibility.MIGS}</SelectItem>
                                     <SelectItem value={VotingEligibility.REGISTERED}>{VotingEligibility.REGISTERED}</SelectItem>
                                     <SelectItem value={VotingEligibility.MARKED_CANVOTE}>{VotingEligibility.MARKED_CANVOTE}</SelectItem>
+                                 </SelectContent>
+                              </Select>
+                           </div>
+                           <FormMessage />
+                        </FormItem>
+                     );
+                  }}
+               />
+                <FormField
+                  control={settingsForm.control}
+                  name="voteConfiguration"
+                  render={({ field }) => {
+                     return (
+                        <FormItem className="flex justify-between items-center">
+                           <FormLabel>Voting Configuration </FormLabel>
+                           <div className="w-44">
+                              <Select
+                                 onValueChange={(e:VotingConfiguration)=>{
+                                    setVoteConfiguration(e)
+                                    return field.onChange(e)
+                                 }}
+                                 defaultValue={field.value}
+                              >
+                                 <FormControl>
+                                    <SelectTrigger className=" border-0 ring-offset-0 focus:ring-0 round-0 focus-visible:ring-0">
+                                       <SelectValue
+                                          className="ring-offset-0 focus:ring-0 round-0 focus-visible:ring-0"
+                                          placeholder={`${settingsForm.getValues(
+                                             "voteConfiguration"
+                                          )}`}
+                                       />
+                                    </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                    <SelectItem value={VotingConfiguration.ALLOW_SKIP}>{VotingConfiguration.ALLOW_SKIP}</SelectItem>
+                                    <SelectItem value={VotingConfiguration.ATLEAST_ONE}>{VotingConfiguration.ATLEAST_ONE}</SelectItem>
+                                    <SelectItem value={VotingConfiguration.REQUIRE_ALL}>{VotingConfiguration.REQUIRE_ALL}</SelectItem>
                                  </SelectContent>
                               </Select>
                            </div>
