@@ -129,7 +129,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
             reset();
          }}
       >
-         <DialogContent className="border-none shadow-2 sm:rounded-2xl max-h-[1000px] overflow-y-auto md:max-w-[700px] lg:max-w-[1000px] font-inter">
+         <DialogContent className="border-none shadow-2 sm:rounded-2xl max-h-screen overflow-y-auto md:max-w-[700px] lg:max-w-[1000px] font-inter">
             <ModalHead
                title="Create Member"
                description="Creating a member that is exclusive to being either a partial or full member of the Coop."
