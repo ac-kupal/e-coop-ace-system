@@ -1,4 +1,4 @@
-import { TCandidate, TCandidatewithPosition, TElection, TElectionWithPositionsAndCandidates, TPosition } from "@/types";
+import { TElection, TElectionWithPositionsAndCandidates } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { ElectionStatus } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -63,7 +63,6 @@ export const  promptElectionStatus = ({params}:TParams) =>{
    })
    return promptElection
 }
-
 
 export const getElectionWithPositionAndCandidates = ({params}:TParams) => {
     const { data, isLoading, error } = useQuery<TElectionWithPositionsAndCandidates, any>({

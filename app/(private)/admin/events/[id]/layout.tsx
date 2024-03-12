@@ -5,7 +5,7 @@ import NotFound from "./_components/not-found";
 import EventNav from "./_components/event-nav";
 import { eventIdSchema } from "@/validation-schema/commons";
 import { Separator } from "@/components/ui/separator";
-import { CalendarCheck, CalendarDays, MapPin, TrainFrontTunnel } from "lucide-react";
+import { CalendarCheck, CalendarDays, MapPin } from "lucide-react";
 import moment from "moment";
 
 type Props = {
@@ -49,7 +49,6 @@ const EventLayout = async ({ children, params }: Props) => {
                   {moment(event.date).format("LL")}
                </h1>
             </div>
-
          </div>
          <div className="flex flex-col bg-background  border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl space-y-2 overflow-x-hidden lg:p-5  w-full ">
             <div className="p-5 w-full">

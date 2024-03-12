@@ -1,6 +1,6 @@
 import { electionSettingSchema } from "@/validation-schema/election-settings";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { VotingEligibility, VotingConfiguration } from "@prisma/client";
+import { VotingEligibility, VotingConfiguration, VotingScreenOrientation } from "@prisma/client";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { SettingsType, TElection } from "@/types";
@@ -38,6 +38,7 @@ const SettingsForm = ({ election,params }: Props) => {
    const [voteEligibility,setVoteEligibility] = useState<VotingEligibility>(election.voteEligibility)
    const [allowBirthday,setAllowBirthday] = useState<boolean>(election.allowBirthdayVerification)
    const [voteConfiguration,setVoteConfiguration] = useState<VotingConfiguration>(election.voteConfiguration)
+   const [voteScreenConfiguration,setVoteScreenConfiguration] = useState<VotingScreenOrientation>(election.voteScreenConfiguration)
     
    const settingsForm = useForm<SettingsType>({
       resolver: zodResolver(electionSettingSchema),
@@ -49,9 +50,10 @@ const SettingsForm = ({ election,params }: Props) => {
          election.allowBirthdayVerification
       );
       settingsForm.setValue("voteConfiguration", election.voteConfiguration)
+      settingsForm.setValue("voteScreenConfiguration",  election.voteScreenConfiguration)
    }, [settingsForm, election]);
 
-   const isSettingChange = voteEligibility === election.voteEligibility && allowBirthday === election.allowBirthdayVerification && voteConfiguration === election.voteConfiguration
+   const isSettingChange = voteEligibility === election.voteEligibility && allowBirthday === election.allowBirthdayVerification && voteConfiguration === election.voteConfiguration && voteScreenConfiguration === election.voteScreenConfiguration
    
    useEffect(() => {
       defaultValues();
@@ -157,6 +159,44 @@ const SettingsForm = ({ election,params }: Props) => {
                      );
                   }}
                />
+               <FormField
+                  control={settingsForm.control}
+                  name="voteScreenConfiguration"
+                  render={({ field }) => {
+                     return (
+                        <FormItem className="flex justify-between items-center">
+                           <FormLabel>Voting Screen Orientation</FormLabel>
+                           <div className="w-44">
+                              <Select
+                                 onValueChange={(e:VotingScreenOrientation)=>{
+                                    setVoteScreenConfiguration(e)
+                                    return field.onChange(e)
+                                 }}
+                                 defaultValue={field.value}
+                              >
+                                 <FormControl>
+                                    <SelectTrigger className=" border-0 ring-offset-0 focus:ring-0 round-0 focus-visible:ring-0">
+                                       <SelectValue
+                                          className="ring-offset-0 focus:ring-0 round-0 focus-visible:ring-0"
+                                          placeholder={`${settingsForm.getValues(
+                                             "voteScreenConfiguration"
+                                          )}`}
+                                       />
+                                    </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                    <SelectItem value={VotingScreenOrientation.PORTRAIT}>{VotingScreenOrientation.PORTRAIT}</SelectItem>
+                                    <SelectItem value={VotingScreenOrientation.LANDSCAPE}>{VotingScreenOrientation.LANDSCAPE}</SelectItem>
+                                    <SelectItem value={VotingScreenOrientation.ANY}>{VotingScreenOrientation.ANY}</SelectItem>
+                                 </SelectContent>
+                              </Select>
+                           </div>
+                           <FormMessage />
+                        </FormItem>
+                     );
+                  }}
+               />
+
                <Separator></Separator>
                <h1 className="font-bold">others</h1>
                <FormField

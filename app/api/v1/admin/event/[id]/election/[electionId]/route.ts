@@ -47,7 +47,8 @@ export const PATCH = async function name(req:NextRequest,{params}:TParams) {
        data:{
          voteEligibility:election.voteEligibility,
          allowBirthdayVerification:election.allowBirthdayVerification,
-         voteConfiguration:election.voteConfiguration
+         voteConfiguration:election.voteConfiguration,
+         voteScreenConfiguration:election.voteScreenConfiguration
         }
        }
      )
