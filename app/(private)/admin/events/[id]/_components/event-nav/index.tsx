@@ -1,6 +1,5 @@
 import { TEventWithElection, TNavListRoute } from "@/types";
 import {
-   BaggageClaim,
    Gift,
    ListChecks,
    Users,
@@ -9,7 +8,6 @@ import {
 } from "lucide-react";
 import React from "react";
 import EventNavItems from "./event-nav-items";
-import Header from "../../election/[electionId]/_components/header";
 
 export const EventRoutes: TNavListRoute[] = [
    {
