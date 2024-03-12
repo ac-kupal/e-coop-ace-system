@@ -1,5 +1,6 @@
 import { $Enums, Election } from "@prisma/client";
 import { TCandidate, TCandidatewithPosition, TEvent, TPosition, TPositionWithCandidatesAndPosition } from ".";
+
 export type TCreateElection = {
     electionName: string;
     status: $Enums.ElectionStatus;

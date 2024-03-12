@@ -4,14 +4,13 @@ import { useRouter } from "next/navigation";
 
 import VoteHeader from "./vote-header";
 import VoteSummary from "./vote-summary";
+import OnlyPortrait from "../only-portrait";
 import CandidateList from "./candidate-list";
+import OnlyLandscape from "../only-landscape";
 import VoteNavControl from "./vote-nav-control";
 import InvalidPrompt from "@/components/invalid-prompt";
-import OnlyLandscape from "@/components/only-landscape";
 import LoadingSpinner from "@/components/loading-spinner";
 
-
-import { useInfoModal } from "@/stores/use-info-modal-store";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useCastVote, loadVoter } from "@/hooks/public-api-hooks/use-vote-api";
 import { TCandidatewithPosition, TElectionWithEventWithPositionAndCandidates } from "@/types";
@@ -23,27 +22,14 @@ type Props = {
 const VoteWindow = ({ election }: Props) => {
     const router = useRouter();
     const { onOpen } = useConfirmModal();
-    const { onOpen: onOpenInfoModal } = useInfoModal();
 
     const [currentPage, setCurrentPage] = useState(0);
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
     const { voter, isPending, isError, error } = loadVoter(election);
     const { data, castVote, isCasting } = useCastVote(election, (data) => {
-        // if (document.exitFullscreen) document.exitFullscreen();
         router.push(`/events/${election.eventId}/election/vote/complete`);
     });
-
-    const toggleFullScreen = () => {
-        if (voter && document) {
-            if (!document.fullscreenElement)
-                document.documentElement.requestFullscreen();
-            else {
-                if (document.exitFullscreen) document.exitFullscreen();
-            }
-        }
-    };
-
 
     if (isPending)
         return (
@@ -129,7 +115,12 @@ const VoteWindow = ({ election }: Props) => {
                 canFinalize={votes.length > 0}
                 canNext={true}
             />
-            <OnlyLandscape />
+            {
+                election.voteScreenConfiguration === "LANDSCAPE" && <OnlyLandscape />
+            }
+            {
+                election.voteScreenConfiguration === "PORTRAIT" && <OnlyPortrait />
+            }
         </div>
     );
 };

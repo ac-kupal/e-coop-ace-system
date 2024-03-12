@@ -1,17 +1,18 @@
 import LoadingSpinner from "@/components/loading-spinner";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {
     onBack: () => void;
     onNext: () => void;
     onFinalize: () => void;
-    casted : boolean;
+    casted: boolean;
     isLoading: boolean;
 
     currentPage: number;
     lastPage: number;
     canNext: boolean;
-    canFinalize : boolean;
+    canFinalize: boolean;
 };
 
 const VoteNavControl = ({
@@ -27,16 +28,22 @@ const VoteNavControl = ({
 }: Props) => {
     return (
         <div className="w-full flex items-center p-4 justify-between">
-            <Button disabled={currentPage == 0 || isLoading || casted} onClick={onBack}>
-                Previous Position
+            <Button
+                disabled={currentPage == 0 || isLoading || casted}
+                onClick={onBack}
+            >
+                <ChevronLeft />
             </Button>
             {currentPage > lastPage ? (
-                <Button onClick={onFinalize} disabled={isLoading || casted || !canFinalize}>
+                <Button
+                    onClick={onFinalize}
+                    disabled={isLoading || casted || !canFinalize}
+                >
                     {isLoading || casted ? <LoadingSpinner /> : "Cast Vote"}
                 </Button>
             ) : (
                 <Button disabled={!canNext || casted} onClick={onNext}>
-                    Next 
+                   <ChevronRight /> 
                 </Button>
             )}
         </div>
