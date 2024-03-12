@@ -15,7 +15,7 @@ export const GET = async ( req : NextRequest, { params } : TParams ) =>{
             include: { event: true },
         });
 
-        if(!election) return NextResponse.json({ message : "Election not found"}, { status : 404})
+        if(!election) return NextResponse.json({ message : "Election not found, or possibly this event doesn't have an election."}, { status : 404})
         
         return NextResponse.json(election)
     }catch(e){
