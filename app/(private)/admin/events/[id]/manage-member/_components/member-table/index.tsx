@@ -84,8 +84,8 @@ const MemberTable = ({ id }: Props) => {
     }, []);
     
     return (
-        <div className=" space-y-5">
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2  bg-primary dark:border dark:bg-secondary/70 ">
+        <div className="space-y-5 min-h-screen">
+            <div className="flex flex-wrap items-center p-3 justify-between rounded-xl gap-y-2  bg-background dark:border dark:bg-secondary/70 ">
                 <CreateMemberModal
                     eventId={id}
                     state={createMember}
@@ -101,26 +101,30 @@ const MemberTable = ({ id }: Props) => {
                   state={onSkippedMemberModal}
                   onClose={(state) => setOnSkippedMemberModal(state)}
                 />
-                <div className="flex relative items-center gap-x-4 text-muted-foreground">
-                 <SearchIcon className="absolute w-4 h-auto top-3 text-white left-2" />
+                <div className="flex flex-wrap space-y-2 lg:space-y-0 relative w-full items-center gap-x-4 text-muted-foreground">
+                    <div className="flex-grow lg:flex-none relative">
+                        <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
                         <Input
-                            ref={onFocusSearch}
-                            placeholder="Search..."
-                            value={globalFilter}
-                            onChange={(event) =>
-                                setGlobalFilter(event.target.value)
-                            }
-                            className="w-full pl-8 bg-transparent text-white border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        />
-                    <ActionTooltip content="Scan Passbook Number">
+                                ref={onFocusSearch}
+                                placeholder="Search..."
+                                value={globalFilter}
+                                onChange={(event) =>
+                                    setGlobalFilter(event.target.value)
+                                }
+                                className="w-full pl-8 bg-transparent text-muted-foreground placeholder:text-muted-foreground border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        ></Input>
+                    </div>
+                    <div className="">
+                    <ActionTooltip  content="Scan Passbook Number">
                         <Button variant="ghost" size="icon" className="cursor-pointer bg-transparent " onClick={()=> onOpenQR({ onRead : (val) => setGlobalFilter(val) }) } >
                             <ScanLine className="size-4" />
                         </Button>
                     </ActionTooltip>
-                </div>
-                <div className="flex items-center flex-1 gap-x-2 md:gap-x-4">
-                    <DataTableViewOptions table={table} />
-                    <ActionTooltip
+                    </div>
+                    <div className="flex-grow"></div>
+                     <div className="flex-none flex items-center space-x-3 border">
+                     <DataTableViewOptions table={table} />
+                        <ActionTooltip
                         side="top"
                         align="center"
                         content={
@@ -129,7 +133,7 @@ const MemberTable = ({ id }: Props) => {
                                 all members via email address.
                             </div>
                         }
-                    >
+                        >
                         <Button
                             size="sm"
                             className={cn(
@@ -140,40 +144,44 @@ const MemberTable = ({ id }: Props) => {
                               
                                broadcastOTP();
                             }}
-                        >   Send all OTP
+                        >   <p>Send all <span className="hidden lg:inline-block">OTP</span></p>
                             {
                                 isBroadcasting ? <LoadingSpinner /> :  <Send className="w-4 h-4" />
                             }
                         </Button>
-                    </ActionTooltip>
+                        </ActionTooltip>
+                     </div>
+                    <div className="flex-none">
+                        <Button
+                            size="sm"
+                            className={cn(
+                                "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                            )}
+                            onClick={() => {
+                                setCreateMember(true);
+                            }}
+                        >
+                            <p>Add <span className="hidden lg:inline-block">Member</span></p>
+                            <Plus className="w-4 h-4" />
+                        </Button>
+                    </div>
                     <Button
                         size="sm"
                         className={cn(
-                            "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                        )}
-                        onClick={() => {
-                            setCreateMember(true);
-                        }}
-                    >
-                        Add Member
-                        <Plus className="w-4 h-4" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        className={cn(
-                            "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                            "flex-none flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                         )}
                         onClick={() => {
                             setOnImportModal(true);
                         }}
                     >
-                        <p> import csv</p>
+                        <p>csv <span className="hidden lg:inline-block">import</span></p>
                         <Plus className="w-4 h-4" />
                     </Button>
                 </div>
+              
             </div>
             <DataTable
-                className="py-5 overflow-y-auto h-full overflow-auto overscroll-y-none flex-1 bg-background dark:bg-secondary/30 rounded-2xl"
+                className="py-5 overflow-y-auto h-screen overflow-auto overscroll-y-none flex-1 bg-background dark:bg-secondary/30 rounded-2xl"
                 isError={isError}
                 isLoading={isLoading || isFetching}
                 table={table}
