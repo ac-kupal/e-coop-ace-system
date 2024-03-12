@@ -14,7 +14,7 @@ const ElectionHome = ({ eventId }: Props) => {
 
   if (isLoading) return <LoadingSpinner className="fixed top-1/2 left-1/2" />;
 
-  if (!election) return <InvalidPrompt />;
+  if (!election) return <InvalidPrompt message="This event does not have an election"/>;
 
   if (election.status === "done")
     return <InvalidPrompt message="This election has ended" />;
