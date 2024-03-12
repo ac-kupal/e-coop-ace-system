@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         let result: TMemberAttendeesMinimalInfo[] = [];
 
-        if (passbookNumber) {
+        if (passbookNumber && passbookNumber.length >= 1) {
             result = await db.eventAttendees.findMany({
                 select: {
                     id: true,
@@ -36,7 +36,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     passbookNumber,
                 },
             });
-        } else if (nameSearch) {
+        } else if (nameSearch && nameSearch.length >= 1) {
             const [lastName, firstName] = nameSearch.split(", ")
             result = await db.eventAttendees.findMany({
                 select: {
