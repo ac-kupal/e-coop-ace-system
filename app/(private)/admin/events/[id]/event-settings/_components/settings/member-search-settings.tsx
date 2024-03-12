@@ -21,7 +21,7 @@ const MemberSearchModeSettings = ({ loading, eventSettings, onUpdate, }: Props) 
     <SettingsCard className="flex gap-y-4">
       <div className="flex flex-col gap-y-6 pb-4">
         <div className="flex justify-between items-center">
-          <p className="text-lg">Registration Configuration</p>
+          <p className="text-lg">Member Search Config</p>
           {loading && <LoadingSpinner strokeWidth={1} className="size-4" />}
         </div>
         <p className="text-sm text-foreground/60">
