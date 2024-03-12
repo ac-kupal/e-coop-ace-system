@@ -176,6 +176,12 @@ enum VotingEligibility {
     MARKED_CANVOTE
 }
 
+enum VotingScreenOrientation { 
+    LANDSCAPE
+    PORTRAIT
+    ANY
+}
+
 model Election {
     id           Int            @id @default(autoincrement())
     electionName String
@@ -184,6 +190,7 @@ model Election {
     allowBirthdayVerification Boolean           @default(false)
     voteEligibility           VotingEligibility @default(MIGS)
     voteConfiguration VotingConfiguration @default(ALLOW_SKIP)
+    voteScreenConfiguration VotingScreenOrientation @default(LANDSCAPE)
 
     positions  Position[] // 1st to create
     candidates Candidate[] // 2nd
