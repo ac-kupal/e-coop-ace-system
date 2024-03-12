@@ -59,10 +59,7 @@ const CompletePage = async ({ params }: Props) => {
           Your vote has been saved & the copy of your vote has been sent to your
           email.
         </p>
-        <Link
-          className=""
-          href={`/events/${election.eventId}`}
-        >
+        <Link className="" href={`/events/${election.eventId}`}>
           <Button size="sm">Return to Event</Button>
         </Link>
       </div>

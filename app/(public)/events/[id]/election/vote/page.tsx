@@ -8,16 +8,16 @@ import VoteHome from "./_components/vote-home";
 import { eventIdParamSchema } from "@/validation-schema/api-params";
 
 type Props = {
-    params: { id: number };
+  params: { id: number };
 };
 
 const VotePage = ({ params }: Props) => {
-    const parsedParams = eventIdParamSchema.safeParse(params);
+  const parsedParams = eventIdParamSchema.safeParse(params);
 
-    if (!parsedParams.success)
-        return <InvalidPrompt message="Invalid election id" />;
+  if (!parsedParams.success)
+    return <InvalidPrompt message="Invalid election id" />;
 
-    return <VoteHome eventId={parsedParams.data.id}/>
+  return <VoteHome eventId={parsedParams.data.id} />;
 };
 
 export default VotePage;

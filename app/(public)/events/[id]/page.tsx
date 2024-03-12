@@ -7,22 +7,21 @@ import { eventIdParamSchema } from "@/validation-schema/api-params";
 import { Metadata } from "next";
 
 type Props = {
-    params: { id: string };
+  params: { id: string };
 };
 
 export const metadata: Metadata = {
-    title: "Explore Event",
-    description: "Explore this event",
+  title: "Explore Event",
+  description: "Explore this event",
 };
 
 const ElectionPage = ({ params }: Props) => {
-    const validatedEventId = eventIdParamSchema.safeParse(params)
+  const validatedEventId = eventIdParamSchema.safeParse(params);
 
-    if (!validatedEventId.success) return <InvalidPrompt message="This event id is invalid" />;
+  if (!validatedEventId.success)
+    return <InvalidPrompt message="This event id is invalid" />;
 
-    return (
-        <EventHome eventId={validatedEventId.data.id} />
-    );
+  return <EventHome eventId={validatedEventId.data.id} />;
 };
 
 export default ElectionPage;
