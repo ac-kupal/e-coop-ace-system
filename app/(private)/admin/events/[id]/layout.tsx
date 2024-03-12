@@ -28,22 +28,22 @@ const EventLayout = async ({ children, params }: Props) => {
       <div className="font-poppins pt-5 lg:p-7 space-y-4 h-fit overflow-hidden">
          <div className="p-5 w-full rounded-2xl flex flex-col lg:flex-row space-x-0 space-y-3 lg:space-x-16 lg:space-y-0  justify-start shadow-md bg-background dark:bg-secondary/30">
             <div className="flex space-x-2 items-center ">
-               <div className="bg-[#22C55E] rounded-lg p-1">
+               <div className="p-1">
                   <CalendarCheck className="text-primary" />
                </div>
                <h1 className="text-[min(18px,4vw)] font-bold text-black/80  dark:text-white/80">{event.title}</h1>
             </div>
             <div className="flex space-x-2 items-center ">
-               <div className="dark:bg-yellow-500 bg-yellow-400   rounded-lg p-1">
-                  <MapPin className="text-yellow-700 dark:text-white " />
+               <div className="  p-1">
+                  <MapPin className="text-yellow-500 dark:text-yellow-400 " />
                </div>
                <h1 className="text-[min(16px,3.8vw)] font-normal text-black/80 dark:text-white/80">
                   {event.location}
                </h1>
             </div>
             <div className="flex space-x-2 items-center">
-               <div className="bg-blue-500 dark:bg-blue-800 rounded-lg p-1">
-               <CalendarDays className="text-blue-800 dark:text-white" />
+               <div className="p-1">
+               <CalendarDays className="text-blue-800 dark:text-blue-500" />
                </div>
                <h1 className="text-[min(16px,3.8vw)] font-normal text-black/80 dark:text-white/80">
                   {moment(event.date).format("LL")}
