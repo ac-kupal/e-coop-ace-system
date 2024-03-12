@@ -2,7 +2,7 @@ import z from "zod";
 import { otpSchema, eventIdSchema, validateBirthDay, electionIdParamSchema, passbookNumberSchema, validateBirthdayString } from "./commons"
 
 // for event registration verification api
-export const nameSearchSchema = z.string({ required_error : "name is required", invalid_type_error : "invalid name search type"}).optional()
+export const nameSearchSchema = z.string({ required_error : "name is required", invalid_type_error : "invalid name search type"})
 
 export const attendeeParamsSchema = z.object({
     id: eventIdSchema,
@@ -31,7 +31,7 @@ export const attendeeRegisterFormSchema = z.object({
 });
 
 export const memberAttendeeSearchSchema = z.object({
-    passbookNumber : passbookNumberSchema,
+    passbookNumber : z.string({invalid_type_error: "invalid passbook number",required_error: "passbook number is required"}),
     nameSearch : nameSearchSchema
 })
 
