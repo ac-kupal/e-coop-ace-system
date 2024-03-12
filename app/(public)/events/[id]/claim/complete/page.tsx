@@ -24,7 +24,7 @@ const CompletePage = async ({ params }: Props) => {
     );
 
   const event = await db.event.findUnique({
-    where: { id : validateParam.data },
+    where: { id: validateParam.data },
   });
 
   if (!event)
@@ -43,9 +43,7 @@ const CompletePage = async ({ params }: Props) => {
             src={event.coverImage as ""}
           />
           <div className="absolute w-full flex items-center bottom-0 left-0 py-8 px-4 bg-gradient-to-t  from-background to-transparent">
-            <h1 className="text-4xl dark:text-[#e7e0fb]">
-              {event.title}
-            </h1>
+            <h1 className="text-4xl dark:text-[#e7e0fb]">{event.title}</h1>
           </div>
         </div>
 
@@ -55,12 +53,10 @@ const CompletePage = async ({ params }: Props) => {
 
         <p className="text-lg">Incentive claim complete</p>
         <p className="text-foreground/80 text-center">
-          Your completed you incentive claims, you can get the actual items on the admin.
+          Your completed you incentive claims, you can get the actual items on
+          the admin.
         </p>
-        <Link
-          className=""
-          href={`/events/${event.id}`}
-        >
+        <Link className="" href={`/events/${event.id}`}>
           <Button size="sm">Return to Event</Button>
         </Link>
       </div>

@@ -9,16 +9,16 @@ import { Metadata } from "next";
 type Props = { params: { id: string } };
 
 export const metadata: Metadata = {
-    title: "Register",
+  title: "Register",
 };
 
 const RegisterPage = async ({ params }: Props) => {
-    const validatedEventId = eventIdParamSchema.safeParse(params);
+  const validatedEventId = eventIdParamSchema.safeParse(params);
 
-    if (!validatedEventId.success)
-        return <InvalidPrompt message="This event id is invalid" />;
+  if (!validatedEventId.success)
+    return <InvalidPrompt message="This event id is invalid" />;
 
-    return <RegisterHome eventId={validatedEventId.data.id} />;
+  return <RegisterHome eventId={validatedEventId.data.id} />;
 };
 
 export default RegisterPage;

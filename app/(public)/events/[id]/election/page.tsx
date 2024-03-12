@@ -6,20 +6,20 @@ import ElectionHome from "./_components/election-home";
 import { Metadata } from "next";
 
 type Props = {
-    params: { id: number };
+  params: { id: number };
 };
 
 export const metadata: Metadata = {
-    title: "Vote",
+  title: "Vote",
 };
 
 const ElectionVerifyPage = ({ params }: Props) => {
-    const validatedEventId = eventIdParamSchema.safeParse(params);
+  const validatedEventId = eventIdParamSchema.safeParse(params);
 
-    if (!validatedEventId.success)
-        return <InvalidPrompt message="This election id is invalid" />;
+  if (!validatedEventId.success)
+    return <InvalidPrompt message="This election id is invalid" />;
 
-    return <ElectionHome eventId={validatedEventId.data.id} />
+  return <ElectionHome eventId={validatedEventId.data.id} />;
 };
 
 export default ElectionVerifyPage;

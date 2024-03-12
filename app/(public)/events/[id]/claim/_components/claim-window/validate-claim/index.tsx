@@ -31,7 +31,9 @@ type Props = { eventId: number };
 type TClaimValidateForm = z.infer<typeof createPublicClaimAuthorizationSchema>;
 
 const ValidateClaim = ({ eventId }: Props) => {
-  const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(null);
+  const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(
+    null,
+  );
 
   const form = useForm<TClaimValidateForm>({
     resolver: zodResolver(createPublicClaimAuthorizationFormSchema),
@@ -41,7 +43,6 @@ const ValidateClaim = ({ eventId }: Props) => {
   });
 
   const { authorize, isPending, isError, error } = useCreateClaimAuth(eventId);
-
 
   const disabled = isPending;
 
@@ -72,7 +73,7 @@ const ValidateClaim = ({ eventId }: Props) => {
           className="opacity-10 ease-in bg-transparent text-foreground hover:bg-transparent group-hover:opacity-100"
           onClick={() => {
             form.reset();
-            setMember(null)
+            setMember(null);
           }}
         >
           Cancel
@@ -96,9 +97,12 @@ const ValidateClaim = ({ eventId }: Props) => {
                     {...field}
                     autoFocus
                     maxLength={6}
-                    onComplete={()=> {
-                        authorize({ otp : form.getValues("otp"), passbookNumber : member.passbookNumber })
-                    }} 
+                    onComplete={() => {
+                      authorize({
+                        otp: form.getValues("otp"),
+                        passbookNumber: member.passbookNumber,
+                      });
+                    }}
                     inputMode="text"
                     pattern="^[a-zA-Z0-9]+$"
                     containerClassName="group flex items-center has-[:disabled]:opacity-30"

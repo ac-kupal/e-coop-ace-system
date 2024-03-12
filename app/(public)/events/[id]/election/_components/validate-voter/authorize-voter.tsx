@@ -55,7 +55,6 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
 
   const disabled = isPending || authenticatedVoter !== undefined;
 
-
   return (
     <div className="flex flex-col items-center gap-y-4">
       <p className="text-sm lg:text-base text-center text-foreground/60 pb-4">
@@ -75,9 +74,12 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                       {...field}
                       autoFocus
                       maxLength={6}
-                      onComplete={()=>{ 
-                        if(!electionWithEvent.allowBirthdayVerification)
-                            onSubmit({ passbookNumber : voter.passbookNumber, otp : form.getValues("otp") })
+                      onComplete={() => {
+                        if (!electionWithEvent.allowBirthdayVerification)
+                          onSubmit({
+                            passbookNumber: voter.passbookNumber,
+                            otp: form.getValues("otp"),
+                          });
                       }}
                       inputMode="text"
                       pattern="^[a-zA-Z0-9]+$"

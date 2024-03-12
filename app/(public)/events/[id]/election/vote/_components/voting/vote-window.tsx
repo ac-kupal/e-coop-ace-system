@@ -13,7 +13,10 @@ import LoadingSpinner from "@/components/loading-spinner";
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { useCastVote, loadVoter } from "@/hooks/public-api-hooks/use-vote-api";
-import { TCandidatewithPosition, TElectionWithEventWithPositionAndCandidates } from "@/types";
+import {
+    TCandidatewithPosition,
+    TElectionWithEventWithPositionAndCandidates,
+} from "@/types";
 
 type Props = {
     election: TElectionWithEventWithPositionAndCandidates;
@@ -26,8 +29,8 @@ const VoteWindow = ({ election }: Props) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
-    const { voter, isPending, isError, error } = loadVoter(election);
-    const { data, castVote, isCasting } = useCastVote(election, (data) => {
+    const { isPending, isError, error } = loadVoter(election);
+    const { data, castVote, isCasting } = useCastVote(election, () => {
         router.push(`/events/${election.eventId}/election/vote/complete`);
     });
 
@@ -35,9 +38,7 @@ const VoteWindow = ({ election }: Props) => {
         return (
             <div className="fixed top-1/2 left-auto gap-x-2 rounded-xl flex items-center justify-center px-3 py-1 bg-secondary/40 backdrop-blur-sm">
                 <LoadingSpinner strokeWidth={1} />
-                <p className="text-foreground/80 text-sm">
-                    checking authorization
-                </p>
+                <p className="text-foreground/80 text-sm">checking authorization</p>
             </div>
         );
 
@@ -47,8 +48,18 @@ const VoteWindow = ({ election }: Props) => {
     const totalPositions = election.positions.length - 1;
     const currentPosition =
         election.positions[
-            currentPage > totalPositions - 1 ? totalPositions : currentPage
+        currentPage > totalPositions - 1 ? totalPositions : currentPage
         ];
+    const canNext = () => {
+        const currentPositionChosenLength = votes.filter(
+            (votedCandidate) => votedCandidate.position.id === currentPosition.id,
+        ).length;
+        if (election.voteConfiguration === "ATLEAST_ONE")
+            return currentPositionChosenLength;
+        if (election.voteConfiguration === "REQUIRE_ALL")
+            return currentPositionChosenLength === currentPosition.numberOfSelection;
+        return true;
+    };
 
     return (
         <div className="w-full max-w-7xl py-2 lg:py-16 pb-4">
@@ -58,12 +69,12 @@ const VoteWindow = ({ election }: Props) => {
                 ) : (
                     <>
                         <VoteHeader
+                            voteConfig={election.voteConfiguration}
                             position={currentPosition}
                             selected={
                                 votes.filter(
                                     (votedCandidate) =>
-                                        votedCandidate.position.id ===
-                                        currentPosition.id
+                                        votedCandidate.position.id === currentPosition.id,
                                 ).length
                             }
                         />
@@ -71,20 +82,14 @@ const VoteWindow = ({ election }: Props) => {
                             maxSelect={currentPosition.numberOfSelection}
                             chosenCandidates={votes.filter(
                                 (votedCandidate) =>
-                                    votedCandidate.position.id ===
-                                    currentPosition.id
+                                    votedCandidate.position.id === currentPosition.id,
                             )}
                             onAdd={(candidate) => {
-                                setVotes((prevVotes) => [
-                                    ...prevVotes,
-                                    candidate,
-                                ]);
+                                setVotes((prevVotes) => [...prevVotes, candidate]);
                             }}
                             onRemove={(candidate) => {
                                 setVotes((prevVotes) =>
-                                    prevVotes.filter(
-                                        (voted) => voted.id !== candidate.id
-                                    )
+                                    prevVotes.filter((voted) => voted.id !== candidate.id),
                                 );
                             }}
                             candidates={currentPosition.candidates}
@@ -107,20 +112,14 @@ const VoteWindow = ({ election }: Props) => {
                         confirmString: "Cast Vote",
                         cancelString: "Review Vote",
                         onConfirm: () =>
-                            castVote(
-                                votes.map((votedCandidate) => votedCandidate.id)
-                            ),
+                            castVote(votes.map((votedCandidate) => votedCandidate.id)),
                     })
                 }
                 canFinalize={votes.length > 0}
-                canNext={true}
+                canNext={canNext()}
             />
-            {
-                election.voteScreenConfiguration === "LANDSCAPE" && <OnlyLandscape />
-            }
-            {
-                election.voteScreenConfiguration === "PORTRAIT" && <OnlyPortrait />
-            }
+            {election.voteScreenConfiguration === "LANDSCAPE" && <OnlyLandscape />}
+            {election.voteScreenConfiguration === "PORTRAIT" && <OnlyPortrait />}
         </div>
     );
 };
