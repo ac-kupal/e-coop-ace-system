@@ -55,7 +55,7 @@ const VoteWindow = ({ election }: Props) => {
             (votedCandidate) => votedCandidate.position.id === currentPosition.id,
         ).length;
         if (election.voteConfiguration === "ATLEAST_ONE")
-            return currentPositionChosenLength;
+            return currentPositionChosenLength >= 1;
         if (election.voteConfiguration === "REQUIRE_ALL")
             return currentPositionChosenLength === currentPosition.numberOfSelection;
         return true;
