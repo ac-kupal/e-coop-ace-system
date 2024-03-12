@@ -77,6 +77,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                     <FormControl>
                       <Input
                         disabled={disabled}
+                        key="passbook search input"
                         placeholder="Enter Passbook Number"
                         className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                         {...field}
@@ -97,6 +98,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                     <FormControl>
                       <Input
                         disabled={disabled}
+                        key="name search input"
                         placeholder="Enter last name &amp; first name"
                         className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                         {...field}
