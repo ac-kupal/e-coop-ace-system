@@ -1,14 +1,17 @@
 import z from "zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { MemberSearchMode } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Asterisk, CaseSensitive, Loader2 } from "lucide-react";
 
 import QrReader from "@/components/qr-reader";
 import { Input } from "@/components/ui/input";
+import ActionTooltip from "../action-tooltip";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import MultiResultSelect from "./multi-result-select";
 import ErrorAlert from "@/components/error-alert/error-alert";
 import {
     Form,
@@ -20,12 +23,9 @@ import {
 } from "@/components/ui/form";
 
 import { TMemberAttendeesMinimalInfo } from "@/types";
-import { memberAttendeeSearchSchema } from "@/validation-schema/event-registration-voting";
-import { useSearchMemberAttendee } from "@/hooks/public-api-hooks/use-member-api";
-import MultiResultSelect from "./multi-result-select";
-import ActionTooltip from "../action-tooltip";
 import { useEventSettingsPublic } from "@/hooks/public-api-hooks/use-events-api";
-import { MemberSearchMode } from "@prisma/client";
+import { useSearchMemberAttendee } from "@/hooks/public-api-hooks/use-member-api";
+import { memberAttendeeSearchSchema } from "@/validation-schema/event-registration-voting";
 
 type Props = {
     eventId: number;
@@ -184,7 +184,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                 onRead={(val: string) => {
                                     if (val.length === 0) return;
                                     form.setValue("passbookNumber", val);
-                                    searchMember({ passbookNumber: val });
+                                    searchMember({ passbookNumber: val, nameSearch : '' });
                                 }}
                                 className="size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl"
                             />
