@@ -34,7 +34,7 @@ export const useRegisterMember = (eventId: number, onRegister: () => void) => {
         isError,
         error,
     } = useMutation<any, string, z.infer<typeof attendeeRegisterFormSchema>>({
-        mutationKey: ["member-search"],
+        mutationKey: ["member-register"],
         mutationFn: async (data) => {
             try {
                 const request = await axios.post(
