@@ -50,8 +50,8 @@ const EventLayout = async ({ children, params }: Props) => {
                </h1>
             </div>
          </div>
-         <div className="flex flex-col bg-background  border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl space-y-2 overflow-x-hidden lg:p-5  w-full ">
-            <div className="p-5 w-full">
+         <div className="flex flex-col bg-background border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl space-y-2 lg:space-y-0 overflow-x-hidden lg:p-5  w-full ">
+            <div className="px-5 py-2 w-full">
                <EventNav event={event} />
                <Separator className=""></Separator>
             </div>
