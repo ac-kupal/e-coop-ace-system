@@ -122,7 +122,7 @@ const MemberTable = ({ id }: Props) => {
                     </ActionTooltip>
                     </div>
                     <div className="flex-grow"></div>
-                     <div className="flex-none flex items-center space-x-3 border">
+                     <div className="flex-none flex items-center space-x-3">
                      <DataTableViewOptions table={table} />
                         <ActionTooltip
                         side="top"
