@@ -52,7 +52,7 @@ const EventNav = ({ event }: { event: TEventWithElection }) => {
 
    return (
       <div>
-         <div className="flex space-x-1 w-full justify-evenly lg:justify-start ">
+         <div className="flex space-x-1 flex-wrap w-full justify-start lg:justify-start ">
             {EventNavRoutes.map((route: TNavListRoute, i) => {
                return (
                   <EventNavItems eventId={event.id} route={route} key={i} />

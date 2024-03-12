@@ -31,13 +31,13 @@ const EventLayout = async ({ children, params }: Props) => {
                <div className="bg-[#22C55E] rounded-lg p-1">
                   <CalendarCheck className="text-primary" />
                </div>
-               <h1 className="text-lg font-bold text-black/80 dark:text-white/80">{event.title} New Boarders Lorem 2024</h1>
+               <h1 className="text-[min(18px,4vw)] font-bold text-black/80  dark:text-white/80">{event.title}</h1>
             </div>
             <div className="flex space-x-2 items-center ">
                <div className="dark:bg-yellow-500 bg-yellow-400   rounded-lg p-1">
                   <MapPin className="text-yellow-700 dark:text-white " />
                </div>
-               <h1 className="text-lg font-normal text-black/80 dark:text-white/80">
+               <h1 className="text-[min(16px,3.8vw)] font-normal text-black/80 dark:text-white/80">
                   {event.location}
                </h1>
             </div>
@@ -45,7 +45,7 @@ const EventLayout = async ({ children, params }: Props) => {
                <div className="bg-blue-500 dark:bg-blue-800 rounded-lg p-1">
                <CalendarDays className="text-blue-800 dark:text-white" />
                </div>
-               <h1 className="text-lg font-normal text-black/80 dark:text-white/80">
+               <h1 className="text-[min(16px,3.8vw)] font-normal text-black/80 dark:text-white/80">
                   {moment(event.date).format("LL")}
                </h1>
             </div>
@@ -53,7 +53,7 @@ const EventLayout = async ({ children, params }: Props) => {
          <div className="flex flex-col bg-background  border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl space-y-2 overflow-x-hidden lg:p-5  w-full ">
             <div className="p-5 w-full">
                <EventNav event={event} />
-               <Separator className="dark:hidden"></Separator>
+               <Separator className=""></Separator>
             </div>
             <div>{children}</div>
          </div>
