@@ -30,15 +30,9 @@ export const attendeeRegisterFormSchema = z.object({
     }, "Invalid date format"),
 });
 
-// for vote - voter search
-export const voterPbSearchSchema = z.object({
-    passbookNumber: passbookNumberSchema.optional(),
-    nameSearch : nameSearchSchema.optional()
-});
-
 export const memberAttendeeSearchSchema = z.object({
-    passbookNumber : passbookNumberSchema.optional(),
-    nameSearch : nameSearchSchema.optional()
+    passbookNumber : passbookNumberSchema,
+    nameSearch : nameSearchSchema
 })
 
 // for params
