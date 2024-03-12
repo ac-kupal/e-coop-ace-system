@@ -33,7 +33,7 @@ const ValidateVoter = ({ electionWithEvent }: Props) => {
         {voter.voted ? (
           <div className="flex flex-col items-center gap-y-4">
             <p className="text-xl lg:text-3xl">You already voted</p>
-            <p>Every member is only allowed to vote once.</p>
+            <p className="text-sm text-center text-foreground/50">Every member is only allowed to vote once.</p>
             <Link
               className="mx-auto"
               href={`/events/${electionWithEvent.eventId}`}
