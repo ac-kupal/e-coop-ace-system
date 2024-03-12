@@ -16,6 +16,7 @@ export const GET = async( req : NextRequest, { params } : TParams) => {
                 event: true,
                 positions: {
                     include: { candidates: { include: { position: true } } },
+                    orderBy : { id : "asc" }
                 },
             },
         });
