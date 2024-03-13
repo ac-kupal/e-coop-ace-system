@@ -53,7 +53,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 where: {
                     eventId,
                     AND: [
-                        { firstName: { equals: firstName , mode: "insensitive" } },
+                        { firstName: { contains : firstName , mode: "insensitive" } },
                         { lastName: { equals: lastName, mode: "insensitive" } }
                     ]
                 },
