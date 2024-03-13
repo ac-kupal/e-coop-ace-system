@@ -4,6 +4,7 @@ import { BarGraphSection } from "./_components/bar-graph-section";
 import QuorumSection from "./_components/quorum-section";
 import db from "@/lib/database"
 import { z } from "zod";
+import { PieGraphSection } from "./_components/pie-graph-section";
 type TParams = {
    params: { id: number; electionId: number };
 };
@@ -18,7 +19,7 @@ const page = async({ params }: TParams) => {
    
 
    return (
-      <div>
+      <div className="w-full lg:w-[1000px] lg:min-w-full ">
          {Election && 
             <Header text={Election?.electionName}></Header>
          }
@@ -31,8 +32,9 @@ const page = async({ params }: TParams) => {
                <h1 className="font-medium">Positions</h1>
             </div>
          </div>
-         <div className="flex w-full  px-5 overflow-y-auto rounded-3xl lg:p-5 lg:justify-center  bg-secondary/20">
+         <div className="flex flex-col w-full items-center px-5 rounded-3xl lg:p-5 justify-center  bg-secondary/20">
             <BarGraphSection params={params}/>
+            <PieGraphSection params={params} />
          </div>
       </div>
    );

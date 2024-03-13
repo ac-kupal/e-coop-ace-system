@@ -1,12 +1,9 @@
 "use client";
-import { BarGraphDataTypes } from "@/types";
 import React from "react";
-import BarGraphContainer from "./container-bar-graph";
 import { getPositionVotesTotal } from "@/hooks/api-hooks/vote-api-hooks";
 import Loading from "../../_components/loading";
 import NotFound from "../../_components/not-found";
 
-import { Card, CardContent } from "@/components/ui/card";
 import {
    Carousel,
    CarouselContent,
@@ -14,11 +11,12 @@ import {
    CarouselNext,
    CarouselPrevious,
 } from "@/components/ui/carousel";
+import { PieGraphContainer } from "./pie-graph-container";
 
 type TParams = {
    params: { id: number; electionId: number };
 };
-export const BarGraphSection = ({ params }: TParams) => {
+export const PieGraphSection = ({ params }: TParams) => {
    const { votes, isLoading, isError } = getPositionVotesTotal(params);
 
    if (isLoading) return <Loading></Loading>;
@@ -32,17 +30,17 @@ export const BarGraphSection = ({ params }: TParams) => {
    </div>
 
    return (
-         <Carousel className="min-w-[100px] w-full lg:w-3/4  p-3 ">
-            <CarouselContent> 
+         <Carousel className="w-full lg:w-3/4 h-fit p-3 ">
+            <CarouselContent className=""> 
                {votes?.map((position, index) => (
                   <CarouselItem key={index}>
-                     <div className="p-5 w-full rounded-3xl bg-secondary/20 flex xl:justify-center">
-                              <BarGraphContainer
+                     <div className="p-5 h-[600px] w-full rounded-3xl bg-secondary/20 flex xl:justify-center">
+                              <PieGraphContainer
                                  key={index}
                                  positionName={position.positionName}
                                  dataSet={position.dataSets}
                                  labels={position.candidateNameWithNumeric}
-                              ></BarGraphContainer>
+                              />
                      </div>
                   </CarouselItem>
                ))}

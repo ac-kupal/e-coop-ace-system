@@ -40,6 +40,7 @@ const BarGraphContainer = ({ positionName, labels, dataSet }: Props) => {
       plugins: {
          legend: {
             position: "right" as const,
+            
          },
       },
       scales: {
