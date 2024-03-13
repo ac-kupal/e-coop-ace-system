@@ -32,7 +32,7 @@ export const BarGraphSection = ({ params }: TParams) => {
    </div>
 
    return (
-         <Carousel className="min-w-[100px] max-w-[800px] p-3 ">
+         <Carousel className="min-w-[100px] w-full lg:w-3/4  p-3 ">
             <CarouselContent> 
                {votes?.map((position, index) => (
                   <CarouselItem key={index}>

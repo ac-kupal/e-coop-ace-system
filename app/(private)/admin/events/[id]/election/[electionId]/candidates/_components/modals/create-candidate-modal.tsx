@@ -71,7 +71,6 @@ const CreateCandidateModal = ({
    };
    const onCancelandReset = () => {
       reset();
-      onClose(false);
    };
    const createCandidate = useCreateCandidate({ onCancelandReset, params });
 
@@ -155,6 +154,7 @@ const CreateCandidateModal = ({
                         onClick={(e) => {
                            e.preventDefault();
                            onCancelandReset();
+                           onClose(false)
                         }}
                         variant={"secondary"}
                         className="bg-muted/60 hover:bg-muted"

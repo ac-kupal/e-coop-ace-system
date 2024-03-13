@@ -30,11 +30,11 @@ export const PieGraphSection = ({ params }: TParams) => {
    </div>
 
    return (
-         <Carousel className="min-w-[100px] max-w-[800px] p-3 ">
-            <CarouselContent> 
+         <Carousel className="w-full lg:w-3/4 h-fit p-3 ">
+            <CarouselContent className=""> 
                {votes?.map((position, index) => (
                   <CarouselItem key={index}>
-                     <div className="p-5 w-full rounded-3xl bg-secondary/20 flex xl:justify-center">
+                     <div className="p-5 h-[600px] w-full rounded-3xl bg-secondary/20 flex xl:justify-center">
                               <PieGraphContainer
                                  key={index}
                                  positionName={position.positionName}
