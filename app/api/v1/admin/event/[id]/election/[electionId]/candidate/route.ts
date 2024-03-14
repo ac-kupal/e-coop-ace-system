@@ -1,23 +1,20 @@
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { TCandidate, TCandidatewithVotes, TCreateCandidate, TPosition, TPositionWithCandidates, TPositionWithCandidatesAndPosition } from "@/types";
-import { createCandidateSchema } from "@/validation-schema/candidate";
+import {  TCreateCandidate, TPositionWithCandidates } from "@/types";
+import { candidateId, createCandidateSchema } from "@/validation-schema/candidate";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database"
-import { parseArgs } from "util";
-import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import { validateId } from "@/lib/server-utils";
-import { ZodError, z } from "zod";
-
+import { z } from "zod";
 
 type TCreateCandidateParams = {
    params: { id: number; electionId: number; candidateId: number };
 };
 export const POST = async (req: NextRequest,{params}:TCreateCandidateParams) => {
      try {
-        const candidate: TCreateCandidate = await req.json();
-        createCandidateSchema.parse(candidate)
+      const candidate: TCreateCandidate = await req.json();
+      createCandidateSchema.parse(candidate)
 
-        z.string().parse(candidate.passbookNumber)
+      z.string().parse(candidate.passbookNumber)
 
       const eventId = params.id
 
@@ -69,7 +66,8 @@ type CandidatesDataType = {
    candidateName: string,
    totalVotes:number
    candidateNameWithNumeric: string,
-   
+   candidateVoters:string
+   votersName:string[]
 }
 
 export const GET = async (req: NextRequest,{params}:TParams) => {
@@ -82,30 +80,49 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
             include:{
                candidates:{
                   include:{
-                     votes:true
+                     votes:{
+                        include:{
+                           attendee:true,
+                           candidate:true,
+                        }
+                     }
                   }
                }
             }
         })
+      //   return NextResponse.json(positions);
+            
         const sampleData = positions.map((position:TPositionWithCandidates) => {
+         const voters:string[] = []
          const candidatesData = position.candidates.map((candidate:any)  => {
            const totalVotes = candidate.votes.length;
+           const candidateVoter = candidate.votes.map((votes:any)=>{
+            const votersName = votes.attendee.lastName + " " + votes.attendee.firstName
+            voters.push(votersName)
+            return {votersName:votersName, value:1}
+           })
+           console.log()
            return {
              ...candidate,
              candidateNameWithNumeric: `${candidate.firstName} ${candidate.lastName} ${"("+totalVotes+")"}`,
              candidateName: `${candidate.firstName} ${candidate.lastName}`,
              totalVotes: totalVotes,
-           };
+             candidateVoters: {CandidateName:`${candidate.firstName} ${candidate.lastName}`, passbookNumber:candidate.passbookNumber, voters:candidateVoter, },
+             votersName:voters
+      
+            };
          });
          return {
            positionName: position.positionName,
            dataSets: candidatesData.map((candidateData:CandidatesDataType) => candidateData.totalVotes),
            candidatesName: candidatesData.map((candidateData:CandidatesDataType) => candidateData.candidateName),
            candidateNameWithNumeric:candidatesData.map((candidatesData:CandidatesDataType)=> candidatesData.candidateNameWithNumeric),
-           candidatesInfo: candidatesData,
+           membersTotalVote:candidatesData.map((candidateData:CandidatesDataType)=> candidateData.candidateVoters),
+           voters:voters
          };
        });
-        return NextResponse.json(sampleData);
+       return NextResponse.json(sampleData);
+       
      } catch (error) {
         return routeErrorHandler(error, req);
      }
