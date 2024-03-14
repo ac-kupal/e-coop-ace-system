@@ -1,22 +1,43 @@
+"use client";
 import React from "react";
 import Link from "next/link";
-import db from "@/lib/database";
+import { useSearchParams } from "next/navigation";
 
 import { CheckCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import InvalidPrompt from "@/components/invalid-prompt";
+import LoadingSpinner from "@/components/loading-spinner";
+
+import { useEvent } from "@/hooks/public-api-hooks/use-events-api";
+import UserAvatar from "@/components/user-avatar";
 
 type Props = {
-  params: { id: string };
+  params: { id: number };
 };
 
-const RegisteredPage = async ({ params }: Props) => {
-  let id = Number(params.id);
+const RegisteredPage = ({ params }: Props) => {
+  const searchParams = useSearchParams();
 
-  if (!params.id || isNaN(id)) return <InvalidPrompt />;
-  const event = await db.event.findUnique({ where: { id, deleted: false } });
-  if (!event) return <InvalidPrompt />;
+  const pb = searchParams.get("pb");
+  const fullName = searchParams.get("fullname");
+  const picture = searchParams.get("picture");
+
+  const { event, isLoading } = useEvent(params.id);
+
+  if (isLoading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-dvh">
+        <LoadingSpinner />
+      </div>
+    );
+
+  if (!event)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-dvh">
+        <InvalidPrompt message="Election was not found" />
+      </div>
+    );
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -37,6 +58,20 @@ const RegisteredPage = async ({ params }: Props) => {
         <div className="gap-y-4 flex flex-col items-center">
           <CheckCircle className="size-14 text-green-600" strokeWidth={1} />
           <p className="text-2xl">You have been registered 🎉</p>
+
+          {pb && fullName && (
+            <div className="flex px-6 py-4 rounded-xl bg-secondary/25 w-full gap-y-2 flex-col items-center">
+              {picture && (
+                <UserAvatar className="size-16" src={picture} fallback=".." />
+              )}
+              <p className="text-2xl lg:text-4xl"> {fullName} </p>
+              <p className="text-xl lg:text-2xl"> {pb} </p>
+              <p className="text-xl text-green-400 lg:text-2xl">
+                Registered
+              </p>
+            </div>
+          )}
+
           <p className="text-foreground/70">
             Your registration will serve as your attendance
           </p>
