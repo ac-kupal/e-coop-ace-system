@@ -98,7 +98,7 @@ const VoteWindow = ({ election }: Props) => {
                 )}
             </div>
             <VoteNavControl
-                casted={data}
+                casted={data !== undefined}
                 currentPage={currentPage}
                 lastPage={totalPositions}
                 isLoading={isCasting}
