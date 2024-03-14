@@ -3,7 +3,7 @@ import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 
 import { sendMail } from "@/lib/mailer";
-import { TVoteAuthorizationPayload } from "@/types";
+import { TMemberAttendeesMinimalInfo, TVoteAuthorizationPayload } from "@/types";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { memberEmailSchema } from "@/validation-schema/member";
 import { chosenCandidateIds } from "@/validation-schema/election";
@@ -84,6 +84,17 @@ export const POST = async (req: NextRequest) => {
             db.eventAttendees.update({
                 where: { id: attendeeId },
                 data: { voted: true },
+                select: {
+                    id: true,
+                    firstName: true, 
+                    middleName: true, 
+                    lastName: true, 
+                    contact: true,
+                    picture: true, 
+                    passbookNumber: true, 
+                    registered: true, 
+                    voted: true 
+                }
             }),
         ]);
 
@@ -109,24 +120,24 @@ export const POST = async (req: NextRequest) => {
                 const voted = position.candidates.filter((candidate) =>
                     candidateIds.includes(candidate.id),
                 );
-                if(voted.length === 0) payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:10px; font-style: italic;">no candidate selected</p>`;
+                if (voted.length === 0) payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:10px; font-style: italic;">no candidate selected</p>`;
                 voted.forEach((candidate) => {
                     payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:16px;">${candidate.firstName} ${candidate.lastName}</p>`;
                 });
             });
 
-            await sendMail( { 
-                subject : "Confirmation: Your Vote has been Successfully Submitted",
-                toEmail : voter.emailAddress,
-                template : {
-                    templateFile : "vote-submit.html",
-                    payload 
+            await sendMail({
+                subject: "Confirmation: Your Vote has been Successfully Submitted",
+                toEmail: voter.emailAddress,
+                template: {
+                    templateFile: "vote-submit.html",
+                    payload
                 }
             }
             );
         }
 
-        const response = NextResponse.json("Ok");
+        const response = NextResponse.json(voterUpdate);
 
         response.cookies.delete("v-auth");
         return response;

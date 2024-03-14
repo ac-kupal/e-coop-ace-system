@@ -31,8 +31,8 @@ const ClaimHome = ({ eventId }: Props) => {
     eventId,
     myInfo !== undefined,
   );
-  const { completeClaim } = useClaimComplete(eventId, () =>
-    router.push("claim/complete"),
+  const { completeClaim } = useClaimComplete(eventId, (member) =>
+    router.push(`claim/complete?pb=${member.passbookNumber}&fullname=${`${member.firstName} ${member.lastName}`}&picture=${member.picture}`),
   );
   const { claimables, isLoadingClaimables } = useClaimablesList(
     eventId,
@@ -71,7 +71,7 @@ const ClaimHome = ({ eventId }: Props) => {
   return (
     <div className="w-full max-w-md lg:max-w-2xl py-8 gap-y-8 flex flex-col">
       {!isLoadingClaims && claimables.length === 0 ? (
-        <p className="text-sm text-cemter">
+        <p className="text-sm text-center">
           Seems like there&apos;s no incentives in this event
         </p>
       ) : (

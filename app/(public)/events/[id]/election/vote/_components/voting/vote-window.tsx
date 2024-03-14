@@ -30,8 +30,8 @@ const VoteWindow = ({ election }: Props) => {
     const [votes, setVotes] = useState<TCandidatewithPosition[]>([]);
 
     const { isPending, isError, error } = loadVoter(election);
-    const { data, castVote, isCasting } = useCastVote(election, () => {
-        router.push(`/events/${election.eventId}/election/vote/complete`);
+    const { data, castVote, isCasting } = useCastVote(election, (voter) => {
+        router.push(`/events/${election.eventId}/election/vote/complete?pb=${voter.passbookNumber}&fullname=${`${voter.firstName} ${voter.lastName}`}&picture=${voter.picture}`);
     });
 
     if (isPending)

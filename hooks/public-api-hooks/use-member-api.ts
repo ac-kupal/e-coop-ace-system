@@ -26,7 +26,7 @@ export const useSearchMemberAttendee = (eventId : number, onSingleFound? : (memb
     return { searchResults, searchMember, isPending, isError, error, reset }
 };
 
-export const useRegisterMember = (eventId: number, onRegister: () => void) => {
+export const useRegisterMember = (eventId: number, onRegister?: (member : TMemberAttendeesMinimalInfo) => void) => {
     const {
         data: registeredMember,
         isPending,
@@ -42,7 +42,8 @@ export const useRegisterMember = (eventId: number, onRegister: () => void) => {
                     data,
                 );
                 toast.success("You have been registered to this event.");
-                onRegister();
+                if(onRegister) onRegister(request.data);
+                return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);

@@ -17,10 +17,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { TMemberAttendeesMinimalInfo } from "@/types";
-import { attendeeRegisterFormSchema } from "@/validation-schema/event-registration-voting";
-import { useRegisterMember } from "@/hooks/public-api-hooks/use-member-api";
 import { cn } from "@/lib/utils";
+import { TMemberAttendeesMinimalInfo } from "@/types";
+import { useRegisterMember } from "@/hooks/public-api-hooks/use-member-api";
+import { attendeeRegisterFormSchema } from "@/validation-schema/event-registration-voting";
 
 type Props = {
   eventId: number;
@@ -30,9 +30,8 @@ type Props = {
 const RegisterAttendance = ({ eventId, member }: Props) => {
   const router = useRouter();
 
-  const { registeredMember, isPending, register, isError, error } =
-    useRegisterMember(eventId, () => {
-      router.push(`/events/${eventId}/register/registered`);
+  const { registeredMember, isPending, register, isError, error } = useRegisterMember(eventId, (member) => {
+      router.push(`/events/${eventId}/register/registered?pb=${member.passbookNumber}&fullname=${`${member.firstName} ${member.lastName}`}&picture=${member.picture}`);
     });
 
   const form = useForm<z.infer<typeof attendeeRegisterFormSchema>>({

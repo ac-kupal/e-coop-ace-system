@@ -36,8 +36,8 @@ export const loadVoter = (election: TElection) => {
     return { voter, isPending, isError, error };
 };
 
-export const useCastVote = ( election: TElection, onSuccess?: (data: any) => void ) => {
-    const { data, isPending: isCasting, isError: isCastError, error: castError, mutate: castVote, } = useMutation<any, string, z.infer<typeof chosenCandidateIds>>({
+export const useCastVote = ( election: TElection, onSuccess?: (data: TMemberAttendeesMinimalInfo) => void ) => {
+    const { data, isPending: isCasting, isError: isCastError, error: castError, mutate: castVote, } = useMutation<TMemberAttendeesMinimalInfo, string, z.infer<typeof chosenCandidateIds>>({
         mutationKey: ["cast-vote"],
         mutationFn: async (chosenCandidatesIds) => {
             try {

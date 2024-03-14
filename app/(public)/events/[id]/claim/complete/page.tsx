@@ -1,6 +1,6 @@
+"use client";
 import React from "react";
 import Link from "next/link";
-import db from "@/lib/database";
 
 import { CheckIcon } from "lucide-react";
 
@@ -8,24 +8,22 @@ import { Button } from "@/components/ui/button";
 import InvalidPrompt from "@/components/invalid-prompt";
 
 import { eventIdSchema } from "@/validation-schema/commons";
+import { useSearchParams } from "next/navigation";
+import { useEvent } from "@/hooks/public-api-hooks/use-events-api";
+import UserAvatar from "@/components/user-avatar";
 
 type Props = {
   params: { id: number };
 };
 
-const CompletePage = async ({ params }: Props) => {
-  const validateParam = eventIdSchema.safeParse(params.id);
+const CompletePage = ({ params }: Props) => {
+  const searchParams = useSearchParams();
 
-  if (!validateParam.success)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-dvh">
-        <InvalidPrompt message={validateParam.error.issues[0].message} />
-      </div>
-    );
+  const pb = searchParams.get("pb");
+  const fullName = searchParams.get("fullname");
+  const picture = searchParams.get("picture");
 
-  const event = await db.event.findUnique({
-    where: { id: validateParam.data },
-  });
+  const { event, isLoading } = useEvent(params.id);
 
   if (!event)
     return (
@@ -52,6 +50,18 @@ const CompletePage = async ({ params }: Props) => {
         </div>
 
         <p className="text-lg">Incentive claim complete</p>
+
+        {pb && fullName && (
+          <div className="flex px-6 py-4 rounded-xl bg-secondary/25 w-full gap-y-2 flex-col items-center">
+            {picture && (
+              <UserAvatar className="size-16" src={picture} fallback=".." />
+            )}
+            <p className="text-2xl lg:text-4xl"> {fullName} </p>
+            <p className="text-xl lg:text-2xl"> {pb} </p>
+            <p className="text-xl text-green-400 lg:text-2xl"> Claim complete </p>
+          </div>
+        )}
+
         <p className="text-foreground/80 text-center">
           Your completed you incentive claims, you can get the actual items on
           the admin.
