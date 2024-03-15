@@ -1,6 +1,6 @@
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import {  TCreateCandidate, TPositionWithCandidates } from "@/types";
-import { candidateId, createCandidateSchema } from "@/validation-schema/candidate";
+import { TCreateCandidate, TPositionWithCandidates } from "@/types";
+import { createCandidateSchema } from "@/validation-schema/candidate";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database"
 import { validateId } from "@/lib/server-utils";
@@ -33,7 +33,6 @@ export const POST = async (req: NextRequest,{params}:TCreateCandidateParams) => 
       if(!!isExistOnMigs == false){
         throw new Error("The candidate must either exist among the members or be a member of MIGS")
       }
-
         const createCandidate = await db.candidate.create({
            data: {
               firstName: candidate.firstName,
@@ -66,8 +65,15 @@ type CandidatesDataType = {
    candidateName: string,
    totalVotes:number
    candidateNameWithNumeric: string,
-   candidateVoters:string
-   votersName:string[]
+   candidateVotersTally:string
+   votersName:Voters[]
+   voters:Voters[]
+}
+
+type Voters = {
+   id:string,
+   votersName:string,
+   value?:number
 }
 
 export const GET = async (req: NextRequest,{params}:TParams) => {
@@ -90,34 +96,52 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
                }
             }
         })
-      //   return NextResponse.json(positions);
-            
         const sampleData = positions.map((position:TPositionWithCandidates) => {
-         const voters:string[] = []
-         const candidatesData = position.candidates.map((candidate:any)  => {
-           const totalVotes = candidate.votes.length;
-           const candidateVoter = candidate.votes.map((votes:any)=>{
-            const votersName = votes.attendee.lastName + " " + votes.attendee.firstName
-            voters.push(votersName)
-            return {votersName:votersName, value:1}
-           })
-           console.log()
-           return {
-             ...candidate,
-             candidateNameWithNumeric: `${candidate.firstName} ${candidate.lastName} ${"("+totalVotes+")"}`,
-             candidateName: `${candidate.firstName} ${candidate.lastName}`,
-             totalVotes: totalVotes,
-             candidateVoters: {CandidateName:`${candidate.firstName} ${candidate.lastName}`, passbookNumber:candidate.passbookNumber, voters:candidateVoter, },
-             votersName:voters
-      
+         const voters:Voters[] = []
+
+
+         position.candidates.forEach((candidate:any)=>{
+               candidate.votes.forEach((votes:any)=>{
+               const votersName = votes.attendee.lastName + " " + votes.attendee.firstName
+               const id = votes.attendee.id
+                voters.push({id:id,votersName:votersName})
+               })
+         })
+         const candidatesData = position.candidates.map((candidate: any) => {
+            const totalVotes = candidate.votes.length;
+            const votersIds: string[] = []
+
+            const candidateVoter = candidate.votes.map((votes: any) => {
+               const votersName = votes.attendee.lastName + " " + votes.attendee.firstName;
+               const votersId = votes.attendee.id
+               votersIds.push(votersId)
+               return {votersName:votersName, id:votersId}
+            });
+            return {
+               ...candidate,
+               candidateNameWithNumeric: `${candidate.firstName} ${candidate.lastName} ${"(" + totalVotes + ")"}`,
+               candidateName: `${candidate.firstName} ${candidate.lastName}`,
+               totalVotes: totalVotes,
+               candidateVotersTally: {
+                  CandidateName: `${candidate.firstName} ${candidate.lastName}`,
+                  passbookNumber: candidate.passbookNumber,
+                  voters: voters.map((voters)=> {
+                     const findVoters = votersIds.find((id)=> id === voters.id)
+                     return {...voters,value:findVoters ? 1 : 0} 
+                  }),
+               },
+               votersName: voters,
+               voters: candidateVoter,
             };
          });
+
+
          return {
            positionName: position.positionName,
            dataSets: candidatesData.map((candidateData:CandidatesDataType) => candidateData.totalVotes),
            candidatesName: candidatesData.map((candidateData:CandidatesDataType) => candidateData.candidateName),
            candidateNameWithNumeric:candidatesData.map((candidatesData:CandidatesDataType)=> candidatesData.candidateNameWithNumeric),
-           membersTotalVote:candidatesData.map((candidateData:CandidatesDataType)=> candidateData.candidateVoters),
+           candidateVotersTally:candidatesData.map((candidateData:CandidatesDataType)=> candidateData.candidateVotersTally),
            voters:voters
          };
        });
