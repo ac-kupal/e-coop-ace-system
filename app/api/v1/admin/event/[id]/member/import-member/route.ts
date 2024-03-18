@@ -34,6 +34,7 @@ const mapAndFilterDuplicates = (membersData: any[], user: { id: number }, id: nu
         firstName: member.firstName ?? "",
         lastName: member.lastName ?? "",
         middleName: member.middleName?.toString() ?? "",
+        gender:member.gender === "M" || member.gender === "Male" ? "Male" : "Female",
         passbookNumber: member.passbookNumber?.toString() ?? generateOTP(6),
         createdBy: user.id,
         birthday: member.birthday ? ExcelDateToJSDate(member.birthday) : undefined,

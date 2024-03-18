@@ -167,10 +167,13 @@ export const createManySchema = z.object({
       })
       .nullable(),
 
-   gender: z
-      .nativeEnum(gender, {
-         required_error: "gender is Requried",
-         invalid_type_error: "Invalid gender data type",
+      gender: z
+      .string()
+      .refine(value => ["M", "Male", "F", "Female"].includes(value), {
+        message: "Invalid gender value. Must be 'M', 'Male', 'F', or 'Female'."
+      })
+      .transform(value => {
+        return value === "M" || value === "Male" ? "Male" : "Female";
       })
       .nullable(),
 
