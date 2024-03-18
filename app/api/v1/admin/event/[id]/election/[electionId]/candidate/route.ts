@@ -155,11 +155,8 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
         });
 
         const results = electionResults.sort((a,b) => a.id - b.id)
-       
-        console.log(results)
-
-         return NextResponse.json(electionResults);
-      // return NextResponse.json(positions);
+         console.log(results)
+         return NextResponse.json(results);
 
        
      } catch (error) {
