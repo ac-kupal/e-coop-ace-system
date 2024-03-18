@@ -107,15 +107,13 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
             }
         })
         
-        const sampleData = positions.map((position) => {
+        const electionResults = positions.map((position) => {
            const voters: { id: number; votersName: string }[] = [];
            const candidates: { id: number; candidateName: string }[] = [];
 
             position.candidates.forEach(candidate => {
                candidates.push({id:candidate.id,candidateName:`${candidate.lastName}, ${candidate.firstName}`})
             })
-
-           // console.log(cand)
 
            position.candidates.forEach((candidate) => {
                candidates.push({
@@ -130,49 +128,19 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
               });
            });
             
-           const votersCandidatesIds = voters.map(voter => voter.id)
-
-           const votersVoteTally = candidates.map(candidate=>( 
-            votersCandidatesIds.includes(candidate.id) ? 1 : 0))
-           
-           const modifiedVoters = voters.map(voter =>({...voter, value:votersVoteTally}))
-
-
            const candidatesData = position.candidates.map((candidate) => {
               const totalVotes = candidate.votes.length;
-              const votersIds = candidate.votes.map((vote) => vote.attendee.id);
-
-            //   const modifiedVoters = voters.map((voter) => ({
-            //      value: votersIds.includes(voter.id) ? 1 : 0,
-            //   }));
-
-            //   const totalVotesForCandidate = modifiedVoters.reduce(
-            //      (total, voter) => total + voter.value,
-            //      0
-            //   );
 
               return {
                  ...candidate,
                  candidateNameWithNumeric: `${candidate.firstName} ${candidate.lastName} (${totalVotes})`,
                  candidateName: `${candidate.firstName} ${candidate.lastName}`,
                  totalVotes,
-                 candidateVotersTally: {
-                    candidateName: `${candidate.firstName} ${candidate.lastName}`,
-                    passbookNumber: candidate.passbookNumber,
-                  //   voters: modifiedVoters,
-                  //   total: totalVotesForCandidate,
-                 },
-                 votersName: voters,
-                 candidates:candidates,
-                 voters: candidate.votes.map((vote) => ({
-                    votersName: `${vote.attendee.lastName} ${vote.attendee.firstName}`,
-                    id: vote.attendee.id,
-                 })),
               };
            });
 
-
            return {
+              id:position.id,
               positionName: position.positionName,
               dataSets: candidatesData.map(
                  (candidateData) => candidateData.totalVotes
@@ -185,8 +153,12 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
               ),
            };
         });
-     
-         return NextResponse.json(sampleData);
+
+        const results = electionResults.sort((a,b) => a.id - b.id)
+       
+        console.log(results)
+
+         return NextResponse.json(electionResults);
       // return NextResponse.json(positions);
 
        
