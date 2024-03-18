@@ -12,6 +12,7 @@ import {
    CarouselPrevious,
 } from "@/components/ui/carousel";
 import { PieGraphContainer } from "./pie-graph-container";
+import NoVoters from "./no-voters";
 
 type TParams = {
    params: { id: number; electionId: number };
@@ -24,12 +25,7 @@ export const PieGraphSection = ({ params }: TParams) => {
    if (isLoading) return <Loading></Loading>;
    if (isError) return <NotFound></NotFound>;
 
-   if(votes?.length === 0) return <div className="w-full h-[50vh] flex justify-center items-center">
-         <div className="flex flex-col items-center space-y-2">
-            <p className="font-bold text-[5rem]">🍃</p>
-            <p className="font-semibold">{`There's still no vote captured!`}</p>
-         </div>
-   </div>
+   if(votes?.length === 0) return <NoVoters></NoVoters>
 
    return (
          <Carousel className="w-full lg:w-3/4 h-fit p-3 ">

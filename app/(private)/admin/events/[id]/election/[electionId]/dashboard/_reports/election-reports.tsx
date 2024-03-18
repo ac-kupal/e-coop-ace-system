@@ -5,6 +5,7 @@ import Loading from "../../_components/loading";
 import NotFound from "../../_components/not-found";
 import { Button } from "@/components/ui/button";
 import { utils, writeFile } from "xlsx";
+import NoVoters from "../_components/no-voters";
 
 type TParams = {
    params: { id: number; electionId: number };
@@ -15,9 +16,12 @@ const ElectionReports = ({ params,electionName }: TParams) => {
    const tableRef = useRef(null);
 
    const { votes, isLoading, isError } = getReportsResults(params);
+   
+   console.log(votes)
 
-   if (isLoading) return <Loading></Loading>;
    if (!votes) return <NotFound></NotFound>;
+   if(votes.sum === 0) return <NoVoters></NoVoters>
+   if (isLoading) return <Loading></Loading>;
 
    return (
       <>
