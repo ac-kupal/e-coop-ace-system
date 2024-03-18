@@ -50,24 +50,22 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
                   const candidateId = vote.candidateId;
                   const voterName = `${vote.attendee.firstName}, ${vote.attendee.lastName}`;
 
-                  // If voter is unique, add them to the unique voters list
                   if (!uniqueVotersIds.has(voterId)) {
                      uniqueVotersIds.add(voterId);
                   }
 
-                  // If the voter's entry doesn't exist in the modifiedVotes array, create it
                   const voterEntryIndex = votes.findIndex(
                      (voter) => voter.id === voterId
                   );
                   if (voterEntryIndex === -1) {
                      const voterVotes = new Array(uniqueCandidates.length).fill(
                         0
-                     ); // Initialize votes array with 0s
+                     ); 
                      const candidateIndex = uniqueCandidates.findIndex(
                         (candidate) => candidate.candidateId === candidateId
                      );
                      if (candidateIndex !== -1) {
-                        voterVotes[candidateIndex] = 1; // Set vote for this candidate to 1
+                        voterVotes[candidateIndex] = 1; 
                      }
                      votes.push({
                         id: voterId,
@@ -76,12 +74,11 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
                         votes: voterVotes,
                      });
                   } else {
-                     // If the voter's entry exists, find the index of the candidate they voted for
                      const candidateIndex = uniqueCandidates.findIndex(
                         (candidate) => candidate.candidateId === candidateId
                      );
                      if (candidateIndex !== -1) {
-                        votes[voterEntryIndex].votes[candidateIndex] = 1; // Set vote for this candidate to 1
+                        votes[voterEntryIndex].votes[candidateIndex] = 1;
                      }
                   }
 
@@ -103,12 +100,8 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
                });
             });
 
-            // Convert the totals to the desired format
             const total = totalVotesPerCandidate;
             const sumOfTotalVotes = total.reduce((sum, votes) => sum + votes, 0);
-            console.log(total);
-            console.log(modifiedVotes);
-            console.log(uniqueCandidates);
             return NextResponse.json({total:total,voters:modifiedVotes,candidates:uniqueCandidates,sum:sumOfTotalVotes});
          }
          
