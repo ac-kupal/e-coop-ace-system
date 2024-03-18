@@ -22,7 +22,7 @@ export const BarGraphSection = ({ params }: TParams) => {
    
    const { votes, isLoading, isError } = getPositionVotesTotal(params);
 
-   console.log(votes)
+   console.log("bar graph", votes)
 
    if (isLoading) return <Loading></Loading>;
    if (isError) return <NotFound></NotFound>;

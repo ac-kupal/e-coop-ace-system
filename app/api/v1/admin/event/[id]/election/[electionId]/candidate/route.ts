@@ -1,5 +1,5 @@
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { TCreateCandidate, TPositionWithCandidates } from "@/types";
+import { TCreateCandidate } from "@/types";
 import { createCandidateSchema } from "@/validation-schema/candidate";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database"
@@ -57,23 +57,33 @@ export const POST = async (req: NextRequest,{params}:TCreateCandidateParams) => 
      }
   };
   
+// type CandidatesDataType = {
+//    candidateName: string,
+//    totalVotes:number
+//    candidateNameWithNumeric: string,
+//    candidateVotersTally:string
+//    votersName:Voters[]
+//    voters:Voters[]
+//    totalVotesForCandidate:number[]
+// }
+
+// type Voters = {
+//    id:string,
+//    votersName:string,
+//    value?:number
+// }
+// type totaTallyType = {
+//    id:string
+//    total:number
+// }
+
 type TParams = {
    params:{id:number,electionId:number}
 } 
 
-type CandidatesDataType = {
-   candidateName: string,
-   totalVotes:number
-   candidateNameWithNumeric: string,
-   candidateVotersTally:string
-   votersName:Voters[]
-   voters:Voters[]
-}
-
-type Voters = {
-   id:string,
-   votersName:string,
-   value?:number
+type candidateValue ={
+   candidateId:number
+   value:number
 }
 
 export const GET = async (req: NextRequest,{params}:TParams) => {
@@ -96,56 +106,89 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
                }
             }
         })
-        const sampleData = positions.map((position:TPositionWithCandidates) => {
-         const voters:Voters[] = []
+        
+        const sampleData = positions.map((position) => {
+           const voters: { id: number; votersName: string }[] = [];
+           const candidates: { id: number; candidateName: string }[] = [];
+
+            position.candidates.forEach(candidate => {
+               candidates.push({id:candidate.id,candidateName:`${candidate.lastName}, ${candidate.firstName}`})
+            })
+
+           // console.log(cand)
+
+           position.candidates.forEach((candidate) => {
+               candidates.push({
+               id: candidate.id,
+               candidateName: `${candidate.lastName}, ${candidate.firstName}`,
+               });
+            
+              candidate.votes.forEach((vote) => {
+                 const votersName = `${vote.attendee.lastName} ${vote.attendee.firstName}`;
+                 const id = vote.candidateId;
+                 voters.push({ id, votersName });
+              });
+           });
+            
+           const votersCandidatesIds = voters.map(voter => voter.id)
+
+           const votersVoteTally = candidates.map(candidate=>( 
+            votersCandidatesIds.includes(candidate.id) ? 1 : 0))
+           
+           const modifiedVoters = voters.map(voter =>({...voter, value:votersVoteTally}))
 
 
-         position.candidates.forEach((candidate:any)=>{
-               candidate.votes.forEach((votes:any)=>{
-               const votersName = votes.attendee.lastName + " " + votes.attendee.firstName
-               const id = votes.attendee.id
-                voters.push({id:id,votersName:votersName})
-               })
-         })
-         const candidatesData = position.candidates.map((candidate: any) => {
-            const totalVotes = candidate.votes.length;
-            const votersIds: string[] = []
+           const candidatesData = position.candidates.map((candidate) => {
+              const totalVotes = candidate.votes.length;
+              const votersIds = candidate.votes.map((vote) => vote.attendee.id);
 
-            const candidateVoter = candidate.votes.map((votes: any) => {
-               const votersName = votes.attendee.lastName + " " + votes.attendee.firstName;
-               const votersId = votes.attendee.id
-               votersIds.push(votersId)
-               return {votersName:votersName, id:votersId}
-            });
-            return {
-               ...candidate,
-               candidateNameWithNumeric: `${candidate.firstName} ${candidate.lastName} ${"(" + totalVotes + ")"}`,
-               candidateName: `${candidate.firstName} ${candidate.lastName}`,
-               totalVotes: totalVotes,
-               candidateVotersTally: {
-                  CandidateName: `${candidate.firstName} ${candidate.lastName}`,
-                  passbookNumber: candidate.passbookNumber,
-                  voters: voters.map((voters)=> {
-                     const findVoters = votersIds.find((id)=> id === voters.id)
-                     return {...voters,value:findVoters ? 1 : 0} 
-                  }),
-               },
-               votersName: voters,
-               voters: candidateVoter,
-            };
-         });
+            //   const modifiedVoters = voters.map((voter) => ({
+            //      value: votersIds.includes(voter.id) ? 1 : 0,
+            //   }));
+
+            //   const totalVotesForCandidate = modifiedVoters.reduce(
+            //      (total, voter) => total + voter.value,
+            //      0
+            //   );
+
+              return {
+                 ...candidate,
+                 candidateNameWithNumeric: `${candidate.firstName} ${candidate.lastName} (${totalVotes})`,
+                 candidateName: `${candidate.firstName} ${candidate.lastName}`,
+                 totalVotes,
+                 candidateVotersTally: {
+                    candidateName: `${candidate.firstName} ${candidate.lastName}`,
+                    passbookNumber: candidate.passbookNumber,
+                  //   voters: modifiedVoters,
+                  //   total: totalVotesForCandidate,
+                 },
+                 votersName: voters,
+                 candidates:candidates,
+                 voters: candidate.votes.map((vote) => ({
+                    votersName: `${vote.attendee.lastName} ${vote.attendee.firstName}`,
+                    id: vote.attendee.id,
+                 })),
+              };
+           });
 
 
-         return {
-           positionName: position.positionName,
-           dataSets: candidatesData.map((candidateData:CandidatesDataType) => candidateData.totalVotes),
-           candidatesName: candidatesData.map((candidateData:CandidatesDataType) => candidateData.candidateName),
-           candidateNameWithNumeric:candidatesData.map((candidatesData:CandidatesDataType)=> candidatesData.candidateNameWithNumeric),
-           candidateVotersTally:candidatesData.map((candidateData:CandidatesDataType)=> candidateData.candidateVotersTally),
-           voters:voters
-         };
-       });
-       return NextResponse.json(sampleData);
+           return {
+              positionName: position.positionName,
+              dataSets: candidatesData.map(
+                 (candidateData) => candidateData.totalVotes
+              ),
+              candidatesName: candidatesData.map(
+                 (candidateData) => candidateData.candidateName
+              ),
+              candidateNameWithNumeric: candidatesData.map(
+                 (candidateData) => candidateData.candidateNameWithNumeric
+              ),
+           };
+        });
+     
+         return NextResponse.json(sampleData);
+      // return NextResponse.json(positions);
+
        
      } catch (error) {
         return routeErrorHandler(error, req);

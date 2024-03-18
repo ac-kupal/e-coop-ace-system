@@ -19,11 +19,26 @@ export type TPositionWithEventID = Position & {eventId:number}
 
 export type TPositionWithCandidates= Position & { candidates : TCandidate[] }
 
+type Voters = {
+     id:string,
+     votersName:string,
+     value?:number
+}
+type candidateVotersTally = {
+     candidateName:string,
+     passbookNumber:string,
+     voters:Voters[]
+     total:number
+}
 export type  BarGraphDataTypes = {
      positionName:string,
      dataSets: number[];
      candidatesName: string[];
      candidateNameWithNumeric: string[];
+     voters:Voters[]
+     candidateVotersTally:candidateVotersTally[]
+     totalVotesForCandidate:number[]
+
 }
 
 // used in public event/[]/election/vote
