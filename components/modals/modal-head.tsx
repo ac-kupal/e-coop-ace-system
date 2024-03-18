@@ -2,9 +2,9 @@ import { ReactNode } from "react";
 import { Separator } from "@/components/ui/separator";
 import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-type Props = { title : string, description : string | ReactNode };
+type Props = { title : string, description : string | ReactNode, showSeparator? : boolean };
 
-const ModalHead = ({ title, description }: Props) => {
+const ModalHead = ({ title, description, showSeparator = true}: Props) => {
     return (
         <>
             <DialogHeader>
@@ -13,7 +13,7 @@ const ModalHead = ({ title, description }: Props) => {
             <DialogDescription className="my-2">
                 { description }
             </DialogDescription>
-            <Separator className="bg-muted/70" />
+            { showSeparator && <Separator className="bg-muted/70" /> }
         </>
     );
 };
