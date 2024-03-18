@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Gift, HandCoins, UserCheck } from "lucide-react";
+import { BarChart2, Gift, HandCoins, UserCheck } from "lucide-react";
 import NavItem from "./nav-item";
 
 type Props = { eventId: number };
@@ -30,6 +30,15 @@ const incentiveRoutes = [
         Icon: (
             <div className="p-1 bg-orange-400 text-white rounded-lg">
                 <HandCoins className="size-4" />
+            </div>
+        ),
+    },
+    {
+        name: "Claim Reports",
+        path: "reports",
+        Icon: (
+            <div className="p-1 bg-rose-400 text-white rounded-lg">
+                <BarChart2 className="size-4" />
             </div>
         ),
     },

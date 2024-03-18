@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TUser, TUserWithBranch } from "@/types";
+import { TUser, TUserMinimalInfo, TUserWithBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createUserSchema, updateUserSchema } from "@/validation-schema/user";
 
