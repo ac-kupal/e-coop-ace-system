@@ -34,16 +34,21 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
                      uniqueCandidateIds.add(candidateId);
                      const candidateName = `${vote.candidate.firstName}, ${vote.candidate.lastName} - ${vote.candidate.position.positionName}`;
                      unique.push({
+                        id:vote.candidate.positionId,
                         candidateId: candidateId,
                         candidateName: candidateName,
                      });
                   }
-                  return unique;
+                  const sortUnique = unique.sort((a,b)=> a.id - b.id)
+                  return sortUnique
                },
-               [] as { candidateId: number; candidateName: string }[]
+               [] as {id:number, candidateId: number; candidateName: string }[]
             );
+           
+            
 
             const uniqueVotersIds = new Set<string>();
+
             const modifiedVotes = votes.reduce(
                (votes, vote) => {
                   const voterId = vote.attendee.id;
