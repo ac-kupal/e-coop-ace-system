@@ -19,6 +19,8 @@ type TParams = {
 export const PieGraphSection = ({ params }: TParams) => {
    const { votes, isLoading, isError } = getPositionVotesTotal(params);
 
+   console.log("pie graph", votes)
+
    if (isLoading) return <Loading></Loading>;
    if (isError) return <NotFound></NotFound>;
 

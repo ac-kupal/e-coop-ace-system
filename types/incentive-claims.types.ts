@@ -38,3 +38,15 @@ export type TIncentiveClaimsWithIncentiveAndAssisted = TIncentive & {
     incentive: TIncentiveMinimalInfo,
     assistedBy : TUserMinimalInfo | null,
 }
+
+export type TIncentiveClaimReportsPerUser = {
+   user : TUserMinimalInfo,
+   incentives : TIncentiveMinimalInfo[],
+   membersAssisted : {
+        id : string,
+        passbookNumber : string,
+        firstName : string,
+        lastName : string,
+        incentiveClaimed : { incentiveId : number }[]
+    }[]
+}

@@ -16,6 +16,7 @@ export * from "./incentive-claims.types";
 export * from "./mail-template.types";
 export * from "./election-settings.types";
 export * from "./incentive-assigned.types";
+export * from "./vote.types"
 
 export type TApiError = { message: string };
 

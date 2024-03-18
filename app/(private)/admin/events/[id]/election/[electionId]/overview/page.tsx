@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/badge';
 import ElectionSwitch from './_components/election-switch';
 import ElectionDetails from './_components/election-details';
 import Header from '../_components/header';
-import { TCandidatewithPosition } from '@/types';
 
 type Props = {
   params: { id: number; electionId: number };
@@ -30,8 +29,6 @@ const page = ({params}:Props) => {
   const isPending = elections.status === "pending";
   const isEnded = elections.status === "done";
   
-  console.log(elections.candidates)
-
   return (
     <div className='space-y-2 relative '>
           {isLive && (

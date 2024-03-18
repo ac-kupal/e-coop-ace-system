@@ -19,7 +19,10 @@ type TParams = {
    params: { id: number; electionId: number };
 };
 export const BarGraphSection = ({ params }: TParams) => {
+   
    const { votes, isLoading, isError } = getPositionVotesTotal(params);
+
+   console.log("bar graph", votes)
 
    if (isLoading) return <Loading></Loading>;
    if (isError) return <NotFound></NotFound>;
