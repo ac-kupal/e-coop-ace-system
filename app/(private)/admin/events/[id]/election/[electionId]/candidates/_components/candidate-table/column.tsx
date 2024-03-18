@@ -13,6 +13,7 @@ import {  TCandidatewithPositionwithEventId } from "@/types";
 import { deleteCandidate } from "@/hooks/api-hooks/candidate-api-hooks";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 const columns: ColumnDef<TCandidatewithPositionwithEventId>[] = [
@@ -66,6 +67,34 @@ const columns: ColumnDef<TCandidatewithPositionwithEventId>[] = [
       {
         return <div> {row.original.position?.positionName}</div>
       },
+   },
+   {
+      id:"edit",
+      cell:({row})=>{
+         const params = {id:row.original.eventId,electionId:row.original.electionId }
+         const queryClient = useQueryClient()
+         const { elections, isLoading, error } = getElectionWithPositionAndCandidates({params});
+         const [onOpenModal, setOnOpenModal] = useState(false);
+         return (
+            <>
+            <UpdateCandidateModal
+               candidate={row.original}
+               positions={elections?.positions}
+               state={onOpenModal}
+               onClose={() => setOnOpenModal(false)}
+            />
+            <Button
+               onClick={() => {
+                  setOnOpenModal(true);
+                  queryClient.invalidateQueries({queryKey: ["get-election-query"],});
+               }}
+               variant={"outline"}
+            >
+               {isLoading ? <Loader2 className=" animate-spin size-4"/>:"edit"}
+            </Button>
+         </>
+         )
+      }
    },
    {
       id: "delete",

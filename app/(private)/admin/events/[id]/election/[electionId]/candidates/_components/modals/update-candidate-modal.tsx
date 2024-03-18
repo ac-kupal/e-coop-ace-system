@@ -75,6 +75,7 @@ const UpdateCandidateModal = ({
    const onCancelandReset = () => {
       onClose(false);
       candidateForm.reset()
+      resetPicker()
    };
    const params = {id:candidate.eventId, electionId:candidate.electionId, candidateId:candidate.id} 
    const updateCandidate = useUpdateCandidate({onCancelandReset},{params})
@@ -84,6 +85,7 @@ const UpdateCandidateModal = ({
 
    const isCandidateOnChange = candidateForm.watch().firstName === candidate.firstName && candidateForm.watch().lastName === candidate.lastName && Number(candidateForm.watch().positionId) === candidate.positionId && candidateForm.watch().picture === candidate.picture
 
+   console.log(candidateForm.watch())
 
    const onSubmit=async(formValues: updateTCandidate)=>{
    console.log(formValues)
@@ -101,7 +103,6 @@ const UpdateCandidateModal = ({
                picture: !image ? "/images/default.png" : image,
             });
          }
-         resetPicker();
       } catch (error) {
          console.log(error);
       }
@@ -112,7 +113,6 @@ const UpdateCandidateModal = ({
          open={state}
          onOpenChange={() => {
             onCancelandReset()
-            resetPicker()
          }}
       >
          <DialogContent className="border-none shadow-2 sm:rounded-2xl max-w-[600px] font-inter">
@@ -198,7 +198,7 @@ const UpdateCandidateModal = ({
                            <FormItem>
                               <FormLabel>Profile</FormLabel>
                               <FormControl>
-                                 <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL} onChange={async (e)=> {field.onChange(await onSelectImage(e))}} />
+                                 <ImagePick className="flex flex-col items-center gap-y-4" url={imageURL}  onChange={async (e)=> {field.onChange(await onSelectImage(e))}} />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
@@ -217,7 +217,7 @@ const UpdateCandidateModal = ({
                      >
                         cancel
                      </Button>
-                     <Button disabled={isCandidateOnChange} type="submit">
+                     <Button onChangeCapture={()=> console.log("hello")} disabled={isCandidateOnChange} type="submit">
                         {isLoading ? (
                            <Loader2
                               className="h-3 w-3 animate-spin"
