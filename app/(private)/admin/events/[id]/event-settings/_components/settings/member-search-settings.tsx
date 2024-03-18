@@ -72,7 +72,7 @@ const MemberSearchModeSettings = ({ loading, eventSettings, onUpdate, }: Props) 
           <p>Name search</p>
           <p className="text-sm text-foreground/60">
             Default searching mode will be set to Name search. The member can
-            search themselves using their <b>Last Name</b> and <b>First Name</b> separated by comma (<span className="text-3xl">,</span>) <br />
+            search themselves using their <b>Last Name</b> and <b>First Name</b> separated by comma and space "(<span className="text-3xl">,&nbsp;</span>)" <br />
             <span className="text-foreground/40">
               Example : Castro, John Limuel{" "}
             </span>
