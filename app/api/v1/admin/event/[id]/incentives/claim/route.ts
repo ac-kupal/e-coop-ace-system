@@ -84,15 +84,12 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         const createAssistClaims = await db.incentiveClaims.createMany({
             data: 
-            
             claims.map((claimEntry) => ({
                 ...claimEntry,
                 eventId,
                 assistedById: currentUser.id,
                 createdBy: currentUser.id,
-                released : true,
                 releasedAt : new Date(),
-                releasedById : currentUser.id
             }))
         });
 
