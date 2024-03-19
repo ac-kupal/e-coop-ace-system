@@ -1,11 +1,8 @@
 "use client";
 import React, { useEffect } from "react";
 import { signOut } from "next-auth/react";
-
 import { DropdownMenuItem, DropdownMenuShortcut } from "@/components/ui/dropdown-menu";
-
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-
 type Props = {  };
 
 const LogOut = ({  }: Props) => {

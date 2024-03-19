@@ -31,7 +31,7 @@ const page = async({ params }: TParams) => {
          <QuorumSection params={params}></QuorumSection>
          <div className="w-full flex space-x-3 justify-start px-2">
             <div className="flex space-x-2 items-center py-5">
-               <div className="p-1 bg-[#22C55E]/80 rounded-lg">
+               <div className="p-1 bg-primary rounded-lg">
                   <Accessibility className="size-5 text-slate-200" />
                </div>
                <h1 className="font-medium">Results & Graphs</h1>
@@ -44,7 +44,7 @@ const page = async({ params }: TParams) => {
          <div>
          <div className="w-full flex space-x-3 justify-start px-2">
             <div className="flex space-x-2 items-center py-5">
-               <div className="p-1 bg-[#22C55E]/80 rounded-lg">
+               <div className="p-1 bg-primary rounded-md">
                   <ClipboardMinus className="size-5 text-slate-200" />
                </div>
                <h1 className="font-medium">Reports</h1>

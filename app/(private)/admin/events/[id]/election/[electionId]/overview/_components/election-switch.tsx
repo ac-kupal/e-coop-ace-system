@@ -1,10 +1,11 @@
+import ActionTooltip from "@/components/action-tooltip";
 import { Button } from "@/components/ui/button";
 import { promptElectionStatus } from "@/hooks/api-hooks/election-api-hooks";
 import { cn } from "@/lib/utils";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { TElectionWithPositionsAndCandidates } from "@/types";
 import { ElectionStatus } from "@prisma/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, Play, Power } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 
@@ -14,8 +15,8 @@ type Props = {
    params: { id: number; electionId: number };
 };
 
-const ElectionSwitch = ({ status, election,params }: Props) => {
-   const promptElection = promptElectionStatus({params});
+const ElectionSwitch = ({ status, election, params }: Props) => {
+   const promptElection = promptElectionStatus({ params });
 
    const isLoading = promptElection.isPending;
 
@@ -28,31 +29,54 @@ const ElectionSwitch = ({ status, election,params }: Props) => {
       election.positions.length >= 1 && election.candidates.length >= 1;
    return (
       <div className="absolute -top-3 right-3 lg:right-0 lg:top-0  flex space-x-3">
-         <Button
-            disabled={isDone || !allowedToStart}
-            onClick={() => {
-               onOpenConfirmModal({
-                  title: "You are about to End the Election",
-                  description:
-                     "Are you sure you want to end the election? Ending the election will not preserve incoming votes. ",
-
-                  onConfirm: () => {
-                     try {
-                        promptElection.mutate({
-                           status: ElectionStatus.done,
-                        });
-                     } catch (error) {
-                        console.log(error);
-                     }
-                  },
-               });
-            }}
-            className={cn(
-               "text-white hover:scale-105 cursor-pointer hover:bg-secondary/90 bg-secondary-foreground  dark:bg-secondary rounded-xl"
-            )}
+         <ActionTooltip
+            side="top"
+            align="center"
+            content={
+               <div className="flex items-center gap-x-2">
+                   <Power className="size-4 text-red-700" /> End Election.
+               </div>
+            }
          >
-            {isLoading ? <Loader2 className=" size-4 animate-spin " /> : "end"}
-         </Button>
+            <Button
+               disabled={isDone || !allowedToStart}
+               onClick={() => {
+                  onOpenConfirmModal({
+                     title: "You are about to End the Election",
+                     description:
+                        "Are you sure you want to end the election? Ending the election will not preserve incoming votes. ",
+
+                     onConfirm: () => {
+                        try {
+                           promptElection.mutate({
+                              status: ElectionStatus.done,
+                           });
+                        } catch (error) {
+                           console.log(error);
+                        }
+                     },
+                  });
+               }}
+               className={cn(
+                  "text-white hover:scale-105 cursor-pointer hover:bg-black bg-accent-foreground/80  dark:bg-secondary rounded-xl"
+               )}
+            >
+               {isLoading ? (
+                  <Loader2 className=" size-4 animate-spin " />
+               ) : (
+                  "end"
+               )}
+            </Button>
+         </ActionTooltip>
+         <ActionTooltip
+            side="top"
+            align="center"
+            content={
+               <div className="flex items-center gap-x-2">
+                                   <Play className="size-4 text-primary" /> Start Election.
+               </div>
+            }
+         >
          <Button
             disabled={isLive || !allowedToStart}
             onClick={() => {
@@ -88,6 +112,7 @@ const ElectionSwitch = ({ status, election,params }: Props) => {
                "start"
             )}
          </Button>
+         </ActionTooltip>
       </div>
    );
 };

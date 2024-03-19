@@ -20,6 +20,7 @@ import {
 import CreateUserModal from "../modals/create-user-modal";
 import { userList } from "@/hooks/api-hooks/user-api-hooks";
 import { user } from "next-auth";
+import { Card } from "@/components/ui/card";
 
 const UserTable = ({ currentUser } : { currentUser : user}) => {
     const [createModal, setCreateModal] = useState(false)
@@ -66,9 +67,9 @@ const UserTable = ({ currentUser } : { currentUser : user}) => {
     return (
         <div className="flex flex-1 flex-col gap-y-5 ">
             { allowedToCreate && <CreateUserModal state={createModal} editor={currentUser} onClose={(state) => setCreateModal(state)} /> }
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
+            <Card className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 dark:bg-secondary/30  ">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
-                    <div className="relative text-white">
+                    <div className="relative ">
                         <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                         <Input
                             ref={onFocusSearch}
@@ -77,7 +78,7 @@ const UserTable = ({ currentUser } : { currentUser : user}) => {
                             onChange={(event) =>
                                 setGlobalFilter(event.target.value)
                             }
-                            className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="w-full pl-8 border-0 border-b bg-transparent text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
                 </div>
@@ -86,14 +87,14 @@ const UserTable = ({ currentUser } : { currentUser : user}) => {
                     <Button
                         disabled={currentUser.role === "staff"}
                         size="sm"
-                        className="flex rounded-md justify-center bg-[#5B9381] hover:bg-[#5B9381]/70 items-center md:space-x-2 md:min-w-[7rem]"
+                        className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                         onClick={()=>setCreateModal(true)}
                     >
                         Add 
                         <Plus className="w-4 h-4" />
                     </Button>
                 </div>
-            </div>
+            </Card>
             <DataTable className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl" isError={isError} isLoading={isLoading || isFetching} table={table} />
             <DataTablePagination  table={table}/>
         </div>
