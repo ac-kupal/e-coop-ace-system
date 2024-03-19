@@ -28,7 +28,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         if (!memberAttendee)
             return NextResponse.json(
                 { message: "Not found, for verification" },
-                { status: 404 }
+                { status: 404 },
             );
 
         // DUE TO CHANGES / REQUEST of client,
@@ -47,13 +47,13 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 memberAttendee.birthday,
                 birthday.toDateString(),
                 memberAttendee.birthday.toDateString(),
-                isSameDay(birthday, memberAttendee.birthday)
+                isSameDay(birthday, memberAttendee.birthday),
             );
 
             if (!isSameDay(birthday, memberAttendee.birthday))
                 return NextResponse.json(
                     { message: "Wrong birthday, please try again" },
-                    { status: 403 }
+                    { status: 403 },
                 );
         }
 
@@ -81,7 +81,15 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 },
             });
 
-        return NextResponse.json(registered);
+        const response = NextResponse.json(registered);
+
+        response.cookies.set("recent-user", registered.passbookNumber, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: true,
+        });
+
+        return response;
     } catch (e) {
         console.error(e);
         return routeErrorHandler(e, req);
