@@ -51,7 +51,10 @@ const EventTable = () => {
                state={createEvent}
                onClose={(state) => setCreateEvent(state)}
             />
-            <h1 className="font-bold text-3xl">Events</h1>
+            <div className="">
+               <h1 className="font-bold text-[min(24px,3vw)]">Events</h1>
+               <p className="text-sm">manage events and elections</p>
+            </div>
             <Button
                size="sm"
                className={cn(
@@ -91,7 +94,7 @@ const EventTable = () => {
                table={table}
             />
             <div className="lg:hidden p-5">
-               <DataTableBasicPagination2  table={table} />
+               <DataTableBasicPagination2 table={table} />
             </div>
             <div className="hidden lg:p-5 lg:block">
                <DataTablePagination pageSizes={[5, 10, 15]} table={table} />

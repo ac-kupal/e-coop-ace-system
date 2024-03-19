@@ -38,7 +38,7 @@ type Props = {
 
 const ElectionSideBar =({params}:Props ) => {
   return (
-    <Card className="flex flex-row lg:flex-col w-full h-full py-3 dark:border-0 px-3 lg:px-0  justify-evenly  gap-1 lg:gap-5 lg:py-10 bg-background  lg:min-h-screen  dark:bg-secondary/30 shadow lg:shadow-md  lg:justify-start    ">
+    <Card className="flex flex-row lg:flex-col w-full h-full py-3 border-0 dark:border-0 px-3 lg:px-0  justify-evenly  gap-1 lg:gap-5 lg:py-10   lg:min-h-screen  dark:bg-secondary/30 shadow lg:shadow-md  lg:justify-start    ">
     {SideBar.map((route:TNavListRoute, i) => (
        <ElectionSideBarItems params={params} route={route} key={i} />
     ))}

@@ -66,7 +66,7 @@ const BranchesTable = () => {
             state={createModal}
             onClose={(state) => setCreateModal(state)}
          />
-         <Card className="dark:bg-secondary/30">
+         <Card className="dark:bg-secondary/30 border-0">
             <CardContent className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2   ">
                <div className="flex items-center gap-x-4 text-muted-foreground">
                   <div className="relative text">
@@ -96,7 +96,7 @@ const BranchesTable = () => {
             </CardContent>
          </Card>
          <DataTable
-            className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl border"
+            className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl "
             isError={isError}
             isLoading={isLoading || isFetching}
             table={table}

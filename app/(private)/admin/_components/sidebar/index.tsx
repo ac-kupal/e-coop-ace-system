@@ -24,13 +24,12 @@ const SideBar = async (props: Props) => {
       <div className="w-60 border h-screen py-5 overflow-clip shadow-md dark:bg-background flex flex-col gap-y-8 items-center">
          <Link
             href="/"
-            className="hidden lg:flex text-[min(22px,3.5vw)] font-bold items-center"
+            className="hidden lg:flex text-[min(20px,3.5vw)] font-bold items-center"
          >
             <h1>
-               <span className="text-md">e</span>Coop ACE System
+               <span className="">e</span>Coop ACE System
             </h1>
          </Link>
-
          <div className=" flex flex-col space-y-4 items-center">
             <DropdownMenu>
                <DropdownMenuTrigger asChild>

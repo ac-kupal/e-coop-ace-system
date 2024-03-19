@@ -7,6 +7,8 @@ import { eventIdSchema } from "@/validation-schema/commons";
 import { Separator } from "@/components/ui/separator";
 import { CalendarCheck, CalendarDays, MapPin } from "lucide-react";
 import moment from "moment";
+import BackButton from "@/components/back";
+import EventHeader from "./_components/event-header";
 
 type Props = {
    children: ReactNode;
@@ -14,7 +16,7 @@ type Props = {
 };
 
 const EventLayout = async ({ children, params }: Props) => {
-
+  
     const eventIdValidation = eventIdSchema.safeParse(params.id)
 
     if(!eventIdValidation.success) throw eventIdValidation.error.issues[0].message
@@ -24,33 +26,36 @@ const EventLayout = async ({ children, params }: Props) => {
    if (!event) return <NotFound />
 
    return (
-      <div className="font-poppins pt-5 lg:p-7 space-y-4 h-fit overflow-hidden">
-           <h1 className="font-bold text-2xl">Manage Event</h1>   
-         <div className="p-5 w-full rounded-2xl flex flex-col lg:flex-row space-x-0 space-y-3 lg:space-x-16 lg:space-y-0  justify-start shadow-md bg-background dark:bg-secondary/30">
+      <div className="font-poppins pt-2 lg:p-7 space-y-2 lg:space-y-4 h-fit overflow-hidden">
+         <div className="w-full px-2 lg:p-2 flex items-center justify-between">
+         <EventHeader></EventHeader>
+         <BackButton></BackButton>
+         </div>
+         <div className="p-2 w-full rounded-2xl flex flex-col lg:flex-row space-x-0 space-y-1 lg:space-x-16 lg:space-y-0  justify-start shadow-md bg-background dark:bg-secondary/30">
             <div className="flex space-x-2 items-center ">
                <div className="p-1">
-                  <CalendarCheck className="text-primary" />
+                  <CalendarCheck className="size-4 md:size-5 lg:size-6 text-primary" />
                </div>
-               <h1 className="text-[min(18px,4vw)] font-bold text-black/80  dark:text-white/80">{event.title}</h1>
+               <h1 className="text-[min(15px,3.1vw)] font-bold text-black/80  dark:text-white/80">{event.title}</h1>
             </div>
             <div className="flex space-x-2 items-center ">
                <div className=" p-1">
-                  <MapPin className="text-yellow-500 dark:text-yellow-400 " />
+                  <MapPin className="text-yellow-500 size-4 md:size-5 lg:size-6 dark:text-yellow-400 " />
                </div>
-               <h1 className="text-[min(16px,3.8vw)] font-normal text-black/80 dark:text-white/80">
+               <h1 className="text-[min(15px,3.1vw)] font-normal text-black/80 dark:text-white/80">
                   {event.location}
                </h1>
             </div>
             <div className="flex space-x-2 items-center">
                <div className="p-1">
-               <CalendarDays className="text-blue-800 dark:text-blue-500" />
+               <CalendarDays className="size-4 md:size-5 lg:size-6 text-blue-800 dark:text-blue-500" />
                </div>
-               <h1 className="text-[min(16px,3.8vw)] font-normal text-black/80 dark:text-white/80">
+               <h1 className="text-[min(15px,3.1vw)] font-normal text-black/80 dark:text-white/80">
                   {moment(event.date).format("LL")}
                </h1>
             </div>
          </div>
-         <div className="flex flex-col bg-background min-h-screen shadow-xl dark:bg-secondary/30 py-4 space-y-2 lg:space-y-0 overflow-x-hidden w-full ">
+         <div className="flex flex-col bg-background rounded-xl min-h-screen shadow-xl dark:bg-secondary/30 py-4 space-y-2 lg:space-y-0 overflow-x-hidden w-full ">
             <div className="px-5 py-2 w-full">
                <EventNav event={event} />
                <Separator className=""></Separator>

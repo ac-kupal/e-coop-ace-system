@@ -67,7 +67,7 @@ const UserTable = ({ currentUser } : { currentUser : user}) => {
     return (
         <div className="flex flex-1 flex-col gap-y-5 ">
             { allowedToCreate && <CreateUserModal state={createModal} editor={currentUser} onClose={(state) => setCreateModal(state)} /> }
-            <Card className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 dark:bg-secondary/30  ">
+            <Card className="flex flex-wrap items-center border-0 justify-between p-3 rounded-xl gap-y-2 dark:bg-secondary/30  ">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
                     <div className="relative ">
                         <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
