@@ -104,7 +104,7 @@ const ElectionSwitch = ({ status, election, params }: Props) => {
                   },
                });
             }}
-            className={`text-white hover:scale-105 cursor-pointer rounded-xl bg-primary hover:bg-primary/80 dark:bg-primary  dark:hover:bg-primary `}
+            className={`hover:scale-105 cursor-pointer rounded-xl bg-primary hover:bg-primary/80 dark:bg-primary  dark:hover:bg-primary `}
          >
             {isLoading ? (
                <Loader2 className=" size-4 animate-spin " />

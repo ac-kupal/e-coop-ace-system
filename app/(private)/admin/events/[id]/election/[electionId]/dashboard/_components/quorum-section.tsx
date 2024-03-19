@@ -7,11 +7,9 @@ import {
    CardTitle,
 } from "@/components/ui/card";
 import { getMembersQuorum } from "@/hooks/api-hooks/member-api-hook";
-import { getPositionVotesTotal } from "@/hooks/api-hooks/vote-api-hooks";
 import { Sigma, UsersRound, Vote } from "lucide-react";
 import React from "react";
 import Loading from "../../_components/loading";
-import LoadingSpinner from "@/components/loading-spinner";
 type TParams = {
    params: { id: number; electionId: number };
 };
@@ -30,17 +28,17 @@ const QuorumSection = ({ params }: TParams) => {
       <div className="min-w-[200px] flex justify-start flex-col lg:justify-start  xl:flex-row   space-x-0 xl:space-x-10 p-5">
          <div className="min-w-fit ">
             <div className="flex space-x-2  items-center py-5">
-               <div className="p-1 dark:bg-[#c5a522] bg-[#e7c127] rounded-lg">
+               <div className="p-1 dark:bg-[#c5a522] bg-[#e7c127] rounded-sm">
                   <Sigma className="size-5 text-slate-200" />
                </div>
                <h1 className="font-medium">Quorum</h1>
             </div>
-            <Card className="w-full lg:w-fit rounded-2xl">
+            <Card className="w-full lg:w-fit">
                <CardHeader>
                   <CardTitle>Total Attendance</CardTitle>
                </CardHeader>
                <CardContent>
-                  <h1 className="font-bold text-[3rem] text-[#22C55E]">
+                  <h1 className="font-bold text-[3rem] text-primary">
                      {Math.trunc(isNaN(percentageAttendanceTotal) ? 0 : percentageAttendanceTotal)}%
                   </h1>
                   <CardDescription className="text-md">
@@ -51,7 +49,7 @@ const QuorumSection = ({ params }: TParams) => {
          </div>
          <div className="min-w-fit ">
             <div className="flex space-x-2 items-center py-5">
-               <div className="p-1 dark:bg-[#226ec5] bg-[#2d84e8] rounded-lg">
+               <div className="p-1 dark:bg-[#226ec5] bg-[#2d84e8] rounded-sm">
                 <UsersRound className="size-5 text-slate-200"/>
                </div>
                <h1 className="font-medium">Participants</h1>
@@ -61,7 +59,7 @@ const QuorumSection = ({ params }: TParams) => {
                   <CardTitle>Total Votes</CardTitle>
                </CardHeader>
                <CardContent>
-                  <h1 className="font-bold text-[3rem] text-[#22C55E]">
+                  <h1 className="font-bold text-[3rem] text-primary">
                   {Math.trunc(isNaN(percentageVotersTotal) ? 0 : percentageVotersTotal)}%
                   </h1>
                   <CardDescription className="text-md">
@@ -72,7 +70,7 @@ const QuorumSection = ({ params }: TParams) => {
          </div>
          <div className="min-w-fit ">
             <div className="flex space-x-2 items-center py-5">
-               <div className="p-1 bg-[#22C55E]/80 rounded-lg">
+               <div className="p-1 bg-primary rounded-sm">
                 <Vote className="size-5 text-slate-200"/>
                </div>
                <h1 className="font-medium">Voters</h1>
@@ -82,7 +80,7 @@ const QuorumSection = ({ params }: TParams) => {
                   <CardTitle>Vote Summary</CardTitle>
                </CardHeader>
                <CardContent>
-                  <h1 className="font-bold text-[3rem] text-[#22C55E]">
+                  <h1 className="font-bold text-[3rem] text-primary">
                     {members.totalMembersVoted}
                   </h1>
                   <CardDescription className="text-md">

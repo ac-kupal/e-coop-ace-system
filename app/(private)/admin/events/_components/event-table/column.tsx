@@ -198,7 +198,7 @@ const ViewEventQr = ({
 const columns: ColumnDef<TEventWithElection>[] = [
     {
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Actions" />
+            <DataTableColHeader className="font-bold" column={column} title="Actions" />
         ),
         id: "actions",
         enableHiding: false,
@@ -210,7 +210,7 @@ const columns: ColumnDef<TEventWithElection>[] = [
     },
     {
         accessorKey: "id",
-        header: ({ column }) => <DataTableColHeader column={column} title="id" />,
+        header: ({ column }) => (<DataTableColHeader  className="font-bold" column={column} title="id" />),
         cell: ({ row }) => {
             const img =
                 row.original.coverImage === null
@@ -234,7 +234,7 @@ const columns: ColumnDef<TEventWithElection>[] = [
     {
         accessorKey: "title",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="title" />
+            <DataTableColHeader  className="font-bold" column={column} title="title" />
         ),
         cell: ({ row }) => {
             return (
@@ -243,17 +243,19 @@ const columns: ColumnDef<TEventWithElection>[] = [
                 </div>
             );
         },
+        enableSorting: true,
+        
     },
     {
         accessorKey: "description",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="description" />
+            <DataTableColHeader  className="font-bold" column={column} title="description" />
         ),
         cell: ({ row }) => <div className=""> {row.original.description}</div>,
     },
     {
         accessorKey: "date",
-        header: ({ column }) => <DataTableColHeader column={column} title="date" />,
+        header: ({ column }) => <DataTableColHeader  className="font-bold" column={column} title="date" />,
         cell: ({ row }) => (
             <div className="">{moment(row.original.date).format("LL")}</div>
         ),
@@ -261,13 +263,13 @@ const columns: ColumnDef<TEventWithElection>[] = [
     {
         accessorKey: "Address",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Address" />
+            <DataTableColHeader  className="font-bold" column={column} title="Address" />
         ),
         cell: ({ row }) => <div className="">{row.original.location}</div>,
     },
     {
         accessorKey: "type",
-        header: ({ column }) => <DataTableColHeader column={column} title="type" />,
+        header: ({ column }) => <DataTableColHeader  className="font-bold" column={column} title="type" />,
         cell: ({ row }) => <div className="">{row.original.category}</div>,
     },
     {

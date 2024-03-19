@@ -23,9 +23,9 @@ const EventLayout = async ({ children, params }: Props) => {
 
    if (!event) return <NotFound />
 
-   
    return (
       <div className="font-poppins pt-5 lg:p-7 space-y-4 h-fit overflow-hidden">
+           <h1 className="font-bold text-2xl">Manage Event</h1>   
          <div className="p-5 w-full rounded-2xl flex flex-col lg:flex-row space-x-0 space-y-3 lg:space-x-16 lg:space-y-0  justify-start shadow-md bg-background dark:bg-secondary/30">
             <div className="flex space-x-2 items-center ">
                <div className="p-1">
@@ -34,7 +34,7 @@ const EventLayout = async ({ children, params }: Props) => {
                <h1 className="text-[min(18px,4vw)] font-bold text-black/80  dark:text-white/80">{event.title}</h1>
             </div>
             <div className="flex space-x-2 items-center ">
-               <div className="  p-1">
+               <div className=" p-1">
                   <MapPin className="text-yellow-500 dark:text-yellow-400 " />
                </div>
                <h1 className="text-[min(16px,3.8vw)] font-normal text-black/80 dark:text-white/80">
@@ -50,7 +50,7 @@ const EventLayout = async ({ children, params }: Props) => {
                </h1>
             </div>
          </div>
-         <div className="flex flex-col bg-background border-[#00000012] min-h-screen shadow-xl dark:bg-secondary/30 py-4 rounded-3xl space-y-2 lg:space-y-0 overflow-x-hidden lg:p-5  w-full ">
+         <div className="flex flex-col bg-background min-h-screen shadow-xl dark:bg-secondary/30 py-4 space-y-2 lg:space-y-0 overflow-x-hidden w-full ">
             <div className="px-5 py-2 w-full">
                <EventNav event={event} />
                <Separator className=""></Separator>

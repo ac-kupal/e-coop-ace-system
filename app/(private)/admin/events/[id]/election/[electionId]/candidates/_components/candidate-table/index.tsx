@@ -53,7 +53,7 @@ const CandidateTable = ({ data,positions,params}: Props) => {
 
    return (
       <div className="flex flex-1 flex-col gap-y-2 ">
-         <Card className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
+         <Card className="flex flex-wrap items-center dark:bg-transparent border-0 justify-between p-3 rounded-xl gap-y-2 ">
             <CreateCandidateModal
                positions={positions}
                params={params}

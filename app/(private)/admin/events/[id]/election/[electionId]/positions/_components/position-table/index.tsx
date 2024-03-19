@@ -75,7 +75,7 @@ const PositionTable = ({data,electionId,params}: Props) => {
                   }}
                   size="sm"
                   className={cn(
-                     "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                     "flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                   )}
                >
                   Add Position

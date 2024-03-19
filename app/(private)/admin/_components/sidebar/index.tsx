@@ -24,10 +24,10 @@ const SideBar = async (props: Props) => {
       <div className="w-60 border h-screen py-5 overflow-clip shadow-md dark:bg-background flex flex-col gap-y-8 items-center">
          <Link
             href="/"
-            className="hidden lg:flex text-[min(22px,3.5vw)]  font-medium  items-center"
+            className="hidden lg:flex text-[min(22px,3.5vw)] font-bold items-center"
          >
             <h1>
-               <span className="text-lg">e</span>Coop ACE System
+               <span className="text-md">e</span>Coop ACE System
             </h1>
          </Link>
 

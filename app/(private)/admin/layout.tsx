@@ -21,7 +21,7 @@ const AdminLayout = async ({ children }: Props) => {
                 <div className=" lg:flex hidden fixed h-screen bg-background rounded-r-3xl  flex-col inset-y-0 print:hidden">
                     <SideBar />
                 </div>
-                <main className="ml-0 lg:ml-[15rem] mt-16 lg:mt-0 dark:bg-background bg-secondary  overflow-x-hidden flex-1">
+                <main className="ml-0 lg:ml-[15rem] mt-20 lg:mt-0 lg:p-5 dark:bg-background bg-[#F9F9FB]  overflow-x-hidden flex-1">
                     {children}
                 </main>
             </div>

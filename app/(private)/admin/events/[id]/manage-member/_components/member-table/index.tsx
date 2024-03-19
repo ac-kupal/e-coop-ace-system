@@ -207,7 +207,7 @@ const MemberTable = ({ id }: Props) => {
                 table={table}
             />
             <div className="lg:hidden ">
-                <DataTableBasicPagination2 table={table} />
+             <DataTableBasicPagination2 table={table} />
             </div>
             <div className="hidden lg:block">
                 <DataTablePagination

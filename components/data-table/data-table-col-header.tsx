@@ -40,7 +40,7 @@ import {
               size="sm"
               className="-ml-3 h-8 data-[state=open]:bg-accent"
             >
-              <span>{title}</span>
+              <span className="font-bold">{title}</span>
               {column.getIsSorted() === "desc" ? (
                 <ArrowDownIcon className="w-4 h-4 ml-2" />
               ) : column.getIsSorted() === "asc" ? (

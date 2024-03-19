@@ -1,6 +1,6 @@
 "use client"
 import { getElectionWithPositionAndCandidates } from '@/hooks/api-hooks/election-api-hooks';
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Loading from '../_components/loading';
 import NotFound from '../_components/not-found';
 import { Candidates } from './_components/candidates';

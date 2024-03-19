@@ -18,7 +18,8 @@ interface DataTableProps<TData> {
     tableRowClassName? : string;
     isLoading?: boolean;
     isError? : boolean;
-    loadingComponent? : React.ReactNode
+    loadingComponent? : React.ReactNode,
+    headerLayout? : string
 }
 
 const DefaultLoading = () => (<div>
@@ -49,11 +50,12 @@ export default function DataTable<TData>({
     tableRowClassName,
     isError=false,
     loadingComponent = <DefaultLoading />,
+    headerLayout,
 }: DataTableProps<TData>) {
     return (
         <div className={cn("rounded-md px-6 py-4 border-0 bg-background", className)}>
             <Table>
-                <TableHeader>
+                <TableHeader className={cn(headerLayout)}>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => {
