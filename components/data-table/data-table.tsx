@@ -10,6 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "../ui/skeleton";
 
 interface DataTableProps<TData> {
     table: TanstackTable<TData>;
@@ -20,12 +21,34 @@ interface DataTableProps<TData> {
     loadingComponent? : React.ReactNode
 }
 
+const DefaultLoading = () => (<div>
+    <div className="flex w-full py-4 mx-auto space-x-4 justify-evenly">
+        <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+        </div>
+        <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 mx-auto w-[200px]" />
+        </div>
+        <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 ml-auto w-[200px]" />
+        </div>
+    </div>
+    <p className="text-sm text-foreground/40">
+        loading...
+    </p>
+    </div>)
+
+
 export default function DataTable<TData>({
     table,
     isLoading,
     className,
     tableRowClassName,
     isError=false,
+    loadingComponent = <DefaultLoading />,
 }: DataTableProps<TData>) {
     return (
         <div className={cn("rounded-md px-6 py-4 border-0 bg-background", className)}>
@@ -79,7 +102,7 @@ export default function DataTable<TData>({
                                 colSpan={table.getAllColumns().length}
                                 className="h-24 text-center"
                             >
-                                {isLoading ? <p className="text-center text-xs text-foreground/60 animate-pulse ">loading..</p> : (
+                                {isLoading ? loadingComponent : (
                                     <div className={cn("text-foreground/40 text-xs text-center", isError && "text-rose-400")}>
                                         {isError ? "something went wrong" : 
                                         <div>

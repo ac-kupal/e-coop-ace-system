@@ -20,6 +20,7 @@ import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-
 import {  TCandidatewithPositionwithEventId, TPosition } from "@/types";
 import { toast } from "sonner";
 import { FilteredEventMembersForCandidateSelection, getAllEventMembers } from "@/hooks/api-hooks/member-api-hook";
+import { Card } from "@/components/ui/card";
 
 type Props = {
    params: { id: number; electionId: number };
@@ -52,7 +53,7 @@ const CandidateTable = ({ data,positions,params}: Props) => {
 
    return (
       <div className="flex flex-1 flex-col gap-y-2 ">
-         <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
+         <Card className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 ">
             <CreateCandidateModal
                positions={positions}
                params={params}
@@ -81,14 +82,14 @@ const CandidateTable = ({ data,positions,params}: Props) => {
                   }}
                   size="sm"
                   className={cn(
-                     "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                     "flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                   )}
                >
                   Add Candidate
                   <Plus className="w-4 h-4" />
                </Button>
             </div>
-         </div>
+         </Card>
          <DataTable
             className="flex-1 bg-background/50 rounded-"
             table={table}

@@ -11,7 +11,6 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import LogOut from "./log-out";
 import Link from "next/link";
 import {
    Sheet,
@@ -23,6 +22,7 @@ import {
 } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
 import SideBarRoute from "../sidebar/sidebar-route";
+import LogOut from "../sidebar/log-out";
 
 type Props = {};
 
@@ -51,7 +51,7 @@ const NavBar = async ({}: Props) => {
             <h1><span className="text-lg">e</span>Coop ACE System</h1>
          </Link>
          <div className=" flex  space-x-4 items-center">
-            <h1 className="text-white text-[min(14px,2.9vw)]">{user.name}</h1>
+            <h1 className="text-white text-[min(14px,2.9vw)] font-bold">{user.name}</h1>
             <DropdownMenu>
                <DropdownMenuTrigger asChild>
                   <Avatar>

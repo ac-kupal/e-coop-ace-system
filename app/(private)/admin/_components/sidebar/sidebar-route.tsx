@@ -5,6 +5,7 @@ import { GitBranch, Home, PartyPopper, User } from "lucide-react";
 
 import { TRoute } from "@/types";
 import RouteItem from "./route-item";
+import Link from "next/link";
 
 export const AdminRoutes: TRoute[] = [
     {
@@ -33,7 +34,7 @@ type Props = {
 
 const SideBarRoute = ({ currentUser }: Props) => {
     return (
-        <div className="flex-1 flex flex-col gap-y-2 px-2 w-full">
+            <div className="flex-1 flex flex-col gap-y-2 px-2 w-full">
             {AdminRoutes.map((route, i) => (
                 <RouteItem currentUser={currentUser} route={route} key={i} />
             ))}

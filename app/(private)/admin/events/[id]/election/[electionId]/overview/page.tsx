@@ -69,7 +69,7 @@ const page = ({params}:Props) => {
          ></ElectionSwitch>
       <ElectionDetails election={elections}></ElectionDetails>
       <div className="w-full flex space-x-3 justify-start px-2">
-            <Users className="size-5 text-green-700" />
+            <Users className="size-5 text-primary" />
             <h1 className="font-medium">Candidates</h1>
          </div>
       <Candidates data={elections?.candidates} ></Candidates>

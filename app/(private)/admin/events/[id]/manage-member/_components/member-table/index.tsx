@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 
-import { Mails, Plus, ScanLine, SearchIcon, Send } from "lucide-react";
+import { Mails, PersonStandingIcon, Plus, ScanLine, SearchIcon, Send, Users } from "lucide-react";
 
 import columns from "./column";
 import { Button } from "@/components/ui/button";
@@ -137,7 +137,7 @@ const MemberTable = ({ id }: Props) => {
                         <Button
                             size="sm"
                             className={cn(
-                                "flex bg-[#5B9381] gap-x-2  hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                "flex  gap-x-2  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                             )}
                             disabled={isBroadcasting} 
                             onClick={() => {
@@ -152,10 +152,19 @@ const MemberTable = ({ id }: Props) => {
                         </ActionTooltip>
                      </div>
                     <div className="flex-none">
+                    <ActionTooltip
+                        side="top"
+                        align="center"
+                        content={
+                            <div className="flex items-center gap-x-2">
+                                <PersonStandingIcon className="size-4" /> Add Specific Members.
+                            </div>
+                        }
+                        >
                         <Button
                             size="sm"
                             className={cn(
-                                "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                "flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                             )}
                             onClick={() => {
                                 setCreateMember(true);
@@ -164,11 +173,21 @@ const MemberTable = ({ id }: Props) => {
                             <p>Add <span className="hidden lg:inline-block">Member</span></p>
                             <Plus className="w-4 h-4" />
                         </Button>
+                        </ActionTooltip>
                     </div>
+                    <ActionTooltip
+                        side="top"
+                        align="center"
+                        content={
+                            <div className="flex items-center gap-x-2">
+                                <Users className="size-4" /> Bulk Creation.
+                            </div>
+                        }
+                        >
                     <Button
                         size="sm"
                         className={cn(
-                            "flex-none flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                            "flex-none flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                         )}
                         onClick={() => {
                             setOnImportModal(true);
@@ -177,6 +196,7 @@ const MemberTable = ({ id }: Props) => {
                         <p>csv <span className="hidden lg:inline-block">import</span></p>
                         <Plus className="w-4 h-4" />
                     </Button>
+                    </ActionTooltip>
                 </div>
               
             </div>

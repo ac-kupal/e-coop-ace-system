@@ -2,6 +2,7 @@ import React from 'react'
 import {  TNavListRoute} from '@/types'
 import { LayoutDashboard, Users, Medal, Settings2, Combine } from 'lucide-react'
 import ElectionSideBarItems from './election-side-bar-item';
+import { Card } from '@/components/ui/card';
 
 export const SideBar:TNavListRoute [] = [
    {
@@ -37,11 +38,11 @@ type Props = {
 
 const ElectionSideBar =({params}:Props ) => {
   return (
-    <div className="flex flex-row lg:flex-col w-full h-full py-3 rounded-2xl px-3 justify-evenly border border-[#0000000b]  gap-1 lg:gap-5 lg:py-10 bg-secondary  lg:min-h-screen  dark:bg-secondary/50 shadow lg:shadow-md  lg:justify-start    ">
+    <Card className="flex flex-row lg:flex-col w-full h-full py-3 dark:border-0 px-3 lg:px-0  justify-evenly  gap-1 lg:gap-5 lg:py-10 bg-background  lg:min-h-screen  dark:bg-secondary/30 shadow lg:shadow-md  lg:justify-start    ">
     {SideBar.map((route:TNavListRoute, i) => (
        <ElectionSideBarItems params={params} route={route} key={i} />
     ))}
- </div>
+ </Card>
   )
 }
 

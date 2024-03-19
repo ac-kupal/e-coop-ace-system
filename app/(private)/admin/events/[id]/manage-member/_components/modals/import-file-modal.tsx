@@ -1,5 +1,5 @@
 "use client";
-import {  Loader2 } from "lucide-react";
+import {  Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -12,6 +12,10 @@ import { createManyMember,  } from "@/hooks/api-hooks/member-api-hook";
 import { read, utils } from "xlsx";
 import { importCSVSchema } from "@/validation-schema/import-csv";
 import { TMember } from "@/types";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import * as XLSX from 'xlsx'
+import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
    state: boolean;
@@ -59,6 +63,28 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
      createManyMemberMutation.mutate({member:Members,eventId:id})
    };
 
+   const sampleFile = [{
+      passbookNumber:"",
+      lastName:"",
+      firstName:"",
+      middleName:"",
+      gender:"",
+      birthday:"",
+      contact:"",
+      emailAddress:"",
+      registered:"",
+   }]
+
+
+   const handleExportSampleFile = () => {
+      const worksheet = XLSX.utils.json_to_sheet(sampleFile);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      XLSX.writeFile(workbook, "Example Member List Format.xlsx");
+      onClose(false);
+      toast.success("Sample file downloaded");
+   };
+
    return (
       <Dialog
          open={state}
@@ -72,6 +98,19 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
                title="Import Member"
                description="When importing members, ensure that any duplicate passbook entries are skipped. Please ensure to clean your file before saving."
             />
+            <DialogDescription className="text-sm border rounded-xl p-3 bg-secondary/60 flex justify-center flex-col items-center space-y-3">
+            <div>Follow these required column headers when importing:</div>
+            <div className=" flex flex-wrap text-muted-foreground">
+                {Object.keys(sampleFile[0]).map((key,idx)=> {
+                 return<div>
+                  <p className="text-primary" key={idx}> {key} <span className="invisible">__</span></p>
+               </div>
+                 }              
+                )}
+            </div>
+            <Separator className="text-center text-muted-foreground text-[12px]">or download this format</Separator>
+           <Button onClick={handleExportSampleFile} variant={"link"} className="flex items-center justify-center space-x-2"><span>Example Member List Format</span> <Download className="size-4"></Download></Button>
+           </DialogDescription>
             <form onSubmit={onSubmit}>
                <Input
                   type="file"

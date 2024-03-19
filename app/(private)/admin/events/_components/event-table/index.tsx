@@ -19,6 +19,7 @@ import CreateEventModal from "../modals/create-event-modal";
 import { getAllEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { Input } from "@/components/ui/input";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
+import { Card } from "@/components/ui/card";
 
 const EventTable = () => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
@@ -45,20 +46,20 @@ const EventTable = () => {
 
    return (
       <div className="flex flex-1 flex-col gap-y-5">
-         <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
+         <Card className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 dark:bg-secondary/30 ">
             <CreateEventModal
                state={createEvent}
                onClose={(state) => setCreateEvent(state)}
             />
             <div className="flex items-center gap-x-4 text-muted-foreground">
                <div className="relative">
-                  <SearchIcon className="absolute text-white w-4 h-auto top-3 left-2" />
+                  <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                   <Input
                      ref={onFocusSearch}
                      placeholder="Search..."
                      value={globalFilter}
                      onChange={(event) => setGlobalFilter(event.target.value)}
-                     className="w-full pl-8 bg-transparent border-white text-accent placeholder:text-white border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                     className="w-full pl-8 bg-transparent  border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                </div>
             </div>
@@ -67,7 +68,7 @@ const EventTable = () => {
                <Button
                   size="sm"
                   className={cn(
-                     "flex bg-[#5B9381] hover:bg-[#5B9381]/70 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                     "flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                   )}
                   onClick={() => setCreateEvent(true)}
                >
@@ -75,7 +76,7 @@ const EventTable = () => {
                   <Plus className="w-4 h-4" />
                </Button>
             </div>
-         </div>
+         </Card>
          <DataTable
             className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl"
             isError={isError}
