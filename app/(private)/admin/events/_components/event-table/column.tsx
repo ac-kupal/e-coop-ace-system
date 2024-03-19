@@ -294,11 +294,11 @@ const columns: ColumnDef<TEventWithElection>[] = [
                     <Link
                         href={`/admin/events/${row.original.id}/election/${row.original.election.id}/overview`}
                     >
-                        <Button className=" rounded-xl h-8">View List</Button>
+                        <Button size="sm" className=" rounded-xl h-8">View List</Button>
                     </Link>
                 ) : (
                     <Link href={`/admin/events/${row.original.id}/manage-member`}>
-                        <Button className=" rounded-xl h-8">View List</Button>
+                        <Button size="sm" className=" rounded-xl h-8">View List</Button>
                     </Link>
                 )}
             </div>
