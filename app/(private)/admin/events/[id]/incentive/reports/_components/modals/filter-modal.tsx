@@ -15,6 +15,7 @@ import {
     CommandSeparator,
 } from "@/components/ui/command";
 import LoadingSpinner from "@/components/loading-spinner";
+import UserAvatar from "@/components/user-avatar";
 
 type Props = {
     state: boolean;
@@ -47,7 +48,7 @@ const FilterModal = ({ state, onClose, selectedIds, setIds }: Props) => {
                                     <span>Yours</span>
                                 </div>
                                 {selectedIds.length === 0 && (
-                                    <FaCheck className="text-teal-500 size-4" />
+                                    <FaCheck className="text-primary size-4" />
                                 )}
                             </CommandItem>
                             <CommandItem
@@ -63,7 +64,7 @@ const FilterModal = ({ state, onClose, selectedIds, setIds }: Props) => {
                                     <span>All Users</span>
                                 </div>
                                 {selectedIds.length === data.length && data.length !== 0 && (
-                                    <FaCheck className="text-teal-500 size-4" />
+                                    <FaCheck className="text-primary size-4" />
                                 )}
                             </CommandItem>
                         </CommandGroup>
@@ -85,12 +86,13 @@ const FilterModal = ({ state, onClose, selectedIds, setIds }: Props) => {
                                         className="rounded-lg hover:bg-secondary/20 p-3 cursor-pointer flex justify-between"
                                     >
                                         <div className="flex gap-x-2">
-                                            <AiOutlineUser className="mr-2 h-4 w-4" />
+                                            {/** <AiOutlineUser className="mr-2 h-4 w-4" /> **/}
+                                            <UserAvatar className="size-4" src={user.picture as ""} fallback={`${user.name.substring(0,2)}`} />
                                             <span>{user.name}</span>
                                         </div>
 
                                         {selected && (
-                                            <FaCheck className="text-teal-500 size-4" />
+                                            <FaCheck className="text-primary size-4" />
                                         )}
                                     </CommandItem>
                                 );

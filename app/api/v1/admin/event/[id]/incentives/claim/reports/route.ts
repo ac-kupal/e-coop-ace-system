@@ -9,8 +9,7 @@ import { TIncentiveClaimReportsPerUser } from "@/types";
 
 type TParams = { params: { id: number } };
 
-
-// Request like this by providing an ids seach param 
+// Request like this by providing an ids seach param
 // if no ids provided, current user id will be used to get the report
 // Example http://localhost:3000/api/v1/admin/event/1/incentives/reports?ids=1,2,3,4
 
@@ -34,6 +33,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 itemName: true,
             },
             where: { eventId },
+            orderBy: { id: "asc" },
         });
 
         if (incentives.length === 0)
@@ -53,10 +53,10 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                         name: true,
                         email: true,
                     },
-                    where: { id: userId},
+                    where: { id: userId },
                 });
 
-                if(!user) return
+                if (!user) return;
 
                 const claims = await db.eventAttendees.findMany({
                     where: {
@@ -71,9 +71,11 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                         lastName: true,
                         incentiveClaimed: {
                             select: { incentiveId: true },
+                            where: { assistedById: { equals: userId } },
                             orderBy: { incentiveId: "asc" },
                         },
                     },
+                    orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
                 });
 
                 reports.push({
@@ -83,6 +85,8 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 });
             }),
         );
+
+        reports.sort((a, b) => a.user.id - b.user.id);
 
         return NextResponse.json(reports);
     } catch (e) {
