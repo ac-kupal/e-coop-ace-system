@@ -15,7 +15,7 @@ const InfoModal = () => {
 
     return (
         <Dialog open={ isOpen } onOpenChange={ onClose }>
-            <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
+            <DialogContent className="max-w-fit shadow-2 border-none shadow-2 sm:rounded-2xl font-inter">
                 <DialogHeader>
                     <DialogTitle className="font-medium">{infoDatas?.title}</DialogTitle>
                 </DialogHeader>
