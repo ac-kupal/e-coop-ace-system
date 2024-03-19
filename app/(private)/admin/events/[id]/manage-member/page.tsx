@@ -14,7 +14,7 @@ const page = async ({params}:Props) => {
   if(!EventId) return <NotFound></NotFound>
   
   return (
-    <div className='flex p-4 min-h-screen flex-col w-full'>
+    <div className='flex p-2 min-h-screen flex-col w-full'>
       <MemberTable id={EventId}></MemberTable>
     </div>
   )

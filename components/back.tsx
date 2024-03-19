@@ -9,7 +9,7 @@ const BackButton = () => {
    
    return (
       <>
-         <Button onClick={() => router.back()} variant={"ghost"}>
+         <Button onClick={() => router.back()} variant={"ghost"} className="text-[min(14px,3vw)]">
             <ArrowLeft className="size-4"></ArrowLeft>
             back
          </Button>

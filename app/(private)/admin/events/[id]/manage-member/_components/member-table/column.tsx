@@ -192,6 +192,10 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
     );
 };
 
+const Cell = ({ text,className}: { text: string | null,className?:string }) => {
+    return <p className={`text-[min(14px,2.9vw)] fon-bold uppercase ${className}`}>{text}</p>;
+};
+
 const columns: ColumnDef<TMemberWithEventElectionId>[] = [
     {
         id: "actions",
@@ -222,7 +226,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
                             {row.original.firstName.charAt(0).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
-                    <h1 className="font-medium">{row.original.firstName.toUpperCase()}</h1>
+                    <Cell text={row.original.firstName}></Cell>
                 </div>
             );
         },
@@ -232,14 +236,14 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Last Name" />
         ),
-        cell: ({ row }) => <div className=""> {row.original.lastName.toUpperCase()}</div>,
+        cell: ({ row }) =>  <Cell text={row.original.lastName}></Cell>,
     },
     {
         accessorKey: "middleName",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Middle" />
         ),
-        cell: ({ row }) => <div className="">{row.original.middleName?.toUpperCase()}</div>,
+        cell: ({ row }) => <Cell text={row.original.middleName}></Cell>,
     },
     {
         accessorKey: "passbookNumber",
@@ -247,7 +251,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
             <DataTableColHeader column={column} title="Passbook N0." />
         ),
         cell: ({ row }) => (
-            <div className="">{row.original.passbookNumber}</div>
+            <Cell text={row.original.passbookNumber}></Cell>
         ),
     },
     {
@@ -255,7 +259,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Vote OTP" />
         ),
-        cell: ({ row }) => <div className="">{row.original.voteOtp}</div>,
+        cell: ({ row }) => <Cell text={row.original.voteOtp }></Cell>,
     },
 
     {
@@ -265,7 +269,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
             <DataTableColHeader column={column} title="Birthday" />
         ),
         cell: ({ row }) => (
-            <div className="">{!row.original.birthday ? "":moment(row.original.birthday).format("LL")}</div>
+            <Cell text={!row.original.birthday ? "":moment(row.original.birthday).format("LL")}></Cell>
         ),
     },
     {
@@ -273,21 +277,21 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Contact" />
         ),
-        cell: ({ row }) => <div className="">{row.original.contact}</div>,
+        cell: ({ row }) => <Cell text={row.original.contact}></Cell>,
     },
     {
         accessorKey: "emailAddress",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Email" />
         ),
-        cell: ({ row }) => <div className="">{row.original.emailAddress}</div>,
+        cell: ({ row }) =><Cell text={row.original.emailAddress}></Cell>,
     },
     {
         accessorKey: "gender",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Gender" />
         ),
-        cell: ({ row }) => <div className="">{row.original.gender}</div>,
+        cell: ({ row }) =><Cell text={row.original.gender}></Cell>,
         enableHiding:true,
         enableSorting:false
     },
@@ -300,10 +304,12 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
             <div className="">
                 {row.original.voted ? (
                     <Badge className={cn("bg-green-500 text-accent border-0")} >
-                        voted
+                    <Cell className="lowercase" text="voted"></Cell>
                     </Badge>
                 ) : (
-                    <Badge variant={"secondary"} className={cn(" bg-secondary")} >Unvoted</Badge>
+                    <Badge variant={"secondary"} className={cn(" bg-secondary")} >
+                          <Cell className="lowercase" text="Unvoted"></Cell>
+                        </Badge>
                 )}
             </div>
         ),
@@ -318,11 +324,11 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         cell: ({ row }) => (
             <div className="">
                 {row.original.registered ? (
-                    <Badge className="dark:text-white text-white bg-primary">
-                        registered
+                    <Badge className="text-primary border-0  bg-primary/40">
+                          <Cell className="lowercase" text="registered"></Cell>
                     </Badge>
                 ) : (
-                    <Badge variant={"secondary"}>unregistered</Badge>
+                    <Badge  variant={"secondary"}>unregistered</Badge>
                 )}
             </div>
         ),

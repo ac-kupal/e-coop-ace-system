@@ -10,7 +10,7 @@ const EventHeader = () => {
   const isCurrentPathElection = pathname.includes("election");
   return (
     <div>
-           <h1 className="font-bold text-[min(20px,3vw)]">Manage {isCurrentPathElection ? "Election":"Event"}</h1>   
+           <h1 className="font-bold text-[min(20px,3.5vw)]">Manage {isCurrentPathElection ? "Election":"Event"}</h1>   
     </div>
   )
 }

@@ -46,14 +46,14 @@ const EventTable = () => {
 
    return (
       <div className="flex flex-1 flex-col gap-y-5">
-         <div className="flex justify-between px-1">
+         <div className="flex justify-between items-center px-5 lg:px-1">
             <CreateEventModal
                state={createEvent}
                onClose={(state) => setCreateEvent(state)}
             />
             <div className="">
-               <h1 className="font-bold text-[min(24px,3vw)]">Events</h1>
-               <p className="text-sm">manage events and elections</p>
+               <h1 className="font-bold text-[min(22px,3.7vw)]">Events</h1>
+               <p className="text-[min(14px,3.4vw)]">manage events and elections</p>
             </div>
             <Button
                size="sm"
@@ -66,9 +66,9 @@ const EventTable = () => {
                <Plus className="w-4 h-4" />
             </Button>
          </div>
-         <Card className="h-full border-0 min-h-screen bg-background dark:bg-secondary/30 ">
-            <div className="flex w-full px-5 pt-5 items-center justify-end space-x-5">
-               <div className="items-center gap-x-4 text-muted-foreground">
+         <Card className="h-full border-0 min-h-[70vh] bg-background dark:bg-secondary/30 ">
+            <div className="flex w-full px-5  justify-between pt-5 items-center lg:justify-start space-x-3">
+               <div className="items-center w-full gap-x-4 text-muted-foreground">
                   <div className="relative">
                      <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
                      <Input
@@ -82,13 +82,13 @@ const EventTable = () => {
                      />
                   </div>
                </div>
-               <div>
-                  <DataTableViewOptions table={table} />
+               <div className="">
+                  <DataTableViewOptions className="h-10 " table={table} />
                </div>
             </div>
             <DataTable
                headerLayout="bg-secondary"
-               className="flex-1 min-h-screen dark:bg-transparent rounded-2xl"
+               className="flex-1 min-h-[70vh] dark:bg-transparent rounded-2xl"
                isError={isError}
                isLoading={isLoading || isFetching}
                table={table}

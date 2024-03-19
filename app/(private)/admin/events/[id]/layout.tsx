@@ -22,11 +22,11 @@ const EventLayout = async ({ children, params }: Props) => {
     if(!eventIdValidation.success) throw eventIdValidation.error.issues[0].message
 
    const event = await db.event.findUnique({ where : { id : eventIdValidation.data }, include : { election : true }})
-
+   
    if (!event) return <NotFound />
 
    return (
-      <div className="font-poppins pt-2 lg:p-7 space-y-2 lg:space-y-4 h-fit overflow-hidden">
+      <div className="font-poppins pt-2 lg:px-7 space-y-2 lg:space-y-4 h-fit overflow-hidden">
          <div className="w-full px-2 lg:p-2 flex items-center justify-between">
          <EventHeader></EventHeader>
          <BackButton></BackButton>
@@ -55,10 +55,10 @@ const EventLayout = async ({ children, params }: Props) => {
                </h1>
             </div>
          </div>
-         <div className="flex flex-col bg-background rounded-xl min-h-screen shadow-xl dark:bg-secondary/30 py-4 space-y-2 lg:space-y-0 overflow-x-hidden w-full ">
-            <div className="px-5 py-2 w-full">
+         <div className="flex flex-col bg-background rounded-xl min-h-screen shadow-xl dark:bg-secondary/30 py-2  overflow-x-hidden w-full ">
+            <div className="px-2 w-full">
                <EventNav event={event} />
-               <Separator className=""></Separator>
+               <Separator className="hidden md:block"></Separator>
             </div>
             <div>{children}</div>
          </div>
