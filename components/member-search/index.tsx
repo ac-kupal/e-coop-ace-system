@@ -26,6 +26,7 @@ import { TMemberAttendeesMinimalInfo } from "@/types";
 import { useEventSettingsPublic } from "@/hooks/public-api-hooks/use-events-api";
 import { useSearchMemberAttendee } from "@/hooks/public-api-hooks/use-member-api";
 import { memberAttendeeSearchSchema } from "@/validation-schema/event-registration-voting";
+import RecentMember from "./recent-member";
 
 type Props = {
   eventId: number;
@@ -61,6 +62,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
 
   return (
     <div className="flex flex-col items-center gap-y-4">
+      <RecentMember eventId={eventId} onSelect={(member) => onFound(member)} />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((pbForm) => searchMember(pbForm))}
