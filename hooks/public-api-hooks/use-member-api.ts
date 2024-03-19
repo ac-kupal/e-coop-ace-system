@@ -1,7 +1,7 @@
 import z from "zod";
 import axios from "axios";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { handleAxiosErrorMessage } from "@/utils";
 import { attendeeRegisterFormSchema, memberAttendeeSearchSchema } from "@/validation-schema/event-registration-voting";
@@ -54,3 +54,20 @@ export const useRegisterMember = (eventId: number, onRegister?: (member : TMembe
 
     return { registeredMember, isPending, register, isError, error };
 };
+
+export const useRecentMember = ( eventId : number ) => {
+    const { data : member, isLoading } = useQuery<TMemberAttendeesMinimalInfo, string>({
+       queryKey : ["recent-member"],
+        queryFn : async () => {
+            try{
+                const request = await axios.get(`/api/v1/public/event/${eventId}/event-attendee/recent`);
+                return request.data;
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e);
+                console.log("public recent member error:",errorMessage);
+            }
+        }
+    });
+
+    return { member, isLoading }
+}

@@ -140,6 +140,12 @@ export const POST = async (req: NextRequest) => {
         const response = NextResponse.json(voterUpdate);
 
         response.cookies.delete("v-auth");
+        response.cookies.set("recent-user", voterUpdate.passbookNumber, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: true,
+        });
+
         return response;
     } catch (e) {
         return routeErrorHandler(e, req);
