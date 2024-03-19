@@ -210,7 +210,7 @@ const columns: ColumnDef<TEventWithElection>[] = [
     },
     {
         accessorKey: "id",
-        header: ({ column }) => (<DataTableColHeader  className="font-bold" column={column} title="id" />),
+        header: ({ column }) => (<DataTableColHeader  className="font-bold" column={column} title="title" />),
         cell: ({ row }) => {
             const img =
                 row.original.coverImage === null
@@ -228,23 +228,7 @@ const columns: ColumnDef<TEventWithElection>[] = [
                 </div>
             );
         },
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: "title",
-        header: ({ column }) => (
-            <DataTableColHeader  className="font-bold" column={column} title="title" />
-        ),
-        cell: ({ row }) => {
-            return (
-                <div className="flex space-x-2">
-                    <h1>{row.original.title}</h1>
-                </div>
-            );
-        },
-        enableSorting: true,
-        
+       
     },
     {
         accessorKey: "description",

@@ -64,7 +64,7 @@ const EventTable = () => {
             </Button>
          </div>
          <Card className="h-full border-0 min-h-screen bg-background dark:bg-secondary/30 ">
-            <div className="flex w-full px-5 pt-5   items-center justify-end space-x-5">
+            <div className="flex w-full px-5 pt-5 items-center justify-end space-x-5">
                <div className="items-center gap-x-4 text-muted-foreground">
                   <div className="relative">
                      <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
@@ -90,10 +90,10 @@ const EventTable = () => {
                isLoading={isLoading || isFetching}
                table={table}
             />
-            <div className="lg:hidden">
+            <div className="lg:hidden p-5">
                <DataTableBasicPagination2  table={table} />
             </div>
-            <div className="hidden lg:block">
+            <div className="hidden lg:p-5 lg:block">
                <DataTablePagination pageSizes={[5, 10, 15]} table={table} />
             </div>
          </Card>
