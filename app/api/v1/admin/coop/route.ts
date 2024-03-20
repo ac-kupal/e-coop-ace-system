@@ -9,7 +9,11 @@ export const GET = async (req: NextRequest) => {
   try {
     await currentUserOrThrowAuthError();
 
-    const cooperatives = await db.coop.findMany({});
+    const cooperatives = await db.coop.findMany({
+      include: {
+        branches: true,
+      },
+    });
 
     return NextResponse.json(cooperatives);
   } catch (e) {

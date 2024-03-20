@@ -12,7 +12,7 @@ export const GET = async (req: NextRequest) => {
   try {
     const currentUser = await currentUserOrThrowAuthError();
 
-    const higherRoles : Role[] = [Role.root, Role.coop_root]
+    const higherRoles: Role[] = [Role.root, Role.coop_root];
 
     const conditions = higherRoles.includes(currentUser.role as Role)
       ? {}
@@ -38,8 +38,18 @@ export const POST = async (req: NextRequest) => {
     if (validatedData.password)
       validatedData.password = await hashPassword(validatedData.password);
 
+    const branch = await db.branch.findUnique({
+      where: { id: validatedData.branchId },
+    });
+
+    if (!branch)
+      return NextResponse.json(
+        { message: "Selected branch does not exist, try again" },
+        { status: 404 },
+      );
+
     const newUser = await db.user.create({
-      data: { ...validatedData, createdBy: user.id },
+      data: { ...validatedData, createdBy: user.id, coopId: branch.coopId },
     });
 
     return NextResponse.json(newUser);

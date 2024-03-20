@@ -64,6 +64,7 @@ model Coop {
 
     coopName        String
     coopDescription String
+    coopLogo String? @default("/images/default.png")
 
     branches Branch[]
     users    User[]

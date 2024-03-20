@@ -4,7 +4,15 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Copy, Image, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import {
+    Copy,
+    Image,
+    Loader2,
+    MenuIcon,
+    MoreHorizontal,
+    Pencil,
+    Trash,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
@@ -18,13 +26,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { TBranch } from "@/types";
+import { TBranchWCoop } from "@/types";
 import UpdateBranchModal from "../modals/update-branch-modal";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { deleteBranch } from "@/hooks/api-hooks/branch-api-hooks";
 import UpdateBranchImageModal from "../modals/update-branch-image-modal";
 
-const Actions = ({ branch }: { branch: TBranch }) => {
+const Actions = ({ branch }: { branch: TBranchWCoop}) => {
     const [modal, setModal] = useState(false);
     const [branchPictureModal, setBranchPictureModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
@@ -36,19 +44,24 @@ const Actions = ({ branch }: { branch: TBranch }) => {
 
     return (
         <>
-            <UpdateBranchModal branch={branch} state={modal} close={() => setModal(false)}/>
-            <UpdateBranchImageModal branch={branch} state={branchPictureModal} close={()=> setBranchPictureModal(false)}/>
-            <DropdownMenu> 
+            <UpdateBranchModal
+                branch={branch}
+                state={modal}
+                close={() => setModal(false)}
+            />
+            <UpdateBranchImageModal
+                branch={branch}
+                state={branchPictureModal}
+                close={() => setBranchPictureModal(false)}
+            />
+            <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="w-8 h-8 p-0">
+                    <Button variant="ghost" size="icon">
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="w-4 h-4" />
+                        <MenuIcon className="size-5 text-muted-foreground" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                    className="border-none shadow-2"
-                    align="end"
-                >
+                <DropdownMenuContent className="border-none shadow-2" align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -78,8 +91,7 @@ const Actions = ({ branch }: { branch: TBranch }) => {
                         onClick={() =>
                             onOpenConfirmModal({
                                 title: "Delete Branch 🗑️",
-                                description:
-                                    "Are you sure to delete this branch?",
+                                description: "Are you sure to delete this branch?",
                                 onConfirm: () => {
                                     deleteOperation.mutate(branch.id);
                                 },
@@ -95,12 +107,26 @@ const Actions = ({ branch }: { branch: TBranch }) => {
     );
 };
 
-const columns: ColumnDef<TBranch>[] = [
+const columns: ColumnDef<TBranchWCoop>[] = [
+    {
+        id: "actions",
+        enableHiding: false,
+        header: ({ column }) => (
+            <DataTableColHeader
+                className="w-fit"
+                column={column}
+                title="Actions"
+            />
+        ),
+        cell: ({ row }) => (
+            <div className="">
+                <Actions branch={row.original} />
+            </div>
+        ),
+    },
     {
         accessorKey: "id",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="ID" />
-        ),
+        header: ({ column }) => <DataTableColHeader column={column} title="ID" />,
         cell: ({ row }) => (
             <div className="font-medium uppercase">{row.original.id}</div>
         ),
@@ -120,7 +146,7 @@ const columns: ColumnDef<TBranch>[] = [
                         0,
                         row.original.branchName.length >= 2
                             ? 2
-                            : row.original.branchName.length
+                            : row.original.branchName.length,
                     )}
                 />
                 {row.original.branchName}
@@ -128,39 +154,32 @@ const columns: ColumnDef<TBranch>[] = [
         ),
     },
     {
+        id : "Address",
         accessorKey: "branchAddress",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Address" />
         ),
-        cell: ({ row }) => (
-            <div className=""> {row.original.branchAddress}</div>
-        ),
+        cell: ({ row }) => <div className=""> {row.original.branchAddress}</div>,
     },
+     {
+        id : "Cooperative",
+        accessorKey: "coop.coopName",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Cooperative" />
+        ),
+        cell: ({ row }) => <div className=""> {row.original.coop.coopName}</div>,
+    },
+
     {
+        id : "Date Created",
         accessorKey: "createdAt",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Date joined" />
+            <DataTableColHeader column={column} title="Date Created" />
         ),
         cell: ({ row }) => (
             <div className="">
                 {" "}
                 {format(new Date(row.original.createdAt), "MMM dd, y")}
-            </div>
-        ),
-    },
-    {
-        id: "actions",
-        enableHiding: false,
-        header: ({ column }) => (
-            <DataTableColHeader
-                className="text-right"
-                column={column}
-                title="Actions"
-            />
-        ),
-        cell: ({ row }) => (
-            <div className="flex justify-end">
-                <Actions branch={row.original} />
             </div>
         ),
     },

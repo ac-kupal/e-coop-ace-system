@@ -7,11 +7,11 @@ import {
     useQueryClient,
 } from "@tanstack/react-query";
 
-import { TCoop } from "@/types";
+import { TCoopWBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 
 export const useCoopList = () => {
-    const { data : coopList, isLoading, refetch, isFetching, isError} = useQuery<TCoop[], string>({
+    const { data : coopList, isLoading, refetch, isFetching, isError} = useQuery<TCoopWBranch[], string>({
         queryKey: ["coop-list-query"],
         queryFn: async () => {
             try {

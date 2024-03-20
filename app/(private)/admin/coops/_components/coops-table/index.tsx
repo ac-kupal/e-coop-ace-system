@@ -64,9 +64,8 @@ const CoopsTable = () => {
   return (
     <div className="flex flex-1 flex-col  gap-y-5 ">
       <Card className="dark:bg-secondary/30 border-0">
-        <CardContent className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2   ">
-          <div className="flex items-center gap-x-4 text-muted-foreground">
-            <div className="relative text">
+        <CardContent className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2">
+          <div className="flex relative items-center gap-x-4 text-muted-foreground w-full lg:w-fit">
               <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
               <Input
                 ref={onFocusSearch}
@@ -75,7 +74,6 @@ const CoopsTable = () => {
                 onChange={(event) => setGlobalFilter(event.target.value)}
                 className="w-full pl-8 bg-transparent border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
               />
-            </div>
           </div>
           <div className="flex items-center gap-x-2 md:gap-x-4">
             <DataTableViewOptions table={table} />

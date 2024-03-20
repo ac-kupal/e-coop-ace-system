@@ -12,7 +12,8 @@ export const createBranchSchema = z.object({
         .min(1, "branch address is required"),
     branchPicture: z
         .string({ required_error: "branch picture is required" })
-        .optional()
+        .optional(),
+    coopId : z.coerce.number({ required_error : "Coop id is required", invalid_type_error :  "Invalid coop id"})
 });
 
 export const updateBranchSchema = createBranchSchema;

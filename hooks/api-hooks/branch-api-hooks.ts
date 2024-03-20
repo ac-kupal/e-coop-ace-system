@@ -6,7 +6,7 @@ import {
     useQueryClient,
 } from "@tanstack/react-query";
 
-import { TBranch } from "@/types";
+import { TBranch, TBranchWCoop } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
 import { createBranchSchema } from "@/validation-schema/branch";
@@ -38,7 +38,7 @@ export const deleteBranch = () => {
 };
 
 export const branchList = () => {
-    const branchListQuery = useQuery<TBranch[], string>({
+    const branchListQuery = useQuery<TBranchWCoop[], string>({
         queryKey: ["branch-list-query"],
         queryFn: async () => {
             try {

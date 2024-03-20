@@ -8,7 +8,7 @@ import {
     Copy,
     Image,
     Loader2,
-    MoreHorizontal,
+    MenuIcon,
     Pencil,
     Trash,
 } from "lucide-react";
@@ -24,11 +24,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { TCoop } from "@/types";
+import { TCoopWBranch } from "@/types";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { deleteBranch } from "@/hooks/api-hooks/branch-api-hooks";
+import UserAvatar from "@/components/user-avatar";
 
-const Actions = ({ coop }: { coop : TCoop }) => {
+const Actions = ({ coop }: { coop: TCoopWBranch }) => {
     const [modal, setModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
@@ -41,45 +42,38 @@ const Actions = ({ coop }: { coop : TCoop }) => {
         <>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="w-8 h-8 p-0">
+                    <Button variant="ghost" size="icon"> 
                         <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="w-4 h-4" />
+                        <MenuIcon className="size-5 text-muted-foreground" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="border-none shadow-2" align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        className="px-2 gap-x-2"
-                        onClick={() => {
-                        }}
-                    >
+                    <DropdownMenuItem className="px-2 gap-x-2" onClick={() => { }}>
                         <Copy strokeWidth={2} className="h-4" />
-                        Copy Branch ID
+                        Copy Coop ID
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        className="px-2 gap-x-2"
-                    >
-                        <Pencil strokeWidth={2} className="h-4" /> Edit Branch
+                    <DropdownMenuItem className="px-2 gap-x-2">
+                        <Pencil strokeWidth={2} className="h-4" /> Edit Coop
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        className="px-2 gap-x-2"
-                    >
-                        <Image strokeWidth={2} className="h-4" /> Branch Logo
+                    <DropdownMenuItem className="px-2 gap-x-2">
+                        <Image strokeWidth={2} className="h-4" /> Coop Logo
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         onClick={() =>
                             onOpenConfirmModal({
                                 title: "Delete Coop 🗑️",
-                                description: "Are you sure to delete this coop? Everything under the coop will be deleted, branches, users, events etc, will be deleted. Do you which to proceed?",
-                                onConfirm: () => {
-                                },
+                                description:
+                                    "Are you sure to delete this coop? Everything under the coop will be deleted, branches, users, events etc, will be deleted. Do you wish to proceed?",
+                                onConfirm: () => { },
                             })
                         }
                         className="px-2 gap-x-2 text-destructive"
                     >
-                        <Trash strokeWidth={2} className="h-4" />Delete Coop 
+                        <Trash strokeWidth={2} className="h-4" />
+                        Delete Coop
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -87,7 +81,23 @@ const Actions = ({ coop }: { coop : TCoop }) => {
     );
 };
 
-const columns: ColumnDef<TCoop>[] = [
+const columns: ColumnDef<TCoopWBranch>[] = [
+    {
+        id: "actions",
+        enableHiding: false,
+        header: ({ column }) => (
+            <DataTableColHeader
+                className="w-fit"
+                column={column}
+                title="Actions"
+            />
+        ),
+        cell: ({ row }) => (
+            <div className="flex w-fit justify-start">
+                <Actions coop={row.original} />
+            </div>
+        ),
+    },
     {
         accessorKey: "id",
         header: ({ column }) => <DataTableColHeader column={column} title="ID" />,
@@ -97,19 +107,41 @@ const columns: ColumnDef<TCoop>[] = [
         enableHiding: false,
     },
     {
-        id : "Coopearative Name",
+        id: "Coopearative Name",
         accessorKey: "coopName",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Cooperative Name" />
         ),
         cell: ({ row }) => (
             <div className="flex gap-x-2 items-center">
+                <UserAvatar
+                    className="size-10"
+                    src={row.original.coopLogo ?? "/images/default.png"}
+                    fallback={row.original.coopName.substring(
+                        0,
+                        row.original.coopName.length >= 2
+                            ? 2
+                            : row.original.coopName.length,
+                    )}
+                />
                 {row.original.coopName}
             </div>
         ),
     },
+
     {
-        id : "Date created",
+        id: "Branches",
+        accessorKey: "branches",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Branches" />
+        ),
+        cell: ({ row }) => <div className="">{row.original.branches.length}</div>,
+        filterFn: (row, id, value) => {
+            return row.original.branches.length.toString() === value;
+        },
+    },
+    {
+        id: "Date created",
         accessorKey: "createdAt",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Date Created" />
@@ -120,23 +152,7 @@ const columns: ColumnDef<TCoop>[] = [
                 {format(new Date(row.original.createdAt), "MMM dd, y")}
             </div>
         ),
-    },
-    {
-        id: "actions",
-        enableHiding: false,
-        header: ({ column }) => (
-            <DataTableColHeader
-                className="text-right"
-                column={column}
-                title="Actions"
-            />
-        ),
-        cell: ({ row }) => (
-            <div className="flex justify-end">
-                <Actions coop={row.original} />
-            </div>
-        ),
-    },
+    }
 ];
 
 export default columns;
