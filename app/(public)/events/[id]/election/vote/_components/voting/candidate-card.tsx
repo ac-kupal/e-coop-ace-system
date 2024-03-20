@@ -45,7 +45,7 @@ const CandidateCard = ({
         >
           <img
             className="h-[100px] xs:h-[100px] w-full lg:h-[200px] pointer-events-none rounded-none object-cover"
-            src={picture ?? "/images/default-avatar.png"}
+            src={picture ? `${picture}?${new Date().getTime()}` : "/images/default-avatar.png"}
           />
         </div>
         <div className="w-full pointer-events-none absolute -bottom-3 left-0 flex justify-center rounded-full ">
