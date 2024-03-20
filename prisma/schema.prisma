@@ -33,11 +33,11 @@ model User {
     name     String
     email    String  @unique
     password String
-    branchId Int
 
     dateVerified DateTime?
     verified     Boolean?  @default(false)
 
+    branchId Int
     branch Branch @relation(fields: [branchId], references: [id])
     role   Role   @default(staff)
 
@@ -66,6 +66,8 @@ model Branch {
     branchPicture     String? @default("/images/default.png")
 
     users User[]
+    events Event[]
+    elections Election[]
 
     createdBy Int?
     updatedBy Int?
@@ -95,6 +97,9 @@ model Event {
     location    String
     category    EventType
     coverImage  String?   @default("/images/default.png")
+
+    branchId Int
+    branch Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
     // Event Settings
     registrationOnEvent Boolean? @default(true)
@@ -198,6 +203,9 @@ model Election {
 
     eventId Int   @unique
     event   Event @relation(fields: [eventId], references: [id])
+
+    branchId Int
+    branch Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
     deleted Boolean @default(false)
 
