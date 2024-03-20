@@ -176,13 +176,11 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {
-                                                userRole === "root" &&
-                                                <SelectItem value={Role.root}>{Role.root}</SelectItem>
-                                            }
-                                            {assignableRoles.map((assignableRole) => (
+                                            { !roleDisabled ? assignableRoles.map((assignableRole) => (
                                                 <SelectItem key={assignableRole.role} value={assignableRole.role}>{assignableRole.role}</SelectItem>
-                                            ))}
+                                            )) :
+                                                <SelectItem value={userRole}>{userRole}</SelectItem>
+                                            }
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -196,7 +194,7 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
                                 <FormItem>
                                     <FormLabel>Branch</FormLabel>
                                     <Select
-                                        disabled={branchLoading}
+                                        disabled={branchLoading || ( !([Role.root, Role.branch_root] as Role[]).includes(editorRole) )}
                                         onValueChange={field.onChange}
                                         defaultValue={field.value.toString()}
                                     >
