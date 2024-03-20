@@ -1,7 +1,6 @@
 import React from "react";
 import UserTable from "./_components/user-table";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { Role } from "@prisma/client";
 import { allowed } from "@/lib/utils";
 
 type Props = {};
@@ -9,7 +8,7 @@ type Props = {};
 const UserManagementPage = async (props: Props) => {
     const user = await currentUserOrThrowAuthError();
 
-    if (!allowed(["root", "admin"], user.role))
+    if (!allowed(["root", "branch_root", "admin"], user.role))
         return (
             <div className="flex p-2 h-dvh flex-col items-center justify-center w-full">
                 <p>You are not allowed in this page</p>

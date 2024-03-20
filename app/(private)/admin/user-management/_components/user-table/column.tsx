@@ -7,7 +7,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
-import { Copy, Image, Loader2, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import {
+    Copy,
+    Image,
+    Loader2,
+    MoreHorizontal,
+    Pencil,
+    Trash,
+} from "lucide-react";
 
 import UserAvatar from "@/components/user-avatar";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
@@ -37,13 +44,30 @@ const Actions = ({ user }: { user: TUserWithBranch }) => {
     if (deleteOperation.isPending || session.status === "loading")
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
 
-    if((session.status === "unauthenticated" || session.data === null || session.data.user.role === user.role || user.role === "root") && user.id !== session.data?.user.id) 
-        return <span className="text-xs text-foreground/40 italic">not allowed</span>;
+    if (
+        (session.status === "unauthenticated" ||
+            session.data === null ||
+            session.data.user.role === user.role ||
+            user.role === "root") &&
+        user.id !== session.data?.user.id
+    )
+        return (
+            <span className="text-xs text-foreground/40 italic">not allowed</span>
+        );
 
     return (
         <DropdownMenu>
-            <UpdateUserModal user={user} editor={session.data.user} state={modal} close={()=> setModal(false)}  />
-            <UpdateUserPictureModal user={user} state={modalPicture} close={()=> setModalPicture(false)} />
+            <UpdateUserModal
+                user={user}
+                editor={session.data.user}
+                state={modal}
+                close={() => setModal(false)}
+            />
+            <UpdateUserPictureModal
+                user={user}
+                state={modalPicture}
+                close={() => setModalPicture(false)}
+            />
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="w-8 h-8 p-0">
                     <span className="sr-only">Open menu</span>
@@ -56,16 +80,22 @@ const Actions = ({ user }: { user: TUserWithBranch }) => {
                 <DropdownMenuItem
                     className="px-2 gap-x-2"
                     onClick={() => {
-                        navigator.clipboard.writeText(`${user.id}`)
-                        toast.success("coppied")
+                        navigator.clipboard.writeText(`${user.id}`);
+                        toast.success("coppied");
                     }}
                 >
                     <Copy strokeWidth={2} className="h-4" /> Copy user ID
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={()=>setModal(true)} className="px-2 gap-x-2">
+                <DropdownMenuItem
+                    onClick={() => setModal(true)}
+                    className="px-2 gap-x-2"
+                >
                     <Pencil strokeWidth={2} className="h-4" /> Edit User
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={()=>setModalPicture(true)} className="px-2 gap-x-2">
+                <DropdownMenuItem
+                    onClick={() => setModalPicture(true)}
+                    className="px-2 gap-x-2"
+                >
                     <Image strokeWidth={2} className="h-4" /> Change Image
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -73,9 +103,10 @@ const Actions = ({ user }: { user: TUserWithBranch }) => {
                     onClick={() =>
                         onOpenConfirmModal({
                             title: "Delete User 🗑️",
-                            description: "Are you sure to delete this account? The user will not be able to login.",
+                            description:
+                                "Are you sure to delete this account? The user will not be able to login.",
                             onConfirm: () => {
-                                deleteOperation.mutate(user.id)
+                                deleteOperation.mutate(user.id);
                             },
                         })
                     }
@@ -91,22 +122,25 @@ const Actions = ({ user }: { user: TUserWithBranch }) => {
 const columns: ColumnDef<TUserWithBranch>[] = [
     {
         accessorKey: "id",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="ID" />
-        ),
+        header: ({ column }) => <DataTableColHeader column={column} title="ID" />,
         cell: ({ row }) => (
             <div className="font-medium uppercase">{row.original.id}</div>
         ),
-        enableSorting : false,
+        enableSorting: false,
         enableHiding: false,
     },
     {
         accessorKey: "name",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="name" />
-        ),
+        header: ({ column }) => <DataTableColHeader column={column} title="name" />,
         cell: ({ row }) => (
-            <div className="flex gap-x-2 items-center"><UserAvatar className="h-10 w-10" src={row.original.picture ?? "/images/default.png"} fallback={row.original.name.substring(0,1)} /> {row.original.name}</div>
+            <div className="flex gap-x-2 items-center">
+                <UserAvatar
+                    className="h-10 w-10"
+                    src={row.original.picture ?? "/images/default.png"}
+                    fallback={row.original.name.substring(0, 1)}
+                />{" "}
+                {row.original.name}
+            </div>
         ),
     },
     {
@@ -114,30 +148,26 @@ const columns: ColumnDef<TUserWithBranch>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Email" />
         ),
-        cell: ({ row }) => (
-            <div className=""> {row.original.email}</div>
-        ),
+        cell: ({ row }) => <div className=""> {row.original.email}</div>,
     },
     {
         accessorKey: "role",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Role" />
-        ),
+        header: ({ column }) => <DataTableColHeader column={column} title="Role" />,
         cell: ({ row }) => (
-            <div className="space-x-1"> 
-                <span className="bg-secondary text-foreground/70 p-1 rounded-md">{row.original.role ?? <i>no role assigned</i>}</span>
+            <div className="space-x-1">
+                <span className="bg-secondary text-foreground/70 p-1 rounded-md">
+                    {row.original.role ?? <i>no role assigned</i>}
+                </span>
             </div>
         ),
-        enableSorting : false
+        enableSorting: false,
     },
     {
         accessorKey: "branch",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Branch" />
         ),
-        cell: ({ row }) => (
-            <div className="">{ row.original.branch.branchName }</div>
-        ),
+        cell: ({ row }) => <div className="">{row.original.branch.branchName}</div>,
     },
     {
         accessorKey: "createdAt",
@@ -145,14 +175,21 @@ const columns: ColumnDef<TUserWithBranch>[] = [
             <DataTableColHeader column={column} title="Date joined" />
         ),
         cell: ({ row }) => (
-            <div className=""> {format(new Date(row.original.createdAt), "MMM dd, y")}</div>
+            <div className="">
+                {" "}
+                {format(new Date(row.original.createdAt), "MMM dd, y")}
+            </div>
         ),
     },
     {
         id: "actions",
         enableHiding: false,
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Actions" className="text-right" />
+            <DataTableColHeader
+                column={column}
+                title="Actions"
+                className="text-right"
+            />
         ),
         cell: ({ row }) => (
             <div className="flex justify-end">

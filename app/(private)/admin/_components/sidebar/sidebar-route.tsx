@@ -12,19 +12,19 @@ export const AdminRoutes: TRoute[] = [
         icon: <GitBranch className="h-5 w-5" />,
         name: "Branches",
         path: "/admin/branches",
-        allowedRole: ["root", "admin"],
+        allowedRole: ["root", "branch_root", "admin"],
     },
     {
         icon: <User className="h-5 w-5" />,
         name: "Users",
         path: "/admin/user-management",
-        allowedRole: ["root", "admin"],
+        allowedRole: ["root", "branch_root", "admin"],
     },
     {
         icon: <PartyPopper className="w-5 h-5"/>,
         name: "Events",
         path: "/admin/events",
-        allowedRole: ["root", "admin", "staff"],
+        allowedRole: ["root", "branch_root", "admin", "staff"],
     }
 ];
 

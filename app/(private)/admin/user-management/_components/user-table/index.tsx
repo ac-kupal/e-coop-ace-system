@@ -27,7 +27,7 @@ const UserTable = ({ currentUser } : { currentUser : user}) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-    const allowedToCreate = currentUser && ( currentUser.role === "admin" || currentUser.role === "root" )
+    const allowedToCreate = currentUser && ( currentUser.role === "branch_root" || currentUser.role === "admin" || currentUser.role === "root" )
 
     const { data, isFetching, isLoading, isError, refetch } = userList();
 
