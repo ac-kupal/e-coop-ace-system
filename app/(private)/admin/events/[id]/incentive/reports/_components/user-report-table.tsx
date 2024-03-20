@@ -106,7 +106,7 @@ const UserReportTable = ({ UserReport, eventId }: Props) => {
                 </TableRow>
                 <TableRow className="bg-transparent hover:bg-transparent border-none">
                     <TableCell>
-                        <div className="h-16" />
+                        <div className="h-1" />
                     </TableCell>
                 </TableRow>
             </TableBody>
