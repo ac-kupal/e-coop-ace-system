@@ -23,6 +23,11 @@ const QuorumSection = ({ params }: TParams) => {
    
    const percentageAttendanceTotal =(Number(members?.totalIsRegistered) / Number(members?.totalAttendees)) *100;
    const percentageVotersTotal =(Number(members?.totalMembersVoted) / Number(members?.totalAttendees)) *100;
+   
+   const finalAttendanceTotal = percentageAttendanceTotal >= 1 ? Math.trunc(percentageAttendanceTotal) : percentageAttendanceTotal.toFixed(5)
+   const finalVotersTotal =  percentageVotersTotal >= 1 ? Math.trunc(percentageVotersTotal) : percentageVotersTotal.toFixed(5)
+
+   console.log(finalVotersTotal)
 
    return (
       <div className="min-w-[200px] flex justify-start flex-col lg:justify-start  xl:flex-row   space-x-0 xl:space-x-10 p-5">
@@ -39,7 +44,7 @@ const QuorumSection = ({ params }: TParams) => {
                </CardHeader>
                <CardContent>
                   <h1 className="font-bold text-[3rem] text-primary">
-                     {Math.trunc(isNaN(percentageAttendanceTotal) ? 0 : percentageAttendanceTotal)}%
+                     {isNaN(Number(finalAttendanceTotal)) ? 0 : finalAttendanceTotal}%
                   </h1>
                   <CardDescription className="text-md">
                      {members?.totalIsRegistered + " (Total registered)"}{" / "}{members?.totalAttendees + " members"}
@@ -60,7 +65,7 @@ const QuorumSection = ({ params }: TParams) => {
                </CardHeader>
                <CardContent>
                   <h1 className="font-bold text-[3rem] text-primary">
-                  {Math.trunc(isNaN(percentageVotersTotal) ? 0 : percentageVotersTotal)}%
+                  {isNaN(Number(finalVotersTotal)) ? 0 : finalVotersTotal}%
                   </h1>
                   <CardDescription className="text-md">
                      {members?.totalMembersVoted + "(Total voters)"}{" / "}{members?.totalAttendees + " members"}

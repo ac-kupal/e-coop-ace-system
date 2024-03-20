@@ -284,7 +284,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Email" />
         ),
-        cell: ({ row }) =><Cell text={row.original.emailAddress}></Cell>,
+        cell: ({ row }) =><Cell text={row.original.emailAddress} className="lowercase"></Cell>,
     },
     {
         accessorKey: "gender",

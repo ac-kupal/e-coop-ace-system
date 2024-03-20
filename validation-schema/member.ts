@@ -50,7 +50,6 @@ export const createMemberSchema = z.object({
          required_error: "email field is required",
          invalid_type_error: "Invalid email data type",
       })
-      .email("please provide a valid email")
       .optional()
       .nullable(),
    contact: z
@@ -118,9 +117,7 @@ export const updateMemberSchema = z.object({
          required_error: "email field is required",
          invalid_type_error: "Invalid email data type",
       })
-      .email("please provide a valid email")
-      .optional()
-      .nullable(),
+         .optional(),
    contact: z
       .string({
          required_error: "contact field is required",
