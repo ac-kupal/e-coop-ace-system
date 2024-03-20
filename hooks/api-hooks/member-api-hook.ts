@@ -4,7 +4,7 @@ import moment from "moment";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TCreateMember, TMemberAttendeesMinimalInfo, TMemberWithEventElectionId } from "@/types";
+import { TCreateMember, TMember, TMemberAttendeesMinimalInfo, TMemberWithEventElectionId, TUpdateMember } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import useSkippedStore from "@/stores/skipped-members-store";
 import { useRouter } from "next/navigation";
@@ -113,13 +113,17 @@ export const createMember = ({ onCancelandReset }: Props) => {
 export const updateMember = ({ onCancelandReset }: Props) => {
     const queryClient = useQueryClient();
     const router = useRouter()
-    const updateMember = useMutation<any,Error,  { member: TCreateMember, memberId: string, eventId:number }
+    const updateMember = useMutation<Error, any, { member: TUpdateMember, memberId: string, eventId:number }
     >({
         mutationKey: ["update-member-query"],
         mutationFn: async ({ member, memberId, eventId }) => {
             try {
-                const response = await axios.patch(`/api/v1/admin/event/${eventId}/member/${memberId}`,member);
-                return response.data;
+                 const date = new Date(!member.birthday ? new Date(): member.birthday);
+                 const newBirthday = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+                 const newMember = {...member, birthday:newBirthday}
+                 console.log("birthday before pass to backend", newBirthday)
+                 const response = await axios.patch(`/api/v1/admin/event/${eventId}/member/${memberId}`,newMember);
+                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage, {

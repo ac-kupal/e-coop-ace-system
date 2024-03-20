@@ -1,3 +1,4 @@
+import { updateMemberSchema } from "@/validation-schema/member";
 import { $Enums, EventAttendees } from "@prisma/client";
 
 export type TCreateMember = {
@@ -35,6 +36,18 @@ export type TSkippedMembers = {
     birthday: Date | undefined;
     contact: string | undefined;
     emailAddress:string | undefined;
+}
+export type TUpdateMember = {
+    passbookNumber: string;
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+    gender: $Enums.gender;
+    birthday?: Date;
+    contact?: string;
+    picture: string | null;
+    eventId?:number;
+    emailAddress?:string;
 }
 
 export  type TMember = EventAttendees

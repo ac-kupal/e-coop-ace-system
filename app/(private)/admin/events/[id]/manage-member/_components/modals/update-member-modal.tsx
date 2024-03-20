@@ -1,13 +1,10 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Loader2 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import ModalHead from "@/components/modals/modal-head";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-
 import { Input } from "@/components/ui/input";
 import {
    Form,
@@ -25,9 +22,8 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-
 import {  gender } from "@prisma/client";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
@@ -35,7 +31,7 @@ import ImagePick from "@/components/image-pick";
 import { v4 } from "uuid";
 import {  updateMemberWithUploadSchema } from "@/validation-schema/member";
 import { updateMember } from "@/hooks/api-hooks/member-api-hook";
-import { TMember } from "@/types";
+import { TMember, TUpdateMember } from "@/types";
 import InputMask from "react-input-mask";
 
 type Props = {
@@ -48,29 +44,27 @@ export type createTMember = z.infer<typeof updateMemberWithUploadSchema>;
 
 const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
 
-   const memberForm = useForm<createTMember>({
+   const memberForm = useForm<TUpdateMember>({
       resolver: zodResolver(updateMemberWithUploadSchema),
    });
-
    const defaultValues = useCallback(() => {
       memberForm.setValue("passbookNumber", member.passbookNumber);
       memberForm.setValue("firstName", member.firstName);
-      memberForm.setValue("middleName", undefined);
+      memberForm.setValue("middleName", !member.middleName ? "" : member.middleName);
       memberForm.setValue("lastName", member.lastName);
       memberForm.setValue("gender", member.gender);
-      memberForm.setValue("birthday", undefined);
-      memberForm.setValue("picture",member.picture)
-      memberForm.setValue("contact", undefined);
-      memberForm.setValue("emailAddress", member.emailAddress);
+      memberForm.setValue("birthday", !member.birthday ? undefined : member.birthday);
+      memberForm.setValue("picture", member.picture)
+      memberForm.setValue("contact", !member.contact ? "": member.contact);
+      memberForm.setValue("emailAddress", !member.emailAddress ? "": member.emailAddress);
       memberForm.setValue("eventId", member.eventId);
    }, [memberForm,member]);
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
-      initialImageURL: !member.picture ?  memberForm.getValues("picture") : member.picture ,
+      initialImageURL: !member.picture ?  "images/default.png" : member.picture ,
       maxOptimizedSizeMB: 0.5,
       maxWidthOrHeight: 300,
    });
-
 
    useEffect(() => {
       defaultValues();
@@ -90,8 +84,8 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
 
    const uploadImage = onUploadImage();
 
-
    const onSubmit = async (formValues: createTMember) => {
+      console.log(formValues)
       try {
          if (!imageFile) {
             updateMemberMutation.mutate({
@@ -123,6 +117,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
          console.log(error);
       }
    };
+
    const isLoading = updateMemberMutation.isPending;
    const isUploading = uploadImage.isPending;
    const inputRef = useRef(null);
