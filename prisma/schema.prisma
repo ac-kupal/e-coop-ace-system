@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
@@ -22,7 +19,7 @@ datasource db {
 
 enum Role {
     root
-    branch_root
+    coop_root 
     admin
     staff
 }
@@ -56,6 +53,22 @@ model User {
     deletedBy Int?
 
     deleted Boolean @default(false)
+}
+
+model Coop {
+    id Int @id @default(autoincrement())
+
+    coopName String
+    coopDescription String
+
+    createdBy Int?
+    updatedBy Int?
+    deletedBy Int?
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+    deleted   Boolean?  @default(false)
 }
 
 model Branch {
