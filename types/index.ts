@@ -4,6 +4,7 @@ import { ReactElement, ReactNode } from "react";
 import { folderGroupSchema } from "@/validation-schema/upload";
 
 export * from "./user.types";
+export * from "./coop.types";
 export * from "./branch.types";
 export * from "./event.types";
 export * from "./election.types";

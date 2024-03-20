@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import UserAvatar from "@/components/user-avatar";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 import {
     DropdownMenu,
@@ -25,13 +24,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { TBranch } from "@/types";
+import { TCoop } from "@/types";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { deleteBranch } from "@/hooks/api-hooks/branch-api-hooks";
 
-const Actions = ({ branch }: { branch: TBranch }) => {
+const Actions = ({ coop }: { coop : TCoop }) => {
     const [modal, setModal] = useState(false);
-    const [branchPictureModal, setBranchPictureModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
     const deleteOperation = deleteBranch();
@@ -54,21 +52,17 @@ const Actions = ({ branch }: { branch: TBranch }) => {
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
                         onClick={() => {
-                            navigator.clipboard.writeText(`${branch.id}`);
-                            toast.success("coppied");
                         }}
                     >
                         <Copy strokeWidth={2} className="h-4" />
                         Copy Branch ID
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                        onClick={() => setModal(true)}
                         className="px-2 gap-x-2"
                     >
                         <Pencil strokeWidth={2} className="h-4" /> Edit Branch
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                        onClick={() => setBranchPictureModal(true)}
                         className="px-2 gap-x-2"
                     >
                         <Image strokeWidth={2} className="h-4" /> Branch Logo
@@ -77,16 +71,15 @@ const Actions = ({ branch }: { branch: TBranch }) => {
                     <DropdownMenuItem
                         onClick={() =>
                             onOpenConfirmModal({
-                                title: "Delete Branch 🗑️",
-                                description: "Are you sure to delete this branch?",
+                                title: "Delete Coop 🗑️",
+                                description: "Are you sure to delete this coop? Everything under the coop will be deleted, branches, users, events etc, will be deleted. Do you which to proceed?",
                                 onConfirm: () => {
-                                    deleteOperation.mutate(branch.id);
                                 },
                             })
                         }
                         className="px-2 gap-x-2 text-destructive"
                     >
-                        <Trash strokeWidth={2} className="h-4" /> Delete branch
+                        <Trash strokeWidth={2} className="h-4" />Delete Coop 
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -94,7 +87,7 @@ const Actions = ({ branch }: { branch: TBranch }) => {
     );
 };
 
-const columns: ColumnDef<TBranch>[] = [
+const columns: ColumnDef<TCoop>[] = [
     {
         accessorKey: "id",
         header: ({ column }) => <DataTableColHeader column={column} title="ID" />,
@@ -104,37 +97,22 @@ const columns: ColumnDef<TBranch>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "branchName",
+        id : "Coopearative Name",
+        accessorKey: "coopName",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Branch Name" />
+            <DataTableColHeader column={column} title="Cooperative Name" />
         ),
         cell: ({ row }) => (
             <div className="flex gap-x-2 items-center">
-                <UserAvatar
-                    className="h-10 w-10"
-                    src={row.original.branchPicture ?? "/images/default.png"}
-                    fallback={row.original.branchName.substring(
-                        0,
-                        row.original.branchName.length >= 2
-                            ? 2
-                            : row.original.branchName.length,
-                    )}
-                />
-                {row.original.branchName}
+                {row.original.coopName}
             </div>
         ),
     },
     {
-        accessorKey: "branchAddress",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Address" />
-        ),
-        cell: ({ row }) => <div className=""> {row.original.branchAddress}</div>,
-    },
-    {
+        id : "Date created",
         accessorKey: "createdAt",
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Date joined" />
+            <DataTableColHeader column={column} title="Date Created" />
         ),
         cell: ({ row }) => (
             <div className="">
@@ -155,7 +133,7 @@ const columns: ColumnDef<TBranch>[] = [
         ),
         cell: ({ row }) => (
             <div className="flex justify-end">
-                <Actions branch={row.original} />
+                <Actions coop={row.original} />
             </div>
         ),
     },
