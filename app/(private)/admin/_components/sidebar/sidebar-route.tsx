@@ -1,18 +1,17 @@
 import React from "react";
 import { user } from "next-auth";
 
-import { GitBranch, Home, PartyPopper, User } from "lucide-react";
+import { GitBranch, PartyPopper, User } from "lucide-react";
 
 import { TRoute } from "@/types";
 import RouteItem from "./route-item";
-import Link from "next/link";
 
 export const AdminRoutes: TRoute[] = [
     {
         icon: <GitBranch className="h-5 w-5" />,
         name: "Branches",
         path: "/admin/branches",
-        allowedRole: ["root", "branch_root", "admin"],
+        allowedRole: ["root", "branch_root"] 
     },
     {
         icon: <User className="h-5 w-5" />,

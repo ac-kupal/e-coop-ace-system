@@ -1,10 +1,7 @@
 "use client"
 import z from "zod";
-import axios from "axios";
-import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Loader2 } from "lucide-react";
 
@@ -25,7 +22,6 @@ import {
 
 import { useCallback, useEffect } from "react";
 import { TBranch } from "@/types";
-import { handleAxiosErrorMessage } from "@/utils";
 import { createBranchSchema } from "@/validation-schema/branch";
 import { updateBranch } from "@/hooks/api-hooks/branch-api-hooks";
 
@@ -38,7 +34,6 @@ type Props = {
 type TUpdateBranch = z.infer<typeof createBranchSchema>;
 
 const UpdateBranchModal = ({ state, branch, close }: Props) => {
-    const queryClient = useQueryClient();
 
     const form = useForm<TUpdateBranch>({ resolver: zodResolver(createBranchSchema) });
 
@@ -58,7 +53,7 @@ const UpdateBranchModal = ({ state, branch, close }: Props) => {
         setDefaults()
     }, [branch, state, setDefaults])
 
-    const { isPending, mutate } = updateBranch({ branchId : branch.id, onUpdate : () => {} });
+    const { isPending, mutate } = updateBranch({ branchId : branch.id, onUpdate : () => { close() } });
 
     const isLoading = isPending // || uploading;
 

@@ -1,11 +1,8 @@
 "use client"
 import z from "zod";
-import axios from "axios";
-import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Loader2 } from "lucide-react";
 
@@ -25,8 +22,8 @@ import {
 } from "@/components/ui/form";
 
 import { TBranch } from "@/types";
-import { handleAxiosErrorMessage } from "@/utils";
 import { createBranchSchema } from "@/validation-schema/branch";
+import { createBranch } from "@/hooks/api-hooks/branch-api-hooks";
 
 
 type Props = {
@@ -39,8 +36,6 @@ type Props = {
 type createTBranch = z.infer<typeof createBranchSchema>;
 
 const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
-    const queryClient = useQueryClient();
-
     const form = useForm<createTBranch>({
         resolver: zodResolver(createBranchSchema),
         defaultValues: {
@@ -56,30 +51,12 @@ const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
         onClose(false);
     }
 
-    const createBranch = useMutation<TBranch, string, createTBranch>({
-        mutationKey: ["create-branch"],
-        mutationFn: async (data) => {
-            try {
-                const response = await axios.post("/api/v1/branch", { data });
+    const { saveBranch, isCreatingBranch } = createBranch((newBranch) => { 
+        reset();
+        if(onCreate) onCreate(newBranch);
+    } )
 
-                queryClient.invalidateQueries({ queryKey: ["branch-list-query"] });
-                if (onCreate !== undefined) onCreate(response.data);
-                reset();
-                toast.success("Branch created successfully")
-                return response.data;
-            } catch (e) {
-                let errorMessage = "";
-                
-                if (e instanceof Error) errorMessage = e.message;
-                else errorMessage =  handleAxiosErrorMessage(e);
-
-                toast.error(errorMessage);
-                throw errorMessage
-            }
-        },
-    });
-
-    const isLoading = createBranch.isPending;
+    const isLoading = isCreatingBranch;
 
 
     return (
@@ -92,7 +69,7 @@ const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit((formValues) =>
-                            createBranch.mutate(formValues)
+                            saveBranch(formValues)
                         )}
                         className="space-y-4"
                     >
