@@ -7,9 +7,10 @@ import { routeErrorHandler } from "@/errors/route-error-handler";
 
 export const GET = async (req: NextRequest) => {
   try {
+    await currentUserOrThrowAuthError();
     const branch = await db.branch.findMany({
       where: { deleted: false },
-      include : { coop : true },
+      include: { coop: true },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(branch);

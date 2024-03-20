@@ -34,7 +34,8 @@ const UpdateBranchImageModal = ({ state, branch, close }: Props) => {
             branchName : branch.branchName,
             branchAddress : branch.branchAddress,
             branchDescription : branch.branchDescription,
-            branchPicture : imageURL
+            branchPicture : imageURL,
+            coopId : branch.coopId
         })
         reset();
     }

@@ -9,6 +9,7 @@ declare module "next-auth" {
         name: string;
         email: string;
         branchId: number;
+        coopId : number;
         verified: boolean | null;
         branch : Branch;
         role : Role;

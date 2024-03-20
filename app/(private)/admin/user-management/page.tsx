@@ -8,7 +8,7 @@ type Props = {};
 const UserManagementPage = async (props: Props) => {
     const user = await currentUserOrThrowAuthError();
 
-    if (!allowed(["root", "coop_root"], user.role))
+    if (!allowed(["root", "coop_root", "admin"], user.role))
         return (
             <div className="flex p-2 h-dvh flex-col items-center justify-center w-full">
                 <p>You are not allowed in this page</p>
