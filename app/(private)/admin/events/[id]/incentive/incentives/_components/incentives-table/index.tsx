@@ -14,10 +14,11 @@ import columns from "./column";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
+import CreateIncentiveModal from "../modals/create-incentive-modal";
+
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import { incentiveListWithClaimCount } from "@/hooks/api-hooks/incentive-api-hooks";
-import CreateIncentiveModal from "../modals/create-incentive-modal";
 
 const IncentivesTable = ({ eventId } : { eventId : number }) => {
     const [createModal, setCreateModal] = useState(false)
@@ -84,7 +85,7 @@ const IncentivesTable = ({ eventId } : { eventId : number }) => {
                     <DataTableViewOptions table={table} />
                     <Button
                         size="sm"
-                        className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem] bg-[#5B9381] hover:bg-[#5B9381]/70 "
+                        className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem] "
                         onClick={() => setCreateModal(true)}
                     >
                         Add Item

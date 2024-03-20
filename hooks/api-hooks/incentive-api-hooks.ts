@@ -12,7 +12,7 @@ import {
     TUserWithAssignedIncentives,
 } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { claimReleaseSchema, createAssistedClaimSchema, createIncentiveAssigneeSchema } from "@/validation-schema/incentive";
+import { claimReleaseSchema, createAssistedClaimSchema, createIncentiveAssigneeSchema, updateIncentiveAssignedSchema } from "@/validation-schema/incentive";
 import { TIncentiveAssignedToMe } from "@/types/incentive-assigned.types";
 
 export const incentiveListWithClaimCount = (eventId: number) => {
@@ -145,8 +145,8 @@ export const useRevokeAssignIncentive = (eventId : number, incentiveId : number,
     const queryClient = useQueryClient();
 
     const { mutate: deleteAssignee, isPending : isDeleting } = useMutation<string, string>({
-        mutationKey: ["delete-incentive"],
-        mutationFn: async (data) => {
+        mutationKey: ["delete-incentive-assigned"],
+        mutationFn: async () => {
             try {
                 const response = await axios.delete(`/api/v1/admin/event/${eventId}/incentives/${incentiveId}/assign/${assignId}`);
 
@@ -166,6 +166,35 @@ export const useRevokeAssignIncentive = (eventId : number, incentiveId : number,
     })
 
     return { deleteAssignee, isDeleting }
+}
+
+export const updateAssignedQuantity = (eventId : number, incentiveId : number, assignId : number, onUpdate? : () => void) => {
+    const queryClient = useQueryClient();
+
+    const { mutate: updateAssigned, isPending : isUpdating} = useMutation<string, string, z.infer<typeof updateIncentiveAssignedSchema>>({
+        mutationKey: ["update-incentive-assigned-qty"],
+        mutationFn: async (data) => {
+            try {
+                const response = await axios.patch(`/api/v1/admin/event/${eventId}/incentives/${incentiveId}/assign/${assignId}`, data);
+
+                queryClient.invalidateQueries({ queryKey: ["incentive-withclaimcount-list"] });
+                queryClient.invalidateQueries({ queryKey: ["incentive-assignee-list"] });
+                queryClient.invalidateQueries({ queryKey: ["incentive-user-list"] });
+                
+                toast.success("Assigned quantity updated")
+
+                if(onUpdate) onUpdate();
+
+                return response.data
+            }catch(e){
+                const errorMessage = handleAxiosErrorMessage(e)
+                toast.error(errorMessage);
+                throw errorMessage
+            }
+        }
+    })
+
+    return { updateAssigned, isUpdating }
 }
 
 export const useAssignedIncentiveToMe = (eventId : number, enabled : boolean) => {

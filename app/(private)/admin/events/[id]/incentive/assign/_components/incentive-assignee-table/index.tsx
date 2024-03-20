@@ -47,7 +47,7 @@ const IncentiveAssigneeTable = ({ eventId }: { eventId: number }) => {
         initialState: {
             pagination: { pageIndex: 0, pageSize: 20 },
             columnVisibility: {
-                id: false,
+                Id : false,
                 "User ID": false,
             },
         },
