@@ -12,7 +12,7 @@ export const GET = async (req: NextRequest) => {
   try {
     const currentUser = await currentUserOrThrowAuthError();
 
-    const higherRoles : Role[] = [Role.root]
+    const higherRoles : Role[] = [Role.root, Role.coop_root]
 
     const conditions = higherRoles.includes(currentUser.role as Role)
       ? {}

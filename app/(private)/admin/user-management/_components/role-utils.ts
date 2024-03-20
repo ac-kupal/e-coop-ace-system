@@ -9,19 +9,19 @@ type roleListType = {
 
 const roleList: roleListType[] = [
     {
-        role: Role.branch_root,
+        role: Role.coop_root,
         allowedRoles: [Role.root],
         allowedEditor: [Role.root],
     },
     {
         role: Role.admin,
-        allowedRoles: [Role.root, Role.branch_root],
-        allowedEditor: [Role.root, Role.branch_root],
+        allowedRoles: [Role.root, Role.coop_root],
+        allowedEditor: [Role.root, Role.coop_root],
     },
     {
         role: Role.staff,
-        allowedRoles: [Role.root, Role.branch_root, Role.admin],
-        allowedEditor: [Role.admin, Role.branch_root, Role.root],
+        allowedRoles: [Role.root, Role.coop_root, Role.admin],
+        allowedEditor: [Role.admin, Role.coop_root, Role.root],
     },
 ];
 

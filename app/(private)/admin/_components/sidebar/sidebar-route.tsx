@@ -1,6 +1,7 @@
 import React from "react";
 import { user } from "next-auth";
 
+import { FaHandsHoldingCircle } from "react-icons/fa6";
 import { GitBranch, PartyPopper, User } from "lucide-react";
 
 import { TRoute } from "@/types";
@@ -8,22 +9,29 @@ import RouteItem from "./route-item";
 
 export const AdminRoutes: TRoute[] = [
     {
-        icon: <GitBranch className="h-5 w-5" />,
-        name: "Branches",
-        path: "/admin/branches",
-        allowedRole: ["root", "branch_root"] 
+        icon: <FaHandsHoldingCircle className="size-5" />,
+        name: "Coops",
+        path: "/admin/coops",
+        allowedRole: ["root", "coop_root"] 
+
     },
     {
-        icon: <User className="h-5 w-5" />,
+        icon: <GitBranch className="size-5" />,
+        name: "Branches",
+        path: "/admin/branches",
+        allowedRole: ["root", "coop_root"] 
+    },
+    {
+        icon: <User className="size-5" />,
         name: "Users",
         path: "/admin/user-management",
-        allowedRole: ["root", "branch_root", "admin"],
+        allowedRole: ["root", "coop_root", "admin"],
     },
     {
         icon: <PartyPopper className="w-5 h-5"/>,
         name: "Events",
         path: "/admin/events",
-        allowedRole: ["root", "branch_root", "admin", "staff"],
+        allowedRole: ["root", "coop_root", "admin", "staff"],
     }
 ];
 

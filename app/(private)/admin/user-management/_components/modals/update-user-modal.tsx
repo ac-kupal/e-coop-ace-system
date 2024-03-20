@@ -194,7 +194,7 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
                                 <FormItem>
                                     <FormLabel>Branch</FormLabel>
                                     <Select
-                                        disabled={branchLoading || ( !([Role.root, Role.branch_root] as Role[]).includes(editorRole) )}
+                                        disabled={branchLoading || ( !([Role.root, Role.coop_root] as Role[]).includes(editorRole) )}
                                         onValueChange={field.onChange}
                                         defaultValue={field.value.toString()}
                                     >

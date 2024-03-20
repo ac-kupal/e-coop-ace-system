@@ -177,7 +177,7 @@ const CreateUserModal = ({ state, onClose, editor }: Props) => {
                                     <Select
                                         disabled={
                                             branchLoading ||
-                                            !([Role.root, Role.branch_root] as Role[]).includes(
+                                            !([Role.root, Role.coop_root] as Role[]).includes(
                                                 editor.role,
                                             )
                                         }
