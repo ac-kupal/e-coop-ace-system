@@ -1,8 +1,13 @@
-import { Branch, User } from "@prisma/client";
+import { TBranch, TCoop } from ".";
+import { User } from "@prisma/client";
 
 export type TUser = Omit<User, 'password'>
 
-export type TUserWithBranch = TUser & { branch : Branch }
+export type TUserWithBranch = TUser & { branch : TBranch }
+
+export type TUserWCoop = TUser & { coop : TCoop }
+
+export type TUserWBranchCoop = TUserWCoop & TUserWithBranch
 
 export type TUserMinimalInfo = TUser | {
     id : number,

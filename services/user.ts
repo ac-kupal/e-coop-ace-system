@@ -11,6 +11,7 @@ export const USER_SELECTS_WITH_NO_PASSWORD = {
     role: true,
     
     coopId : true,
+    coop : true,
     branchId: true,
     branch: true,
 

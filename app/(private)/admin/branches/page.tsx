@@ -10,7 +10,7 @@ type Props = {}
 const Branches = async(props: Props) => {  
     const user = await currentUserOrFalse();
 
-    if (!isAllowed(["root", "admin"], user)) throw new Error("You don't have access to this page")
+    if (!isAllowed(["root", "coop_root"], user)) throw new Error("You don't have access to this page")
 
   return (
     <div className="flex p-4 min-h-screen flex-col w-full">

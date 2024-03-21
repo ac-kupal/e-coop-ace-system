@@ -12,7 +12,7 @@ export const AdminRoutes: TRoute[] = [
         icon: <FaHandsHoldingCircle className="size-5" />,
         name: "Coops",
         path: "/admin/coops",
-        allowedRole: ["root", "coop_root"] 
+        allowedRole: ["root"] 
 
     },
     {

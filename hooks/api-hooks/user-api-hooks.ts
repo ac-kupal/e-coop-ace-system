@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TUser, TUserMinimalInfo, TUserWithBranch } from "@/types";
+import { TUser, TUserWBranchCoop, TUserWithBranch } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import { createUserSchema, updateUserSchema } from "@/validation-schema/user";
 
@@ -30,7 +30,7 @@ export const userQuery = ( userId : number ) => {
 }
 
 export const userList = () => {
-    const branchListQuery = useQuery<TUserWithBranch[], string>({
+    const branchListQuery = useQuery<TUserWBranchCoop[], string>({
         queryKey: ["user-list-query"],
         queryFn: async () => {
             try {

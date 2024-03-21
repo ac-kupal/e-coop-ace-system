@@ -9,7 +9,6 @@ import {
     Image,
     Loader2,
     MenuIcon,
-    MoreHorizontal,
     Pencil,
     Trash,
 } from "lucide-react";
@@ -169,7 +168,6 @@ const columns: ColumnDef<TBranchWCoop>[] = [
         ),
         cell: ({ row }) => <div className=""> {row.original.coop.coopName}</div>,
     },
-
     {
         id : "Date Created",
         accessorKey: "createdAt",
