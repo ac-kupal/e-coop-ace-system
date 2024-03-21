@@ -1,6 +1,6 @@
 import React from "react";
 
-import InvalidPrompt from "@/components/invalid-prompt";
+import NotAllowed from "../../_components/not-allowed";
 import IncentivesTable from "./_components/incentives-table";
 
 import { isAllowed } from "@/lib/utils";
@@ -13,11 +13,7 @@ const Branches = async ({ params }: Props) => {
     const user = await currentUserOrFalse();
 
     if (!isAllowed(["root", "admin"], user))
-        return (
-            <div className="flex px-4 min-h-screen flex-col w-full">
-                <InvalidPrompt message="You don't have rights to view this page" />
-            </div>
-        );
+        return <NotAllowed />
 
     const eventId = eventIdSchema.parse(params.id);
 
