@@ -21,8 +21,8 @@ const EventLayout = async ({ children, params }: Props) => {
 
     if(!eventIdValidation.success) throw eventIdValidation.error.issues[0].message
 
-   const event = await db.event.findUnique({ where : { id : eventIdValidation.data }, include : { election : true }})
-   
+   const event = await db.event.findUnique({ where : { id : eventIdValidation.data }, include : { election : true}})
+
    if (!event) return <NotFound />
 
    return (

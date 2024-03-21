@@ -31,7 +31,7 @@ import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import UpdateEventModal from "../modals/update-event-modal";
-import { TEventWithElection } from "@/types";
+import { TEventWithElection, TEventWithElectionWithCoopWithBranch } from "@/types";
 import Link from "next/link";
 import { useInfoModal } from "@/stores/use-info-modal-store";
 import QrViewContent from "@/components/modals/modal-content/qr-view-content";
@@ -40,7 +40,7 @@ import CopyURL from "@/components/copy-url";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 
-const Actions = ({ event }: { event: TEventWithElection }) => {
+const Actions = ({ event }: { event: TEventWithElectionWithCoopWithBranch  }) => {
    const router = useRouter();
    const session = useSession();
    const [onOpenModal, setOnOpenModal] = useState(false);
@@ -210,7 +210,7 @@ const Cell = ({ text }: { text: string }) => {
    return <p className="text-[min(14px,2.9vw)]">{text}</p>;
 };
 
-const columns: ColumnDef<TEventWithElection>[] = [
+const columns: ColumnDef<TEventWithElectionWithCoopWithBranch>[] = [
    {
       accessorKey: "actions",
       header: ({ column }) => (

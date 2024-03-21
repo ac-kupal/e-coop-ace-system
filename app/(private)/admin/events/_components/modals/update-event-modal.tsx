@@ -33,7 +33,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { updateEventSchema } from "@/validation-schema/event";
 import { number, z } from "zod";
 import { useCallback, useEffect } from "react";
-import { TEventWithElection } from "@/types";
+import { TEventWithElection,TEventWithElectionWithCoopWithBranch } from "@/types";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import useImagePick from "@/hooks/use-image-pick";
 import { v4  } from "uuid";
@@ -44,7 +44,7 @@ import { user } from "next-auth";
 import { Role } from "@prisma/client";
 
 type Props = {
-   event: TEventWithElection;
+   event: TEventWithElectionWithCoopWithBranch;
    state: boolean;
    onClose: (state: boolean) => void;
    user:user,

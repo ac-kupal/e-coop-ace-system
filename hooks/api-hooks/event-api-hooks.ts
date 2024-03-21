@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
-import { TEventWithElection } from "@/types";
+import { TEventWithElection,TEventWithElectionWithCoopWithBranch  } from "@/types";
 import { mutationErrorHandler } from "@/errors/mutation-error-handler";
 import { useRouter } from "next/navigation";
 
@@ -32,7 +32,7 @@ export const deleteEvent = () => {
 };
 
 export const getAllEvent = () => {
-   const getAllEvent = useQuery<TEventWithElection[], string>({
+   const getAllEvent = useQuery<TEventWithElectionWithCoopWithBranch[], string>({
       queryKey: ["event-list-query"],
       queryFn: async () => {
          try {

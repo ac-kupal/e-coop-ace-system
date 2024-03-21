@@ -38,7 +38,9 @@ export type TUpdateEvent = {
 
 export type TEvent = Event;
 
-export type TEventWithElection = Event & { election: TElection | null, branch:TBranch, coop:TCoop };
+export type TEventWithElection = Event & { election: TElection | null};
+export type TEventWithElectionWithCoopWithBranch = Event & { election: TElection | null, branch:TBranch, coop:TCoop };
+
 
 export type TEventSettingsUpdate = z.infer<typeof eventSettingsSchema>;
 
