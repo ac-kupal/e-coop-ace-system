@@ -1,5 +1,5 @@
 import z from "zod";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,6 +41,8 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
       birthday: "",
     },
   });
+
+  useEffect(()=>{ form.setFocus("birthday") }, [form, form.setFocus])
 
   const disabled = isPending || registeredMember;
 
