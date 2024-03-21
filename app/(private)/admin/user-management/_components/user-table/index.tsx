@@ -36,6 +36,8 @@ const UserTable = ({ currentUser }: { currentUser: user }) => {
 
   const { data, isFetching, isLoading, isError, refetch } = userList();
 
+  console.log(data)
+
   const table = useReactTable({
     data,
     columns,

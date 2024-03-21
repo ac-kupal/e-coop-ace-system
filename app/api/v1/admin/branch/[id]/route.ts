@@ -50,3 +50,20 @@ export const DELETE = async ( req : NextRequest, { params } : TParams ) => {
         return routeErrorHandler(e, req)
     }
 }
+
+
+export const GET = async (req: NextRequest, { params } : TParams) => {
+    try {
+      const id = Number(params.id)
+    //  await currentUserOrThrowAuthError();
+      const branch = await db.branch.findMany({
+        where: { deleted: false, coopId:id },
+        include: { coop: true },
+        orderBy: { createdAt: "desc" },
+      });
+      return NextResponse.json(branch);
+    } catch (e) {
+      return routeErrorHandler(e, req);
+    }
+  };
+  

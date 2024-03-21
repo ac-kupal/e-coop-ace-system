@@ -5,6 +5,7 @@ import { createElectionValidation } from "@/validation-schema/election";
 import { ElectionStatus, Role, VotingEligibility } from "@prisma/client";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import db from "@/lib/database";
+
 export const POST = async (req: NextRequest) => {
   try {
     const { data } = await req.json();
@@ -23,6 +24,7 @@ export const POST = async (req: NextRequest) => {
     if (includeElection) {
       createElectionValidation.parse(election);
     }
+
     const CreateEvent = await db.event.create({
       data: includeElection
         ? {
@@ -32,7 +34,6 @@ export const POST = async (req: NextRequest) => {
             location: data.location,
             category: data.category,
             deleted: false,
-            branchId: user.branchId,
             coverImage: data.coverImage,
             election: {
               create: {
@@ -44,6 +45,8 @@ export const POST = async (req: NextRequest) => {
               },
             },
             createdBy: user.id,
+            branchId:data.branchId,
+            coopId: data.coopId,
           }
         : {
             title: data.title,
@@ -51,14 +54,16 @@ export const POST = async (req: NextRequest) => {
             date: data.date,
             location: data.location,
             category: data.category,
-
-            branchId: user.branchId,
+            branchId:data.branchId,
+            coopId: data.coopId,
             deleted: false,
             coverImage: data.coverImage,
             createdBy: user.id,
           },
       include: {
         election: true,
+        coop:true,
+        branch:true,
       },
     });
     return NextResponse.json(CreateEvent);
@@ -97,6 +102,8 @@ export const GET = async (req: NextRequest) => {
       return filteredCondition ? filteredCondition.condition : {}
     };
 
+    console.log(getCondition(currentUser.role))
+
     const getAllEvents = await db.event.findMany({
       where: {
         deleted: false,
@@ -112,8 +119,13 @@ export const GET = async (req: NextRequest) => {
         date: true,
         election: true,
         coverImage: true,
+        coop:true,
+        branch:true,
       },
     });
+
+    console.log(getAllEvents)
+
     return NextResponse.json(getAllEvents);
   } catch (e) {
     return routeErrorHandler(e, req);

@@ -1,5 +1,5 @@
 import z from "zod"
-import { TElection } from ".";
+import { TBranch, TCoop, TElection } from ".";
 import { EventType } from "@prisma/client";
 import { Event, MemberSearchMode } from "@prisma/client";
 import { eventSettingsSchema } from "@/validation-schema/event-settings";
@@ -11,6 +11,8 @@ export type TCreateEvent = {
     location: string;
     category?: EventType;
     deleted: boolean;
+    branchId:number,
+    coopId:number,
 };
 export type Election = {
     title: string;
@@ -31,11 +33,12 @@ export type TUpdateEvent = {
     date: Date;
     location: string;
     coverImage: string;
+    branchId:number;
 };
 
 export type TEvent = Event;
 
-export type TEventWithElection = Event & { election: TElection | null };
+export type TEventWithElection = Event & { election: TElection | null, branch:TBranch, coop:TCoop };
 
 export type TEventSettingsUpdate = z.infer<typeof eventSettingsSchema>;
 

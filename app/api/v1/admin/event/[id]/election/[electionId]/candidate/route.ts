@@ -4,6 +4,7 @@ import { createCandidateSchema } from "@/validation-schema/candidate";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database"
 import { validateId } from "@/lib/server-utils";
+import { TCandidate } from "@/types";
 import { z } from "zod";
 
 type TCreateCandidateParams = {

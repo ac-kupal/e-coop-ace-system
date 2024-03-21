@@ -43,6 +43,8 @@ export const createEventSchema = z.object({
       })
       .nullable()
       .optional(),
+   branchId: z.coerce.number({...commonFieldErrors}),
+   coopId: z.coerce.number({...commonFieldErrors})
 });
 
 export const updateEventSchema = createEventSchema
@@ -51,6 +53,8 @@ export const updateEventSchema = createEventSchema
       description: true,
       date: true,
       location: true,
+      branchId:true,
+      coopId:true,
    })
    .merge(
       z.object({

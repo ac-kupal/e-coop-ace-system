@@ -68,6 +68,7 @@ model Coop {
 
     branches Branch[]
     users    User[]
+    event Event[]
 
     createdBy Int?
     updatedBy Int?
@@ -125,6 +126,10 @@ model Event {
 
     branchId Int
     branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+    coopId Int
+    coop Coop @relation(fields: [coopId],references: [id], onDelete: Cascade)
+
 
     // Event Settings
     registrationOnEvent     Boolean?          @default(true)

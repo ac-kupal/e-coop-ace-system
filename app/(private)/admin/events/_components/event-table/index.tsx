@@ -20,14 +20,20 @@ import { getAllEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { Input } from "@/components/ui/input";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 import { Card } from "@/components/ui/card";
+import { user } from "next-auth";
+import { Role } from "@prisma/client";
 
-const EventTable = () => {
+type TParams = {
+   params:{id:number},
+   user:user,
+}
+
+const EventTable = ({params,user}:TParams) => {
    const [globalFilter, setGlobalFilter] = useState<string>("");
    const [createEvent, setCreateEvent] = useState(false);
    const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
    const { data, isFetching, isLoading, isError, refetch } = getAllEvent();
-
    const table = useReactTable({
       data,
       columns,
@@ -49,6 +55,7 @@ const EventTable = () => {
          <div className="flex justify-between items-center px-5 lg:px-1">
             <CreateEventModal
                state={createEvent}
+               user={user}
                onClose={(state) => setCreateEvent(state)}
             />
             <div className="">
@@ -56,9 +63,10 @@ const EventTable = () => {
                <p className="text-[min(14px,3.4vw)]">manage events and elections</p>
             </div>
             <Button
+               disabled={user.role === Role.staff}
                size="sm"
                className={cn(
-                  "flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                  ` ${user.role === Role.staff ? "invisible":"visible"} flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]`
                )}
                onClick={() => setCreateEvent(true)}
             >

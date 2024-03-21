@@ -20,11 +20,18 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { updateEventSchema } from "@/validation-schema/event";
-import { z } from "zod";
+import { number, z } from "zod";
 import { useCallback, useEffect } from "react";
 import { TEventWithElection } from "@/types";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
@@ -32,16 +39,22 @@ import useImagePick from "@/hooks/use-image-pick";
 import { v4  } from "uuid";
 import { updateEvent } from "@/hooks/api-hooks/event-api-hooks";
 import ImagePick from "@/components/image-pick";
+import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
+import { user } from "next-auth";
+import { Role } from "@prisma/client";
 
 type Props = {
    event: TEventWithElection;
    state: boolean;
    onClose: (state: boolean) => void;
+   user:user,
 };
 
 type TUpdateEventSchema = z.infer<typeof updateEventSchema>;
 
-const UpdateEventModal = ({ event, state, onClose }: Props) => {
+const UpdateEventModal = ({ event, state, onClose,user }: Props) => {
+
+   console.log(event)
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: !event.coverImage
@@ -61,6 +74,8 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
       eventForm.setValue("location", event.location);
       eventForm.setValue("date", event.date);
       eventForm.setValue("coverImage", event.coverImage);
+      eventForm.setValue("coopId", event.coop.id);
+      eventForm.setValue("branchId", event.branch.id);
    }, [event, eventForm]);
 
    useEffect(() => {
@@ -70,7 +85,6 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
    const onCancelandReset = () => {
       eventForm.reset();
       onClose(false);
-      console.log("hello")
    };
 
    const updateEventMutation = updateEvent({ onCancelandReset, id: event.id });
@@ -84,10 +98,13 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
    eventForm.watch().description === event.description &&
    eventForm.watch().location === event.location &&
    eventForm.watch().date === event.date &&
-   eventForm.watch().coverImage === event.coverImage;
+   eventForm.watch().coverImage === event.coverImage &&
+   Number(eventForm.watch().branchId) === event.branch.id;
 
+   console.log(eventForm.watch())
 
    const onSubmit = async (formValues: TUpdateEventSchema) => {
+      console.log(formValues)
       try {
          if (!imageFile) {
             updateEventMutation.mutate({
@@ -112,6 +129,7 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
          console.log(error);
       }
    };
+
    return (
       <Dialog
          open={state}
@@ -254,6 +272,7 @@ const UpdateEventModal = ({ event, state, onClose }: Props) => {
                         );
                      }}
                   />
+                  
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
                      <Button

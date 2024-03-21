@@ -38,21 +38,30 @@ import QrViewContent from "@/components/modals/modal-content/qr-view-content";
 import useOrigin from "@/hooks/use-origin";
 import CopyURL from "@/components/copy-url";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession } from "next-auth/react";
 
 const Actions = ({ event }: { event: TEventWithElection }) => {
    const router = useRouter();
-
+   const session = useSession();
    const [onOpenModal, setOnOpenModal] = useState(false);
 
    const deleteOperation = deleteEvent();
    const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
-   if (deleteOperation.isPending)
-      return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
+   if (deleteOperation.isPending || session.status === "loading")
+   return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
+
+   if (session.status === "unauthenticated" || session.data === null )
+      return (
+        <span className="text-xs text-foreground/40 italic">not allowed</span>
+      );
+
+   
    return (
       <DropdownMenu>
          <UpdateEventModal
             event={event}
+            user={session.data.user}
             state={onOpenModal}
             onClose={() => setOnOpenModal(false)}
          ></UpdateEventModal>
@@ -256,6 +265,24 @@ const columns: ColumnDef<TEventWithElection>[] = [
       ),
       cell: ({ row }) => (
           <Cell text={moment(row.original.date).format("LL")}></Cell>
+      ),
+   },
+   {
+      accessorKey: "branch",
+      header: ({ column }) => (
+         <DataTableColHeader column={column} title="branch" />
+      ),
+      cell: ({ row }) => (
+          <Cell text={row.original.branch.branchName}></Cell>
+      ),
+   },
+   {
+      accessorKey: "coop",
+      header: ({ column }) => (
+         <DataTableColHeader column={column} title="coop" />
+      ),
+      cell: ({ row }) => (
+          <Cell text={row.original.coop.coopName}></Cell>
       ),
    },
    {

@@ -35,31 +35,36 @@ import {
    SelectTrigger,
    SelectValue,
 } from "@/components/ui/select";
-import { EventType } from "@prisma/client";
+import { EventType, Role } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { useCreateEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
-import { v4 as uuid, v4 } from "uuid";
-import { TEvent } from "@/types";
+import { v4 } from "uuid";
+import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
+import { user } from "next-auth";
+
 type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
+   user:user;
 };
 export type EventSchemaType = z.infer<
    ReturnType<typeof createEventWithElectionWithUploadSchema>
 >;
 
-const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
+const CreateEventModal = ({ state, onClose, onCancel, user}: Props) => {
 
    const [isElection, setIsElection] = useState(false);
 
    // Create the schema
    const EventSchema = createEventWithElectionWithUploadSchema(isElection);
+   
+    const { data: branches, isLoading: branchLoading } = branchList(user);
+
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: "/images/default.png",
@@ -75,6 +80,8 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
       date: undefined,
       electionName: "",
       coverImage: imageFile,
+      branchId: user.role === Role.admin ? user.branchId : 0,
+      coopId: user.coopId,
    };
 
    const eventForm = useForm<EventSchemaType>({
@@ -96,11 +103,15 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
 
 
    const onSubmit = async (formValues: EventSchemaType) => {
+      console.log(formValues)
+      console.log(eventForm.getValues("branchId"))
+
       try {
             if(!imageFile){
                createEvent.mutate({
                   ...formValues,
                   coverImage: "/images/default.png" ,
+                  branchId:user.role === Role.admin ? user.branchId : formValues.branchId
                });
             }else{
                const image = await uploadImage.mutateAsync({
@@ -111,6 +122,7 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
                createEvent.mutate({
                   ...formValues,
                   coverImage: !image ? "/images/default.png" : image,
+                  branchId:user.role === Role.admin ? user.branchId : formValues.branchId
                });
             }
           resetPicker()
@@ -121,6 +133,7 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
 
    const isLoading = createEvent.isPending;
    const isUploading = uploadImage.isPending;
+
 
    return (
       <Dialog
@@ -243,6 +256,42 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
                            </FormItem>
                         )}
                      />
+                       <FormField
+                            control={eventForm.control}
+                            name="branchId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Branch</FormLabel>
+                                    <Select
+                                        disabled={
+                                            branchLoading ||
+                                            !([Role.root, Role.coop_root] as Role[]).includes(
+                                                user.role,
+                                            )
+                                        }
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value.toString()}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a branch" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {branches.map((branch) => (
+                                                <SelectItem
+                                                    key={branch.id}
+                                                    value={branch.id.toString()}
+                                                >
+                                                    {branch.branchName}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                   </div>
                   <div className="w-full space-y-2 lg:space-y-5 ">
                      <FormField
@@ -327,6 +376,7 @@ const CreateEventModal = ({ state, onClose, onCancel}: Props) => {
                            );
                         }}
                      />
+                     
                   </div>
                   </div>
                   <Separator className="bg-muted/70" />

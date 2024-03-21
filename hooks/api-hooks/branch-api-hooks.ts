@@ -10,6 +10,9 @@ import { TBranch, TBranchWCoop } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import axios from "axios";
 import { createBranchSchema } from "@/validation-schema/branch";
+import { Role } from "@prisma/client";
+import { user } from "next-auth";
+
 
 export const deleteBranch = () => {
     const queryClient = useQueryClient();
@@ -37,13 +40,24 @@ export const deleteBranch = () => {
     return deleteOperation;
 };
 
-export const branchList = () => {
+
+
+export const branchList = (user?:user) => {
     const branchListQuery = useQuery<TBranchWCoop[], string>({
         queryKey: ["branch-list-query"],
         queryFn: async () => {
             try {
+                const id = Number(user?.coopId);
+                if (user?.role === Role.coop_root) {
+                   const response = await axios.get(
+                      `/api/v1/admin/branch/${id}`
+                   );
+                   console.log(response.data)
+                   return response.data;
+                }
                 const response = await axios.get("/api/v1/admin/branch");
-                return response.data;
+                   return response.data;
+
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage, {
