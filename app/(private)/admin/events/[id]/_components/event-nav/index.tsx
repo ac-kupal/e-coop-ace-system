@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import React from "react";
 import EventNavItems from "./event-nav-items";
+import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { Role } from "@prisma/client";
 
 export const EventRoutes: TNavListRoute[] = [
    {
@@ -25,18 +27,17 @@ export const EventRoutes: TNavListRoute[] = [
       name: "Incentive",
       path: "incentive",
    },
-   {
-      icon: <Wrench className="size-5" />,
-      name: "Event Settings",
-      path: "event-settings",
-   },
+ 
 ];
 
 type Props = {
    hasElection: boolean;
 };
 
-const EventNav = ({ event }: { event: TEventWithElection }) => {
+const EventNav =async ({ event }: { event: TEventWithElection }) => {
+
+   const user = await currentUserOrThrowAuthError();
+
    const EventNavRoutes: TNavListRoute[] = [
       ...EventRoutes,
       ...(event.election
@@ -48,6 +49,15 @@ const EventNav = ({ event }: { event: TEventWithElection }) => {
               },
            ]
          : []),
+         ...(user.role !== Role.staff
+            ? [
+               {
+                  icon: <Wrench className="size-5" />,
+                  name: "Event Settings",
+                  path: "event-settings",
+               },
+              ]
+            : []),
    ];
 
    return (

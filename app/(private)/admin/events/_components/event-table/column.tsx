@@ -39,6 +39,7 @@ import useOrigin from "@/hooks/use-origin";
 import CopyURL from "@/components/copy-url";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
+import { Role } from "@prisma/client";
 
 const Actions = ({ event }: { event: TEventWithElectionWithCoopWithBranch  }) => {
    const router = useRouter();
@@ -51,7 +52,7 @@ const Actions = ({ event }: { event: TEventWithElectionWithCoopWithBranch  }) =>
    if (deleteOperation.isPending || session.status === "loading")
    return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
 
-   if (session.status === "unauthenticated" || session.data === null )
+   if (session.status === "unauthenticated" || session.data === null || session.data.user.role === Role.staff)
       return (
         <span className="text-xs text-foreground/40 italic">not allowed</span>
       );
