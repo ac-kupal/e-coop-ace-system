@@ -1,12 +1,11 @@
 import db from "@/lib/database";
-import { v4 as uuidv4 } from "uuid";
 import { NextRequest, NextResponse } from "next/server";
 
-import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { createCoopSchema } from "@/validation-schema/coop";
-import { imageFileToUploadable } from "@/lib/server-utils";
-import { routeErrorHandler } from "@/errors/route-error-handler";
 import { uploadFile } from "@/services/s3-upload";
+import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { imageFileToUploadable } from "@/lib/server-utils";
+import { createCoopSchema } from "@/validation-schema/coop";
+import { routeErrorHandler } from "@/errors/route-error-handler";
 
 export const GET = async (req: NextRequest) => {
     try {

@@ -1,7 +1,13 @@
 import z from "zod";
+
+import { coopIdSchema } from "./coop";
 import { memberIdSchema } from "./member";
 import { claimIdSchema } from "./incentive";
 import { eventIdSchema, incentiveAssignIdParamSchema, incentiveIdSchema } from "./commons";
+
+export const coopIdParamSchema = z.object({
+    id : coopIdSchema
+})
 
 export const eventIdParamSchema = z.object({
     id : eventIdSchema
@@ -26,4 +32,3 @@ export const eventIdandMemberIdParamSchema = z.object({
     id : eventIdSchema,
     memberId : memberIdSchema
 })
-

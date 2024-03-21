@@ -41,7 +41,7 @@ type Props = {
 
 type createTBranch = z.infer<typeof createBranchSchema>;
 
-const CreateBranchModal = ({ state, onClose, onCancel, onCreate }: Props) => {
+const CreateBranchModal = ({ state, onClose, onCreate }: Props) => {
   const { coopList, isLoading: isLoadingCoopList } = useCoopList();
 
   const form = useForm<createTBranch>({

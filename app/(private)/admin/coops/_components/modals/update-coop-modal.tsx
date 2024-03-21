@@ -23,7 +23,7 @@ import {
 import ImagePick from "@/components/image-pick";
 import useImagePick from "@/hooks/use-image-pick";
 import { updateCoopSchema } from "@/validation-schema/coop";
-import { useCreateCoop } from "@/hooks/api-hooks/coop-api-hooks";
+import { useCreateCoop, useUpdateCoop } from "@/hooks/api-hooks/coop-api-hooks";
 import { TCoopWBranch } from "@/types";
 
 type Props = {
@@ -45,7 +45,8 @@ const UpdateCoopModal = ({ coop, state, onClose }: Props) => {
     resolver: zodResolver(updateCoopSchema),
     defaultValues: {
       coopName: coop.coopName, 
-      coopDescription: coop.coopDescription 
+      coopDescription: coop.coopDescription,
+      coopLogo : coop.coopLogo as string
     },
   });
 
@@ -55,9 +56,9 @@ const UpdateCoopModal = ({ coop, state, onClose }: Props) => {
     onClose(false);
   };
 
-  const { createCoop, isCreating } = useCreateCoop(() => reset());
+  const { updateCoop, isUpdatingCoop } = useUpdateCoop(coop.id, () => reset());
 
-  const isLoading = isCreating;
+  const isLoading = isUpdatingCoop;
 
   return (
     <Dialog open={state} onOpenChange={() => reset()}>
@@ -68,7 +69,7 @@ const UpdateCoopModal = ({ coop, state, onClose }: Props) => {
         />
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit((formValues) => createCoop({ data : formValues, image : imageFile }))}
+            onSubmit={form.handleSubmit((formValues) => updateCoop({ data : formValues, image : imageFile }))}
             className="space-y-4"
           >
             <ImagePick
