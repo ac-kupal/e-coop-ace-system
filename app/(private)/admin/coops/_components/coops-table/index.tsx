@@ -20,6 +20,7 @@ import DataTableViewOptions from "@/components/data-table/data-table-view-option
 import { Card, CardContent } from "@/components/ui/card";
 
 import { useCoopList } from "@/hooks/api-hooks/coop-api-hooks";
+import CreateCoopModal from "../modals/create-coop-modal";
 
 const CoopsTable = () => {
   const [createModal, setCreateModal] = useState(false);
@@ -63,6 +64,7 @@ const CoopsTable = () => {
 
   return (
     <div className="flex flex-1 flex-col  gap-y-5 ">
+      <CreateCoopModal state={createModal} onClose={(state) => setCreateModal(state)}/>
       <Card className="dark:bg-secondary/30 border-0">
         <CardContent className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2">
           <div className="flex relative items-center gap-x-4 text-muted-foreground w-full lg:w-fit">
