@@ -1,18 +1,17 @@
 import React from 'react'
+import { isAllowed } from '@/lib/utils';
+import { currentUserOrFalse } from '@/lib/auth';
 
 import AttendanceTable from './_components/attendance-table';
 
-import { allowed } from '@/lib/utils';
-import { currentUserOrThrowAuthError } from '@/lib/auth';
 import { eventIdSchema } from '@/validation-schema/commons';
 
 type Props = { params : { id : number }};
 
 const AttendancePage = async ({ params } : Props) => {
-  const user = await currentUserOrThrowAuthError();
+  const user = await currentUserOrFalse();
 
-  if (!allowed(["root", "admin", "staff"], user.role))
-    throw new Error("You don't have access to this page");
+  if (!isAllowed(["root", "admin", "staff"], user)) throw new Error("You don't have access to this page");
 
   const eventId = eventIdSchema.parse(params.id);
 

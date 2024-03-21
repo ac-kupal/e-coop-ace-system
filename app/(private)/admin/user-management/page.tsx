@@ -1,14 +1,14 @@
 import React from "react";
 import UserTable from "./_components/user-table";
-import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { allowed } from "@/lib/utils";
+import { currentUserOrFalse, currentUserOrThrowAuthError } from "@/lib/auth";
+import { isAllowed } from "@/lib/utils";
 
 type Props = {};
 
 const UserManagementPage = async (props: Props) => {
-    const user = await currentUserOrThrowAuthError();
+    const user = await currentUserOrFalse();
 
-    if (!allowed(["root", "coop_root", "admin"], user.role))
+    if (!isAllowed(["root", "coop_root", "admin"], user) || !user)
         return (
             <div className="flex p-2 h-dvh flex-col items-center justify-center w-full">
                 <p>You are not allowed in this page</p>

@@ -1,14 +1,16 @@
 import React from 'react'
+
 import BranchesTable from './_components/branches-table'
-import { currentUserOrThrowAuthError } from '@/lib/auth';
-import { allowed } from '@/lib/utils';
+
+import { isAllowed } from '@/lib/utils';
+import { currentUserOrFalse } from '@/lib/auth';
 
 type Props = {}
 
 const Branches = async(props: Props) => {  
-    const user = await currentUserOrThrowAuthError();
+    const user = await currentUserOrFalse();
 
-    if (!allowed(["root", "admin"], user.role)) throw new Error("You don't have access to this page")
+    if (!isAllowed(["root", "admin"], user)) throw new Error("You don't have access to this page")
 
   return (
     <div className="flex p-4 min-h-screen flex-col w-full">

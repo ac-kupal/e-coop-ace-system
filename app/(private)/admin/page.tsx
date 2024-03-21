@@ -1,24 +1,22 @@
 import { redirect } from "next/navigation";
+import { isAllowed } from "@/lib/utils";
+import { currentUserOrFalse } from "@/lib/auth";
 
-import { allowed } from "@/lib/utils";
 import { AdminRoutes } from "./_components/sidebar/sidebar-route";
-import { currentUserOrThrowAuthError } from "@/lib/auth";
 
 type Props = {};
 
 const AdminPage = async (props: Props) => {
-    const user = await currentUserOrThrowAuthError();
+    const user = await currentUserOrFalse();
 
-    if (!allowed(["root", "admin"], user.role))
+    if (!isAllowed(["root", "admin"], user))
         return (
             <div className="flex p-2 h-dvh flex-col items-center justify-center w-full">
                 <p>You are not allowed in this page</p>
             </div>
         );
 
-    const allowedPages = AdminRoutes.filter((route) =>
-        route.allowedRole.includes(user.role)
-    );
+    const allowedPages = AdminRoutes.filter((route) => isAllowed(route.allowedRole, user));
 
     if (allowedPages.length === 0)
         return (

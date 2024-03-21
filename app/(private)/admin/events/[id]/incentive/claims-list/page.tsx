@@ -1,5 +1,5 @@
 import React from "react";
-import { allowed } from "@/lib/utils";
+import { isAllowed } from "@/lib/utils";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { eventIdSchema } from "@/validation-schema/commons";
 import ClaimListTable from "./_components/claim-list-table";
@@ -9,7 +9,7 @@ type Props = { params: { id: number } };
 const ClaimsPage = async ({ params }: Props) => {
     const user = await currentUserOrThrowAuthError();
 
-    if (!allowed(["root", "admin", "staff"], user.role))
+    if (!isAllowed(["root", "admin", "staff"], user))
         throw new Error("You don't have access to this page");
 
     const eventId = eventIdSchema.parse(params.id);
