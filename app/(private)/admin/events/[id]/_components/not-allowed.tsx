@@ -1,15 +1,20 @@
-import { ShieldAlert } from 'lucide-react'
-import React from 'react'
+import { cn } from "@/lib/utils";
+import { ShieldAlert } from "lucide-react";
+import React from "react";
 
-const NotAllowed = () => {
-  return (
-          <div className='w-full h-screen flex justify-center items-center'>
-          <div className='flex flex-col items-center gap-2'>
-          <ShieldAlert className=' text-muted-foreground w-12 h-auto' />
-           You are not allowed here!
-          </div>
-     </div>
-  )
+type Props ={
+  clasName?:string,
 }
 
-export default NotAllowed
+const NotAllowed = ({clasName}:Props) => {
+   return (
+      <div className={cn("w-full h-screen flex justify-center items-center" + clasName)}>
+            <div className="flex flex-col items-center gap-2">
+               <ShieldAlert className=" text-muted-foreground w-12 h-auto" />
+               You are not allowed to visit this page.
+         </div>
+      </div>
+   );
+};
+
+export default NotAllowed;

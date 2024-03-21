@@ -40,7 +40,16 @@ const EventNav =async ({ event }: { event: TEventWithElection }) => {
 
    const EventNavRoutes: TNavListRoute[] = [
       ...EventRoutes,
-      ...(event.election
+      ...(user.role !== Role.staff
+         ? [
+            {
+               icon: <Wrench className="size-5" />,
+               name: "Event Settings",
+               path: "event-settings",
+            },
+           ]
+         : []),
+      ...(event.election && user.role !== Role.staff
          ? [
               {
                  icon: <Vote className="size-5" />,
@@ -49,15 +58,6 @@ const EventNav =async ({ event }: { event: TEventWithElection }) => {
               },
            ]
          : []),
-         ...(user.role !== Role.staff
-            ? [
-               {
-                  icon: <Wrench className="size-5" />,
-                  name: "Event Settings",
-                  path: "event-settings",
-               },
-              ]
-            : []),
    ];
 
    return (
