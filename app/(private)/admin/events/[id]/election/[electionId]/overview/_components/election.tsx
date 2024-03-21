@@ -68,7 +68,7 @@ const Election = ({ params, user }: Props) => {
             </Badge>
          )}
          <Header text="Overview"></Header>
-         {isStaff && (
+         {!isStaff && (
             <ElectionSwitch
                election={elections}
                status={elections.status}

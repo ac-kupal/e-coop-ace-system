@@ -90,7 +90,7 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
          open={state}
          onOpenChange={(state) => {
             onClose(state);
-            onCancelandReset()
+            onCancelandReset();
          }}
       >
          <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
@@ -99,18 +99,29 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
                description="When importing members, ensure that any duplicate passbook entries are skipped. Please ensure to clean your file before saving."
             />
             <DialogDescription className="text-sm border rounded-xl p-3 bg-secondary/60 flex justify-center flex-col items-center space-y-3">
-            <div>Follow these required column headers when importing:</div>
-            <div className=" flex flex-wrap text-muted-foreground">
-                {Object.keys(sampleFile[0]).map((key,idx)=> {
-                 return<div>
-                  <p className="text-primary" key={idx}> {key} <span className="invisible">__</span></p>
+               <div>Follow these required column headers when importing:</div>
+               <div className=" flex flex-wrap text-muted-foreground">
+                  {Object.keys(sampleFile[0]).map((key, idx) => {
+                     return (
+                        <p className="text-primary" key={key}>
+                           {" "}
+                           {key} <span className="invisible">__</span>
+                        </p>
+                     );
+                  })}
                </div>
-                 }              
-                )}
-            </div>
-            <Separator className="text-center text-muted-foreground text-[12px]">or download this format</Separator>
-           <Button onClick={handleExportSampleFile} variant={"link"} className="flex items-center justify-center space-x-2"><span>Example Member List Format</span> <Download className="size-4"></Download></Button>
-           </DialogDescription>
+               <Separator className="text-center text-muted-foreground text-[12px]">
+                  or download this format
+               </Separator>
+               <Button
+                  onClick={handleExportSampleFile}
+                  variant={"link"}
+                  className="flex items-center justify-center space-x-2"
+               >
+                  <span>Example Member List Format</span>{" "}
+                  <Download className="size-4"></Download>
+               </Button>
+            </DialogDescription>
             <form onSubmit={onSubmit}>
                <Input
                   type="file"
@@ -118,21 +129,26 @@ const ImportFileModal = ({ state, onClose, onCancel,id, onOpenSkippedModal }: Pr
                   onChange={handleImport}
                   accept=".xlsx, .xls, .csv, .xlm"
                />
-               {isLoading && <>
-                  <p className=" text-center m-2 animate-pulse text-primary text-sm">Importing! Please Wait..</p>
-               </>}
+               {isLoading && (
+                     <p className=" text-center m-2 animate-pulse text-primary text-sm">
+                        Importing! Please Wait..
+                     </p>
+               )}
                <div className="flex justify-end gap-x-2">
                   <Button
                      onClick={(e) => {
                         e.preventDefault();
-                        onCancelandReset()
+                        onCancelandReset();
                      }}
                      variant={"secondary"}
                      className="bg-muted/60 hover:bg-muted"
                   >
                      cancel
                   </Button>
-                  <Button disabled={Members.length === 0 ? true:false } type="submit">
+                  <Button
+                     disabled={Members.length === 0 ? true : false}
+                     type="submit"
+                  >
                      {isLoading ? (
                         <Loader2
                            className="h-3 w-3 animate-spin"
