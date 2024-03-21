@@ -125,3 +125,40 @@ export const useUpdateCoop = (coopId : number, onUpdate ?: (updatedCoop : TCoopW
 
   return { updatedCoop, updateCoop, isUpdatingCoop };
 };
+
+export const useDeleteCoop = (onDelete?: () => void) => {
+  const queryClient = useQueryClient();
+  const {
+    data,
+    mutate: deleteCoop,
+    isPending: isDeletingCoop,
+  } = useMutation<
+    string,
+    string,
+    number
+  >({
+    mutationKey: ["delete-coop-mutation"],
+    mutationFn: async (coopId) => {
+      try {
+
+        const request = await axios.delete(`/api/v1/admin/coop/${coopId}` );
+
+        if (onDelete) onDelete();
+
+        queryClient.invalidateQueries({ queryKey: ["coop-list-query"] });
+        return request.data;
+      } catch (e) {
+        const errorMessage = handleAxiosErrorMessage(e);
+        toast.error(errorMessage, {
+          action: {
+            label: "try agian",
+            onClick: () => deleteCoop(coopId) 
+          },
+        });
+        throw handleAxiosErrorMessage(e);
+      }
+    },
+  });
+
+  return { data, deleteCoop, isDeletingCoop };
+};

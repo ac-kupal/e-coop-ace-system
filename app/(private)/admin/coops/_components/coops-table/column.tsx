@@ -29,14 +29,15 @@ import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { deleteBranch } from "@/hooks/api-hooks/branch-api-hooks";
 import UserAvatar from "@/components/user-avatar";
 import UpdateCoopModal from "../modals/update-coop-modal";
+import { useDeleteCoop } from "@/hooks/api-hooks/coop-api-hooks";
 
 const Actions = ({ coop }: { coop: TCoopWBranch }) => {
     const [modal, setModal] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
 
-    const deleteOperation = deleteBranch();
+    const { deleteCoop, isDeletingCoop } = useDeleteCoop();
 
-    if (deleteOperation.isPending)
+    if (isDeletingCoop)
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
 
     return (
@@ -69,7 +70,7 @@ const Actions = ({ coop }: { coop: TCoopWBranch }) => {
                                 title: "Delete Coop 🗑️",
                                 description:
                                     "Are you sure to delete this coop? Everything under the coop will be deleted, branches, users, events etc, will be deleted. Do you wish to proceed?",
-                                onConfirm: () => { },
+                                onConfirm: () => deleteCoop(coop.id),
                             })
                         }
                         className="px-2 gap-x-2 text-destructive"

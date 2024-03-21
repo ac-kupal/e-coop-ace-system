@@ -39,3 +39,16 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
     return routeErrorHandler(e, req);
   }
 };
+
+export const DELETE = async (req: NextRequest, { params }: TParams) => {
+  try {
+    const { id } = coopIdParamSchema.parse(params);
+    await currentUserOrThrowAuthError();
+
+    await db.coop.delete({ where : { id } })
+
+    return NextResponse.json("coop deleted");
+  } catch (e) {
+    return routeErrorHandler(e, req);
+  }
+};
