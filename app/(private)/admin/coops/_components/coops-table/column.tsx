@@ -39,8 +39,6 @@ const Actions = ({ coop }: { coop: TCoopWBranch }) => {
     if (deleteOperation.isPending)
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
 
-    console.log(modal)
-
     return (
         <>
             <DropdownMenu>
