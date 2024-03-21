@@ -2,6 +2,7 @@ import React from "react";
 import UserTable from "./_components/user-table";
 import { currentUserOrFalse, currentUserOrThrowAuthError } from "@/lib/auth";
 import { isAllowed } from "@/lib/utils";
+import NotAllowed from "../events/[id]/_components/not-allowed";
 
 type Props = {};
 
@@ -10,9 +11,7 @@ const UserManagementPage = async (props: Props) => {
 
     if (!isAllowed(["root", "coop_root", "admin"], user) || !user)
         return (
-            <div className="flex p-2 h-dvh flex-col items-center justify-center w-full">
-                <p>You are not allowed in this page</p>
-            </div>
+            <NotAllowed />
         );
 
     return (
