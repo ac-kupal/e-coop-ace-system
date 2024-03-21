@@ -1,30 +1,51 @@
 "use client";
-import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
-import React, { useEffect, useState } from "react";
-import Loading from "../_components/loading";
+import { useSession } from "next-auth/react";
+import React from "react";
+
 import Header from "../_components/header";
-import { TCandidatewithPosition } from "@/types";
+import Loading from "../_components/loading";
 import NotFound from "../_components/not-found";
 import CandidateTable from "./_components/candidate-table";
+import NotAllowed from "../../../_components/not-allowed";
+
+import { isAllowed } from "@/lib/utils";
+import { TCandidatewithPosition } from "@/types";
+import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
+
 type Props = {
-   params: { id: number; electionId: number };
+  params: { id: number; electionId: number };
 };
+
 const page = ({ params }: Props) => {
+  const { data, status } = useSession();
+  const { elections, isLoading } = getElectionWithPositionAndCandidates({
+    params,
+  });
 
-   const { elections, isLoading, error } = getElectionWithPositionAndCandidates({params});
-   
-   if (isLoading) return (  <Loading/>);
+  if (isLoading || status === "loading") return <Loading />;
 
-   if(elections === undefined) return <NotFound></NotFound>
-   
-   const candidates = elections.candidates.map((candidate:TCandidatewithPosition)=>({...candidate,eventId:params.id}))
+  if (!isAllowed(["root", "coop_root", "admin"], data?.user))
+    return <NotAllowed />;
 
-   return (
-      <div>
-           <Header text="Manage Candidates"></Header>
-         <CandidateTable params={params} positions={elections?.positions} data={candidates}></CandidateTable>
-      </div>
-   );
+  if (elections === undefined) return <NotFound></NotFound>;
+
+  const candidates = elections.candidates.map(
+    (candidate: TCandidatewithPosition) => ({
+      ...candidate,
+      eventId: params.id,
+    }),
+  );
+
+  return (
+    <div>
+      <Header text="Manage Candidates"></Header>
+      <CandidateTable
+        params={params}
+        positions={elections?.positions}
+        data={candidates}
+      ></CandidateTable>
+    </div>
+  );
 };
 
 export default page;
