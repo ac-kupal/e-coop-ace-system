@@ -37,10 +37,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
         });
 
         if (incentives.length === 0)
-            return NextResponse.json(
-                { message: "There's no incentive to generate a report" },
-                { status: 400 },
-            );
+            return NextResponse.json([]);
 
         let reports: TIncentiveClaimReportsPerUser[] = [];
 

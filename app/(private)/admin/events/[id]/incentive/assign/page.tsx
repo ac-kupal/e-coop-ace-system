@@ -10,9 +10,9 @@ import { eventIdSchema } from "@/validation-schema/commons";
 type Props = { params: { id: number } };
 
 const AssignPage = async ({ params }: Props) => {
-    const user = await currentUserOrFalse();
+    const currentUser = await currentUserOrFalse();
 
-    if (!isAllowed(["root", "admin", "staff"], user))
+    if (!currentUser || !isAllowed(["root", "admin", "staff"], currentUser))
         return (
             <div className="flex px-4 min-h-screen flex-col w-full">
                 <InvalidPrompt message="You don't have rights to view this page" />
@@ -23,7 +23,7 @@ const AssignPage = async ({ params }: Props) => {
 
     return (
         <div className="flex px-4 min-h-screen flex-col w-full">
-            <IncentiveAssigneeTable eventId={eventId} />
+            <IncentiveAssigneeTable currentUser={currentUser} eventId={eventId} />
         </div>
     );
 };
