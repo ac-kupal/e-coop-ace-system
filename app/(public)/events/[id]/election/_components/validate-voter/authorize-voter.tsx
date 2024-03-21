@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 import { Input } from "@/components/ui/input";
+import { useEffect } from "react";
 
 type Props = {
   voter: TMemberAttendeesMinimalInfo;
@@ -49,6 +50,10 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
       voter.id,
       onAuthorize,
     );
+
+  useEffect(() => {
+    form.setFocus("otp");
+  }, [form, form.setFocus]);
 
   const onSubmit = (values: TForm) => {
     getAuthorization(values);
@@ -104,12 +109,12 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                         </>
                       )}
                     /> */}
-                        <Input
-                        disabled={disabled}
-                        placeholder="6 Digit OTP"
-                        className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
-                        {...field}
-                      />
+                    <Input
+                      disabled={disabled}
+                      placeholder="6 Digit OTP"
+                      className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

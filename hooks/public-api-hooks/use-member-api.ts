@@ -64,7 +64,8 @@ export const useRecentMember = ( eventId : number ) => {
                 return request.data;
             }catch(e){
                 const errorMessage = handleAxiosErrorMessage(e);
-                console.log("public recent member error:",errorMessage);
+                console.log("public recent member err : ",errorMessage);
+                throw errorMessage
             }
         }
     });

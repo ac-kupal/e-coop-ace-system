@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { MemberSearchMode } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Asterisk, CaseSensitive, Loader2, Space } from "lucide-react";
+import { Asterisk, CaseSensitive, Loader2 } from "lucide-react";
 
 import QrReader from "@/components/qr-reader";
 import { Input } from "@/components/ui/input";
@@ -36,11 +36,8 @@ type Props = {
 
 const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
   const [searchMode, setSearchMode] = useState<MemberSearchMode>("ByPassbook");
-  const { searchResults, searchMember, isPending, isError, error, reset } =
-    useSearchMemberAttendee(eventId, onFound);
-  const {} = useEventSettingsPublic(eventId, (settings) => {
-    setSearchMode(settings.defaultMemberSearchMode);
-  });
+  const { searchResults, searchMember, isPending, isError, error, reset } = useSearchMemberAttendee(eventId, onFound);
+  const {} = useEventSettingsPublic(eventId, (settings) => { setSearchMode(settings.defaultMemberSearchMode) });
 
   const form = useForm<z.infer<typeof memberAttendeeSearchSchema>>({
     resolver: zodResolver(memberAttendeeSearchSchema),
