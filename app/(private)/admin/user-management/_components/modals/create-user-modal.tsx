@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Loader2 } from "lucide-react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -34,6 +35,7 @@ import { createUser } from "@/hooks/api-hooks/user-api-hooks";
 import { Role } from "@prisma/client";
 import { user } from "next-auth";
 import { getAssignableRoles } from "../role-utils";
+import { useState } from "react";
 
 type Props = {
     state: boolean;
@@ -45,6 +47,7 @@ type Props = {
 type createTUser = z.infer<typeof createUserSchema>;
 
 const CreateUserModal = ({ state, onClose, editor }: Props) => {
+    const [showPassword, setShowPassword] = useState(false);
     const form = useForm<createTUser>({
         resolver: zodResolver(createUserSchema),
         defaultValues: {
@@ -126,12 +129,25 @@ const CreateUserModal = ({ state, onClose, editor }: Props) => {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder="8 character password"
-                                            className="placeholder:text-foreground/40"
-                                            {...field}
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                type={showPassword ?  "text" : "password" }
+                                                placeholder="8 character password"
+                                                className="placeholder:text-foreground/40"
+                                                {...field}
+                                            />
+                                            {showPassword ? (
+                                                <FaRegEye
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    className="cursor-pointer size-4 absolute right-3 top-3"
+                                                />
+                                            ) : (
+                                                <FaRegEyeSlash
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    className="cursor-pointer size-4 absolute right-3 top-3"
+                                                />
+                                            )}
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

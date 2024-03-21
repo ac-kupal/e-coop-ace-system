@@ -1,6 +1,6 @@
 "use client";
 import z from "zod";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -34,6 +34,7 @@ import { updateUser } from "@/hooks/api-hooks/user-api-hooks";
 import { Role } from "@prisma/client";
 import { user } from "next-auth";
 import { canEditRole, getAssignableRoles } from "../role-utils";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 type Props = {
     user: TUser;
@@ -45,6 +46,7 @@ type Props = {
 type updateTUser = z.infer<typeof updateUserSchema>;
 
 const UpdateUserModal = ({ state, user, editor, close }: Props) => {
+    const [showPassword, setShowPassword] = useState(false);
     const form = useForm<updateTUser>({
         resolver: zodResolver(updateUserSchema),
         defaultValues: {
@@ -148,12 +150,25 @@ const UpdateUserModal = ({ state, user, editor, close }: Props) => {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder="8 character password"
-                                            className="placeholder:text-foreground/40"
-                                            {...field}
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                type={showPassword ?  "text" : "password" }
+                                                placeholder="8 character password"
+                                                className="placeholder:text-foreground/40"
+                                                {...field}
+                                            />
+                                            {showPassword ? (
+                                                <FaRegEye
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    className="cursor-pointer size-4 absolute right-3 top-3"
+                                                />
+                                            ) : (
+                                                <FaRegEyeSlash
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    className="cursor-pointer size-4 absolute right-3 top-3"
+                                                />
+                                            )}
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
