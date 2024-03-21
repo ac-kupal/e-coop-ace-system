@@ -45,7 +45,6 @@ export const useCreateCoop = (onCreate?: (newCoop: TCoopWBranch) => void) => {
     data: newCoop,
     mutate: createCoop,
     isPending: isCreating,
-    isError,
   } = useMutation<
     TCoopWBranch,
     string,
@@ -54,10 +53,13 @@ export const useCreateCoop = (onCreate?: (newCoop: TCoopWBranch) => void) => {
     mutationKey: ["create-coop-mutation"],
     mutationFn: async ({ data, image }) => {
       try {
-        const request = await axios.postForm("/api/v1/admin/coop", {
-          data: JSON.stringify(data),
-          image,
-        });
+
+        const formData = new FormData();
+
+        formData.append("data", JSON.stringify(data));
+        if(image) formData.append("image", image, image.name);
+
+        const request = await axios.postForm("/api/v1/admin/coop", formData);
 
         if (onCreate) onCreate(request.data);
 

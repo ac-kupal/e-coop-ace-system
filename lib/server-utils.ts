@@ -1,6 +1,9 @@
 // This contains utils/helpers that ONLY & ONLY SHOULD run on server
+import { TFolderUploadGroups, TUploadable } from "@/types";
+import { uploadSchema } from "@/validation-schema/upload";
 import { hash, compare } from "bcrypt";
 import { headers } from "next/headers";
+import path, { extname } from "path";
 import { z } from "zod";
 
 export const hashPassword = async (data: string) => {
@@ -32,7 +35,7 @@ export const getTemplate = (name: emailTemplateNames) => {
 
 export const transformer = (
     template: emailTemplateNames,
-    value: Record<string, any>
+    value: Record<string, any>,
 ): string => {
     const regex = /\${(.*?)}/g;
 
@@ -47,7 +50,7 @@ export const transformer = (
 export const isQueryParamValEqualTo = (
     url: string,
     paramKey: string,
-    expected: string
+    expected: string,
 ) => {
     return getQueryParamValue(url, paramKey) === expected;
 };
@@ -72,7 +75,7 @@ export const pathName = (): string => {
     return url.pathname;
 };
 
-export const searchParamsEntries = (searchParams : URLSearchParams) => {
+export const searchParamsEntries = (searchParams: URLSearchParams) => {
     const searchParamsObj: { [key: string]: string } = {};
     searchParams.forEach((value, key) => {
         searchParamsObj[key] = value;
@@ -82,23 +85,51 @@ export const searchParamsEntries = (searchParams : URLSearchParams) => {
 };
 
 export const ExcelDateToJSDate = (date: string) => {
-    if(date === undefined) return null;
-    
+    if (date === undefined) return null;
+
     const numericDate = parseFloat(date);
- 
+
     if (isNaN(numericDate) || numericDate < -657434 || numericDate > 2958465) {
-       return null;
+        return null;
     }
- 
+
     return new Date(Math.round((numericDate - 25569) * 864e5));
- };
+};
 
 export function generateOTP(length: number): string {
-    const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let otp = '';
+    const charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let otp = "";
     for (let i = 0; i < length; i++) {
         const randomIndex = Math.floor(Math.random() * charset.length);
         otp += charset[randomIndex];
     }
     return otp;
 }
+
+export const imageFileToUploadable = async (uploadDatas: {
+    file: File;
+    fileName?: string;
+    folderGroup: TFolderUploadGroups;
+}) => {
+    if(!uploadDatas.file) return null;
+
+    if (!uploadDatas.fileName)
+        uploadDatas.fileName = path.basename(
+            uploadDatas.file.name,
+            path.extname(uploadDatas.file.name),
+        );
+
+    const { file, fileName, folderGroup } = uploadSchema.parse(uploadDatas);
+
+    const extName = extname(file.name);
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    const uploadable: TUploadable = [
+        buffer, // buffer 
+        `${fileName}${extName}`, // filename with default extension
+        folderGroup, // folder group where the fill will be stored
+        file.type, // file original type
+    ];
+
+    return uploadable
+};

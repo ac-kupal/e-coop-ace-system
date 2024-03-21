@@ -1,42 +1,66 @@
 import db from "@/lib/database";
+import { v4 as uuidv4 } from "uuid";
 import { NextRequest, NextResponse } from "next/server";
 
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { createCoopSchema } from "@/validation-schema/coop";
+import { imageFileToUploadable } from "@/lib/server-utils";
 import { routeErrorHandler } from "@/errors/route-error-handler";
+import { uploadFile } from "@/services/s3-upload";
 
 export const GET = async (req: NextRequest) => {
-  try {
-    await currentUserOrThrowAuthError();
+    try {
+        await currentUserOrThrowAuthError();
 
-    const cooperatives = await db.coop.findMany({
-      include: {
-        branches: true,
-      },
-    });
+        const cooperatives = await db.coop.findMany({
+            include: {
+                branches: true,
+            },
+        });
 
-    return NextResponse.json(cooperatives);
-  } catch (e) {
-    return routeErrorHandler(e, req);
-  }
+        return NextResponse.json(cooperatives);
+    } catch (e) {
+        return routeErrorHandler(e, req);
+    }
 };
 
 export const POST = async (req: NextRequest) => {
-  try {
-    const currentUser = await currentUserOrThrowAuthError();
+    try {
+        const currentUser = await currentUserOrThrowAuthError();
+        const payload = await req.formData();
 
-    const data = createCoopSchema.parse(await req.json());
+        const rawImage = payload.get("image") as any;
+        const rawData = payload.get("data") as any;
 
-    const cooperative = await db.coop.create({
-      data: {
-        ...data,
-        createdBy: currentUser.id,
-        updatedBy: currentUser.id,
-      },
-    });
+        const data = createCoopSchema.parse(JSON.parse(rawData));
 
-    return NextResponse.json(cooperative);
-  } catch (e) {
-    return routeErrorHandler(e, req);
-  }
+        let cooperative = await db.coop.create({
+            data: {
+                ...data,
+                createdBy: currentUser.id,
+                updatedBy: currentUser.id,
+            },
+            include : { branches : true }
+        });
+
+        const uploadable = await imageFileToUploadable({
+            file: rawImage,
+            fileName: `coop-${cooperative.id}`,
+            folderGroup: "coop",
+        });
+
+        if (uploadable) {
+            const uploadUrl = await uploadFile(...uploadable);
+
+            cooperative = await db.coop.update({ 
+                where : { id : cooperative.id }, 
+                data : { coopLogo : uploadUrl },
+                include : { branches : true }
+            })
+        }
+
+        return NextResponse.json(cooperative);
+    } catch (e) {
+        return routeErrorHandler(e, req);
+    }
 };

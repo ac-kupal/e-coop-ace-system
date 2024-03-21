@@ -14,3 +14,5 @@ export const createCoopSchema = z.object({
     })
     .min(1, "Coop description is required"),
 });
+
+export const updateCoopSchema = createCoopSchema;

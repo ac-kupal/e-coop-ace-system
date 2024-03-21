@@ -13,7 +13,7 @@ export const uploadFile = async (file : Buffer, fileName : string, folder : TFol
     }
 
     const command = new PutObjectCommand(params);
-    const result = await s3Client.send(command)
+    await s3Client.send(command)
 
     const constructedURL = `https://${params.Bucket}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${params.Key}`
     return constructedURL;

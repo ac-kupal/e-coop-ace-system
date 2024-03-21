@@ -1,7 +1,5 @@
-import z from "zod";
 import { Role } from "@prisma/client";
 import { ReactElement, ReactNode } from "react";
-import { folderGroupSchema } from "@/validation-schema/upload";
 
 export * from "./user.types";
 export * from "./coop.types";
@@ -17,7 +15,8 @@ export * from "./incentive-claims.types";
 export * from "./mail-template.types";
 export * from "./election-settings.types";
 export * from "./incentive-assigned.types";
-export * from "./vote.types"
+export * from "./vote.types";
+export * from "./upload.types";
 
 export type TApiError = { message: string };
 
@@ -33,8 +32,6 @@ export type TNavListRoute = {
     name: string;
     path: string;
 };
-
-export type TFolderUploadGroups = z.infer<typeof folderGroupSchema>;
 
 export type TVoteAuthorizationPayload = {
     eventId: number;

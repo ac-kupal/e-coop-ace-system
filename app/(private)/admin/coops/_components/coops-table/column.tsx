@@ -28,6 +28,7 @@ import { TCoopWBranch } from "@/types";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { deleteBranch } from "@/hooks/api-hooks/branch-api-hooks";
 import UserAvatar from "@/components/user-avatar";
+import UpdateCoopModal from "../modals/update-coop-modal";
 
 const Actions = ({ coop }: { coop: TCoopWBranch }) => {
     const [modal, setModal] = useState(false);
@@ -38,9 +39,12 @@ const Actions = ({ coop }: { coop: TCoopWBranch }) => {
     if (deleteOperation.isPending)
         return <Loader2 className="h-4 text-foreground/70 animate-spin" />;
 
+    console.log(modal)
+
     return (
         <>
             <DropdownMenu>
+                <UpdateCoopModal coop={coop} state={modal} onClose={(state) => setModal(state)} />
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon"> 
                         <span className="sr-only">Open menu</span>
@@ -54,7 +58,7 @@ const Actions = ({ coop }: { coop: TCoopWBranch }) => {
                         <Copy strokeWidth={2} className="h-4" />
                         Copy Coop ID
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="px-2 gap-x-2">
+                    <DropdownMenuItem className="px-2 gap-x-2" onClick={() => setModal(true)}>
                         <Pencil strokeWidth={2} className="h-4" /> Edit Coop
                     </DropdownMenuItem>
                     <DropdownMenuItem className="px-2 gap-x-2">

@@ -22,28 +22,30 @@ import {
 
 import ImagePick from "@/components/image-pick";
 import useImagePick from "@/hooks/use-image-pick";
-import { createCoopSchema } from "@/validation-schema/coop";
+import { updateCoopSchema } from "@/validation-schema/coop";
 import { useCreateCoop } from "@/hooks/api-hooks/coop-api-hooks";
+import { TCoopWBranch } from "@/types";
 
 type Props = {
   state: boolean;
   onClose: (state: boolean) => void;
+  coop : TCoopWBranch
 };
 
-type TCreateCoop = z.infer<typeof createCoopSchema>;
+type TUpdateCoop = z.infer<typeof updateCoopSchema>;
 
-const CreateCoopModal = ({ state, onClose }: Props) => {
+const UpdateCoopModal = ({ coop, state, onClose }: Props) => {
   const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
-    initialImageURL: "/images/default.png",
+    initialImageURL: coop.coopLogo as string,
     maxOptimizedSizeMB: 0.5,
     maxWidthOrHeight: 300,
   });
 
-  const form = useForm<TCreateCoop>({
-    resolver: zodResolver(createCoopSchema),
+  const form = useForm<TUpdateCoop>({
+    resolver: zodResolver(updateCoopSchema),
     defaultValues: {
-      coopName: "",
-      coopDescription: "",
+      coopName: coop.coopName, 
+      coopDescription: coop.coopDescription 
     },
   });
 
@@ -61,8 +63,8 @@ const CreateCoopModal = ({ state, onClose }: Props) => {
     <Dialog open={state} onOpenChange={() => reset()}>
       <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
         <ModalHead
-          title="Create Coop"
-          description="By creating a new coop, you will be able to create branches under this coop."
+          title="Update Coop"
+          description="Modify/change coop basic information"
         />
         <Form {...form}>
           <form
@@ -136,4 +138,4 @@ const CreateCoopModal = ({ state, onClose }: Props) => {
   );
 };
 
-export default CreateCoopModal;
+export default UpdateCoopModal;
