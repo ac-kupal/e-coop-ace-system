@@ -1,5 +1,7 @@
 import z from "zod";
 
+export const branchIdSchema = z.coerce.number({ required_error : "branch id is required", invalid_type_error : "invalid branch id"});
+
 export const createBranchSchema = z.object({
     branchName: z
         .string({ required_error: "branch name is required" })

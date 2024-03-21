@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { updateBranchSchema } from "@/validation-schema/branch";
 import { routeErrorHandler } from "@/errors/route-error-handler";
+import { branchIdParamSchema } from "@/validation-schema/api-params";
 
 type TParams = { params: { id : number } }
 
@@ -31,18 +32,21 @@ export const PATCH = async ( req : NextRequest, { params }: TParams ) =>{
 
 export const DELETE = async ( req : NextRequest, { params } : TParams ) => {
     try{
-        const user = await currentUserOrThrowAuthError();
-        const id = Number(params.id); 
+        const currentUser = await currentUserOrThrowAuthError();
+        const { id } = branchIdParamSchema.parse(params);
 
-        if(!params.id && isNaN(Number(id))) 
-            return NextResponse.json({ message : "missing/invalid id on request"}, { status : 400 })
+        const toDeleteCoop = await db.branch.findUnique({
+            where: { id, users: { some : { OR : [{role: "root"}, { id : currentUser.id }] } } },
+        });
+
+        if(toDeleteCoop) return NextResponse.json({ message : "Sorry but you cannot delete this coop as your account or the root user belongs to this branch" }, { status : 403 });
 
         const deletedBranch = await db.branch.update({ 
             where : { id }, 
             data : { 
                 deleted : true, 
                 deletedAt : new Date(), 
-                deletedBy : user.id 
+                deletedBy : currentUser.id 
             }})
 
         return NextResponse.json(deletedBranch)

@@ -4,14 +4,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import {
-    Copy,
-    Image,
-    Loader2,
-    MenuIcon,
-    Pencil,
-    Trash,
-} from "lucide-react";
+import { Copy, Image, Loader2, MenuIcon, Pencil, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
@@ -43,9 +36,13 @@ const Actions = ({ coop }: { coop: TCoopWBranch }) => {
     return (
         <>
             <DropdownMenu>
-                <UpdateCoopModal coop={coop} state={modal} onClose={(state) => setModal(state)} />
+                <UpdateCoopModal
+                    coop={coop}
+                    state={modal}
+                    onClose={(state) => setModal(state)}
+                />
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon"> 
+                    <Button variant="ghost" size="icon">
                         <span className="sr-only">Open menu</span>
                         <MenuIcon className="size-5 text-muted-foreground" />
                     </Button>
@@ -57,11 +54,11 @@ const Actions = ({ coop }: { coop: TCoopWBranch }) => {
                         <Copy strokeWidth={2} className="h-4" />
                         Copy Coop ID
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="px-2 gap-x-2" onClick={() => setModal(true)}>
+                    <DropdownMenuItem
+                        className="px-2 gap-x-2"
+                        onClick={() => setModal(true)}
+                    >
                         <Pencil strokeWidth={2} className="h-4" /> Edit Coop
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="px-2 gap-x-2">
-                        <Image strokeWidth={2} className="h-4" /> Coop Logo
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -89,11 +86,7 @@ const columns: ColumnDef<TCoopWBranch>[] = [
         id: "actions",
         enableHiding: false,
         header: ({ column }) => (
-            <DataTableColHeader
-                className="w-fit"
-                column={column}
-                title="Actions"
-            />
+            <DataTableColHeader className="w-fit" column={column} title="Actions" />
         ),
         cell: ({ row }) => (
             <div className="flex w-fit justify-start">
@@ -155,7 +148,7 @@ const columns: ColumnDef<TCoopWBranch>[] = [
                 {format(new Date(row.original.createdAt), "MMM dd, y")}
             </div>
         ),
-    }
+    },
 ];
 
 export default columns;
