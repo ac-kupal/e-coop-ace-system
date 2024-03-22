@@ -38,8 +38,8 @@ model User {
     branchId Int
     branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
-    coopId Int?
-    coop   Coop? @relation(fields: [coopId], references: [id], onDelete: Cascade)
+    coopId Int
+    coop   Coop @relation(fields: [coopId], references: [id], onDelete: Cascade)
 
     role Role @default(staff)
 
@@ -88,8 +88,8 @@ model Branch {
     branchAddress     String
     branchPicture     String? @default("/images/default.png")
 
-    coopId Int?
-    coop   Coop? @relation(fields: [coopId], references: [id], onDelete: Cascade)
+    coopId Int
+    coop   Coop @relation(fields: [coopId], references: [id], onDelete: Cascade)
 
     users     User[]
     events    Event[]
@@ -124,11 +124,11 @@ model Event {
     category    EventType
     coverImage  String?   @default("/images/default.png")
 
-    branchId Int?
-    branch   Branch? @relation(fields: [branchId], references: [id], onDelete: Cascade)
+    branchId Int
+    branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
-    coopId Int?
-    coop Coop? @relation(fields: [coopId],references: [id], onDelete: Cascade)
+    coopId Int
+    coop Coop @relation(fields: [coopId],references: [id], onDelete: Cascade)
 
 
     // Event Settings
@@ -234,8 +234,8 @@ model Election {
     eventId Int   @unique
     event   Event @relation(fields: [eventId], references: [id])
 
-    branchId Int?
-    branch   Branch? @relation(fields: [branchId], references: [id], onDelete: Cascade)
+    branchId Int
+    branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
     deleted Boolean @default(false)
 
