@@ -26,7 +26,7 @@ export const getPositionVotesTotal = ( params: { id: number; electionId: number}
 ///api/v1/admin/event/1/election/1/reports
 
 export const getReportsResults = ( params: { id: number; electionId: number}) => {
-   const {data,isLoading,isError} = useQuery<reportsTypes>({
+   const {data,isLoading,isError, refetch, isRefetching} = useQuery<reportsTypes>({
          queryKey: ["election-reports-query"],
          queryFn: async () => {
             try {
@@ -41,5 +41,5 @@ export const getReportsResults = ( params: { id: number; electionId: number}) =>
          },
          refetchInterval: 1 * 60 * 1000
       });
-      return {votes:data,isError,isLoading} 
+      return {votes:data,isError,isLoading, refetch, isRefetching} 
    };

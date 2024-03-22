@@ -27,6 +27,8 @@ const ReportHome = ({ eventId, currentUser }: Props) => {
         ids,
     );
 
+    console.log(reports)
+
     const exportToExcel = () => {
         if (reportRef.current) {
             tableToExcel(reportRef.current, `event-${eventId}-claim-report`);
