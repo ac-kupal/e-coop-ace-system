@@ -31,6 +31,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         const createClaims = await db.incentiveClaims.create({
             data: {
                 ...data,
+                claimedOnline : true,
                 eventAttendeeId: member.id,
                 eventId
             },
