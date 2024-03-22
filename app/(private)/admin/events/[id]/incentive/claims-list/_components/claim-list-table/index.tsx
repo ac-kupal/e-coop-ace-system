@@ -23,6 +23,7 @@ import {
 
 import { useClaimsMasterList } from "@/hooks/api-hooks/incentive-api-hooks";
 import { userList } from "@/hooks/api-hooks/user-api-hooks";
+import { user } from "next-auth";
 
 const claimFromFilter: FacetedOptionType[] = [
     {
@@ -37,22 +38,21 @@ const claimFromFilter: FacetedOptionType[] = [
     },
 ];
 
-const ClaimListTable = ({ eventId }: { eventId: number }) => {
+type Props = { eventId: number; currentUser: user };
+
+const ClaimListTable = ({ eventId, currentUser }: Props) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
     const { data: users } = userList();
     const { data } = useSession();
 
-    const myFilter =
-        data && data.user
-            ? [
-                  {
-                      label: "You",
-                      value: data.user.id.toString(),
-                      icon: User,
-                  },
-              ]
-            : [];
+    const myFilter = [
+        {
+            label: "You",
+            value: currentUser.id.toString(),
+            icon: User,
+        },
+    ];
 
     const { claimList, isError, isLoading, isFetching } =
         useClaimsMasterList(eventId);
@@ -101,9 +101,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                             ref={onFocusSearch}
                             placeholder="Search..."
                             value={globalFilter}
-                            onChange={(event) =>
-                                setGlobalFilter(event.target.value)
-                            }
+                            onChange={(event) => setGlobalFilter(event.target.value)}
                             className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
@@ -119,10 +117,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                                     options={[
                                         ...myFilter,
                                         ...users
-                                            .filter(
-                                                (user) =>
-                                                    user.id !== data.user.id
-                                            )
+                                            .filter((user) => user.id !== data.user.id)
                                             .map((user) => ({
                                                 label: user.name,
                                                 value: user.id.toString(),
@@ -148,10 +143,7 @@ const ClaimListTable = ({ eventId }: { eventId: number }) => {
                 isLoading={isLoading || isFetching}
                 table={table}
             />
-            <DataTablePagination
-                pageSizes={[20, 40, 60, 80, 100]}
-                table={table}
-            />
+            <DataTablePagination pageSizes={[20, 40, 60, 80, 100]} table={table} />
         </div>
     );
 };
