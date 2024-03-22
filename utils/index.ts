@@ -1,6 +1,5 @@
 import axios from "axios";
 import { TApiError } from "@/types";
-import { currentUserOrThrowAuthError } from "@/lib/auth";
 
 const isTApiError = (data: any): data is TApiError => {
    return data && typeof data.message === "string";
