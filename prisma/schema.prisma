@@ -356,7 +356,7 @@ model IncentiveClaims {
     assistedBy   User? @relation("AssistedClaims", fields: [assistedById], references: [id], onDelete: SetNull)
 
     assignedId Int?
-    assigned   IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: SetNull)
+    assigned   IncentiveAssigned? @relation(fields: [assignedId], references: [id], onDelete: Cascade)
     releasedAt DateTime? // if claimed online, it should be released when they claim their incentives.
 
     createdBy Int?

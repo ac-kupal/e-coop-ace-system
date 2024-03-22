@@ -75,9 +75,27 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                     orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
                 });
 
+                const incentiveAssigned = await db.incentiveAssigned.findMany({
+                    select : { 
+                        userId : true,
+                        incentiveId : true,
+                        assignedQuantity : true,
+                        _count : {
+                            select : {
+                               claims : {
+                                    where : { eventId }
+                                } 
+                            }
+                        }
+                    },
+                    where : { eventId, userId : user.id },
+                    orderBy: { id: "asc" },
+                });
+
                 reports.push({
                     user,
                     incentives,
+                    incentiveAssigned,
                     membersAssisted: claims,
                 });
             }),
