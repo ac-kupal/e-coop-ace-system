@@ -53,7 +53,7 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
                (votes, vote) => {
                   const voterId = vote.attendee.id;
                   const candidateId = vote.candidateId;
-                  const voterName = `${vote.attendee.firstName}, ${vote.attendee.lastName}`;
+                  const voterName = `${vote.attendee.lastName}, ${vote.attendee.firstName}`;
 
                   if (!uniqueVotersIds.has(voterId)) {
                      uniqueVotersIds.add(voterId);
