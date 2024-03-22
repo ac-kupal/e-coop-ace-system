@@ -35,16 +35,16 @@ export const BarGraphSection = ({ params }: TParams) => {
    </div>
 
    return (
-         <Carousel className="min-w-[100px] w-full lg:w-3/4  p-3 ">
-            <CarouselContent> 
+         <Carousel className="w-full max-w-[1700px] rounded-2xl  p-3">
+            <CarouselContent className="p-10 "> 
                {votes?.map((position, index) => (
                   <CarouselItem key={index}>
-                     <div className="p-5 w-full rounded-3xl bg-secondary/20 flex xl:justify-center">
+                     <div className="p-10 w-full border rounded-3xl bg-secondary/20 flex xl:justify-center">
                               <BarGraphContainer
                                  key={index}
                                  positionName={position.positionName}
                                  dataSet={position.dataSets}
-                                 labels={position.candidateNameWithNumeric}
+                                 labels={position.bargraphNumerics}
                               ></BarGraphContainer>
                      </div>
                   </CarouselItem>

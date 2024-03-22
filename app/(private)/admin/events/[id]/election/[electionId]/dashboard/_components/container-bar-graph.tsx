@@ -8,11 +8,12 @@ import {
    Tooltip,
    Legend,
    scales,
+   Colors,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Bar, Chart } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import Header from "../../_components/header";
-
+import { useTheme } from "next-themes";
 ChartJS.register(
    CategoryScale,
    LinearScale,
@@ -29,6 +30,11 @@ type Props = {
 };
 
 const BarGraphContainer = ({ positionName, labels, dataSet }: Props) => {
+   const { theme } = useTheme()
+ 
+   ChartJS.defaults.color= theme === "dark" ? "#fff" :"#000"
+   
+
    const options = {
       indexAxis: "y" as const,
       elements: {
@@ -46,16 +52,24 @@ const BarGraphContainer = ({ positionName, labels, dataSet }: Props) => {
       scales: {
          x: {
             ticks: {
-               font: {
-                  size: 16,
-               },
+               font: (context:any) => {
+                  const width = context.chart.width || 0;
+                  console.log(width)
+                  return {
+                      size: width < 600 ? 12 : 17, 
+                  };
+              },
             },
          },
          y: {
             ticks: {
-               font: {
-                  size: 16,
-               },
+               font: (context:any) => {
+                  const width = context.chart.width || 0;
+                  console.log(width)
+                  return {
+                      size: width < 600 ? 12 : 17, 
+                  };
+              },
             },
          },
       },

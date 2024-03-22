@@ -33,8 +33,8 @@ type candidateVotersTally = {
 export type  BarGraphDataTypes = {
      positionName:string,
      dataSets: number[];
-     candidatesName: string[];
-     candidateNameWithNumeric: string[];
+     bargraphNumerics: string[],
+     piegraphNumerics:string[],
      voters:Voters[]
      candidateVotersTally:candidateVotersTally[]
      totalVotesForCandidate:number[]

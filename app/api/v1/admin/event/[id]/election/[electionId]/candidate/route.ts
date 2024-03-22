@@ -58,26 +58,6 @@ export const POST = async (req: NextRequest,{params}:TCreateCandidateParams) => 
      }
   };
   
-// type CandidatesDataType = {
-//    candidateName: string,
-//    totalVotes:number
-//    candidateNameWithNumeric: string,
-//    candidateVotersTally:string
-//    votersName:Voters[]
-//    voters:Voters[]
-//    totalVotesForCandidate:number[]
-// }
-
-// type Voters = {
-//    id:string,
-//    votersName:string,
-//    value?:number
-// }
-// type totaTallyType = {
-//    id:string
-//    total:number
-// }
-
 type TParams = {
    params:{id:number,electionId:number}
 } 
@@ -134,8 +114,8 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
 
               return {
                  ...candidate,
-                 candidateNameWithNumeric: `${candidate.firstName} ${candidate.lastName} (${totalVotes})`,
-                 candidateName: `${candidate.firstName} ${candidate.lastName}`,
+                 bargraphNumerics: `${candidate.firstName} ${candidate.lastName} (${totalVotes})`,
+                 piegraphNumerics: `(${totalVotes}) ${candidate.firstName} ${candidate.lastName}`,
                  totalVotes,
               };
            });
@@ -146,11 +126,11 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
               dataSets: candidatesData.map(
                  (candidateData) => candidateData.totalVotes
               ),
-              candidatesName: candidatesData.map(
-                 (candidateData) => candidateData.candidateName
+              bargraphNumerics: candidatesData.map(
+                 (candidateData) => candidateData.bargraphNumerics
               ),
-              candidateNameWithNumeric: candidatesData.map(
-                 (candidateData) => candidateData.candidateNameWithNumeric
+              piegraphNumerics: candidatesData.map(
+                 (candidateData) => candidateData.piegraphNumerics
               ),
            };
         });

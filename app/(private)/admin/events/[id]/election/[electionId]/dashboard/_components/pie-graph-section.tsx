@@ -28,16 +28,16 @@ export const PieGraphSection = ({ params }: TParams) => {
    if(votes?.length === 0) return <NoVoters></NoVoters>
 
    return (
-         <Carousel className="w-full lg:w-3/4 h-fit p-3 ">
-            <CarouselContent className=""> 
+         <Carousel className="w-full max-w-[1700px] min-h-[50vh] p-3 ">
+            <CarouselContent className="p-10"> 
                {votes?.map((position, index) => (
                   <CarouselItem key={index}>
-                     <div className="p-5 h-[600px] w-full rounded-3xl bg-secondary/20 flex xl:justify-center">
+                     <div className="p-5 border w-full rounded-3xl bg-secondary/20 flex justify-center">
                               <PieGraphContainer
                                  key={index}
                                  positionName={position.positionName}
                                  dataSet={position.dataSets}
-                                 labels={position.candidateNameWithNumeric}
+                                 labels={position.piegraphNumerics}
                               />
                      </div>
                   </CarouselItem>
