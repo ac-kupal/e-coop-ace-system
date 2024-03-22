@@ -1,11 +1,11 @@
 import db from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
+import { TIncentiveClaimReportsPerUser } from "@/types";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { userIdsSchema } from "@/validation-schema/user";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { eventIdParamSchema } from "@/validation-schema/api-params";
-import { userIdsSchema } from "@/validation-schema/user";
-import { TIncentiveClaimReportsPerUser } from "@/types";
 
 type TParams = { params: { id: number } };
 
