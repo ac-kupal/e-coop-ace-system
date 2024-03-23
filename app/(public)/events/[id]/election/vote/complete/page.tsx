@@ -70,8 +70,7 @@ const CompletePage = ({ params }: Props) => {
         )}
 
         <p className="text-foreground/80 text-center">
-          Your vote has been saved & the copy of your vote has been sent to your
-          email.
+          Your vote has been saved
         </p>
         <Link className="" href={`/events/${election.eventId}`}>
           <Button size="sm">Return to Event</Button>

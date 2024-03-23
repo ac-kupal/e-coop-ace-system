@@ -16,7 +16,7 @@ const VoteSummary = ({ positions, votes }: Props) => {
       <div className="flex flex-col gap-y-4 items-center">
         <p className="text-xl lg:text-3xl xl:text-4xl">Your Vote Summary</p>
         <p className="text-sm text-foreground/70">
-          Please review your vote carefuly before casting vote.
+          Please review your vote carefuly & take a screenshot before casting vote.
         </p>
       </div>
       <div className="w-full gap-y-4 lg:gap-y-16 min-h-[70vh] py-18 flex flex-col flex-1 ">
