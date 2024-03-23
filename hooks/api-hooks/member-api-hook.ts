@@ -4,7 +4,7 @@ import moment from "moment";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TCreateMember, TMember, TMemberAttendeesMinimalInfo, TMemberWithEventElectionId, TUpdateMember } from "@/types";
+import { TCreateMember, TMailSendObject, TMember, TMemberAttendeesMinimalInfo, TMemberWithEventElectionId, TUpdateMember } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
 import useSkippedStore from "@/stores/skipped-members-store";
 import { useRouter } from "next/navigation";
@@ -229,7 +229,7 @@ export const useBroadcastOTP = (eventId: number) => {
         isPending: isBroadcasting,
         mutate: broadcastOTP,
     } = useMutation<
-        { sentCount: 0; invalidEmailAddress: 0; failedSend: 0 },
+        TMailSendObject,
         string
     >({
         mutationKey: [`broadcast-otp-${eventId}`],

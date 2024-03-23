@@ -3,7 +3,10 @@ import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 
 import { sendMail } from "@/lib/mailer";
-import { TMemberAttendeesMinimalInfo, TVoteAuthorizationPayload } from "@/types";
+import {
+    TMemberAttendeesMinimalInfo,
+    TVoteAuthorizationPayload,
+} from "@/types";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { memberEmailSchema } from "@/validation-schema/member";
 import { chosenCandidateIds } from "@/validation-schema/election";
@@ -17,12 +20,12 @@ export const POST = async (req: NextRequest) => {
         if (!vauth)
             return NextResponse.json(
                 { message: "You dont have system credentials to vote" },
-                { status: 403 },
+                { status: 403 }
             );
 
         const verifiedJwt = await jwtVerify<TVoteAuthorizationPayload>(
             vauth,
-            new TextEncoder().encode(process.env.VOTING_AUTHORIZATION_SECRET),
+            new TextEncoder().encode(process.env.VOTING_AUTHORIZATION_SECRET)
         );
 
         const { attendeeId, electionId } = verifiedJwt.payload;
@@ -33,7 +36,7 @@ export const POST = async (req: NextRequest) => {
                     message:
                         "There's a problem with your authorization, please retry voter member verification again.",
                 },
-                { status: 400 },
+                { status: 400 }
             );
 
         const voter = await db.eventAttendees.findUnique({
@@ -47,13 +50,13 @@ export const POST = async (req: NextRequest) => {
         if (!voter)
             return NextResponse.json(
                 { message: "Sorry we can't identify who you are" },
-                { status: 404 },
+                { status: 404 }
             );
 
         if (voter?.voted) {
             const response = NextResponse.json(
                 { message: "You already voted" },
-                { status: 403 },
+                { status: 403 }
             );
             response.cookies.delete("v-auth");
             return response;
@@ -61,7 +64,10 @@ export const POST = async (req: NextRequest) => {
 
         const election = await db.election.findUnique({
             where: { id: electionId },
-            include: { event: true, positions: { include: { candidates: true } } },
+            include: {
+                event: true,
+                positions: { include: { candidates: true } },
+            },
         });
 
         if (!election)
@@ -70,7 +76,7 @@ export const POST = async (req: NextRequest) => {
                     message:
                         "Sorry but this election was not found. Please contact admin",
                 },
-                { status: 404 },
+                { status: 404 }
             );
 
         const [saveVote, voterUpdate] = await db.$transaction([
@@ -86,15 +92,15 @@ export const POST = async (req: NextRequest) => {
                 data: { voted: true },
                 select: {
                     id: true,
-                    firstName: true, 
-                    middleName: true, 
-                    lastName: true, 
+                    firstName: true,
+                    middleName: true,
+                    lastName: true,
                     contact: true,
-                    picture: true, 
-                    passbookNumber: true, 
-                    registered: true, 
-                    voted: true 
-                }
+                    picture: true,
+                    passbookNumber: true,
+                    registered: true,
+                    voted: true,
+                },
             }),
         ]);
 
@@ -109,7 +115,7 @@ export const POST = async (req: NextRequest) => {
             const payload = {
                 iconImage: `${process.env.DEPLOYMENT_URL}/images/vote-saved.png`,
                 title: election.event.title,
-                coverImage: election.event.coverImage as '',
+                coverImage: election.event.coverImage as "",
                 participantName: `${firstName} ${lastName}`,
                 eventLink: `${process.env.DEPLOYMENT_URL}/events/${election.event.id}`,
                 voted: "",
@@ -118,23 +124,26 @@ export const POST = async (req: NextRequest) => {
             electionPosition.map((position) => {
                 payload.voted += `<p style=" font-family: helvetica, sans-serif;text-decoration: none;color: #333;font-weight: 800;display: block;font-size: 16px; line-height: 24px; margin: 1em 0 0em;padding: 0;">${position.positionName}</p>`;
                 const voted = position.candidates.filter((candidate) =>
-                    candidateIds.includes(candidate.id),
+                    candidateIds.includes(candidate.id)
                 );
-                if (voted.length === 0) payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:10px; font-style: italic;">no candidate selected</p>`;
+                if (voted.length === 0)
+                    payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:10px; font-style: italic;">no candidate selected</p>`;
                 voted.forEach((candidate) => {
                     payload.voted += `<p style="font-family:helvetica, sans-serif; font-size:16px;">${candidate.firstName} ${candidate.lastName}</p>`;
                 });
             });
 
-            await sendMail({
-                subject: "Confirmation: Your Vote has been Successfully Submitted",
-                toEmail: voter.emailAddress,
-                template: {
-                    templateFile: "vote-submit.html",
-                    payload
-                }
-            }
-            );
+            await sendMail([
+                {
+                    subject:
+                        "Confirmation: Your Vote has been Successfully Submitted",
+                    toEmail: voter.emailAddress,
+                    template: {
+                        templateFile: "vote-submit.html",
+                        payload,
+                    },
+                },
+            ]);
         }
 
         const response = NextResponse.json(voterUpdate);

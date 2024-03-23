@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { sendMail } from "@/lib/mailer";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { eventIdSchema } from "@/validation-schema/commons";
 import { memberEmailSchema } from "@/validation-schema/member";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { eventIdSchema } from "@/validation-schema/commons";
+import { ISendMailProps } from "@/types";
 
 type TParams = { params: { id: number } };
 
@@ -23,66 +24,45 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 firstName: true,
                 lastName: true,
                 emailAddress: true,
-                voteOtp : true
+                voteOtp: true,
             },
             where: {
                 eventId: eventId,
-                // canVote: true, // idk about this though, cuz otp can also be used in claiming
-                AND: [{ emailAddress: { not: null } }, { emailAddress: { not: "" } }],
+                AND: [
+                    { emailAddress: { not: null } },
+                    { emailAddress: { not: "" } },
+                ],
             },
         });
 
-        if (memberAttendeesList.length === 0)
-            return NextResponse.json(
-                {
-                    message:
-                        "Nothing to send to, make sure they are allowed to vote and have a valid email address.",
-                },
-                { status: 400 },
-            );
+        if (memberAttendeesList.length === 0) return NextResponse.json({message:"Nothing to send to, make sure they are allowed to vote and have a valid email address."},{ status: 400 });
 
-        const mailTaskStatus = {
-            sentCount: 0,
-            invalidEmailAddress: 0,
-            failedSend: 0,
-        };
+        const mails: ISendMailProps[] = [];
 
-        const mailSentTasks = memberAttendeesList
-            .filter((member) => {
+        memberAttendeesList.forEach((member) => {
                 const validatedEmail = memberEmailSchema.safeParse(member.emailAddress);
-                if (!validatedEmail.success) {
-                    mailTaskStatus.invalidEmailAddress += 1;
-                    return false;
-                }
-                return true;
-            })
-            .map(async (member) => {
-                try {
-                    if (!member.emailAddress) return;
-                    await sendMail({
-                        subject: "eCoop : Your event OTP",
-                        toEmail: member.emailAddress,
-                        template: {
-                            templateFile: "vote-otp.html",
-                            payload: {
-                                iconImage: `${process.env.DEPLOYMENT_URL}/images/vote-otp.png`,
-                                eventTitle: event.title,
-                                otp : member.voteOtp as "",
-                                eventLink : `${process.env.DEPLOYMENT_URL}/events/${event.id}/`,
-                                memberName : `${member.firstName} ${member.firstName}`,
-                                eventCoverImage : event.coverImage as ''
-                            }
-                        }
-                    })
-                    mailTaskStatus.sentCount += 1;
-                } catch (e) {
-                    mailTaskStatus.failedSend += 1;
-                }
+                if (!validatedEmail.success) return;
+
+                mails.push({
+                    subject: "eCoop : Your event OTP",
+                    toEmail: validatedEmail.data,
+                    template: {
+                        templateFile: "vote-otp.html",
+                        payload: {
+                            iconImage: `${process.env.DEPLOYMENT_URL}/images/vote-otp.png`,
+                            eventTitle: event.title,
+                            otp: member.voteOtp as "",
+                            eventLink: `${process.env.DEPLOYMENT_URL}/events/${event.id}/`,
+                            memberName: `${member.firstName} ${member.firstName}`,
+                            eventCoverImage: event.coverImage as "",
+                        },
+                    },
+                });
             });
 
-        await Promise.all(mailSentTasks);
+        const mailSendJob = await sendMail(mails);
 
-        return NextResponse.json(mailTaskStatus);
+        return NextResponse.json(mailSendJob);
     } catch (e) {
         return routeErrorHandler(e, req);
     }

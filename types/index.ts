@@ -12,11 +12,12 @@ export * from "./member-attendees.types";
 export * from "./member.types";
 export * from "./incentive.types";
 export * from "./incentive-claims.types";
-export * from "./mail-template.types";
+export * from "./mailer.types";
 export * from "./election-settings.types";
 export * from "./incentive-assigned.types";
 export * from "./vote.types";
 export * from "./upload.types";
+export * from "./mailer.types";
 
 export type TApiError = { message: string };
 

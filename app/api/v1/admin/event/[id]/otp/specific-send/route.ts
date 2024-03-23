@@ -59,7 +59,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
             return NextResponse.json({ message : "OTP can't be sent as member email was invalid."}, {status : 400});
 
 
-        const mailTask = await sendMail({
+        const mailTask = await sendMail([{
             subject: "eCoop : Your event OTP",
             toEmail: validatedEmail.data,
             template: {
@@ -73,7 +73,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     eventCoverImage: event.coverImage as "",
                 },
             },
-        });
+        }]);
 
         if(!mailTask) return NextResponse.json('Not Sent', { status : 400 });
 

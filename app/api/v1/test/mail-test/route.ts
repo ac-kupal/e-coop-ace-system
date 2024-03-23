@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { NextRequest, NextResponse } from "next/server";
 
-import { routeErrorHandler } from "@/errors/route-error-handler";
 import { sendMail } from "@/lib/mailer";
+import { ISendMailProps } from "@/types";
+import { routeErrorHandler } from "@/errors/route-error-handler";
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -14,15 +15,8 @@ export const GET = async (req: NextRequest) => {
       emails.push(email);
     }
 
-    const mailTaskStatus = {
-      sentCount: 0,
-      invalidEmailAddress: 0,
-      failedSend: 0,
-    };
-
-    const mailSentTasks = emails.map(async (email) => {
-        try {
-          await sendMail({
+    const mails : ISendMailProps[] = emails.map((email) => (
+        {
             subject: "eCoop : Your event OTP",
             toEmail: email,
             template: {
@@ -36,16 +30,12 @@ export const GET = async (req: NextRequest) => {
                 eventCoverImage: "",
               },
             },
-          });
-          mailTaskStatus.sentCount += 1;
-        } catch (e) {
-          mailTaskStatus.failedSend += 1;
-        }
-      });
+          }
+    ))
 
-    await Promise.all(mailSentTasks);
+    const mailResult = await sendMail(mails)
 
-    return NextResponse.json(mailTaskStatus);
+    return NextResponse.json(mailResult);
   } catch (e) {
     return routeErrorHandler(e, req);
   }
