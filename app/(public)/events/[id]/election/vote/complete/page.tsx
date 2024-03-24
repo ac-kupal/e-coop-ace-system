@@ -224,6 +224,7 @@ const CompletePage = ({ params }: Props) => {
                 </div>
                 {getVotes().length > 0 && fullName && pb && (
                     <>
+                        <div className="flex flex-col items-center gap-y-3">
                         <Button
                             onClick={() =>
                                 downloadVoteSummary(
@@ -242,6 +243,8 @@ const CompletePage = ({ params }: Props) => {
                                 </>
                             )}
                         </Button>
+                        <p className="text-xs text-center text-foreground/50">If download doesn&apos;t work, please take a photo/screenshot of the summary instead as your own copy.</p>
+                        </div>
                     </>
                 )}
                 <p className="text-foreground/80 text-center">
