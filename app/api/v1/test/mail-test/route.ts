@@ -11,7 +11,7 @@ export const GET = async (req: NextRequest) => {
 
     for (let i = 0; i < 1; i++) {
       const uuid = uuidv4().replace(/-/g, "");
-      const email = `pleizyparagas+${uuid}@gmail.com`;
+      const email = `pleizyparagas+a${uuid}@gmail.com`;
       emails.push(email);
     }
 
