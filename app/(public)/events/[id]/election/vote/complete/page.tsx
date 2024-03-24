@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
+import { toast } from "sonner";
 import * as htmlToImage from "html-to-image";
-import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 
 import { CheckIcon } from "lucide-react";
 import { IoIosSave } from "react-icons/io";
 
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
 import { Separator } from "@/components/ui/separator";
@@ -128,7 +128,7 @@ const CompletePage = ({ params }: Props) => {
 
                 <div
                     ref={containerRef}
-                    className="w-full flex gap-y-8 flex-col bg-background items-center"
+                    className="p-4 w-full flex gap-y-8 flex-col bg-background items-center"
                 >
                     {getVotes().length > 0 && pb && fullName && (
                         <>
