@@ -128,7 +128,7 @@ const CompletePage = ({ params }: Props) => {
 
                 <div
                     ref={containerRef}
-                    className="w-full flex gap-y-8 flex-col items-center"
+                    className="w-full flex gap-y-8 flex-col bg-background items-center"
                 >
                     {getVotes().length > 0 && pb && fullName && (
                         <>
@@ -171,7 +171,7 @@ const CompletePage = ({ params }: Props) => {
                                     ({ positionName, votedCandidates }) => (
                                         <div
                                             key={positionName}
-                                            className="w-full flex flex-col gap-y-4 px-6 py-4 rounded-xl bg-secondary/25"
+                                            className="w-full flex flex-col gap-y-4 px-6 py-4 rounded-xl bg-secondary/50 border dark:bg-secondary/25"
                                         >
                                             <div className="flex justify-between">
                                                 <p className="font-medium">
