@@ -16,4 +16,6 @@ export type TCandidatewithVotes = TCandidate & {votes:Votes[]}
 
 export type TCandidatewithPosition = Candidate & {position:Position} 
 
+export type TVoteCopyB64 = { positionName : string, votedCandidates : TCandidatewithPosition[] }
+
 export type TCandidatewithPositionwithEventId = Candidate & {position:Position} & {eventId:number}

@@ -16,6 +16,7 @@ import { useCastVote, loadVoter } from "@/hooks/public-api-hooks/use-vote-api";
 import {
     TCandidatewithPosition,
     TElectionWithEventWithPositionAndCandidates,
+    TVoteCopyB64,
 } from "@/types";
 
 type Props = {
@@ -31,7 +32,20 @@ const VoteWindow = ({ election }: Props) => {
 
     const { isPending, isError, error } = loadVoter(election);
     const { data, castVote, isCasting } = useCastVote(election, (voter) => {
-        router.push(`/events/${election.eventId}/election/vote/complete?pb=${voter.passbookNumber}&fullname=${`${voter.firstName} ${voter.lastName}`}&picture=${voter.picture}`);
+        try{
+            let myVotes : TVoteCopyB64[] = []
+        
+            election.positions.forEach((pos)=>{
+                const { positionName, id } = pos;
+                const votedCandidates = votes.filter((votedCandidate) => votedCandidate.positionId === id )
+                myVotes.push({ positionName, votedCandidates });
+            })
+    
+            const voteB64 = btoa(JSON.stringify(myVotes))
+            router.push(`/events/${election.eventId}/election/vote/complete?pb=${voter.passbookNumber}&fullname=${`${voter.firstName} ${voter.lastName}`}&picture=${voter.picture}&votes=${voteB64}`);
+        }catch(e){
+            router.push(`/events/${election.eventId}/election/vote/complete?pb=${voter.passbookNumber}&fullname=${`${voter.firstName} ${voter.lastName}`}&picture=${voter.picture}`);
+        }
     });
 
     if (isPending)
