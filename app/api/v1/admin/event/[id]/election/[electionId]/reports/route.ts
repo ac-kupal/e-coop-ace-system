@@ -2,13 +2,13 @@ import { routeErrorHandler } from "@/errors/route-error-handler";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database"
 import { validateId } from "@/lib/server-utils";
+import { TReportCandidate } from "@/types";
 
 
 
 type TParams = {
           params:{electionId:number,id:number}
-        }
-        
+        }  
 export const GET = async (req: NextRequest,{params}:TParams) => {
          try {
             const id = Number(params.electionId);
@@ -37,12 +37,16 @@ export const GET = async (req: NextRequest,{params}:TParams) => {
                         id:vote.candidate.positionId,
                         candidateId: candidateId,
                         candidateName: candidateName,
+                        firstName:vote.candidate.firstName,
+                        lastName:vote.candidate.lastName,
+                        picture:!vote.candidate.picture ? "/images/default-avatar.png" : vote.candidate.picture,
+                        position:vote.candidate.position.positionName
                      });
                   }
                   const sortUnique = unique.sort((a,b)=> a.id - b.id)
                   return sortUnique
                },
-               [] as {id:number, candidateId: number; candidateName: string }[]
+               [] as TReportCandidate[]
             );
            
             
