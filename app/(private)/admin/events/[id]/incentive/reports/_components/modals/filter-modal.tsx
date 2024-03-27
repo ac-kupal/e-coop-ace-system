@@ -3,7 +3,7 @@ import React from "react";
 import { FaCheck } from "react-icons/fa";
 import { AiOutlineUser, AiOutlineUsergroupAdd } from "react-icons/ai";
 
-import { userList } from "@/hooks/api-hooks/user-api-hooks";
+import UserAvatar from "@/components/user-avatar";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
     Command,
@@ -15,25 +15,27 @@ import {
     CommandSeparator,
 } from "@/components/ui/command";
 import LoadingSpinner from "@/components/loading-spinner";
-import UserAvatar from "@/components/user-avatar";
+
+import { eventBasedUserList } from "@/hooks/api-hooks/user-api-hooks";
 
 type Props = {
     state: boolean;
+    eventId: number;
     onClose: (state: boolean) => void;
 
     selectedIds: number[];
     setIds: (ids: number[]) => void;
 };
 
-const FilterModal = ({ state, onClose, selectedIds, setIds }: Props) => {
-    const { data, isLoading } = userList();
+const FilterModal = ({ state, onClose, eventId, selectedIds, setIds }: Props) => {
+    const { data, isLoading } = eventBasedUserList(eventId);
 
     return (
         <Dialog open={state} onOpenChange={(state) => onClose(state)}>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl p-2 font-inter">
                 <Command loop={true} className="rounded-lg bg-transparent p-0 shadow-md">
                     <CommandInput placeholder="Filter report..." />
-                    <CommandList>
+                    <CommandList className="thin-scroll">
                         <CommandEmpty>No results found.</CommandEmpty>
                         <CommandGroup heading="Quick Filter">
                             <CommandItem

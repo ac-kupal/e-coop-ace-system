@@ -35,53 +35,64 @@ const ReportHome = ({ eventId, currentUser }: Props) => {
         }
     };
 
-    const loading = isLoading || isRefetching;
+    const loading = isLoading;
 
     return (
         <div className="flex flex-col gap-y-2 p-4">
             <FilterModal
                 state={filter}
+                eventId={eventId}
                 onClose={(state) => setFilter(state)}
                 selectedIds={ids}
                 setIds={(ids) => setIds(ids)}
             />
-            <div className="flex gap-x-2 justify-end">
-                <Button
-                    variant={"secondary"}
-                    onClick={() => refetch()}
-                    className="gap-x-2"
-                    size="icon"
-                >
-                    <GrRotateRight className="size-4" />
-                </Button>
-                {
-                    isAllowed(["root", "coop_root", "admin"], currentUser) && 
+
+            <div className="flex justify-between">
+                <p className="text-foreground/60 text-sm">Showing {reports.length} user report{reports.length > 1 ? 's' : ''}</p>
+                <div className="flex items-center gap-x-1 justify-end">
                     <Button
                         variant={"secondary"}
-                        onClick={() => setFilter(!filter)}
+                        onClick={() => refetch()}
                         className="gap-x-2"
+                        size="icon"
                     >
-                        <FaFilter className="size-4" /> Filter
+                        <GrRotateRight className="size-4" />
                     </Button>
-                }
-                <Button onClick={() => exportToExcel()} className="gap-x-2">
-                    <SiMicrosoftexcel className="size-4" /> Export
-                </Button>
+                    {
+                        isAllowed(["root", "coop_root", "admin"], currentUser) &&
+                        <Button
+                            variant={"secondary"}
+                            onClick={() => setFilter(!filter)}
+                            className="gap-x-2"
+                        >
+                            <FaFilter className="size-4" /> Filter
+                        </Button>
+                    }
+                    <Button onClick={() => exportToExcel()} className="gap-x-2">
+                        <SiMicrosoftexcel className="size-4" /> Export
+                    </Button>
+                </div>
             </div>
             {loading ? (
                 <div className="min-h-[60dvh] flex items-center justify-center">
                     <LoadingSpinner />
                 </div>
             ) : (
-                <Table ref={reportRef} className="">
-                    {reports.map((userReport) => (
-                        <UserReportTable
-                            eventId={eventId}
-                            key={userReport.user.id}
-                            UserReport={userReport}
-                        />
-                    ))}
-                </Table>
+                <>
+                    {isRefetching && <div className="flex items-center gap-x-2 justify-center">
+                        <LoadingSpinner />
+                        <span className="text-xs text-foreground/70">refreshing report</span>
+                    </div>}
+                    <Table ref={reportRef} className="">
+                        {reports.map((userReport) => (
+                            <UserReportTable
+                                eventId={eventId}
+                                key={userReport.user.id}
+                                UserReport={userReport}
+                            />
+                        ))}
+                    </Table>
+                </>
             )}
         </div>
     );

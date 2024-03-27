@@ -1,4 +1,5 @@
 "use client";
+import { user } from "next-auth";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef } from "react";
 import {
@@ -21,9 +22,8 @@ import {
     FacetedOptionType,
 } from "@/components/data-table/data-table-facited-filter";
 
+import { eventBasedUserList } from "@/hooks/api-hooks/user-api-hooks";
 import { useClaimsMasterList } from "@/hooks/api-hooks/incentive-api-hooks";
-import { userList } from "@/hooks/api-hooks/user-api-hooks";
-import { user } from "next-auth";
 
 const claimFromFilter: FacetedOptionType[] = [
     {
@@ -43,7 +43,7 @@ type Props = { eventId: number; currentUser: user };
 const ClaimListTable = ({ eventId, currentUser }: Props) => {
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
-    const { data: users } = userList();
+    const { data: users } = eventBasedUserList(eventId);
     const { data } = useSession();
 
     const myFilter = [
