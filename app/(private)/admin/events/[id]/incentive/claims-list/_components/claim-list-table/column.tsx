@@ -68,7 +68,7 @@ const ReleaseAction = ({
                 onOpen({
                     title: "Release Claim",
                     description:
-                        "By releasing this claim, you are confirming that the member has received this item.",
+                        "Incentives that are claimed online by the user without staff assistance should be claim from the staff/admin assigned. By releasing this claim, you are confirming that you have given this item to the member. This will also count in your assisted claim.",
                     onConfirm: () =>
                         releaseClaim({
                             incentiveItemId: incentiveClaim.incentive.id,
@@ -115,6 +115,11 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
                 )}
             </div>
         ),
+        filterFn: (row, id, value) => {
+            const status = row.original.releasedAt ? "Released" : "Pending";
+            return value.includes(status)
+        },
+
         enableSorting: false,
     },
     {
@@ -128,7 +133,7 @@ const columns: ColumnDef<TIncentiveClaimsWithIncentiveAttendeeAssistedBy>[] = [
         ),
     },
     {
-        accessorKey: "itemName",
+        accessorKey: "incentive.itemName",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Item Name" />
         ),

@@ -10,7 +10,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 
-import { HandHeart, MonitorSmartphone, SearchIcon, User } from "lucide-react";
+import { Check, HandHeart, Hourglass, MonitorSmartphone, SearchIcon, User } from "lucide-react";
 
 import columns from "./column";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,19 @@ const claimFromFilter: FacetedOptionType[] = [
         label: "Online",
         value: "Online",
         icon: MonitorSmartphone,
+    },
+];
+
+const claimStatusFilter: FacetedOptionType[] = [
+    {
+        label: "Released",
+        value: "Released",
+        icon: Check,
+    },
+    {
+        label: "Pending Release",
+        value: "Pending",
+        icon: Hourglass,
     },
 ];
 
@@ -127,9 +140,20 @@ const ClaimListTable = ({ eventId, currentUser }: Props) => {
                                     column={table.getColumn("Assisted By")}
                                     title="Assisted by"
                                 />
+                                <DataTableFacetedFilter
+                                    title="Status"
+                                    options={claimStatusFilter}
+                                    column={table.getColumn("Status")}
+                                />
                             </div>
                         ) : (
-                            <div></div>
+                            <div className="flex items-center gap-x-2">
+                                <DataTableFacetedFilter
+                                    title="Status"
+                                    options={claimStatusFilter}
+                                    column={table.getColumn("Status")}
+                                />
+                            </div>
                         )}
                         <div className="flex items-center gap-x-2 md:gap-x-4">
                             <DataTableViewOptions table={table} />

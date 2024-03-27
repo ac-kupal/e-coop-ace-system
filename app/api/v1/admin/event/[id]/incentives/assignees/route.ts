@@ -36,7 +36,11 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 },
                 _count: {
                     select: {
-                        claims : true
+                        claims : {
+                            where : {
+                                releasedAt : { not : null }
+                            }
+                        } 
                     },
                 },
             },

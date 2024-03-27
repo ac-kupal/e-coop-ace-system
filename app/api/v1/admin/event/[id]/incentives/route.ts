@@ -20,26 +20,33 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
             where: { eventId },
             include: {
                 _count: {
-                    select: { claimed: true, assigned: true },
+                    select: { 
+                        claimed: { 
+                            where : {
+                                releasedAt : { not : null }
+                            }
+                        }, 
+                        assigned: true 
+                    },
                 },
                 assigned: includeAssignees
                     ? {
-                          include: {
-                              user: {
-                                  select: {
-                                      id: true,
-                                      picture: true,
-                                      name: true,
-                                      email: true,
-                                  },
-                              },
-                          },
-                      }
+                        include: {
+                            user: {
+                                select: {
+                                    id: true,
+                                    picture: true,
+                                    name: true,
+                                    email: true,
+                                },
+                            },
+                        },
+                    }
                     : false,
             },
-            orderBy : {
-                createdAt : "desc"
-            }
+            orderBy: {
+                createdAt: "desc",
+            },
         });
 
         return NextResponse.json(claimsWithClaimAndAssignedCount);
