@@ -1,4 +1,5 @@
 "use client";
+import { user } from "next-auth";
 import React, { useRef, useState } from "react";
 
 import { FaFilter } from "react-icons/fa";
@@ -13,7 +14,6 @@ import LoadingSpinner from "@/components/loading-spinner";
 
 import { isAllowed, tableToExcel } from "@/lib/utils";
 import { useClaimReports } from "@/hooks/api-hooks/claim-report-api-hook";
-import { user } from "next-auth";
 
 type Props = { eventId: number; currentUser: user };
 
