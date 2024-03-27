@@ -132,3 +132,27 @@ export const deleteUser = () => {
 
     return deleteOperation;
 }
+
+export const eventBasedUserList = (eventId : number) => {
+    const branchListQuery = useQuery<TUserWBranchCoop[], string>({
+        queryKey: ["user-list-query"],
+        queryFn: async () => {
+            try {
+                const response = await axios.get(`/api/v1/admin/event/${eventId}/event-users`);
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action : {
+                        label : "try agian",
+                        onClick : () => branchListQuery.refetch()
+                    }
+                });
+                throw handleAxiosErrorMessage(e);
+            }
+        },
+        initialData: [],
+    });
+
+    return branchListQuery;
+}

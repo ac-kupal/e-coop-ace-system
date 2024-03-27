@@ -1,26 +1,34 @@
 import db from "@/lib/database";
+import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { eventIdSchema } from "@/validation-schema/commons";
+import { USER_SELECTS_WITH_NO_PASSWORD } from "@/services/user";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { Role } from "@prisma/client";
-
-type TParams = { params: { id: number } };
+import { eventIdParamSchema } from "@/validation-schema/api-params";
 
 type TConditionSet = {
     roles: Role[];
     condition: Record<string, any>;
 };
 
+type TParams = { params: { id: number } };
+
+// This route is only for the event users, instead of returning all users regardless of coops or branch
+// this do the opposite which returns only the users for that coop or branch based on the event
 export const GET = async (req: NextRequest, { params }: TParams) => {
     try {
         const currentUser = await currentUserOrThrowAuthError();
-        const eventId = eventIdSchema.parse(params.id);
 
-        const event = await db.event.findUnique({ where: { id: eventId } })
+        const { id } = eventIdParamSchema.parse(params);
 
-        if (!event) return NextResponse.json({ message: "Event wasn't found or does not exist" }, { status: 404 });
+        const event = await db.event.findUnique({ where: { id } });
+
+        if (!event)
+            return NextResponse.json(
+                { message: "Couldn't get users list as the event doesn't exist." },
+                { status: 404 },
+            );
 
         const { coopId, branchId } = event;
 
@@ -32,7 +40,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                         OR: [
                             {
                                 coopId,
-                                branchId,
+                                branchId
                             },
                             {
                                 role: Role.root,
@@ -73,22 +81,17 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 : { id: currentUser.id };
         };
 
-        const usersWithAssignedIncentives = await db.user.findMany({
+        const users = await db.user.findMany({
             where: {
                 deleted: false,
-                ...getCondition(currentUser.role)
+                ...getCondition(currentUser.role),
             },
-            include: {
-                assignedIncentive: {
-                    where: {
-                        eventId,
-                    },
-                },
-            },
+            orderBy: { createdAt: "desc" },
+            select: USER_SELECTS_WITH_NO_PASSWORD,
         });
-
-        return NextResponse.json(usersWithAssignedIncentives);
+        return NextResponse.json(users);
     } catch (e) {
+        console.log(e);
         return routeErrorHandler(e, req);
     }
 };
