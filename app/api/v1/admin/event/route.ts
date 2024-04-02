@@ -102,8 +102,6 @@ export const GET = async (req: NextRequest) => {
       return filteredCondition ? filteredCondition.condition : {}
     };
 
-    console.log(getCondition(currentUser.role))
-
     const getAllEvents = await db.event.findMany({
       where: {
         deleted: false,
@@ -123,8 +121,6 @@ export const GET = async (req: NextRequest) => {
         branch:true,
       },
     });
-
-    console.log(getAllEvents)
 
     return NextResponse.json(getAllEvents);
   } catch (e) {

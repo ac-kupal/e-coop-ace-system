@@ -11,7 +11,6 @@ export const PATCH =async(req:NextRequest,{params}:Tparams)=>{
      try {
           const electionId = Number(params.electionId)
           const electionStatus = await req.json()
-          console.log(electionStatus)
           electionSwitchSchema.parse(electionStatus.status)
           const startElection = await db.election.update({
                where:{

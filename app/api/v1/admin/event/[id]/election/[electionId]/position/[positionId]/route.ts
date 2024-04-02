@@ -12,7 +12,6 @@ export const DELETE = async function name(req:NextRequest,{params}:TParams) {
      try {
       const positionId = Number(params.positionId)
       validateId(positionId)
-      console.log("position id:", positionId)
       const deletePosition = await db.position.delete({where:{id:positionId}})
       return NextResponse.json(deletePosition)     
       } catch (error) {

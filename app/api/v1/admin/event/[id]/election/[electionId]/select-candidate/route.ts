@@ -9,7 +9,6 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
     try {
         const eventId = eventIdSchema.parse(params.id)
         const electionId = eventIdSchema.parse(params.electionId)
-        console.log(params)
         const eventAttendees = await db.eventAttendees.findMany({
             where: { eventId },
             include : { event : {

@@ -25,10 +25,8 @@ export const POST = async (req: NextRequest) => {
 export const GET =async (req:NextRequest,{params}:TParams)=>{
      try {
           const electionId = Number(params.electionId)
-          console.log(params)
           validateId(electionId)
-          const getElection = await db.election.findUnique({where:{id:electionId}})
-          console.log("this is election: ",getElection)
+          await db.election.findUnique({where:{id:electionId}})
           const getAllPosition = await db.position.findMany({where:{electionId:electionId}});
           return NextResponse.json(getAllPosition);
        } catch (error) {

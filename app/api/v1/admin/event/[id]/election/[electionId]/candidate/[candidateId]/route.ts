@@ -14,7 +14,6 @@ export const DELETE = async function name(
    { params }: TParams
 ) {
    try {
-      console.log(params);
       const candidateId = Number(params.candidateId);
       validateId(candidateId);
       const deleteCandidate = await db.candidate.delete({
@@ -40,7 +39,6 @@ export const DELETE = async function name(
 export const GET = async function name(req: NextRequest, { params }: TParams) {
    try {
       const electionId = Number(params.candidateId);
-      console.log(electionId);
       validateId(electionId);
       const getAllCandidate = await db.candidate.findMany({
          where: {

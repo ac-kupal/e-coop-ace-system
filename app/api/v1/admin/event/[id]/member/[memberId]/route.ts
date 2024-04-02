@@ -9,7 +9,6 @@ type TParams = { params: { id: number, memberId:string } };
 export const DELETE = async function name(req:NextRequest,{params}:TParams) {
      try {
       const memberId = params.memberId
-      console.log(memberId)
       const deletePosition = await db.eventAttendees.delete({where:{id:memberId}})
       return NextResponse.json(deletePosition)     
       } catch (error) {

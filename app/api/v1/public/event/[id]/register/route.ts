@@ -42,14 +42,6 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         // Regardless, it was implemented instead, so I wrap it to skip all member who dont have date
         // of birth so anyone can type any date on registration and the system will let them pass through
         if (memberAttendee.birthday) {
-            console.log(
-                birthday,
-                memberAttendee.birthday,
-                birthday.toDateString(),
-                memberAttendee.birthday.toDateString(),
-                isSameDay(birthday, memberAttendee.birthday),
-            );
-
             if (!isSameDay(birthday, memberAttendee.birthday))
                 return NextResponse.json(
                     { message: "Wrong birthday, please try again" },

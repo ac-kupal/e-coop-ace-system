@@ -11,7 +11,6 @@ type TParams = { params : { id : number, claimId : number }}
 export const DELETE = async ( req : NextRequest , { params } : TParams) => {
     try{
         await currentUserOrThrowAuthError();
-        console.log(params)
         const { id : eventId, claimId } = eventIdAndClaimIdParamSchema.parse(params);
 
         const deletedClaim = await db.incentiveClaims.delete({

@@ -40,8 +40,6 @@ export const POST = async (req: NextRequest) => {
        
        const isBirthday = data.birthday === undefined
        
-       console.log(isBirthday)
-
        const user = await currentUserOrThrowAuthError();
 
        const date = new Date(data.birthday);
@@ -54,8 +52,6 @@ export const POST = async (req: NextRequest) => {
           voteOtp: generateOTP(6),
           birthday: isBirthday ? null : newBirthday,
        };
-
-       console.log(memberData)
 
        createMemberWithUploadSchema.parse(memberData);
        
