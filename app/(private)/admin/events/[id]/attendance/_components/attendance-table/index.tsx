@@ -20,8 +20,15 @@ import { useAttendanceList } from "@/hooks/api-hooks/attendance-api-hooks";
 import { useSession } from "next-auth/react";
 import { userList } from "@/hooks/api-hooks/user-api-hooks";
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-facited-filter";
+import { tableToExcel } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { SiMicrosoftexcel } from "react-icons/si";
+import { utils, write, writeFile, writeXLSX } from "xlsx";
 
 const AttendanceTable = ({ eventId } : { eventId : number }) => {
+
+    const tableRef = useRef(null)
+
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
@@ -74,6 +81,13 @@ const AttendanceTable = ({ eventId } : { eventId : number }) => {
         };
     }, []);
 
+    const exportToExcel = () => {
+        var wb = utils.book_new()
+        var ws = utils.json_to_sheet(attendanceList)
+        utils.book_append_sheet(wb,ws,"attendance_list")
+        writeFile(wb,"attendance_list.xlsx")
+     };
+
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
             <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
@@ -109,9 +123,21 @@ const AttendanceTable = ({ eventId } : { eventId : number }) => {
                 </div>
                 <div className="flex items-center gap-x-2 md:gap-x-4">
                     <DataTableViewOptions table={table} />
+                            <Button
+                                disabled={isFetching}
+                                className="gap-x-2"
+                                onClick={() => {
+                                    exportToExcel();
+                                    // const wb = utils.table_to_book(tableRef.current);
+                                    // writeFile(wb, `${electionName}_reports.xlsx`);
+                            }}
+                            >
+                            <SiMicrosoftexcel className="size-4" /> Export
+                       </Button>
                 </div>
+              
             </div>
-            <DataTable className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl" isError={isError} isLoading={isLoading || isFetching} table={table} />
+            <DataTable tableRef={tableRef} className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl" isError={isError} isLoading={isLoading || isFetching} table={table} />
             <DataTablePagination pageSizes={[20,40,60,80,100]} table={table}/>
         </div>
     );
