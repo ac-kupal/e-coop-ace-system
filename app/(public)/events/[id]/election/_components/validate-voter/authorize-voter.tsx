@@ -1,5 +1,5 @@
 import z from "zod";
-// import { OTPInput } from "input-otp";
+import { OTPInput } from "input-otp";
 import { useForm } from "react-hook-form";
 import ReactInputMask from "react-input-mask";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-// import OtpSlot from "@/components/otp-input/otp-slot";
+import OtpSlot from "@/components/otp-input/otp-slot";
 import ErrorAlert from "@/components/error-alert/error-alert";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 import {
@@ -76,9 +76,6 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                 <FormItem className="gap-y-2">
                   <p className="text-lg text-center ">OTP</p>
                   <FormControl>
-                    {/* 
-                        // Once issue was resolved, verify again if it was fixed and uncomment and use this again
-                        // issue here : https://github.com/guilhermerodz/input-otp/issues/37?fbclid=IwAR1YL1TO5f6bex2RSTypffO5-aJQD-DNqKVLfBExjr9Vy-fBeG2P70c81xI
                     <OTPInput
                       {...field}
                       autoFocus
@@ -108,13 +105,17 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                           </div>
                         </>
                       )}
-                    /> */}
+                    /> 
+
+                    {/* 
+                        // Once issue was resolved, verify again if it was fixed and uncomment and use this again
+                        // issue here : https://github.com/guilhermerodz/input-otp/issues/37?fbclid=IwAR1YL1TO5f6bex2RSTypffO5-aJQD-DNqKVLfBExjr9Vy-fBeG2P70c81xI
                     <Input
                       disabled={disabled}
                       placeholder="6 Digit OTP"
                       className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                       {...field}
-                    />
+                    />*/}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

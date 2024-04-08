@@ -92,45 +92,43 @@ const ValidateClaim = ({ eventId }: Props) => {
                         name="otp"
                         render={({ field }) => (
                             <FormItem>
-                                {/* <p className="text-lg text-center ">OTP</p> */}
+                                <p className="text-lg text-center ">OTP</p>
                                 <FormControl>
-                                    {/*
-
-                  <OTPInput
-                    {...field}
-                    autoFocus
-                    maxLength={6}
-                    onComplete={() => {
-                      authorize({
-                        otp: form.getValues("otp"),
-                        passbookNumber: member.passbookNumber,
-                      });
-                    }}
-                    inputMode="text"
-                    pattern="^[a-zA-Z0-9]+$"
-                    containerClassName="group flex items-center has-[:disabled]:opacity-30"
-                    render={({ slots }) => (
-                      <>
-                        <div className="flex">
-                          {slots.slice(0, 3).map((slot, idx) => (
-                            <OtpSlot key={idx} {...slot} />
-                          ))}
-                        </div>
-                        <div className="w-5 mx-2 h-2 bg-secondary rounded-full" />
-                        <div className="flex">
-                          {slots.slice(3).map((slot, idx) => (
-                            <OtpSlot key={idx} {...slot} />
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  /> */}
+                                    <OTPInput
+                                        {...field}
+                                        autoFocus
+                                        maxLength={6}
+                                        onComplete={() => {
+                                            authorize({
+                                                otp: form.getValues("otp"),
+                                                passbookNumber: member.passbookNumber,
+                                            });
+                                        }}
+                                        inputMode="text"
+                                        pattern="^[a-zA-Z0-9]+$"
+                                        containerClassName="group flex items-center has-[:disabled]:opacity-30"
+                                        render={({ slots }) => (
+                                            <>
+                                                <div className="flex">
+                                                    {slots.slice(0, 3).map((slot, idx) => (
+                                                        <OtpSlot key={idx} {...slot} />
+                                                    ))}
+                                                </div>
+                                                <div className="w-5 mx-2 h-2 bg-secondary rounded-full" />
+                                                <div className="flex">
+                                                    {slots.slice(3).map((slot, idx) => (
+                                                        <OtpSlot key={idx} {...slot} />
+                                                    ))}
+                                                </div>
+                                            </>
+                                        )}
+                                    /> {/*
                                     <Input
                                         disabled={disabled}
                                         placeholder="6 Digit OTP"
                                         className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
                                         {...field}
-                                    />
+                                    /> */}
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
