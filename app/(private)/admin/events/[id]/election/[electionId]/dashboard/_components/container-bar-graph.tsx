@@ -64,7 +64,6 @@ const BarGraphContainer = ({ positionName, labels, dataSet }: Props) => {
             ticks: {
                font: (context:any) => {
                   const width = context.chart.width || 0;
-                  console.log(width)
                   return {
                       size: width < 600 ? 12 : 17, 
                   };

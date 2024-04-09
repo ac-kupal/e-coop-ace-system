@@ -23,7 +23,11 @@ const EventLayout = async ({ children, params }: Props) => {
 
    const event = await db.event.findUnique({ where : { id : eventIdValidation.data }, include : { election : true}})
 
+   
+   
    if (!event) return <NotFound />
+   
+   console.log(event.date)
 
    return (
       <div className="font-poppins pt-2 lg:px-7 space-y-2 lg:space-y-4 h-fit overflow-hidden">

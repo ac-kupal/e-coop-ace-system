@@ -20,28 +20,19 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-   Select,
-   SelectContent,
-   SelectItem,
-   SelectTrigger,
-   SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { updateEventSchema } from "@/validation-schema/event";
-import { number, z } from "zod";
+import { z } from "zod";
 import { useCallback, useEffect } from "react";
-import { TEventWithElection,TEventWithElectionWithCoopWithBranch } from "@/types";
+import { TEventWithElectionWithCoopWithBranch } from "@/types";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import useImagePick from "@/hooks/use-image-pick";
 import { v4  } from "uuid";
 import { updateEvent } from "@/hooks/api-hooks/event-api-hooks";
 import ImagePick from "@/components/image-pick";
-import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
 import { user } from "next-auth";
-import { Role } from "@prisma/client";
 
 type Props = {
    event: TEventWithElectionWithCoopWithBranch;
@@ -54,7 +45,6 @@ type TUpdateEventSchema = z.infer<typeof updateEventSchema>;
 
 const UpdateEventModal = ({ event, state, onClose,user }: Props) => {
 
-   console.log(event)
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: !event.coverImage

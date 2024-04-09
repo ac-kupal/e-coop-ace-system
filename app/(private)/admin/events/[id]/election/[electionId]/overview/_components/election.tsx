@@ -13,6 +13,7 @@ import { Candidates } from "./candidates";
 import { Positions } from "./positions";
 import { Role } from "@prisma/client";
 import { user } from "next-auth";
+import moment from "moment";
 
 type Props = {
    params: { id: number; electionId: number };
@@ -36,7 +37,7 @@ const Election = ({ params, user }: Props) => {
 
    const isStaff = user.role === Role.staff;
    
-   console.log(elections.event)
+   console.log(elections.event.date)
 
    return (
       <div className="space-y-2 relative ">

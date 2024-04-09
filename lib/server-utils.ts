@@ -106,6 +106,14 @@ export function generateOTP(length: number): string {
     return otp;
 }
 
+export const newDate=(dateToFix:Date)=>{
+    const date = new Date(dateToFix);
+    const newDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return newDate
+}
+
+
+
 export const imageFileToUploadable = async (uploadDatas: {
     file: File;
     fileName?: string;

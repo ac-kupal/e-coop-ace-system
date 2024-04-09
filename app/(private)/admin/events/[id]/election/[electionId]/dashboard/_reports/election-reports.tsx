@@ -26,8 +26,6 @@ import {
 } from "@/components/ui/tooltip";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
    Popover,
    PopoverContent,
@@ -43,10 +41,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const ElectionReports = ({ params, electionName }: TParams) => {
    const tableRef = useRef(null);
 
-   const { votes, isLoading, isError, refetch, isRefetching } =
-      getReportsResults(params);
+   const { votes, isLoading, refetch, isRefetching } =getReportsResults(params);
 
-   console.log(votes);
 
    if (!votes) return <NotFound></NotFound>;
    if (votes.sum === 0) return <NoVoters></NoVoters>;

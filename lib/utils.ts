@@ -12,6 +12,12 @@ export const isAllowed = (roleAllowed: Role[], user : user | false | null | unde
     return roleAllowed.includes(user.role);
 };
 
+export const newDate=(dateToFix:Date)=>{
+    const date = new Date(dateToFix);
+    const newDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return newDate
+}
+
 export const tableToExcel = (table: HTMLDivElement, name: string) => {
     const uri = "data:application/vnd.ms-excel;base64,";
     const template =

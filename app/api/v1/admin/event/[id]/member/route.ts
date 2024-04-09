@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { eventIdSchema } from "@/validation-schema/commons";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { generateOTP } from "@/lib/server-utils";
+import { generateOTP, newDate } from "@/lib/server-utils";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
 
 type TParams = { params: { id: number } };
@@ -41,16 +41,12 @@ export const POST = async (req: NextRequest) => {
        const isBirthday = data.birthday === undefined
        
        const user = await currentUserOrThrowAuthError();
-
-       const date = new Date(data.birthday);
-       const newBirthday = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
        
-
        const memberData = {
           ...data,
           createdBy: user.id,
           voteOtp: generateOTP(6),
-          birthday: isBirthday ? null : newBirthday,
+          birthday: isBirthday ? null : newDate(data.birthday),
        };
 
        createMemberWithUploadSchema.parse(memberData);
