@@ -11,7 +11,7 @@ type Props = { params : { id : number }};
 const AttendancePage = async ({ params } : Props) => {
   const user = await currentUserOrFalse();
 
-  if (!isAllowed(["root", "admin", "staff"], user)) throw new Error("You don't have access to this page");
+  if (!isAllowed(["root","admin", "staff"], user)) throw new Error("You don't have access to this page");
 
   const eventId = eventIdSchema.parse(params.id);
 

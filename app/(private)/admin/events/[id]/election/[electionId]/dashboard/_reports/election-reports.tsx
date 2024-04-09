@@ -218,40 +218,6 @@ const ElectionReports = ({ params, electionName }: TParams) => {
                            </TableRow>
                         );
                      })}
-                     {votes?.voters.map((voter) => {
-                        return (
-                           <TableRow className="w-[300px] " key={voter.id}>
-                              <TableCell>{voter.voterName}</TableCell>
-                              {voter.votes.map((vote, idx) => {
-                                 return (
-                                    <TableCell
-                                       className="text-muted-foreground font-bold"
-                                       key={idx}
-                                    >
-                                       {vote === 0 ? "" : vote}
-                                    </TableCell>
-                                 );
-                              })}
-                           </TableRow>
-                        );
-                     })}
-                     {votes?.voters.map((voter) => {
-                        return (
-                           <TableRow className="w-[300px] " key={voter.id}>
-                              <TableCell>{voter.voterName}</TableCell>
-                              {voter.votes.map((vote, idx) => {
-                                 return (
-                                    <TableCell
-                                       className="text-muted-foreground font-bold"
-                                       key={idx}
-                                    >
-                                       {vote === 0 ? "" : vote}
-                                    </TableCell>
-                                 );
-                              })}
-                           </TableRow>
-                        );
-                     })}
                   </TableBody>
                </Table>
               
