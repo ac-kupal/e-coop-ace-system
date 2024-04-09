@@ -20,6 +20,7 @@ type Props = {
 };
 
 const Election = ({ params, user }: Props) => {
+
    const { elections, isLoading, error } = getElectionWithPositionAndCandidates(
       { params }
    );
@@ -34,6 +35,8 @@ const Election = ({ params, user }: Props) => {
    const isEnded = elections.status === "done";
 
    const isStaff = user.role === Role.staff;
+   
+   console.log(elections.event)
 
    return (
       <div className="space-y-2 relative ">
@@ -75,7 +78,7 @@ const Election = ({ params, user }: Props) => {
                params={params}
             ></ElectionSwitch>
          )}
-         <ElectionDetails election={elections}></ElectionDetails>
+         <ElectionDetails eventDate={elections.event.date} election={elections}></ElectionDetails>
          <div className="w-full flex space-x-3 justify-start px-2">
             <Users className="size-5 text-primary" />
             <h1 className="font-medium">Candidates</h1>

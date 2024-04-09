@@ -23,6 +23,7 @@ export const GET =async (req:NextRequest,{params}:TParams)=>{
         where:{id:electionId},
         include:{
           positions:true,
+          event:true,
           candidates:{
             include:{
               position:true
@@ -30,7 +31,6 @@ export const GET =async (req:NextRequest,{params}:TParams)=>{
           }
          }
         })
-   
         return NextResponse.json(getElection)   
     } catch (error) {
        return routeErrorHandler(error, req);

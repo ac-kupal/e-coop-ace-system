@@ -82,8 +82,11 @@ const AttendanceTable = ({ eventId } : { eventId : number }) => {
     }, []);
 
     const exportToExcel = () => {
+        const modifiedAttendance = attendanceList.map((attendance)=> {
+            return {pbno:attendance.passbookNumber,firstname:attendance.firstName,lastname:attendance.lastName,sex:attendance.gender}
+        })
         var wb = utils.book_new()
-        var ws = utils.json_to_sheet(attendanceList)
+        var ws = utils.json_to_sheet(modifiedAttendance)
         utils.book_append_sheet(wb,ws,"attendance_list")
         writeFile(wb,"attendance_list.xlsx")
      };
