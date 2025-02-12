@@ -64,11 +64,11 @@ model Coop {
 
     coopName        String
     coopDescription String
-    coopLogo String? @default("/images/default.png")
+    coopLogo        String? @default("/images/default.png")
 
     branches Branch[]
     users    User[]
-    event Event[]
+    event    Event[]
 
     createdBy Int?
     updatedBy Int?
@@ -128,8 +128,7 @@ model Event {
     branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
     coopId Int
-    coop Coop @relation(fields: [coopId],references: [id], onDelete: Cascade)
-
+    coop   Coop @relation(fields: [coopId], references: [id], onDelete: Cascade)
 
     // Event Settings
     registrationOnEvent     Boolean?          @default(true)
@@ -226,6 +225,8 @@ model Election {
     voteEligibility           VotingEligibility       @default(MIGS)
     voteConfiguration         VotingConfiguration     @default(ALLOW_SKIP)
     voteScreenConfiguration   VotingScreenOrientation @default(LANDSCAPE)
+
+    sendEmailVoteCopy Boolean @default(false)
 
     positions  Position[] // 1st to create
     candidates Candidate[] // 2nd
