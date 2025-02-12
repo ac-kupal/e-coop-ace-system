@@ -40,6 +40,7 @@ import SkippedMemberModal from "../modals/skipped-member-modal";
 import { Input } from "@/components/ui/input";
 import { user } from "next-auth";
 import { Role } from "@prisma/client";
+import useDebounce from "@/hooks/use-debounce";
 
 type Props = {
     id: number;
@@ -48,18 +49,15 @@ type Props = {
 
 const MemberTable = ({ id, user }: Props) => {
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
-
-    const [globalFilter, setGlobalFilter] = useState<string>("");
-
+    const [searchVal, setSearchVal] = useState("");
     const [createMember, setCreateMember] = useState(false);
-
     const [onImportModal, setOnImportModal] = useState(false);
-
+    const [globalFilter, setGlobalFilter] = useState<string>("");
     const [onSkippedMemberModal, setOnSkippedMemberModal] = useState(false);
 
+    const { onOpenQR } = useQrReaderModal();
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
     const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
-    const { onOpenQR } = useQrReaderModal();
 
     const table = useReactTable({
         data,
@@ -94,6 +92,12 @@ const MemberTable = ({ id, user }: Props) => {
         };
     }, []);
 
+    const debouncedValue = useDebounce<string>(searchVal, 500);
+
+    useEffect(() => {
+        setGlobalFilter(debouncedValue);
+    }, [debouncedValue, setGlobalFilter]);
+
     const isStaff = user.role === Role.staff;
 
     if (data === undefined)
@@ -123,14 +127,14 @@ const MemberTable = ({ id, user }: Props) => {
                     <div className="w-full lg:w-fit relative">
                         <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
                         <Input
+                            value={searchVal}
                             ref={onFocusSearch}
                             placeholder="Search..."
-                            value={globalFilter}
                             onChange={(event) =>
-                                setGlobalFilter(event.target.value)
+                                setSearchVal(event.target.value)
                             }
                             className="w-full pl-8 bg-transparent text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        ></Input>
+                        />
                     </div>
                     <div className="flex items-center space-x-1  md:justify-start justify-evenly w-full lg:w-fit">
                         <div className="">
