@@ -7,6 +7,7 @@ import { routeErrorHandler } from "@/errors/route-error-handler";
 
 import { memberEmailSchema } from "@/validation-schema/member";
 import { chosenCandidateIds } from "@/validation-schema/election";
+import { sendMail } from "@/lib/mailer";
 
 export const POST = async (req: NextRequest) => {
     try {
@@ -131,18 +132,17 @@ export const POST = async (req: NextRequest) => {
                 });
             });
 
-            // TODO: Rojan : Single Email Send replace Implementaition below
-            // await sendMail([
-            //     {
-            //         subject:
-            //             "Confirmation: Your Vote has been Successfully Submitted",
-            //         toEmail: voter.emailAddress,
-            //         template: {
-            //             templateFile: "vote-submit.html",
-            //             payload,
-            //         },
-            //     },
-            // ]);
+            await sendMail([
+                {
+                    subject:
+                        "Confirmation: Your Vote has been Successfully Submitted",
+                    toEmail: voter.emailAddress,
+                    template: {
+                        templateFile: "vote-submit.html",
+                        payload,
+                    },
+                },
+            ]);
         }
 
         const response = NextResponse.json(voterUpdate);

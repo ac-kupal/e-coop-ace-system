@@ -81,6 +81,7 @@ const CreateCandidateModal = ({
          toast.error("Please select Members First!");
          return;
       }
+      reset();
       createCandidate.mutate({
          firstName: selectedMembers?.firstName,
          lastName: selectedMembers?.lastName,

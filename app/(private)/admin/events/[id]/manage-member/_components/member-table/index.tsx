@@ -41,6 +41,7 @@ import { Input } from "@/components/ui/input";
 import { user } from "next-auth";
 import { Role } from "@prisma/client";
 import useDebounce from "@/hooks/use-debounce";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 
 type Props = {
     id: number;
@@ -54,10 +55,10 @@ const MemberTable = ({ id, user }: Props) => {
     const [onImportModal, setOnImportModal] = useState(false);
     const [globalFilter, setGlobalFilter] = useState<string>("");
     const [onSkippedMemberModal, setOnSkippedMemberModal] = useState(false);
-
     const { onOpenQR } = useQrReaderModal();
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
     const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
+    const { onOpen } = useConfirmModal()
 
     const table = useReactTable({
         data,
@@ -177,7 +178,11 @@ const MemberTable = ({ id, user }: Props) => {
                                     )}
                                     disabled={isBroadcasting}
                                     onClick={() => {
-                                        broadcastOTP();
+                                        onOpen({
+                                            title: "Bulk OPT Sending",
+                                            description: "You are about to send all members an OTP. Are you sure?",
+                                            onConfirm: () => broadcastOTP(),
+                                          });
                                     }}
                                 >
                                     {" "}
