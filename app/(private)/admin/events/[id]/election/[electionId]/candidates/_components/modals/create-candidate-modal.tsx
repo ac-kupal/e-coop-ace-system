@@ -72,7 +72,7 @@ const CreateCandidateModal = ({
    const onCancelandReset = () => {
       reset();
    };
-   const createCandidate = useCreateCandidate({ onCancelandReset, params });
+   const { createCandidate, isPending: isLoading, isSuccess } = useCreateCandidate({ onCancelandReset, params });
 
    const uploadImage = onUploadImage();
 
@@ -81,8 +81,7 @@ const CreateCandidateModal = ({
          toast.error("Please select Members First!");
          return;
       }
-      reset();
-      createCandidate.mutate({
+      createCandidate({
          firstName: selectedMembers?.firstName,
          lastName: selectedMembers?.lastName,
          passbookNumber: selectedMembers?.passbookNumber,
@@ -90,9 +89,11 @@ const CreateCandidateModal = ({
          electionId: selectedMembers?.event.election?.id,
          positionId: formValues.positionId,
       });
+      if (isSuccess) {
+         reset()
+      }
    };
    const isUploading = uploadImage.isPending;
-   const isLoading = createCandidate.isPending;
 
    return (
       <Dialog
@@ -123,11 +124,13 @@ const CreateCandidateModal = ({
                         <FormItem>
                            <FormLabel>Select a Position </FormLabel>
                            <Select
+                              key={field.value}
+                              value={field.value.toString() || ""}
                               onValueChange={field.onChange}
                               defaultValue={field.value.toString()}
                            >
                               <FormControl>
-                                 <SelectTrigger>
+                                 <SelectTrigger value={field.value.toString() || ""}>
                                     <SelectValue placeholder="Select a position" />
                                  </SelectTrigger>
                               </FormControl>

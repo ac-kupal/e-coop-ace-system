@@ -41,7 +41,7 @@ type Props = {
 
 export const useCreateCandidate = ({ onCancelandReset,params }: Props) => {
    const queryClient = useQueryClient();
-   const createCandidate = useMutation<TCreateCandidate, string, unknown>({
+   const createCandidateMutation = useMutation<TCreateCandidate, string, unknown>({
       mutationKey: ["create-candidate-query"],
       mutationFn: async (data) => {
          try {
@@ -53,7 +53,7 @@ export const useCreateCandidate = ({ onCancelandReset,params }: Props) => {
             toast.error(errorMessage, {
                action: {
                   label: "try agian",
-                  onClick: () => createCandidate.mutate(data),
+                  onClick: () => createCandidateMutation.mutate(data),
                },
             });
             throw errorMessage;
@@ -66,7 +66,7 @@ export const useCreateCandidate = ({ onCancelandReset,params }: Props) => {
          toast.success("candidate created successfully");
       },
    });
-   return createCandidate;
+   return {createCandidate: createCandidateMutation.mutate, isSuccess: createCandidateMutation.isSuccess, isPending:createCandidateMutation.isPending}
 };
 
 
