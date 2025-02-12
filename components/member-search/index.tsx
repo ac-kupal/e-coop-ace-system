@@ -200,6 +200,11 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                         nameSearch: "",
                                     });
                                 }}
+                                components={{
+                                    zoom: true,
+                                    torch: true,
+                                    finder: true,
+                                }}
                                 classNames={{
                                     container:
                                         "size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl",
