@@ -20,12 +20,10 @@ const getEmailTemplate = async ({
   return generatedTemplate;
 };
 
-// ✅ MailerSend Setup
 const mailerSend = new MailerSend({
   apiKey: process.env.MAILER_SEND_API_KEY || "",
 });
 
-// ✅ Validate required environment variables
 const validateEnv = () => {
   if (!process.env.MAILER_SEND_API_KEY)
     throw new Error("MAILER_SEND_API_KEY is missing in environment variables.");
@@ -33,7 +31,6 @@ const validateEnv = () => {
     throw new Error("MAILER_SEND_DOMAIN is missing in environment variables.");
 };
 
-// ✅ Standardized Email Sending Function
 const sendEmail = async (
   toEmail: string,
   subject: string,
@@ -74,7 +71,7 @@ export const sendMail = async (
   sendMailsContent: ISendMailProps[],
   options: { isBulkSend?: boolean } = {}
 ): Promise<TMailSendObject> => {
-  validateEnv(); // ✅ Ensure environment variables are set
+  validateEnv();
   const { isBulkSend = false } = options;
   let successSend: { success: true; to: string }[] = [];
   let errorSend: { success: false; to: string; reason: string }[] = [];
@@ -83,7 +80,6 @@ export const sendMail = async (
     const sentFrom = new Sender(process.env.MAILER_SEND_DOMAIN!, "eCoop");
 
     if (isBulkSend) {
-      // ✅ BULK EMAIL SEND
       const bulkEmails = await Promise.all(
         sendMailsContent.map(async ({ subject, toEmail, template }) => {
           const recipients = [new Recipient(toEmail, "Recipient")];
@@ -97,7 +93,6 @@ export const sendMail = async (
         })
       );
 
-      // Send all emails in bulk
       const response = await mailerSend.email.sendBulk(bulkEmails);
       console.log(
         "[MailerSend Success] : Bulk emails sent successfully",
@@ -109,7 +104,7 @@ export const sendMail = async (
         to: toEmail,
       }));
     } else {
-      // ✅ SINGLE EMAIL SEND (loops through each email)
+
       const results = await Promise.all(
         sendMailsContent.map(async ({ subject, toEmail, template }) => {
           const htmlContent = await getEmailTemplate(template);
@@ -117,11 +112,11 @@ export const sendMail = async (
         })
       );
 
-      // Separate successes and errors
       successSend = results.filter((result) => result.success) as {
         success: true;
         to: string;
       }[];
+      
       errorSend = results.filter((result) => !result.success) as {
         success: false;
         to: string;
