@@ -1,78 +1,141 @@
 import path from "path";
 import { promises as fs } from "fs";
-import nodemailer from "nodemailer";
 import * as handlebars from "handlebars";
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { ISendMailProps, TMailSendObject } from "@/types";
 
-const getEmailTemplate = async ({ templateFile, payload } : { templateFile: string; payload: Record<string, any> }) => {
-    const templateContent = await fs.readFile(
-        path.join(process.cwd(), "public", "email-templates", templateFile),
-        "utf8"
-    );
-    const template = handlebars.compile(templateContent);
-    const generatedTemplate = template(payload);
-    return generatedTemplate;
+const getEmailTemplate = async ({
+  templateFile,
+  payload,
+}: {
+  templateFile: string;
+  payload: Record<string, any>;
+}) => {
+  const templateContent = await fs.readFile(
+    path.join(process.cwd(), "public", "email-templates", templateFile),
+    "utf8"
+  );
+  const template = handlebars.compile(templateContent);
+  const generatedTemplate = template(payload);
+  return generatedTemplate;
 };
 
-export const sendMail = async (sendMailsContent: ISendMailProps[]) : Promise<TMailSendObject> => {
-    var transporter = nodemailer.createTransport({
-        pool: true,
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.NODEMAILER_EMAIL,
-            pass: process.env.NODEMAILER_PW,
-        },
-    });
+// ✅ MailerSend Setup
+const mailerSend = new MailerSend({
+  apiKey: process.env.MAILER_SEND_API_KEY || "",
+});
 
-    let successSend: { success: true; to: string }[] = [];
-    let errorSend: { success: false; to: string; reason: string }[] = [];
+// ✅ Validate required environment variables
+const validateEnv = () => {
+  if (!process.env.MAILER_SEND_API_KEY)
+    throw new Error("MAILER_SEND_API_KEY is missing in environment variables.");
+  if (!process.env.MAILER_SEND_DOMAIN)
+    throw new Error("MAILER_SEND_DOMAIN is missing in environment variables.");
+};
 
-    await Promise.all(
-        sendMailsContent.map(async (mailContent) => {
-            const { subject, toEmail, template } = mailContent;
+// ✅ Standardized Email Sending Function
+const sendEmail = async (
+  toEmail: string,
+  subject: string,
+  htmlContent: string
+) => {
+  try {
+    const sentFrom = new Sender(process.env.MAILER_SEND_DOMAIN!, "eCoop");
+    const recipients = [new Recipient(toEmail, "Recipient")];
 
-            var mailOptions = {
-                from: process.env.NODEMAILER_EMAIL,
-                to: toEmail,
-                subject: subject,
-                html: await getEmailTemplate(template),
-            };
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo(recipients)
+      .setSubject(subject)
+      .setHtml(htmlContent)
+      .setText("This is a fallback text content.");
 
-            return new Promise((resolve, reject) => {
-                transporter.sendMail(
-                    mailOptions,
-                    function (error: Error | null, info) {
-                        if (error) {
-                            console.error(
-                                "[NodeMailer Error] : Error sending email : Error -> ",
-                                error
-                            );
-                            errorSend.push({
-                                success: false,
-                                to: mailOptions.to,
-                                reason: error.message,
-                            });
-                            reject(error);
-                        } else {
-                            console.log(
-                                "[NodeMailer Success] : Email sent to " +
-                                    mailOptions.to
-                            );
-                            successSend.push({
-                                success: true,
-                                to: mailOptions.to,
-                            });
-                            resolve(true);
-                        }
-                    }
-                );
-            });
-        })
+    await mailerSend.email.send(emailParams);
+    console.log("[MailerSend Success] : Email sent to", toEmail);
+
+    return { success: true, to: toEmail };
+  } catch (error: any) {
+    console.error(
+      "[MailerSend Error] : Failed to send email to",
+      toEmail,
+      error.message
     );
+    return { success: false, to: toEmail, reason: error.message };
+  }
+};
 
-    transporter.close();
+/**
+ * Sends emails using MailerSend, supporting both bulk and single email sending.
+ * @param sendMailsContent - Array of emails to be sent.
+ * @param options - Configuration options (e.g., isBulkSend).
+ * @returns {Promise<TMailSendObject>}
+ */
+export const sendMail = async (
+  sendMailsContent: ISendMailProps[],
+  options: { isBulkSend?: boolean } = {}
+): Promise<TMailSendObject> => {
+  validateEnv(); // ✅ Ensure environment variables are set
+  const { isBulkSend = false } = options;
+  let successSend: { success: true; to: string }[] = [];
+  let errorSend: { success: false; to: string; reason: string }[] = [];
 
-    return { successSend, errorSend };
+  try {
+    const sentFrom = new Sender(process.env.MAILER_SEND_DOMAIN!, "eCoop");
+
+    if (isBulkSend) {
+      // ✅ BULK EMAIL SEND
+      const bulkEmails = await Promise.all(
+        sendMailsContent.map(async ({ subject, toEmail, template }) => {
+          const recipients = [new Recipient(toEmail, "Recipient")];
+
+          return new EmailParams()
+            .setFrom(sentFrom)
+            .setTo(recipients)
+            .setSubject(subject)
+            .setHtml(await getEmailTemplate(template))
+            .setText("This is a fallback text content.");
+        })
+      );
+
+      // Send all emails in bulk
+      const response = await mailerSend.email.sendBulk(bulkEmails);
+      console.log(
+        "[MailerSend Success] : Bulk emails sent successfully",
+        response
+      );
+
+      successSend = sendMailsContent.map(({ toEmail }) => ({
+        success: true,
+        to: toEmail,
+      }));
+    } else {
+      // ✅ SINGLE EMAIL SEND (loops through each email)
+      const results = await Promise.all(
+        sendMailsContent.map(async ({ subject, toEmail, template }) => {
+          const htmlContent = await getEmailTemplate(template);
+          return sendEmail(toEmail, subject, htmlContent);
+        })
+      );
+
+      // Separate successes and errors
+      successSend = results.filter((result) => result.success) as {
+        success: true;
+        to: string;
+      }[];
+      errorSend = results.filter((result) => !result.success) as {
+        success: false;
+        to: string;
+        reason: string;
+      }[];
+    }
+  } catch (error: any) {
+    console.error("[MailerSend Error] : General sending error:", error.message);
+    errorSend = sendMailsContent.map(({ toEmail }) => ({
+      success: false,
+      to: toEmail,
+      reason: error.message,
+    }));
+  }
+
+  return { successSend, errorSend };
 };

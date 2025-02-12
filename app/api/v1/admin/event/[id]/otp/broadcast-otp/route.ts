@@ -60,7 +60,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 });
             });
 
-        const mailSendJob = await sendMail(mails);
+        const mailSendJob = await sendMail(mails, {isBulkSend: true});
 
         return NextResponse.json(mailSendJob);
     } catch (e) {

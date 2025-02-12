@@ -238,6 +238,8 @@ export const useBroadcastOTP = (eventId: number) => {
                 const request = await axios.post(
                     `/api/v1/admin/event/${eventId}/otp/broadcast-otp`
                 );
+
+                toast.success("Bulk emails sent successfully ");
                 return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
