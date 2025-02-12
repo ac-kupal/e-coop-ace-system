@@ -1,19 +1,16 @@
-"use client"
-import {
-    Dialog,
-    DialogContent,
-} from "@/components/ui/dialog";
+"use client";
 import QrReader from "../qr-reader";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const QrReaderModal = () => {
-    const { isOpen, onClose, onRead } = useQrReaderModal();
+    const { isOpen, onClose, onScan } = useQrReaderModal();
 
     return (
-        <Dialog open={ isOpen } onOpenChange={ onClose }>
+        <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
                 <div className="p-4">
-                    <QrReader onRead={onRead} qrReaderOption="HTML5QrScanner" />
+                    <QrReader onScan={onScan} />
                 </div>
             </DialogContent>
         </Dialog>

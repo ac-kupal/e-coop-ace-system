@@ -1,37 +1,12 @@
 "use client";
-import useLimiter from "@/hooks/use-limiter";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-import Html5QRScanner from "./Html5QRScanner";
+import { IScannerProps, Scanner } from "@yudiel/react-qr-scanner";
 
-import { cn } from "@/lib/utils";
+interface Props extends IScannerProps {}
 
-type Props = {
-    className?: string;
-    onRead: (value: string) => void;
-    qrReaderOption: "HTML5QrScanner";
-};
-
-const QrReader = ({ className, onRead, qrReaderOption }: Props) => {
-    const [readValue, setReadValue] = useState<string>("");
-    const finalValue = useLimiter(readValue, 500);
-
-    useEffect(() => {
-        onRead(finalValue);
-        const qrSound = new Audio("/sounds/qrcode-beep.mp3");
-        if (qrSound) qrSound.play();
-    }, [finalValue]);
-
-    if (qrReaderOption !== "HTML5QrScanner") throw new Error("You cant choose other qr code scanner yet. only HTML5QrScanner");
-
-    return (
-        <Html5QRScanner
-            className={cn("", className)}
-            onRead={(data) => {
-                setReadValue(data);
-            }}
-        />
-    );
+const QrReader = (props: Props) => {
+    return <Scanner {...props} />;
 };
 
 export default QrReader;

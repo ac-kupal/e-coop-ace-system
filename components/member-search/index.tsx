@@ -35,9 +35,13 @@ type Props = {
 };
 
 const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
-    const [searchMode, setSearchMode] = useState<MemberSearchMode>("ByPassbook");
-    const { searchResults, searchMember, isPending, isError, error, reset } = useSearchMemberAttendee(eventId, onFound);
-    const { } = useEventSettingsPublic(eventId, (settings) => { setSearchMode(settings.defaultMemberSearchMode) });
+    const [searchMode, setSearchMode] =
+        useState<MemberSearchMode>("ByPassbook");
+    const { searchResults, searchMember, isPending, isError, error, reset } =
+        useSearchMemberAttendee(eventId, onFound);
+    const {} = useEventSettingsPublic(eventId, (settings) => {
+        setSearchMode(settings.defaultMemberSearchMode);
+    });
 
     const form = useForm<z.infer<typeof memberAttendeeSearchSchema>>({
         resolver: zodResolver(memberAttendeeSearchSchema),
@@ -59,10 +63,15 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
 
     return (
         <div className="flex flex-col items-center gap-y-4">
-            <RecentMember eventId={eventId} onSelect={(member) => onFound(member)} />
+            <RecentMember
+                eventId={eventId}
+                onSelect={(member) => onFound(member)}
+            />
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit((pbForm) => searchMember(pbForm))}
+                    onSubmit={form.handleSubmit((pbForm) =>
+                        searchMember(pbForm)
+                    )}
                     className="flex flex-col items-center gap-y-4"
                 >
                     <div className="relative">
@@ -119,15 +128,23 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                     e.preventDefault();
                                     form.reset();
                                     setSearchMode(
-                                        searchMode === "ByPassbook" ? "ByName" : "ByPassbook",
+                                        searchMode === "ByPassbook"
+                                            ? "ByName"
+                                            : "ByPassbook"
                                     );
                                 }}
                             >
                                 {searchMode === "ByPassbook" && (
-                                    <Asterisk className="size-6" strokeWidth={2} />
+                                    <Asterisk
+                                        className="size-6"
+                                        strokeWidth={2}
+                                    />
                                 )}
                                 {searchMode === "ByName" && (
-                                    <CaseSensitive className="size-6" strokeWidth={2} />
+                                    <CaseSensitive
+                                        className="size-6"
+                                        strokeWidth={2}
+                                    />
                                 )}
                             </div>
                         </ActionTooltip>
@@ -135,8 +152,8 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                     {searchMode === "ByName" && (
                         <>
                             <FormDescription className="text-sm text-foreground/80 text-center">
-                                Please separate your last name and first name with a comma and
-                                space
+                                Please separate your last name and first name
+                                with a comma and space
                             </FormDescription>
                             <FormDescription className="font-medium text-foreground/40">
                                 Ex: Gonzales, John Christian
@@ -157,7 +174,10 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                     )}
                     <Button disabled={disabled} className="w-full">
                         {isPending ? (
-                            <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
+                            <Loader2
+                                className="h-3 w-3 animate-spin"
+                                strokeWidth={1}
+                            />
                         ) : (
                             "Find"
                         )}
@@ -169,13 +189,21 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                 <Separator className="w-1/2" />
                             </div>
                             <QrReader
-                                qrReaderOption="HTML5QrScanner"
-                                onRead={(val: string) => {
-                                    if (val.length === 0) return;
-                                    form.setValue("passbookNumber", val);
-                                    searchMember({ passbookNumber: val, nameSearch: "" });
+                                onScan={(qrCodes) => {
+                                    if (qrCodes.length === 0) return;
+
+                                    const { rawValue } = qrCodes[0];
+
+                                    form.setValue("passbookNumber", rawValue);
+                                    searchMember({
+                                        passbookNumber: rawValue,
+                                        nameSearch: "",
+                                    });
                                 }}
-                                className="size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl"
+                                classNames={{
+                                    container:
+                                        "size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl",
+                                }}
                             />
                         </>
                     )}

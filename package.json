@@ -37,6 +37,7 @@
     "@tanstack/react-query-devtools": "^5.18.1",
     "@tanstack/react-table": "^8.11.8",
     "@types/uuid": "^9.0.8",
+    "@yudiel/react-qr-scanner": "^2.2.1",
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
     "browser-image-compression": "^2.0.2",

@@ -1,31 +1,32 @@
+import { IDetectedBarcode } from "@yudiel/react-qr-scanner";
 import { create } from "zustand";
 
-interface IQRScannerDatas{
-    onRead : (value : string) => void
+interface IQRScannerDatas {
+    onScan: (detectedCodes: IDetectedBarcode[]) => void;
 }
 
 interface IQRModalStore {
     isOpen: boolean;
     scannerDatas?: IQRScannerDatas;
 
-    onClose : () => void;
+    onClose: () => void;
     onOpenQR: (infoData: IQRScannerDatas) => void;
-    onRead: (data : string) => void;
+    onScan: (detectedCodes: IDetectedBarcode[]) => void;
 }
 
 export const useQrReaderModal = create<IQRModalStore>((set) => ({
     isOpen: false,
-    onOpenQR: (scannerDatas) => set({
+    onOpenQR: (scannerDatas) =>
+        set({
             isOpen: true,
-            scannerDatas
+            scannerDatas,
         }),
-    onClose : () => set({ isOpen : false }),
-    onRead : (data : string) => {
-        if(data.length === 0) return;
+    onClose: () => set({ isOpen: false }),
+    onScan: (datas: IDetectedBarcode[]) => {
+        if (datas.length === 0) return;
         set(({ scannerDatas }) => {
-            if(scannerDatas?.onRead) scannerDatas.onRead(data)
-            return { isOpen : false }
-        })
-    }
-        
+            if (scannerDatas?.onScan) scannerDatas.onScan(datas);
+            return { isOpen: false };
+        });
+    },
 }));

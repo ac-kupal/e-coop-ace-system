@@ -28,7 +28,7 @@ const ElectionHome = ({ eventId }: Props) => {
         {election.electionName}
       </p>
       <div className="w-5 h-2 bg-orange-400 rounded-full" />
-      <div className="py-8 lg:py-16">
+      <div className="py-8 lg:py-10">
         <ValidateVoter electionWithEvent={election} />
       </div>
     </div>
