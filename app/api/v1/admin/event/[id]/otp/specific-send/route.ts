@@ -17,14 +17,15 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         const { passbookNumber } = await req.json();
 
-        const validatedPasbookNumber = passbookNumberSchema.parse(passbookNumber);
+        const validatedPasbookNumber =
+            passbookNumberSchema.parse(passbookNumber);
 
         const event = await db.event.findUnique({ where: { id: eventId } });
 
         if (!event)
             return NextResponse.json(
                 { message: "Event was not found" },
-                { status: 404 },
+                { status: 404 }
             );
 
         const memberAttendee = await db.eventAttendees.findUnique({
@@ -49,35 +50,45 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     message:
                         "This member OTP cant be sent because the member isn't existing on the list",
                 },
-                { status: 400 },
+                { status: 400 }
             );
 
+        const validatedEmail = memberEmailSchema.safeParse(
+            memberAttendee.emailAddress
+        );
 
-        const validatedEmail = memberEmailSchema.safeParse(memberAttendee.emailAddress);
+        if (!validatedEmail.success)
+            return NextResponse.json(
+                { message: "OTP can't be sent as member email was invalid." },
+                { status: 400 }
+            );
 
-        if (!validatedEmail.success) 
-            return NextResponse.json({ message : "OTP can't be sent as member email was invalid."}, {status : 400});
-
-
-        const mailTask = await sendMail([{
-            subject: "eCoop : Your event OTP",
-            toEmail: validatedEmail.data,
-            template: {
-                templateFile: "vote-otp.html",
-                payload: {
-                    iconImage: `${process.env.DEPLOYMENT_URL}/images/vote-otp.png`,
-                    eventTitle: event.title,
-                    otp: memberAttendee.voteOtp as "",
-                    eventLink: `${process.env.DEPLOYMENT_URL}/events/${event.id}/`,
-                    memberName: `${memberAttendee.firstName} ${memberAttendee.firstName}`,
-                    eventCoverImage: event.coverImage as "",
+        const mailTask = await sendMail([
+            {
+                subject: "eCoop : Your event OTP",
+                toEmail: validatedEmail.data,
+                template: {
+                    templateFile: "vote-otp.html",
+                    payload: {
+                        iconImage: `${process.env.DEPLOYMENT_URL}/images/vote-otp.png`,
+                        eventTitle: event.title,
+                        otp: memberAttendee.voteOtp as "",
+                        eventLink: `${process.env.DEPLOYMENT_URL}/events/${event.id}/`,
+                        memberName: `${memberAttendee.firstName} ${memberAttendee.firstName}`,
+                        eventCoverImage: event.coverImage as "",
+                    },
                 },
             },
-        }]);
+        ]);
 
-        if(!mailTask) return NextResponse.json('Not Sent', { status : 400 });
+        if (mailTask.errorSend) {
+            return NextResponse.json(
+                { message: mailTask.errorSend[0].reason ?? "OTP Not Sent" },
+                { status: 400 }
+            );
+        }
 
-        return NextResponse.json('Sent');
+        return NextResponse.json("Sent");
     } catch (e) {
         return routeErrorHandler(e, req);
     }
