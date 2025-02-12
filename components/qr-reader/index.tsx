@@ -32,6 +32,9 @@ const QrReader = (props: Props) => {
         <div className={cn("relative", props.classNames?.container)}>
             <Scanner
                 {...props}
+                constraints={{
+                    deviceId,
+                }}
                 components={{
                     tracker: outline,
                 }}
