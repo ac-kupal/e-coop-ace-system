@@ -58,7 +58,7 @@ const MemberTable = ({ id, user }: Props) => {
     const { onOpenQR } = useQrReaderModal();
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
     const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
-    const { onOpen } = useConfirmModal()
+    const { onOpen } = useConfirmModal();
 
     const table = useReactTable({
         data,
@@ -148,9 +148,7 @@ const MemberTable = ({ id, user }: Props) => {
                                         onOpenQR({
                                             onScan: (val) => {
                                                 if (val.length === 0) return;
-                                                setGlobalFilter(
-                                                    val[0].rawValue
-                                                );
+                                                setSearchVal(val[0].rawValue);
                                             },
                                         })
                                     }
@@ -180,9 +178,10 @@ const MemberTable = ({ id, user }: Props) => {
                                     onClick={() => {
                                         onOpen({
                                             title: "Bulk OPT Sending",
-                                            description: "You are about to send all members an OTP. Are you sure?",
+                                            description:
+                                                "You are about to send all members an OTP. Are you sure?",
                                             onConfirm: () => broadcastOTP(),
-                                          });
+                                        });
                                     }}
                                 >
                                     {" "}

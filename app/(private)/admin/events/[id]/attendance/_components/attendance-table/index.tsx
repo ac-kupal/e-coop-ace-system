@@ -158,7 +158,7 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
                                     onOpenQR({
                                         onScan: (val) => {
                                             if (val.length === 0) return;
-                                            setGlobalFilter(val[0].rawValue);
+                                            setSearchVal(val[0].rawValue);
                                         },
                                     })
                                 }
