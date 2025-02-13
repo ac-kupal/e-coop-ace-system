@@ -1,10 +1,6 @@
 import z from "zod";
 import { toast } from "sonner";
-import {
-    useMutation,
-    useQuery,
-    useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { TBranch, TBranchWCoop } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
@@ -13,16 +9,19 @@ import { createBranchSchema } from "@/validation-schema/branch";
 import { Role } from "@prisma/client";
 import { user } from "next-auth";
 
-
 export const deleteBranch = () => {
     const queryClient = useQueryClient();
     const deleteOperation = useMutation<any, string, number>({
         mutationKey: ["delete-branch"],
         mutationFn: async (branchId) => {
             try {
-                const deleted = await axios.delete(`/api/v1/admin/branch/${branchId}`);
+                const deleted = await axios.delete(
+                    `/api/v1/admin/branch/${branchId}`
+                );
                 toast.success("Branch deleted successfully");
-                queryClient.invalidateQueries({ queryKey: ["branch-list-query"] });
+                queryClient.invalidateQueries({
+                    queryKey: ["branch-list-query"],
+                });
                 return deleted.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -40,24 +39,20 @@ export const deleteBranch = () => {
     return deleteOperation;
 };
 
-
-
-export const branchList = (user?:user) => {
+export const branchList = (user?: user) => {
     const branchListQuery = useQuery<TBranchWCoop[], string>({
         queryKey: ["branch-list-query"],
         queryFn: async () => {
             try {
                 const id = Number(user?.coopId);
                 if (user?.role === Role.coop_root) {
-                   const response = await axios.get(
-                      `/api/v1/admin/branch/${id}`
-                   );
-                   console.log(response.data)
-                   return response.data;
+                    const response = await axios.get(
+                        `/api/v1/admin/branch/${id}`
+                    );
+                    return response.data;
                 }
                 const response = await axios.get("/api/v1/admin/branch");
-                   return response.data;
-
+                return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage, {
@@ -78,15 +73,23 @@ export const branchList = (user?:user) => {
 type TUpdateBranch = z.infer<typeof createBranchSchema>;
 type TCreateBranch = TUpdateBranch;
 
-export const createBranch = (onCreate? : (branch : TBranch) => void) => {
+export const createBranch = (onCreate?: (branch: TBranch) => void) => {
     const queryClient = useQueryClient();
-    const { data : createdBranch, mutate : saveBranch, isPending : isCreatingBranch } = useMutation<TBranch, string, TCreateBranch>({
+    const {
+        data: createdBranch,
+        mutate: saveBranch,
+        isPending: isCreatingBranch,
+    } = useMutation<TBranch, string, TCreateBranch>({
         mutationKey: ["create-branch"],
         mutationFn: async (data) => {
             try {
-                const response = await axios.post("/api/v1/admin/branch", { data });
+                const response = await axios.post("/api/v1/admin/branch", {
+                    data,
+                });
 
-                queryClient.invalidateQueries({ queryKey: ["branch-list-query"] });
+                queryClient.invalidateQueries({
+                    queryKey: ["branch-list-query"],
+                });
                 if (onCreate) onCreate(response.data);
 
                 toast.success("Branch created successfully");
@@ -103,7 +106,7 @@ export const createBranch = (onCreate? : (branch : TBranch) => void) => {
         },
     });
 
-    return { createdBranch, saveBranch, isCreatingBranch }
+    return { createdBranch, saveBranch, isCreatingBranch };
 };
 
 export const updateBranch = ({
@@ -118,11 +121,16 @@ export const updateBranch = ({
         mutationKey: ["update-branch"],
         mutationFn: async (data) => {
             try {
-                const response = await axios.patch(`/api/v1/admin/branch/${branchId}`, {
-                    data,
-                });
+                const response = await axios.patch(
+                    `/api/v1/admin/branch/${branchId}`,
+                    {
+                        data,
+                    }
+                );
 
-                queryClient.invalidateQueries({ queryKey: ["branch-list-query"] });
+                queryClient.invalidateQueries({
+                    queryKey: ["branch-list-query"],
+                });
 
                 onUpdate(response.data);
 
