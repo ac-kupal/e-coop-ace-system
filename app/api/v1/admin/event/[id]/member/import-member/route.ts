@@ -33,18 +33,17 @@ const mapAndFilterDuplicates = (membersData: any[], user: { id: number }, id: nu
         ...member,
         firstName: member.firstName ?? "",
         lastName: member.lastName ?? "",
-        middleName: member.middleName?.toString() ?? "",
-        gender:member.gender === "M" || member.gender === "Male" ? "Male" : "Female",
-        passbookNumber: member.passbookNumber?.toString() ?? generateOTP(6),
-        createdBy: user.id,
+        middleName: member.middleName ? String(member.middleName) : "",
+        gender: member.gender === "M" || member.gender?.toLowerCase() === "male" ? "Male" : "Female",
+        passbookNumber: member.passbookNumber ? String(member.passbookNumber) : generateOTP(6),
+        createdBy: user.id, 
         birthday: member.birthday ? ExcelDateToJSDate(member.birthday) : undefined,
-        eventId: id,
+        eventId: id, 
         emailAddress: member.emailAddress ?? "",
-        contact: member.contact?.toString() ?? "",
+        contact: member.contact ? String(member.contact) : "",
         voteOtp: generateOTP(6),
-        registered:member.registered === "" || member.registered.toLowerCase().trim() === "yes"
+        registered: member.registered?.trim().toLowerCase() === "yes",
     }));
-
 
     const passbookMap = new Map<string | undefined, boolean>();
     const duplicates: MemberData[] = [];
