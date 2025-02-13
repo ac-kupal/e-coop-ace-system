@@ -55,7 +55,7 @@ const sendEmail = async (
     console.error(
       "[MailerSend Error] : Failed to send email to",
       toEmail,
-      error.message
+      error.body.message
     );
     return { success: false, to: toEmail, reason: error.message };
   }
@@ -93,18 +93,29 @@ export const sendMail = async (
         })
       );
 
-      const response = await mailerSend.email.sendBulk(bulkEmails);
-      console.log(
-        "[MailerSend Success] : Bulk emails sent successfully",
-        response
-      );
+      try {
+        const response = await mailerSend.email.sendBulk(bulkEmails);
+        console.log("[MailerSend Success] : Bulk emails sent successfully", response);
 
-      successSend = sendMailsContent.map(({ toEmail }) => ({
-        success: true,
-        to: toEmail,
-      }));
+        successSend = sendMailsContent.map(({ toEmail }) => ({
+          success: true,
+          to: toEmail,
+        }));
+      } catch (error: any) {
+        console.error("[MailerSend Error] : Bulk send failed", error.response?.body || error.message);
+
+        // Extracting API limit error message
+        const errorMessage =
+          error.response?.body?.message ||
+          "Unknown error occurred during bulk sending";
+
+        errorSend = sendMailsContent.map(({ toEmail }) => ({
+          success: false,
+          to: toEmail,
+          reason: errorMessage,
+        }));
+      }
     } else {
-
       const results = await Promise.all(
         sendMailsContent.map(async ({ subject, toEmail, template }) => {
           const htmlContent = await getEmailTemplate(template);
@@ -112,25 +123,22 @@ export const sendMail = async (
         })
       );
 
-      successSend = results.filter((result) => result.success) as {
-        success: true;
-        to: string;
-      }[];
-      
-      errorSend = results.filter((result) => !result.success) as {
-        success: false;
-        to: string;
-        reason: string;
-      }[];
+      successSend = results.filter((result) => result.success) as { success: true; to: string }[];
+      errorSend = results.filter((result) => !result.success) as { success: false; to: string; reason: string }[];
     }
   } catch (error: any) {
-    console.error("[MailerSend Error] : General sending error:", error.message);
+    console.error("[MailerSend Error] : General sending error:", error.response?.body || error.message);
+
+    const errorMessage =
+      error.response?.body?.message || "Unknown error occurred during email sending";
+
     errorSend = sendMailsContent.map(({ toEmail }) => ({
       success: false,
       to: toEmail,
-      reason: error.message,
+      reason: errorMessage,
     }));
   }
 
   return { successSend, errorSend };
 };
+
