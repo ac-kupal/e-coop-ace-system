@@ -234,7 +234,7 @@ const SettingsForm = ({ election, params }: Props) => {
                         name="sendEmailVoteCopy"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Vote Copy Emailing</FormLabel>
+                                <FormLabel>Enable Vote Copy Emailing</FormLabel>
                                 <div className="flex items-center justify-between w-full pr-5 space-x-2">
                                     <FormLabel className="text-sm text-foreground/60 font-normal">
                                         Enables the system to send vote copy to
@@ -256,10 +256,13 @@ const SettingsForm = ({ election, params }: Props) => {
                         name="allowBirthdayVerification"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Voting Verification</FormLabel>
+                                <FormLabel>
+                                    Require Birthday Verification
+                                </FormLabel>
                                 <div className="flex items-center justify-between w-full pr-5 space-x-2">
                                     <FormLabel className="text-sm text-foreground/60 font-normal">
-                                        Allow “Birthday” for Member Verification
+                                        Require “Birthday” as additional Member
+                                        Verification when voting.
                                     </FormLabel>
                                     <FormControl>
                                         <Switch
