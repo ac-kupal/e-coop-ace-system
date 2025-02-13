@@ -42,8 +42,9 @@ const mapAndFilterDuplicates = (membersData: any[], user: { id: number }, id: nu
         emailAddress: member.emailAddress ?? "",
         contact: member.contact?.toString() ?? "",
         voteOtp: generateOTP(6),
-        registered:member.registered && member.registered.trim().toLowerCase() === "registered",
+        registered:member.registered === "" || member.registered.toLowerCase().trim() === "yes"
     }));
+
 
     const passbookMap = new Map<string | undefined, boolean>();
     const duplicates: MemberData[] = [];
@@ -92,6 +93,9 @@ export const POST = async (req: NextRequest, { params }: { params: { id: number 
         const { duplicatesOnNewImport, newMembers } = mapAndFilterDuplicates(membersData, user, id);
         const oldMembers = await fetchOldMembers(id);
         const { filteredMembers, skippedMembers } = filterUniqueMembers(newMembers, oldMembers);
+
+        console.log(filteredMembers,"filteredMembers");
+
 
         filteredMembers.forEach((member: MemberData) => {
             createManySchema.parse(member);
