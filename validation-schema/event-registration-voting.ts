@@ -17,7 +17,7 @@ export const attendeeNameParamsSchema = z.object({
 // for event registration verification api
 export const attendeeRegisterSchema = z.object({
     passbookNumber: passbookNumberSchema,
-    birthday: validateBirthDay,
+    birthday: validateBirthDay.optional(),
 });
 
 // for event registration for form schema
@@ -27,7 +27,7 @@ export const attendeeRegisterFormSchema = z.object({
         return /^(0[1-9]|1[0-2])(\/|-)(0[1-9]|1\d|2\d|3[01])(\/|-)(\d{4})$/.test(
             value
         );
-    }, "Invalid date format"),
+    }, "Invalid date format").optional(),
 });
 
 export const memberAttendeeSearchSchema = z.object({
