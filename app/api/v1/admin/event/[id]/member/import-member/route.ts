@@ -94,9 +94,6 @@ export const POST = async (req: NextRequest, { params }: { params: { id: number 
         const oldMembers = await fetchOldMembers(id);
         const { filteredMembers, skippedMembers } = filterUniqueMembers(newMembers, oldMembers);
 
-        console.log(filteredMembers,"filteredMembers");
-
-
         filteredMembers.forEach((member: MemberData) => {
             createManySchema.parse(member);
         });
