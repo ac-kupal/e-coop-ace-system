@@ -25,7 +25,10 @@ const RegisteredPage = ({ params }: Props) => {
     const picture = searchParams.get("picture");
 
     const { event, isLoading } = useEvent(params.id);
-    const { election, isLoading: isLoadingElection } = useElection(params.id);
+    const { data: election, isLoading: isLoadingElection } = useElection({
+        eventId: (event?.election ? event.id : undefined) as number,
+        showErrorMessage: event?.election ? true : false,
+    });
 
     if (isLoading || isLoadingElection)
         return (
@@ -58,17 +61,26 @@ const RegisteredPage = ({ params }: Props) => {
                     </div>
                 </div>
                 <div className="gap-y-4 flex flex-col items-center">
-                    <CheckCircle className="size-14 text-green-600" strokeWidth={1} />
+                    <CheckCircle
+                        className="size-14 text-green-600"
+                        strokeWidth={1}
+                    />
                     <p className="text-2xl">You have been registered 🎉</p>
 
                     {pb && fullName && (
                         <div className="flex px-6 py-4 rounded-xl bg-secondary/25 w-full gap-y-2 flex-col items-center">
                             {picture && (
-                                <UserAvatar className="size-16" src={picture} fallback=".." />
+                                <UserAvatar
+                                    className="size-16"
+                                    src={picture}
+                                    fallback=".."
+                                />
                             )}
                             <p className="text-2xl lg:text-4xl"> {fullName} </p>
                             <p className="text-xl lg:text-2xl"> {pb} </p>
-                            <p className="text-xl text-green-400 lg:text-2xl">Registered</p>
+                            <p className="text-xl text-green-400 lg:text-2xl">
+                                Registered
+                            </p>
                         </div>
                     )}
 
@@ -83,7 +95,9 @@ const RegisteredPage = ({ params }: Props) => {
                             <>
                                 {election.status === "live" ? (
                                     <Link href={`/events/${event.id}/election`}>
-                                        <Button className="bg-[#00C667] w-full ">Vote Now</Button>
+                                        <Button className="bg-[#00C667] w-full ">
+                                            Vote Now
+                                        </Button>
                                     </Link>
                                 ) : (
                                     <Button disabled variant="secondary">

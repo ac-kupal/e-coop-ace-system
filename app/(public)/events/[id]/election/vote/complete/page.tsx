@@ -26,7 +26,10 @@ const CompletePage = ({ params }: Props) => {
     const [saving, setSaving] = useState(false);
 
     const searchParams = useSearchParams();
-    const { election, isLoading } = useElection(params.id);
+    const { data: election, isLoading } = useElection({
+        eventId : params.id,
+        showErrorMessage: true,
+    });
 
     const pb = searchParams.get("pb");
     const fullName = searchParams.get("fullname");
@@ -225,25 +228,29 @@ const CompletePage = ({ params }: Props) => {
                 {getVotes().length > 0 && fullName && pb && (
                     <>
                         <div className="flex flex-col items-center gap-y-3">
-                        <Button
-                            onClick={() =>
-                                downloadVoteSummary(
-                                    `${fullName}-${pb}-vote-summary`
-                                )
-                            }
-                            variant="secondary"
-                            className="gap-x-2"
-                        >
-                            {saving ? (
-                                <LoadingSpinner />
-                            ) : (
-                                <>
-                                    <IoIosSave className="size-4" />
-                                    <span>Download Summary Copy</span>
-                                </>
-                            )}
-                        </Button>
-                        <p className="text-xs text-center text-foreground/50">If download doesn&apos;t work, please take a photo/screenshot of the summary instead as your own copy.</p>
+                            <Button
+                                onClick={() =>
+                                    downloadVoteSummary(
+                                        `${fullName}-${pb}-vote-summary`
+                                    )
+                                }
+                                variant="secondary"
+                                className="gap-x-2"
+                            >
+                                {saving ? (
+                                    <LoadingSpinner />
+                                ) : (
+                                    <>
+                                        <IoIosSave className="size-4" />
+                                        <span>Download Summary Copy</span>
+                                    </>
+                                )}
+                            </Button>
+                            <p className="text-xs text-center text-foreground/50">
+                                If download doesn&apos;t work, please take a
+                                photo/screenshot of the summary instead as your
+                                own copy.
+                            </p>
                         </div>
                     </>
                 )}
