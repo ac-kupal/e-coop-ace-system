@@ -56,7 +56,8 @@ const ViewMemberQr = ({ member }: { member: TMember }) => {
                         <div className="flex lg:flex-row justify-center gap-x-4 items-center px-8 py-4">
                             <div className="flex flex-col gap-y-2 items-center">
                                 <p className="text-center text-sm">
-                                    Register QR
+                                    {member.firstName} {member.lastName} Pasbook
+                                    QR
                                 </p>
                                 <QrViewContent
                                     qrClassName="size-[250px] lg:size-[350px]"
@@ -184,7 +185,8 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                                 <div className="flex lg:flex-row justify-center gap-x-4 items-center px-8 py-4">
                                     <div className="flex flex-col gap-y-2 items-center">
                                         <p className="text-center text-sm">
-                                            Register QR
+                                            {member.firstName} {member.lastName}{" "}
+                                            Pasbook QR
                                         </p>
                                         <QrViewContent
                                             qrClassName="size-[250px] lg:size-[350px]"
