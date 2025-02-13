@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { updateElectionSettings } from "@/hooks/api-hooks/settings-hooks";
+import { useUpdateElectionSettings } from "@/hooks/api-hooks/settings-hooks";
 
 import { SettingsType, TElection } from "@/types";
 import { electionSettingSchema } from "@/validation-schema/election-settings";
@@ -52,7 +52,7 @@ const SettingsForm = ({ election, params }: Props) => {
 
     const { isDirty } = settingsForm.formState;
 
-    const updateSettings = updateElectionSettings({ params });
+    const updateSettings = useUpdateElectionSettings({ params });
     const isLoading = updateSettings.isPending;
 
     const onSubmit = (formValues: z.infer<typeof electionSettingSchema>) => {

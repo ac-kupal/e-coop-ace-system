@@ -23,10 +23,10 @@ import {
 } from "@/components/ui/form";
 
 import { TMemberAttendeesMinimalInfo } from "@/types";
-import { useEventSettingsPublic } from "@/hooks/public-api-hooks/use-events-api";
 import { useSearchMemberAttendee } from "@/hooks/public-api-hooks/use-member-api";
 import { memberAttendeeSearchSchema } from "@/validation-schema/event-registration-voting";
 import RecentMember from "./recent-member";
+import { usePublicGetEventById } from "@/hooks/public-api-hooks/use-events-api";
 
 type Props = {
     eventId: number;
@@ -39,8 +39,12 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
         useState<MemberSearchMode>("ByPassbook");
     const { searchResults, searchMember, isPending, isError, error, reset } =
         useSearchMemberAttendee(eventId, onFound);
-    const {} = useEventSettingsPublic(eventId, (settings) => {
-        setSearchMode(settings.defaultMemberSearchMode);
+
+    usePublicGetEventById({
+        eventId,
+        onSuccess: (event) => {
+            setSearchMode(event.defaultMemberSearchMode);
+        },
     });
 
     const form = useForm<z.infer<typeof memberAttendeeSearchSchema>>({

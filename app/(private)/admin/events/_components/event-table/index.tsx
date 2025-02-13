@@ -16,7 +16,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import CreateEventModal from "../modals/create-event-modal";
-import { getAllEvent } from "@/hooks/api-hooks/event-api-hooks";
+import { useGetAllEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { Input } from "@/components/ui/input";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 import { Card } from "@/components/ui/card";
@@ -33,7 +33,7 @@ const EventTable = ({params,user}:TParams) => {
    const [createEvent, setCreateEvent] = useState(false);
    const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-   const { data, isFetching, isLoading, isError, refetch } = getAllEvent();
+   const { data, isFetching, isLoading, isError, refetch } = useGetAllEvent();
    const table = useReactTable({
       data,
       columns,

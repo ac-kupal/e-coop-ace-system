@@ -13,49 +13,50 @@ import { TPositionWithEventID } from "@/types";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 
 type Props = {
-  params: { id: number; electionId: number };
+    params: { id: number; electionId: number };
 };
 
-const page = ({ params }: Props) => {
-  const { data: sessionData, status } = useSession();
-  const [data, setData] = useState<TPositionWithEventID[]>([]);
-  const { elections, isLoading, error } = getElectionWithPositionAndCandidates({
-    params,
-  });
+const Page = ({ params }: Props) => {
+    const { data: sessionData, status } = useSession();
+    const [data, setData] = useState<TPositionWithEventID[]>([]);
+    const { elections, isLoading, error } =
+        getElectionWithPositionAndCandidates({
+            params,
+        });
 
-  useEffect(() => {
-    if (elections && elections.positions) {
-      setData(
-        elections.positions.map((position) => ({
-          ...position,
-          eventId: params.id,
-        })),
-      );
-    }
-  }, [elections, params.id]);
+    useEffect(() => {
+        if (elections && elections.positions) {
+            setData(
+                elections.positions.map((position) => ({
+                    ...position,
+                    eventId: params.id,
+                }))
+            );
+        }
+    }, [elections, params.id]);
 
-  if (status === "loading" || isLoading)
+    if (status === "loading" || isLoading)
+        return (
+            <div className="w-full h-[400px] flex justify-center items-center space-x-2 text-primary">
+                <Loader2 className=" size-5 animate-spin"></Loader2>
+                <h1 className=" animate-pulse">Loading...</h1>
+            </div>
+        );
+
+    if (!isAllowed(["root", "coop_root", "admin"], sessionData?.user))
+        return <NotAllowed />;
+
+    if (error) return;
     return (
-      <div className="w-full h-[400px] flex justify-center items-center space-x-2 text-primary">
-        <Loader2 className=" size-5 animate-spin"></Loader2>
-        <h1 className=" animate-pulse">Loading...</h1>
-      </div>
+        <div>
+            <Header text="Manage Positions"></Header>
+            <PositionTable
+                params={params}
+                electionId={params.electionId}
+                data={data}
+            ></PositionTable>
+        </div>
     );
-
-  if (!isAllowed(["root", "coop_root", "admin"], sessionData?.user))
-    return <NotAllowed />;
-
-  if (error) return;
-  return (
-    <div>
-      <Header text="Manage Positions"></Header>
-      <PositionTable
-        params={params}
-        electionId={params.electionId}
-        data={data}
-      ></PositionTable>
-    </div>
-  );
 };
 
-export default page;
+export default Page;
