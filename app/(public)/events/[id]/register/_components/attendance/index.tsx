@@ -19,34 +19,15 @@ type Props = {
 };
 
 const Attendance = ({ eventId, event }: Props) => {
-    const router = useRouter();
     const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(
         null
-    );
-
-    const { registeredMember, register, isPending, error } = useRegisterMember(
-        eventId,
-        (member) => {
-            router.push(
-                `/events/${eventId}/register/registered?pb=${member.passbookNumber}&fullname=${`${member.firstName} ${member.lastName}`}&picture=${member.picture}`
-            );
-        }
     );
 
     if (!member)
         return (
             <MemberSearch
                 eventId={eventId}
-                onFound={(member) => {
-                    setMember(member);
-                    if (
-                        !event.requireBirthdayVerification &&
-                        !member.registered
-                    ) {
-                        register({ passbookNumber: member.passbookNumber });
-                        return;
-                    }
-                }}
+                onFound={(member) => setMember(member)}
             />
         );
 
@@ -59,25 +40,8 @@ const Attendance = ({ eventId, event }: Props) => {
                         <Button>Go Back to Event</Button>
                     </Link>
                 ) : (
-                    event.requireBirthdayVerification && (
-                        <RegisterAttendance eventId={eventId} member={member} />
-                    )
+                    <RegisterAttendance event={event} member={member} />
                 )}
-                {!event.requireBirthdayVerification &&
-                    !member.registered &&
-                    isPending && (
-                        <span>
-                            <LoadingSpinner className="inline mr-2" />{" "}
-                            Registering...
-                        </span>
-                    )}
-                {registeredMember && (
-                    <span>
-                        <LoadingSpinner className="inline mr-2" />{" "}
-                        Redirecting...
-                    </span>
-                )}
-                {error && <ErrorAlert title="Register Error" message={error} />}
             </div>
         </div>
     );

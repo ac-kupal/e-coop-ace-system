@@ -23,6 +23,7 @@ const RegisterHome = ({ eventId }: Props) => {
 
     if (new Date() > eventDate)
         return <InvalidPrompt message="This event already passed" />;
+
     if (event.registrationOnEvent === true && !isSameDay(today, event.date))
         return (
             <InvalidPrompt message="This event registration is not yet open" />

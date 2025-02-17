@@ -18,22 +18,22 @@ import {
 } from "@/components/ui/form";
 
 import { cn } from "@/lib/utils";
-import { TMemberAttendeesMinimalInfo } from "@/types";
+import { TEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import { useRegisterMember } from "@/hooks/public-api-hooks/use-member-api";
 import { attendeeRegisterFormSchema } from "@/validation-schema/event-registration-voting";
 
 type Props = {
-    eventId: number;
+    event: TEvent;
     member: TMemberAttendeesMinimalInfo;
 };
 
-const RegisterAttendance = ({ eventId, member }: Props) => {
+const RegisterAttendance = ({ event, member }: Props) => {
     const router = useRouter();
 
     const { registeredMember, isPending, register, isError, error } =
-        useRegisterMember(eventId, (member) => {
+        useRegisterMember(event.id, (member) => {
             router.push(
-                `/events/${eventId}/register/registered?pb=${member.passbookNumber}&fullname=${`${member.firstName} ${member.lastName}`}&picture=${member.picture}`
+                `/events/${event.id}/register/registered?pb=${member.passbookNumber}&fullname=${`${member.firstName} ${member.lastName}`}&picture=${member.picture}`
             );
         });
 
@@ -41,7 +41,7 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
         resolver: zodResolver(attendeeRegisterFormSchema),
         defaultValues: {
             passbookNumber: member.passbookNumber,
-            birthday: "",
+            birthday: event.requireBirthdayVerification ? "01/01/1950" : undefined,
         },
     });
 
@@ -52,44 +52,49 @@ const RegisterAttendance = ({ eventId, member }: Props) => {
     const disabled = isPending || registeredMember;
 
     return (
-        <div className="flex flex-col items-center gap-y-4">
-            <p className="text-sm lg:text-base text-center text-foreground/60">
-                Please input your birth date so we can verify if it is you.
-            </p>
-            <div className="space-y-4 max-w-sm">
+        <div className="flex flex-col w-full items-center gap-y-4">
+            <div className="space-y-4 w-full max-w-md">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit((pb) => register(pb))}
-                        className="space-y-4 px-2"
+                        className="space-y-4 w-full px-2"
                     >
-                        <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
-                            <Separator className="w-1/2" /> or{" "}
-                            <Separator className="w-1/2" />
-                        </div>
-                        <FormField
-                            control={form.control}
-                            name="birthday"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel className="flex justify-between">
-                                        <h1>Birthday</h1>{" "}
-                                        <span className="text-[12px] italic text-muted-foreground">
-                                            mm/dd/yyyy
-                                        </span>
-                                    </FormLabel>
-                                    <ReactInputMask
-                                        {...field}
-                                        mask="99/99/9999"
-                                        placeholder="input birthday"
-                                        className={cn(
-                                            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                                            "text-xl text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
-                                        )}
-                                    />
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {event.requireBirthdayVerification && (
+                            <>
+                                <p className="text-sm lg:text-base text-center text-foreground/60">
+                                    Please input your birth date so we can
+                                    verify if it is you.
+                                </p>
+                                <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
+                                    <Separator className="w-1/2" /> or{" "}
+                                    <Separator className="w-1/2" />
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="birthday"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel className="flex justify-between">
+                                                <h1>Birthday</h1>{" "}
+                                                <span className="text-[12px] italic text-muted-foreground">
+                                                    mm/dd/yyyy
+                                                </span>
+                                            </FormLabel>
+                                            <ReactInputMask
+                                                {...field}
+                                                mask="99/99/9999"
+                                                placeholder="input birthday"
+                                                className={cn(
+                                                    "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                                                    "text-xl text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
+                                                )}
+                                            />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </>
+                        )}
                         {isError && error && (
                             <ErrorAlert
                                 className="w-full"
