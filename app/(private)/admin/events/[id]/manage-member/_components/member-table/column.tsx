@@ -240,8 +240,11 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                                             {member.middleName}{" "}
                                             {member.lastName}
                                         </p>
-                                        <p className="text-muted-foreground text-lg">
+                                        <p className="text-muted-foreground text-center min-w-28 border-b-2 text-lg">
                                             {member.passbookNumber}
+                                        </p>
+                                        <p className="text-center text-muted-foreground text-xs">
+                                            Passbook No.
                                         </p>
                                         <p className="text-sm text-muted-foreground mt-4 text-center">
                                             You are about to register{" "}
