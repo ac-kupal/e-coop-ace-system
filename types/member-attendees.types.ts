@@ -5,28 +5,34 @@ import { TIncentiveClaimsWithIncentiveAndAssisted } from "./incentive-claims.typ
 export type TMemberAttendees = EventAttendees;
 
 export type TMemberAttendeesMinimalInfo = {
-    id : string;
+    id: string;
     firstName: string;
     middleName: string | null;
     lastName: string;
     contact: string | null;
     picture: string | null;
-    passbookNumber : string;
+    passbookNumber: string;
     registered: boolean;
     voted: boolean;
 };
 
 export type TMemberAttendeesWithRegistrationAssistance = TMemberAttendees & {
-    registeredBy? : TUserMinimalInfo
-}
+    registeredBy?: TUserMinimalInfo;
+};
 
 export type TMemberAttendeeMinimalInfo = {
     passbookNumber: string;
     firstName: string;
     lastName: string;
     registered: boolean;
-}
+};
 
-export type TMemberAttendeesMinimalInfoWithClaims = TMemberAttendeesMinimalInfo & {
-    incentiveClaimed : TIncentiveClaimsWithIncentiveAndAssisted[]
-}
+export type TMemberAttendeesMinimalInfoWithClaims =
+    TMemberAttendeesMinimalInfo & {
+        incentiveClaimed: TIncentiveClaimsWithIncentiveAndAssisted[];
+    };
+
+export type TMemberAttendanceStats = {
+    totalAttendees: number;
+    totalIsRegistered: number;
+};
