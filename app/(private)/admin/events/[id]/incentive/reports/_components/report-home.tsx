@@ -66,7 +66,7 @@ const ReportHome = ({ eventId, currentUser }: Props) => {
                             <FaFilter className="size-4" /> Filter
                         </Button>
                     }
-                    <Button onClick={() => exportToExcel()} className="gap-x-2">
+                    <Button onClick={() => exportToExcel()} className="gap-x-2 text-white dark:text-primary-foreground">
                         <SiMicrosoftexcel className="size-4" /> Export
                     </Button>
                 </div>

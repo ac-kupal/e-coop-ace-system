@@ -20,6 +20,9 @@ import { DataTableFacetedFilter } from "@/components/data-table/data-table-facit
 
 import { eventBasedUserList } from "@/hooks/api-hooks/user-api-hooks";
 import { useIncentiveListAssignee } from "@/hooks/api-hooks/incentive-api-hooks";
+import { Button } from "@/components/ui/button";
+import LoadingSpinner from "@/components/loading-spinner";
+import { GrRotateRight } from "react-icons/gr";
 
 const IncentiveAssigneeTable = ({
     eventId,
@@ -34,16 +37,18 @@ const IncentiveAssigneeTable = ({
     const { data: users } = eventBasedUserList(eventId);
     const myFilter = currentUser
         ? [
-            {
-                label: "You",
-                value: currentUser.id.toString(),
-                icon: User,
-            },
-        ]
+              {
+                  label: "You",
+                  value: currentUser.id.toString(),
+                  icon: User,
+              },
+          ]
         : [];
 
-    const { data, isFetching, isLoading, isError } =
-        useIncentiveListAssignee(eventId);
+    const { data, isLoading, isFetching, isError, refetch } =
+        useIncentiveListAssignee({
+            eventId,
+        });
 
     const table = useReactTable({
         data,
@@ -84,16 +89,18 @@ const IncentiveAssigneeTable = ({
 
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
+            <div className="flex flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
                 <div className="flex items-center flex-wrap gap-x-4 text-muted-foreground">
-                    <div className="relative text-white">
-                        <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
+                    <div className="w-full lg:w-fit relative">
+                        <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
                         <Input
                             ref={onFocusSearch}
                             placeholder="Search..."
                             value={globalFilter}
-                            onChange={(event) => setGlobalFilter(event.target.value)}
-                            className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            onChange={(event) =>
+                                setGlobalFilter(event.target.value)
+                            }
+                            className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
                     {currentUser.role !== "staff" && (
@@ -101,7 +108,9 @@ const IncentiveAssigneeTable = ({
                             options={[
                                 ...myFilter,
                                 ...users
-                                    .filter((user) => user.id !== currentUser.id)
+                                    .filter(
+                                        (user) => user.id !== currentUser.id
+                                    )
                                     .map((user) => ({
                                         label: user.name,
                                         value: user.id.toString(),
@@ -113,8 +122,21 @@ const IncentiveAssigneeTable = ({
                         />
                     )}
                 </div>
-                <div className="flex items-center gap-x-2 md:gap-x-4">
+                <div className="flex items-center gap-x-1">
                     <DataTableViewOptions table={table} />
+                    <Button
+                        variant={"secondary"}
+                        disabled={isFetching}
+                        onClick={() => refetch()}
+                        className="gap-x-2"
+                        size="icon"
+                    >
+                        {isFetching ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <GrRotateRight className="size-4" />
+                        )}
+                    </Button>
                 </div>
             </div>
             <DataTable
@@ -123,7 +145,10 @@ const IncentiveAssigneeTable = ({
                 isLoading={isLoading || isFetching}
                 table={table}
             />
-            <DataTablePagination pageSizes={[20, 40, 60, 80, 100]} table={table} />
+            <DataTablePagination
+                pageSizes={[20, 40, 60, 80, 100]}
+                table={table}
+            />
         </div>
     );
 };

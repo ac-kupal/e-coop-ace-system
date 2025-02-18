@@ -10,7 +10,14 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 
-import { Check, HandHeart, Hourglass, MonitorSmartphone, SearchIcon, User } from "lucide-react";
+import {
+    Check,
+    HandHeart,
+    Hourglass,
+    MonitorSmartphone,
+    SearchIcon,
+    User,
+} from "lucide-react";
 
 import columns from "./column";
 import { Input } from "@/components/ui/input";
@@ -24,6 +31,9 @@ import {
 
 import { eventBasedUserList } from "@/hooks/api-hooks/user-api-hooks";
 import { useClaimsMasterList } from "@/hooks/api-hooks/incentive-api-hooks";
+import LoadingSpinner from "@/components/loading-spinner";
+import { GrRotateRight } from "react-icons/gr";
+import { Button } from "@/components/ui/button";
 
 const claimFromFilter: FacetedOptionType[] = [
     {
@@ -67,8 +77,13 @@ const ClaimListTable = ({ eventId, currentUser }: Props) => {
         },
     ];
 
-    const { claimList, isError, isLoading, isFetching } =
-        useClaimsMasterList(eventId);
+    const {
+        data: claimList,
+        refetch,
+        isFetching,
+        isError,
+        isLoading,
+    } = useClaimsMasterList({ eventId });
 
     const table = useReactTable({
         data: claimList,
@@ -106,16 +121,18 @@ const ClaimListTable = ({ eventId, currentUser }: Props) => {
 
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
-            <div className="flex w-full flex-wrap items-center justify-start gap-x-2 lg:justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
+            <div className="flex flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
                 <div className="flex flex-1 items-center gap-x-2 gap-y-1  overflow-hidden flex-wrap text-muted-foreground">
-                    <div className="relative text-white flex w-full md:w-fit">
-                        <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
+                    <div className="w-full lg:w-fit relative">
+                        <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
                         <Input
                             ref={onFocusSearch}
                             placeholder="Search..."
                             value={globalFilter}
-                            onChange={(event) => setGlobalFilter(event.target.value)}
-                            className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            onChange={(event) =>
+                                setGlobalFilter(event.target.value)
+                            }
+                            className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
                     <div className="flex items-center w-full overflow-x-scroll lg:overflow-visible thin-scroll flex-1 gap-x-2 justify-center md:justify-between">
@@ -130,7 +147,10 @@ const ClaimListTable = ({ eventId, currentUser }: Props) => {
                                     options={[
                                         ...myFilter,
                                         ...users
-                                            .filter((user) => user.id !== data.user.id)
+                                            .filter(
+                                                (user) =>
+                                                    user.id !== data.user.id
+                                            )
                                             .map((user) => ({
                                                 label: user.name,
                                                 value: user.id.toString(),
@@ -155,8 +175,21 @@ const ClaimListTable = ({ eventId, currentUser }: Props) => {
                                 />
                             </div>
                         )}
-                        <div className="flex items-center gap-x-2 md:gap-x-4">
+                        <div className="flex items-center gap-x-1">
                             <DataTableViewOptions table={table} />
+                            <Button
+                                variant={"secondary"}
+                                disabled={isFetching}
+                                onClick={() => refetch()}
+                                className="gap-x-2"
+                                size="icon"
+                            >
+                                {isFetching ? (
+                                    <LoadingSpinner />
+                                ) : (
+                                    <GrRotateRight className="size-4" />
+                                )}
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -167,7 +200,10 @@ const ClaimListTable = ({ eventId, currentUser }: Props) => {
                 isLoading={isLoading || isFetching}
                 table={table}
             />
-            <DataTablePagination pageSizes={[20, 40, 60, 80, 100]} table={table} />
+            <DataTablePagination
+                pageSizes={[20, 40, 60, 80, 100]}
+                table={table}
+            />
         </div>
     );
 };
