@@ -33,7 +33,7 @@ type TClaimValidateForm = z.infer<typeof createPublicClaimAuthorizationSchema>;
 
 const ValidateClaim = ({ eventId }: Props) => {
     const [member, setMember] = useState<TMemberAttendeesMinimalInfo | null>(
-        null,
+        null
     );
 
     const form = useForm<TClaimValidateForm>({
@@ -43,13 +43,17 @@ const ValidateClaim = ({ eventId }: Props) => {
         },
     });
 
-    const { authorize, isPending, isError, error } = useCreateClaimAuth(eventId);
+    const { authorize, isPending, isError, error } =
+        useCreateClaimAuth(eventId);
 
     const disabled = isPending;
 
     if (!member)
         return (
-            <MemberSearch eventId={eventId} onFound={(member) => setMember(member)} />
+            <MemberSearch
+                eventId={eventId}
+                onFound={(member) => setMember(member)}
+            />
         );
 
     return (
@@ -64,7 +68,9 @@ const ValidateClaim = ({ eventId }: Props) => {
                     <div className="flex flex-col">
                         <p>{`${member.firstName} ${member.lastName}`}</p>
                         <p className="text-sm inline-flex">
-                            <span className="text-foreground/60">Passbook :&nbsp;</span>
+                            <span className="text-foreground/60">
+                                Passbook :&nbsp;
+                            </span>
                             <span>{member.passbookNumber}</span>
                         </p>
                     </div>
@@ -83,7 +89,10 @@ const ValidateClaim = ({ eventId }: Props) => {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit((formValues) =>
-                        authorize({ ...formValues, passbookNumber: member.passbookNumber }),
+                        authorize({
+                            ...formValues,
+                            passbookNumber: member.passbookNumber,
+                        })
                     )}
                     className="flex flex-col items-center gap-y-4"
                 >
@@ -101,7 +110,8 @@ const ValidateClaim = ({ eventId }: Props) => {
                                         onComplete={() => {
                                             authorize({
                                                 otp: form.getValues("otp"),
-                                                passbookNumber: member.passbookNumber,
+                                                passbookNumber:
+                                                    member.passbookNumber,
                                             });
                                         }}
                                         inputMode="text"
@@ -110,19 +120,30 @@ const ValidateClaim = ({ eventId }: Props) => {
                                         render={({ slots }) => (
                                             <>
                                                 <div className="flex">
-                                                    {slots.slice(0, 3).map((slot, idx) => (
-                                                        <OtpSlot key={idx} {...slot} />
-                                                    ))}
+                                                    {slots
+                                                        .slice(0, 3)
+                                                        .map((slot, idx) => (
+                                                            <OtpSlot
+                                                                key={idx}
+                                                                {...slot}
+                                                            />
+                                                        ))}
                                                 </div>
                                                 <div className="w-5 mx-2 h-2 bg-secondary rounded-full" />
                                                 <div className="flex">
-                                                    {slots.slice(3).map((slot, idx) => (
-                                                        <OtpSlot key={idx} {...slot} />
-                                                    ))}
+                                                    {slots
+                                                        .slice(3)
+                                                        .map((slot, idx) => (
+                                                            <OtpSlot
+                                                                key={idx}
+                                                                {...slot}
+                                                            />
+                                                        ))}
                                                 </div>
                                             </>
                                         )}
-                                    /> {/*
+                                    />{" "}
+                                    {/*
                                     <Input
                                         disabled={disabled}
                                         placeholder="6 Digit OTP"
@@ -136,11 +157,21 @@ const ValidateClaim = ({ eventId }: Props) => {
                     />
 
                     {isError && error && (
-                        <ErrorAlert title="Claim Authorization Failed" message={error} />
+                        <ErrorAlert
+                            title="Claim Authorization Failed"
+                            message={error}
+                        />
                     )}
-                    <Button disabled={disabled} className="w-full" type="submit">
+                    <Button
+                        disabled={disabled}
+                        className="w-full"
+                        type="submit"
+                    >
                         {isPending ? (
-                            <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1} />
+                            <Loader2
+                                className="h-3 w-3 animate-spin"
+                                strokeWidth={1}
+                            />
                         ) : (
                             "Proceed to Claim"
                         )}

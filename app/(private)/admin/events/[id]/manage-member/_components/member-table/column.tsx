@@ -41,6 +41,7 @@ import useOrigin from "@/hooks/use-origin";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 import { useInfoModal } from "@/stores/use-info-modal-store";
 import QrViewContent from "@/components/modals/modal-content/qr-view-content";
+import UserAvatar from "@/components/user-avatar";
 
 const ViewMemberQr = ({ member }: { member: TMember }) => {
     const { onOpen } = useInfoModal();
@@ -220,10 +221,40 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                         onClick={() =>
                             onOpenConfirmModal({
                                 title: "Register Member",
-                                description:
-                                    "You are about to register this member, registration serves as attendance as well, are you sure?",
                                 onConfirm: () => registerAttendance(),
                                 confirmString: "Register",
+                                contentComponent: (
+                                    <div className="flex flex-col items-center gap-y-1">
+                                        <UserAvatar
+                                            className="size-52"
+                                            src={
+                                                member.picture ??
+                                                "/images/default.png"
+                                            }
+                                            fallback={member.firstName.charAt(
+                                                0
+                                            )}
+                                        />
+                                        <p className="text-2xl">
+                                            {member.firstName}{" "}
+                                            {member.middleName}{" "}
+                                            {member.lastName}
+                                        </p>
+                                        <p className="text-muted-foreground text-lg">
+                                            {member.passbookNumber}
+                                        </p>
+                                        <p className="text-sm text-muted-foreground mt-4 text-center">
+                                            You are about to register{" "}
+                                            <strong>
+                                                {member.firstName}{" "}
+                                                {member.middleName}{" "}
+                                                {member.lastName}
+                                            </strong>
+                                            , registration serves as attendance
+                                            as well, are you sure?
+                                        </p>
+                                    </div>
+                                ),
                             })
                         }
                     >

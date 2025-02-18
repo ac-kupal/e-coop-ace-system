@@ -183,7 +183,7 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
                             {isLoadingAttendanceStats && !attendanceStats ? (
                                 <LoadingSpinner />
                             ) : (
-                                <span className="text-xs text-muted-foreground">
+                                <span className="text-xs text-primary">
                                     {(
                                         (attendanceStats.totalIsRegistered /
                                             attendanceStats.totalAttendees) *
@@ -195,7 +195,7 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
                                 </span>
                             )}
                             <Progress
-                                className="h-1.5 flex-1"
+                                className="h-1.5 flex-1 bg-popover/80"
                                 value={
                                     (attendanceStats.totalIsRegistered /
                                         attendanceStats.totalAttendees) *

@@ -211,7 +211,7 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
                                 }}
                                 classNames={{
                                     container:
-                                        "size-[340px] sm:size-[400px] bg-background overflow-clip rounded-xl",
+                                        "size-full sm:size-[400px] bg-background overflow-clip rounded-xl",
                                 }}
                             />
                         </>

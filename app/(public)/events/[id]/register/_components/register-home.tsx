@@ -35,7 +35,7 @@ const RegisterHome = ({ eventId }: Props) => {
                 {event.title}
             </p>
             <div className="w-5 h-2 bg-orange-400 rounded-full" />
-            <div className="py-8 lg:py-10">
+            <div className="py-8 lg:py-10 w-full sm:w-fit">
                 <Attendance event={event} eventId={eventId} />
             </div>
         </div>
