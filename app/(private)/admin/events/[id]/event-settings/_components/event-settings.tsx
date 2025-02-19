@@ -1,33 +1,25 @@
+"use client";
+import React from "react";
 
-"use client"
-import React from 'react'
+import UpdateEventForm from "../../../_components/update-event-form";
+import LoadingSpinner from "@/components/loading-spinner";
 
-import RegistrationSettings from './settings/registration-settings'
+import { useGetEventById } from "@/hooks/api-hooks/use-events";
 
-import { TEventSettingsUpdate } from "@/types"
-import { useEventSettings, useUpdateEventSettings } from '@/hooks/api-hooks/settings-hooks'
-import MemberSearchModeSettings from './settings/member-search-settings'
-
-type Props = {
-    eventId : number
+interface Props {
+    eventId: number;
 }
 
 const EventSettings = ({ eventId }: Props) => {
-  const { isLoading, existingSettings } = useEventSettings( eventId );
+    const { isPending, data: event } = useGetEventById({ eventId });
 
-  const { isPending, updateSettings } = useUpdateEventSettings( eventId );
+    if (isPending) return <LoadingSpinner className="mx-auto" />;
 
-  const onUpdate = (updates : TEventSettingsUpdate) => updateSettings(updates);
+    return (
+        <div className="w-full h-full p-4">
+            <UpdateEventForm eventId={eventId} defaultValues={event} />
+        </div>
+    );
+};
 
-  const loading = isLoading || isPending ;
-
-  return (
-    <div className="p-4 space-y-8 ">
-        <p className="text-xl font-medium ">Event Settings</p>
-        <RegistrationSettings loading={loading} eventSettings={existingSettings} onUpdate={onUpdate} />
-        <MemberSearchModeSettings loading={loading} eventSettings={existingSettings} onUpdate={onUpdate} />
-    </div>
-  )
-}
-
-export default EventSettings
+export default EventSettings;

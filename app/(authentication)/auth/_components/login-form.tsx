@@ -20,6 +20,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { loginSchema } from "@/validation-schema/auth";
+import { toast } from "sonner";
 
 type Props = {
     callbackUrl?: string;
@@ -27,6 +28,7 @@ type Props = {
 
 const LoginForm = ({ callbackUrl }: Props) => {
     const router = useRouter();
+    const [loggedIn, setLoggedIn] = useState(false);
     const [viewPassword, setViewPassword] = useState(false);
     const [error, setError] = useState("");
 
@@ -48,9 +50,12 @@ const LoginForm = ({ callbackUrl }: Props) => {
         });
 
         if (result?.error) {
-            setError(result.error);
+            toast.error(`Sign in error! : ${result?.error}`);
+            return setError(result.error);
         }
 
+        setLoggedIn(true);
+        toast.success("Welcome Back!");
         router.push(callbackUrl ?? "/admin");
     };
 
@@ -77,7 +82,10 @@ const LoginForm = ({ callbackUrl }: Props) => {
                             onSubmit={form.handleSubmit(onSubmit)}
                             className="w-full py-3 space-y-5"
                         >
-                            <div className="space-y-5">
+                            <fieldset
+                                className="space-y-8"
+                                disabled={loggedIn || isLoading}
+                            >
                                 <FormField
                                     control={form.control}
                                     name="email"
@@ -97,8 +105,6 @@ const LoginForm = ({ callbackUrl }: Props) => {
                                         </FormItem>
                                     )}
                                 />
-                            </div>
-                            <div className="space-y-8">
                                 <FormField
                                     control={form.control}
                                     name="password"
@@ -145,13 +151,13 @@ const LoginForm = ({ callbackUrl }: Props) => {
                                         </FormItem>
                                     )}
                                 />
-                            </div>
+                            </fieldset>
                             <p className="text-sm text-center">{error}</p>
                             <Button
-                                disabled={isLoading}
+                                disabled={isLoading || loggedIn}
                                 className="w-full space-x-2"
                             >
-                                {isLoading ? (
+                                {isLoading || loggedIn ? (
                                     <Loader2 className="animate-spin"></Loader2>
                                 ) : (
                                     <p> Sign in</p>

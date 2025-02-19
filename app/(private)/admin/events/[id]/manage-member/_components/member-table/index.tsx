@@ -42,6 +42,7 @@ import { user } from "next-auth";
 import { Role } from "@prisma/client";
 import useDebounce from "@/hooks/use-debounce";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { GrRotateRight } from "react-icons/gr";
 
 type Props = {
     id: number;
@@ -57,7 +58,8 @@ const MemberTable = ({ id, user }: Props) => {
     const [onSkippedMemberModal, setOnSkippedMemberModal] = useState(false);
     const { onOpenQR } = useQrReaderModal();
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
-    const { data, isError, isLoading, isFetching } = getAllEventMembers(id);
+    const { data, isError, isLoading, isFetching, refetch } =
+        getAllEventMembers(id);
     const { onOpen } = useConfirmModal();
 
     const table = useReactTable({
@@ -106,7 +108,7 @@ const MemberTable = ({ id, user }: Props) => {
 
     return (
         <div className="lg:space-y-5 space-y-2 min-h-[65vh]">
-            <div className="flex flex-wrap items-center p-2 justify-between rounded-xl gap-y-2 border  bg-background dark:border dark:bg-secondary/70 ">
+            <div className="flex flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
                 <CreateMemberModal
                     eventId={id}
                     state={createMember}
@@ -134,7 +136,7 @@ const MemberTable = ({ id, user }: Props) => {
                             onChange={(event) =>
                                 setSearchVal(event.target.value)
                             }
-                            className="w-full pl-8 bg-transparent text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
                     <div className="flex items-center space-x-1  md:justify-start justify-evenly w-full lg:w-fit">
@@ -158,6 +160,19 @@ const MemberTable = ({ id, user }: Props) => {
                             </ActionTooltip>
                         </div>
                         <DataTableViewOptions className="h-10" table={table} />
+                        <Button
+                            variant={"secondary"}
+                            disabled={isFetching}
+                            onClick={() => refetch()}
+                            className="gap-x-2"
+                            size="icon"
+                        >
+                            {isFetching ? (
+                                <LoadingSpinner />
+                            ) : (
+                                <GrRotateRight className="size-4" />
+                            )}
+                        </Button>
                         {!isStaff && (
                             <ActionTooltip
                                 side="top"

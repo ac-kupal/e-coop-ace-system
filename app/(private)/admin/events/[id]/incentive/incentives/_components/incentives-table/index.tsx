@@ -18,14 +18,18 @@ import CreateIncentiveModal from "../modals/create-incentive-modal";
 
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import { incentiveListWithClaimCount } from "@/hooks/api-hooks/incentive-api-hooks";
+import { useINcentiveeList } from "@/hooks/api-hooks/incentive-api-hooks";
+import LoadingSpinner from "@/components/loading-spinner";
+import { GrRotateRight } from "react-icons/gr";
 
-const IncentivesTable = ({ eventId } : { eventId : number }) => {
-    const [createModal, setCreateModal] = useState(false)
+const IncentivesTable = ({ eventId }: { eventId: number }) => {
+    const [createModal, setCreateModal] = useState(false);
     const [globalFilter, setGlobalFilter] = React.useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-    const { data, isFetching, isLoading, isError } = incentiveListWithClaimCount(eventId);
+    const { data, isFetching, isLoading, isError, refetch } = useINcentiveeList(
+        { eventId }
+    );
 
     const table = useReactTable({
         data,
@@ -37,11 +41,11 @@ const IncentivesTable = ({ eventId } : { eventId : number }) => {
         state: {
             globalFilter,
         },
-        initialState : {
-            pagination : { pageIndex : 0, pageSize : 20 },
-            columnVisibility : {
-                Id : false
-            }
+        initialState: {
+            pagination: { pageIndex: 0, pageSize: 20 },
+            columnVisibility: {
+                Id: false,
+            },
         },
         onGlobalFilterChange: setGlobalFilter,
     });
@@ -65,24 +69,41 @@ const IncentivesTable = ({ eventId } : { eventId : number }) => {
 
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
-            <CreateIncentiveModal eventId={eventId} state={createModal} onClose={()=>setCreateModal(false)}/>
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
+            <CreateIncentiveModal
+                eventId={eventId}
+                state={createModal}
+                onClose={() => setCreateModal(false)}
+            />
+            <div className="flex flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
-                    <div className="relative text-white">
-                        <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
+                    <div className="w-full lg:w-fit relative">
+                        <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
                         <Input
+                            value={globalFilter}
                             ref={onFocusSearch}
                             placeholder="Search..."
-                            value={globalFilter}
                             onChange={(event) =>
                                 setGlobalFilter(event.target.value)
                             }
-                            className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
                 </div>
-                <div className="flex items-center gap-x-2 md:gap-x-4">
+                <div className="flex items-center gap-x-1">
                     <DataTableViewOptions table={table} />
+                    <Button
+                        variant={"secondary"}
+                        disabled={isFetching}
+                        onClick={() => refetch()}
+                        className="gap-x-2"
+                        size="icon"
+                    >
+                        {isFetching ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <GrRotateRight className="size-4" />
+                        )}
+                    </Button>
                     <Button
                         size="sm"
                         className="flex rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem] "
@@ -93,8 +114,16 @@ const IncentivesTable = ({ eventId } : { eventId : number }) => {
                     </Button>
                 </div>
             </div>
-            <DataTable className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl" isError={isError} isLoading={isLoading || isFetching} table={table} />
-            <DataTablePagination pageSizes={[20,40,60,80,100]} table={table}/>
+            <DataTable
+                className="flex-1 bg-background dark:bg-secondary/30 rounded-2xl"
+                isError={isError}
+                isLoading={isLoading || isFetching}
+                table={table}
+            />
+            <DataTablePagination
+                pageSizes={[20, 40, 60, 80, 100]}
+                table={table}
+            />
         </div>
     );
 };

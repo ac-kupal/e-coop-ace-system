@@ -4,7 +4,7 @@ import { currentUserOrThrowAuthError } from "@/lib/auth";
 
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { eventIdParamSchema } from "@/validation-schema/api-params";
-import { eventSettingsSchema } from "@/validation-schema/event-settings";
+import { updateEventSchema } from "@/validation-schema/event";
 
 type TParams = { params: { id: number } };
 
@@ -25,7 +25,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
         if (!currentEventSettings)
             return NextResponse.json(
                 { message: "Couldn't find current event settings" },
-                { status: 404 },
+                { status: 404 }
             );
 
         return NextResponse.json(currentEventSettings);
@@ -38,12 +38,14 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
     try {
         const { id } = eventIdParamSchema.parse(params);
         await currentUserOrThrowAuthError();
-        const newSettings = eventSettingsSchema.parse(await req.json());
+        const newSettings = updateEventSchema.parse(await req.json());
 
         const updatedSettings = await db.event.update({
             where: { id },
             data: newSettings,
-            select: { registrationOnEvent: true, defaultMemberSearchMode: true },
+            include: {
+                election: true,
+            },
         });
 
         return NextResponse.json(updatedSettings);

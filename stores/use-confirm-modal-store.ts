@@ -1,10 +1,12 @@
+import { ReactNode } from "react";
 import { create } from "zustand";
 
 interface confirmDatas {
     title: string;
-    description: string;
+    description? : string;
     confirmString?: string;
     cancelString?: string;
+    contentComponent? : ReactNode,
     onConfirm?: () => void;
     onCancel?: () => void;
 }

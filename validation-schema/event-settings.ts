@@ -9,12 +9,3 @@ export const eventRegistrationSettingsSchema = z.object({
 });
 
 export const memberSearchOptionEnums = z.nativeEnum(MemberSearchMode);
-
-export const eventSettingsSchema = z.object({
-    registrationOnEvent: z
-        .boolean({
-            invalid_type_error: "registration on event settings is invalid",
-        })
-        .optional(),
-    defaultMemberSearchMode: memberSearchOptionEnums.optional(),
-});

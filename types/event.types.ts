@@ -1,8 +1,6 @@
-import z from "zod"
-import { TBranch, TCoop, TElection } from ".";
+import { Event } from "@prisma/client";
 import { EventType } from "@prisma/client";
-import { Event, MemberSearchMode } from "@prisma/client";
-import { eventSettingsSchema } from "@/validation-schema/event-settings";
+import { TBranch, TCoop, TElection } from ".";
 
 export type TCreateEvent = {
     title: string;
@@ -11,8 +9,8 @@ export type TCreateEvent = {
     location: string;
     category?: EventType;
     deleted: boolean;
-    branchId:number,
-    coopId:number,
+    branchId: number;
+    coopId: number;
 };
 export type Election = {
     title: string;
@@ -33,18 +31,14 @@ export type TUpdateEvent = {
     date: Date;
     location: string;
     coverImage: string;
-    branchId:number;
+    branchId: number;
 };
 
 export type TEvent = Event;
 
-export type TEventWithElection = Event & { election: TElection | null};
-export type TEventWithElectionWithCoopWithBranch = Event & { election: TElection | null, branch:TBranch, coop:TCoop };
-
-
-export type TEventSettingsUpdate = z.infer<typeof eventSettingsSchema>;
-
-export type TEventSettings = {
-    registrationOnEvent: boolean;
-    defaultMemberSearchMode: MemberSearchMode;
+export type TEventWithElection = Event & { election: TElection | null };
+export type TEventWithElectionWithCoopWithBranch = Event & {
+    election: TElection | null;
+    branch: TBranch;
+    coop: TCoop;
 };

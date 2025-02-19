@@ -27,8 +27,6 @@ const QuorumSection = ({ params }: TParams) => {
    const finalAttendanceTotal = percentageAttendanceTotal >= 1 ? Math.trunc(percentageAttendanceTotal) : percentageAttendanceTotal.toFixed(5)
    const finalVotersTotal =  percentageVotersTotal >= 1 ? Math.trunc(percentageVotersTotal) : percentageVotersTotal.toFixed(5)
 
-   console.log(finalVotersTotal)
-
    return (
       <div className="min-w-[200px] flex justify-start flex-col lg:justify-start  xl:flex-row   space-x-0 xl:space-x-10 p-5">
          <div className="min-w-fit ">

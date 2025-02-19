@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
     Dialog,
     DialogContent,
@@ -14,19 +14,25 @@ const InfoModal = () => {
     const { isOpen, onClose, onConfirm, infoDatas } = useInfoModal();
 
     return (
-        <Dialog open={ isOpen } onOpenChange={ onClose }>
-            <DialogContent className="max-w-fit shadow-2 border-none shadow-2 sm:rounded-2xl font-inter">
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="w-fit shadow-2 border-none shadow-2 sm:rounded-2xl font-inter">
                 <DialogHeader>
-                    <DialogTitle className="font-medium">{infoDatas?.title}</DialogTitle>
+                    <DialogTitle className="font-medium">
+                        {infoDatas?.title}
+                    </DialogTitle>
                 </DialogHeader>
                 <DialogDescription className="my-1 text-center lg:text-left lg:my-4">
-                        {infoDatas?.description}
+                    {infoDatas?.description}
                 </DialogDescription>
-                { infoDatas?.component }
-                <Separator className="bg-muted/70"/>
-                <div className="flex justify-center gap-x-2">
-                    <Button onClick={onConfirm}>{infoDatas?.confirmString}</Button>
-                </div>
+                {infoDatas?.component}
+                <Separator className="bg-muted/70" />
+                {!infoDatas?.hideConfirm && (
+                    <div className="flex justify-center gap-x-2">
+                        <Button onClick={onConfirm}>
+                            {infoDatas?.confirmString}
+                        </Button>
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );

@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { updateElectionSettings } from "@/hooks/api-hooks/settings-hooks";
+import { useUpdateElectionSettings } from "@/hooks/api-hooks/settings-hooks";
 
 import { SettingsType, TElection } from "@/types";
 import { electionSettingSchema } from "@/validation-schema/election-settings";
@@ -52,7 +52,7 @@ const SettingsForm = ({ election, params }: Props) => {
 
     const { isDirty } = settingsForm.formState;
 
-    const updateSettings = updateElectionSettings({ params });
+    const updateSettings = useUpdateElectionSettings({ params });
     const isLoading = updateSettings.isPending;
 
     const onSubmit = (formValues: z.infer<typeof electionSettingSchema>) => {
@@ -234,7 +234,7 @@ const SettingsForm = ({ election, params }: Props) => {
                         name="sendEmailVoteCopy"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Vote Copy Emailing</FormLabel>
+                                <FormLabel>Enable Vote Copy Emailing</FormLabel>
                                 <div className="flex items-center justify-between w-full pr-5 space-x-2">
                                     <FormLabel className="text-sm text-foreground/60 font-normal">
                                         Enables the system to send vote copy to
@@ -256,10 +256,13 @@ const SettingsForm = ({ election, params }: Props) => {
                         name="allowBirthdayVerification"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Voting Verification</FormLabel>
+                                <FormLabel>
+                                    Require Birthday Verification
+                                </FormLabel>
                                 <div className="flex items-center justify-between w-full pr-5 space-x-2">
                                     <FormLabel className="text-sm text-foreground/60 font-normal">
-                                        Allow “Birthday” for Member Verification
+                                        Require “Birthday” as additional Member
+                                        Verification when voting.
                                     </FormLabel>
                                     <FormControl>
                                         <Switch

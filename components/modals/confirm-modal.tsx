@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
     Dialog,
     DialogContent,
@@ -11,21 +11,35 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 const ConfirmModal = () => {
-    const { isOpen, onClose, onCancel, onConfirm, confirmDatas } = useConfirmModal();
+    const { isOpen, onClose, onCancel, onConfirm, confirmDatas } =
+        useConfirmModal();
 
     return (
-        <Dialog open={ isOpen } onOpenChange={ onClose }>
+        <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="border-none shadow-2 sm:rounded-2xl font-inter">
                 <DialogHeader>
-                    <DialogTitle className="font-medium">{confirmDatas?.title}</DialogTitle>
+                    <DialogTitle className="font-medium">
+                        {confirmDatas?.title}
+                    </DialogTitle>
                 </DialogHeader>
-                <DialogDescription className="my-4">
+                {confirmDatas?.description && (
+                    <DialogDescription className="my-4">
                         {confirmDatas?.description}
-                </DialogDescription>
-                <Separator className="bg-muted/70"/>
+                    </DialogDescription>
+                )}
+                <Separator className="bg-muted/70" />
+                {confirmDatas?.contentComponent}
                 <div className="flex justify-end gap-x-2">
-                    <Button onClick={onCancel} variant={'ghost'} className="bg-muted/60 hover:bg-muted">{confirmDatas?.cancelString}</Button>
-                    <Button onClick={onConfirm}>{confirmDatas?.confirmString}</Button>
+                    <Button
+                        onClick={onCancel}
+                        variant={"ghost"}
+                        className="bg-muted/60 hover:bg-muted"
+                    >
+                        {confirmDatas?.cancelString}
+                    </Button>
+                    <Button onClick={onConfirm}>
+                        {confirmDatas?.confirmString}
+                    </Button>
                 </div>
             </DialogContent>
         </Dialog>

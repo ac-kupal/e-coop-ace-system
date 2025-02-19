@@ -4,75 +4,75 @@ import { validateId } from "@/lib/server-utils";
 import { NextRequest, NextResponse } from "next/server";
 import { TUpdateEvent } from "@/types";
 import { updateEventSchema } from "@/validation-schema/event";
-import db from "@/lib/database"
-type TParams = { params: { id: number, electionId?:number } };
+import db from "@/lib/database";
+type TParams = { params: { id: number; electionId?: number } };
 
 export const PATCH = async (req: NextRequest, { params }: TParams) => {
-     try { 
+    try {
         const id = Number(params.id);
         validateId(id);
-        const data:TUpdateEvent = await req.json();
+        const data: TUpdateEvent = await req.json();
         const user = await currentUserOrThrowAuthError();
         updateEventSchema.parse(data);
 
-        const UpdateEvent =  await db.event.update({
-          where: { id: id },
-          data: {
-             title: data.title,
-             description: data.description,
-             location: data.location,
-             date: data.date,
-             updatedBy: user.id,
-             coverImage:data.coverImage,
-             branchId:data.branchId,
-          },
-       });
+        const UpdateEvent = await db.event.update({
+            where: { id: id },
+            data: {
+                title: data.title,
+                description: data.description,
+                location: data.location,
+                date: data.date,
+                updatedBy: user.id,
+                coverImage: data.coverImage,
+                branchId: data.branchId,
+            },
+        });
 
         return NextResponse.json(UpdateEvent);
-     } catch (e) {
+    } catch (e) {
         return routeErrorHandler(e, req);
-     }
-  };
+    }
+};
 
 export const DELETE = async (req: NextRequest, { params }: TParams) => {
-     try {
+    try {
         const id = Number(params.id);
         validateId(id);
         const user = await currentUserOrThrowAuthError();
-        const isPermanentDelete = false
-        if (isPermanentDelete){
-           const permanentDelete = await db.event.delete({ where: { id: id } });
-               return NextResponse.json(permanentDelete);
-        } 
-       const softDelete =  await db.event.update({
-          where: { id: id },
-          data: {
-             deleted: true,
-             deletedBy: user.id,
-          },
-       });
-       return NextResponse.json(softDelete)
-     } catch (e) {
+        const isPermanentDelete = false;
+        if (isPermanentDelete) {
+            const permanentDelete = await db.event.delete({
+                where: { id: id },
+            });
+            return NextResponse.json(permanentDelete);
+        }
+        const softDelete = await db.event.update({
+            where: { id: id },
+            data: {
+                deleted: true,
+                deletedBy: user.id,
+            },
+        });
+        return NextResponse.json(softDelete);
+    } catch (e) {
         return routeErrorHandler(e, req);
-     }
-  };
+    }
+};
 
-export const GET =async (req:NextRequest, {params}:TParams) => {
-   
-   try {
-      const eventId = Number(params.id)
-      validateId(eventId)
-      const getElection = await db.election.findUnique({
-         where:{
-            eventId:eventId
-         }
-      })
-      return NextResponse.json(getElection)
-
-   } catch (e) {
-      return routeErrorHandler(e,req)
-   }
-
-}
-
-  
+export const GET = async (req: NextRequest, { params }: TParams) => {
+    try {
+        const eventId = Number(params.id);
+        validateId(eventId);
+        const event = await db.event.findUnique({
+            where: {
+                id: eventId,
+            },
+            include: {
+                election: true,
+            },
+        });
+        return NextResponse.json(event);
+    } catch (e) {
+        return routeErrorHandler(e, req);
+    }
+};

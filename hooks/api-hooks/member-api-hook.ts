@@ -33,7 +33,6 @@ export const FilteredEventMembersForCandidateSelection = (eventId: number,electi
         queryKey: ["membersOnCandidate-list-query"],
         queryFn: async () => {
             try {
-                console.log(eventId,electionId)
                 const response = await axios.get(`/api/v1/admin/event/${eventId}/election/${electionId}/select-candidate`
                 );
                 return response.data;
@@ -121,7 +120,6 @@ export const updateMember = ({ onCancelandReset }: Props) => {
                  const date = new Date(!member.birthday ? new Date(): member.birthday);
                  const newBirthday = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
                  const newMember = {...member, birthday:newBirthday}
-                 console.log("birthday before pass to backend", newBirthday)
                  const response = await axios.patch(`/api/v1/admin/event/${eventId}/member/${memberId}`,newMember);
                  return response.data;
             } catch (e) {

@@ -1,4 +1,4 @@
-import z from "zod"
+import z from "zod";
 import axios from "axios";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,30 +12,39 @@ import {
     TUserWithAssignedIncentives,
 } from "@/types";
 import { handleAxiosErrorMessage } from "@/utils";
-import { claimReleaseSchema, createAssistedClaimSchema, createIncentiveAssigneeSchema, updateIncentiveAssignedSchema } from "@/validation-schema/incentive";
+import {
+    claimReleaseSchema,
+    createAssistedClaimSchema,
+    createIncentiveAssigneeSchema,
+    updateIncentiveAssignedSchema,
+} from "@/validation-schema/incentive";
 import { TIncentiveAssignedToMe } from "@/types/incentive-assigned.types";
+import { IQueryHook } from "./types";
 
-export const incentiveListWithClaimCount = (eventId: number) => {
-    const { data, isFetching, isLoading, isError, error } = useQuery<
-        TIncentiveWithClaimAndAssignedCount[]
-    >({
+export const useINcentiveeList = ({
+    eventId,
+    onSuccess,
+    onError,
+    ...other
+}: { eventId: number } & IQueryHook) => {
+    return useQuery<TIncentiveWithClaimAndAssignedCount[]>({
         queryKey: ["incentive-withclaimcount-list"],
         queryFn: async () => {
             try {
                 const request = await axios.get(
                     `/api/v1/admin/event/${eventId}/incentives`
                 );
+                onSuccess?.(request.data);
                 return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
+                onError?.(errorMessage);
                 throw e;
             }
         },
         initialData: [],
     });
-
-    return { data, isFetching, isLoading, isError, error };
 };
 
 export const useDeleteIncentive = (eventId: number, incentiveId: number) => {
@@ -68,38 +77,47 @@ export const useDeleteIncentive = (eventId: number, incentiveId: number) => {
     return { deleteIncentive, isPending };
 };
 
-export const useIncentiveListAssignee = (eventId: number) => {
-    const { data, isLoading, isFetching, isError, error } = useQuery<
-        TListOfAssigneesWithAssistCount[],
-        string
-    >({
+export const useIncentiveListAssignee = ({
+    eventId,
+    onSuccess,
+    onError,
+    ...other
+}: { eventId: number } & IQueryHook) => {
+    return useQuery<TListOfAssigneesWithAssistCount[], string>({
         queryKey: ["incentive-assignee-list"],
         queryFn: async () => {
             try {
                 const request = await axios.get(
                     `/api/v1/admin/event/${eventId}/incentives/assignees`
                 );
+                onSuccess?.(request.data);
                 return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
+                onError?.(errorMessage);
                 throw errorMessage;
             }
         },
         initialData: [],
+        ...other,
     });
-
-    return { data, isFetching, isLoading, isError, error };
 };
 
 export const userWithAssignedIncentives = (eventId: number) => {
-    const { data : usersWithAssigned, isFetching : isFetchingUser, isLoading : isLoadingUser, isError, error } = useQuery<
-        TUserWithAssignedIncentives[]
-    >({
+    const {
+        data: usersWithAssigned,
+        isFetching: isFetchingUser,
+        isLoading: isLoadingUser,
+        isError,
+        error,
+    } = useQuery<TUserWithAssignedIncentives[]>({
         queryKey: ["incentive-user-list"],
         queryFn: async () => {
             try {
-                const request = await axios.get(`/api/v1/admin/event/${eventId}/incentives/user-with-assigned`);
+                const request = await axios.get(
+                    `/api/v1/admin/event/${eventId}/incentives/user-with-assigned`
+                );
                 return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -113,211 +131,315 @@ export const userWithAssignedIncentives = (eventId: number) => {
     return { usersWithAssigned, isFetchingUser, isLoadingUser, isError, error };
 };
 
-export const useCreateAssignIncentive = (eventId : number, incentiveId : number, onCreate? : (created : TIncentiveAssigned)=>void) => {
+export const useCreateAssignIncentive = (
+    eventId: number,
+    incentiveId: number,
+    onCreate?: (created: TIncentiveAssigned) => void
+) => {
     const queryClient = useQueryClient();
 
-    const { data : created, mutate : createAssignee, isPending : isCreatingAssignee, isError, error } = useMutation<TIncentiveAssigned, string, z.infer<typeof createIncentiveAssigneeSchema>>({
-        mutationKey : ["create-assign-incentive"],
-        mutationFn : async (data) => {
-            try{
-                const request = await axios.post(`/api/v1/admin/event/${eventId}/incentives/${incentiveId}/assign`, data)
-                if(onCreate) onCreate(request.data)
+    const {
+        data: created,
+        mutate: createAssignee,
+        isPending: isCreatingAssignee,
+        isError,
+        error,
+    } = useMutation<
+        TIncentiveAssigned,
+        string,
+        z.infer<typeof createIncentiveAssigneeSchema>
+    >({
+        mutationKey: ["create-assign-incentive"],
+        mutationFn: async (data) => {
+            try {
+                const request = await axios.post(
+                    `/api/v1/admin/event/${eventId}/incentives/${incentiveId}/assign`,
+                    data
+                );
+                if (onCreate) onCreate(request.data);
 
-                queryClient.invalidateQueries({ queryKey: ["incentive-withclaimcount-list"] });
-                queryClient.invalidateQueries({ queryKey: ["incentive-assignee-list"] });
-                queryClient.invalidateQueries({ queryKey: ["incentive-user-list"] });
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-withclaimcount-list"],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-assignee-list"],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-user-list"],
+                });
 
-                toast.success("User Assigned!")
+                toast.success("User Assigned!");
 
                 return request.data;
-            }catch(e){
-                const errorMessage = handleAxiosErrorMessage(e)
-                toast.error(errorMessage)
-                throw errorMessage
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
             }
-        }
-    })
+        },
+    });
 
-    return { created, createAssignee, isCreatingAssignee, isError, error }
-}
+    return { created, createAssignee, isCreatingAssignee, isError, error };
+};
 
-export const useRevokeAssignIncentive = (eventId : number, incentiveId : number, assignId : number) => {
+export const useRevokeAssignIncentive = (
+    eventId: number,
+    incentiveId: number,
+    assignId: number
+) => {
     const queryClient = useQueryClient();
 
-    const { mutate: deleteAssignee, isPending : isDeleting } = useMutation<string, string>({
+    const { mutate: deleteAssignee, isPending: isDeleting } = useMutation<
+        string,
+        string
+    >({
         mutationKey: ["delete-incentive-assigned"],
         mutationFn: async () => {
             try {
-                const response = await axios.delete(`/api/v1/admin/event/${eventId}/incentives/${incentiveId}/assign/${assignId}`);
+                const response = await axios.delete(
+                    `/api/v1/admin/event/${eventId}/incentives/${incentiveId}/assign/${assignId}`
+                );
 
-                queryClient.invalidateQueries({ queryKey: ["incentive-withclaimcount-list"] });
-                queryClient.invalidateQueries({ queryKey: ["incentive-assignee-list"] });
-                queryClient.invalidateQueries({ queryKey: ["incentive-user-list"] });
-                
-                toast.success("User revoked")
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-withclaimcount-list"],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-assignee-list"],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-user-list"],
+                });
 
-                return response.data
-            }catch(e){
-                const errorMessage = handleAxiosErrorMessage(e)
+                toast.success("User revoked");
+
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
-                throw errorMessage
+                throw errorMessage;
             }
-        }
-    })
+        },
+    });
 
-    return { deleteAssignee, isDeleting }
-}
+    return { deleteAssignee, isDeleting };
+};
 
-export const updateAssignedQuantity = (eventId : number, incentiveId : number, assignId : number, onUpdate? : () => void) => {
+export const updateAssignedQuantity = (
+    eventId: number,
+    incentiveId: number,
+    assignId: number,
+    onUpdate?: () => void
+) => {
     const queryClient = useQueryClient();
 
-    const { mutate: updateAssigned, isPending : isUpdating} = useMutation<string, string, z.infer<typeof updateIncentiveAssignedSchema>>({
+    const { mutate: updateAssigned, isPending: isUpdating } = useMutation<
+        string,
+        string,
+        z.infer<typeof updateIncentiveAssignedSchema>
+    >({
         mutationKey: ["update-incentive-assigned-qty"],
         mutationFn: async (data) => {
             try {
-                const response = await axios.patch(`/api/v1/admin/event/${eventId}/incentives/${incentiveId}/assign/${assignId}`, data);
+                const response = await axios.patch(
+                    `/api/v1/admin/event/${eventId}/incentives/${incentiveId}/assign/${assignId}`,
+                    data
+                );
 
-                queryClient.invalidateQueries({ queryKey: ["incentive-withclaimcount-list"] });
-                queryClient.invalidateQueries({ queryKey: ["incentive-assignee-list"] });
-                queryClient.invalidateQueries({ queryKey: ["incentive-user-list"] });
-                
-                toast.success("Assigned quantity updated")
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-withclaimcount-list"],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-assignee-list"],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["incentive-user-list"],
+                });
 
-                if(onUpdate) onUpdate();
+                toast.success("Assigned quantity updated");
 
-                return response.data
-            }catch(e){
-                const errorMessage = handleAxiosErrorMessage(e)
-                toast.error(errorMessage);
-                throw errorMessage
-            }
-        }
-    })
+                if (onUpdate) onUpdate();
 
-    return { updateAssigned, isUpdating }
-}
-
-export const useAssignedIncentiveToMe = (eventId : number, enabled : boolean) => {
-    const {data : assignedToMe, isFetching : isLoadingAssignedToMe} = useQuery<TIncentiveAssignedToMe[], string>({
-        queryKey : ["incentive-assigned-to-me-list"],
-        queryFn : async () => {
-            try{
-                const request = await axios.get(`/api/v1/admin/event/${eventId}/incentives/assigned-to-me`)
-                return request.data;
-            }catch(e){
+                return response.data;
+            } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
                 throw errorMessage;
             }
         },
-        initialData : [],
-        enabled
-    })
+    });
 
-    return { assignedToMe, isLoadingAssignedToMe }
-}
+    return { updateAssigned, isUpdating };
+};
 
-export const useMemberClaimsWithAssistanceList = (eventId : number, memberId : string, enabled : boolean) => {
-    const {data : memberClaims, isPending : isLoadingMemberClaims} = useQuery<TIncentiveClaimsWithIncentiveAndClaimAssistance[], string>({
-        queryKey : [`incentive-claims-member-${memberId}`],
-        queryFn : async () => {
-            try{
-                const request = await axios.get(`/api/v1/admin/event/${eventId}/member/${memberId}/claims`)
+export const useAssignedIncentiveToMe = (eventId: number, enabled: boolean) => {
+    const { data: assignedToMe, isFetching: isLoadingAssignedToMe } = useQuery<
+        TIncentiveAssignedToMe[],
+        string
+    >({
+        queryKey: ["incentive-assigned-to-me-list"],
+        queryFn: async () => {
+            try {
+                const request = await axios.get(
+                    `/api/v1/admin/event/${eventId}/incentives/assigned-to-me`
+                );
                 return request.data;
-            }catch(e){
+            } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
                 throw errorMessage;
             }
         },
-        initialData : [],
-        enabled
-    })
+        initialData: [],
+        enabled,
+    });
 
-    return { memberClaims, isLoadingMemberClaims }
-}
+    return { assignedToMe, isLoadingAssignedToMe };
+};
 
-export const useCreateClaimAssistance = (eventId : number, onCreate : () => void ) => {
-    const { data : savedEntry, mutate : saveClaimEntries, isPending : isSavingClaim} = useMutation<any, string, z.infer<typeof createAssistedClaimSchema>>({
-        mutationKey : ["create-assist-claim"],
-        mutationFn : async (data) => {
-            try{
-                const request = await axios.post(`/api/v1/admin/event/${eventId}/incentives/claim`, data)
-                toast.success("Claim saved!")
+export const useMemberClaimsWithAssistanceList = (
+    eventId: number,
+    memberId: string,
+    enabled: boolean
+) => {
+    const { data: memberClaims, isPending: isLoadingMemberClaims } = useQuery<
+        TIncentiveClaimsWithIncentiveAndClaimAssistance[],
+        string
+    >({
+        queryKey: [`incentive-claims-member-${memberId}`],
+        queryFn: async () => {
+            try {
+                const request = await axios.get(
+                    `/api/v1/admin/event/${eventId}/member/${memberId}/claims`
+                );
+                return request.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage);
+                throw errorMessage;
+            }
+        },
+        initialData: [],
+        enabled,
+    });
+
+    return { memberClaims, isLoadingMemberClaims };
+};
+
+export const useCreateClaimAssistance = (
+    eventId: number,
+    onCreate: () => void
+) => {
+    const {
+        data: savedEntry,
+        mutate: saveClaimEntries,
+        isPending: isSavingClaim,
+    } = useMutation<any, string, z.infer<typeof createAssistedClaimSchema>>({
+        mutationKey: ["create-assist-claim"],
+        mutationFn: async (data) => {
+            try {
+                const request = await axios.post(
+                    `/api/v1/admin/event/${eventId}/incentives/claim`,
+                    data
+                );
+                toast.success("Claim saved!");
                 onCreate();
-                return request.data
-            }catch(e){
+                return request.data;
+            } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
-                throw errorMessage;
-            }
-        }
-    })
-
-    return { savedEntry, saveClaimEntries, isSavingClaim }
-}
-
-export const useClaimsMasterList = (eventId : number ) => {
-    const { data : claimList, refetch, isFetching, isError, isLoading } = useQuery<TIncentiveClaimsWithIncentiveAttendeeAssistedBy[], string>({
-        queryKey : ["claims-master-list"],
-        queryFn : async () => {
-            try{
-                const request = await axios.get(`/api/v1/admin/event/${eventId}/incentives/claim`)
-                return request.data;
-            }catch(e){
-                const errorMessage = handleAxiosErrorMessage(e);
-                toast.error("Failed to load claims master list", { action : { label : "try again", onClick : () => refetch() }});
                 throw errorMessage;
             }
         },
-        initialData : []
-    })
+    });
 
-    return { claimList, refetch, isFetching, isError, isLoading }
-}
+    return { savedEntry, saveClaimEntries, isSavingClaim };
+};
 
-export const useClaimDelete = (eventId : number, onDelete? : () => void ) => {
-    const queryClient = useQueryClient()
-    const { data : deletedClaim, mutate : deleteClaim, isPending : isDeletingClaim } = useMutation<any, string, number>({
-        mutationKey : ["delete-claim"],
-        mutationFn : async (claimId) => {
-            try{
-                const request = await axios.delete(`/api/v1/admin/event/${eventId}/incentives/claim/${claimId}`)
-                toast.success("Claim Deleted")
+export const useClaimsMasterList = ({
+    eventId,
+    onSuccess,
+    onError,
+    ...other
+}: IQueryHook & { eventId: number }) => {
+    return useQuery<TIncentiveClaimsWithIncentiveAttendeeAssistedBy[], string>({
+        queryKey: ["claims-master-list"],
+        queryFn: async () => {
+            try {
+                const request = await axios.get(
+                    `/api/v1/admin/event/${eventId}/incentives/claim`
+                );
+                onSuccess?.(request.data);
+                return request.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                onError?.(errorMessage);
+                throw errorMessage;
+            }
+        },
+        initialData: [],
+        ...other,
+    });
+};
 
-                if(onDelete) onDelete()
+export const useClaimDelete = (eventId: number, onDelete?: () => void) => {
+    const queryClient = useQueryClient();
+    const {
+        data: deletedClaim,
+        mutate: deleteClaim,
+        isPending: isDeletingClaim,
+    } = useMutation<any, string, number>({
+        mutationKey: ["delete-claim"],
+        mutationFn: async (claimId) => {
+            try {
+                const request = await axios.delete(
+                    `/api/v1/admin/event/${eventId}/incentives/claim/${claimId}`
+                );
+                toast.success("Claim Deleted");
 
-                queryClient.invalidateQueries({ queryKey : ["claims-master-list"]})
+                if (onDelete) onDelete();
 
-                return request.data
-            }catch(e){
+                queryClient.invalidateQueries({
+                    queryKey: ["claims-master-list"],
+                });
+
+                return request.data;
+            } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
                 throw errorMessage;
             }
-        }
-    })
+        },
+    });
 
-    return { deletedClaim, deleteClaim, isDeletingClaim }
-}
+    return { deletedClaim, deleteClaim, isDeletingClaim };
+};
 
-export const useClaimRelease = ( eventId : number, claimId : number ) => {
+export const useClaimRelease = (eventId: number, claimId: number) => {
     const queryClient = useQueryClient();
 
-    const { mutate : releaseClaim, isPending : isReleasing } = useMutation<any, string, z.infer<typeof claimReleaseSchema>>({
-        mutationKey : ["release-claim"],
-        mutationFn : async (payload) => {
-            try{
-                const request = await axios.patch(`/api/v1/admin/event/${eventId}/incentives/claim/${claimId}`, payload);
-                toast.success("Claim released successfully")
-                queryClient.invalidateQueries({ queryKey : ["claims-master-list"]})
-            }catch(e){
+    const { mutate: releaseClaim, isPending: isReleasing } = useMutation<
+        any,
+        string,
+        z.infer<typeof claimReleaseSchema>
+    >({
+        mutationKey: ["release-claim"],
+        mutationFn: async (payload) => {
+            try {
+                const request = await axios.patch(
+                    `/api/v1/admin/event/${eventId}/incentives/claim/${claimId}`,
+                    payload
+                );
+                toast.success("Claim released successfully");
+                queryClient.invalidateQueries({
+                    queryKey: ["claims-master-list"],
+                });
+            } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
                 throw errorMessage;
             }
-        }
-    })
+        },
+    });
 
-    return { releaseClaim, isReleasing }
-}
+    return { releaseClaim, isReleasing };
+};

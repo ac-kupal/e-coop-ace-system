@@ -75,11 +75,13 @@ const BranchesTable = () => {
                             ref={onFocusSearch}
                             placeholder="Search..."
                             value={globalFilter}
-                            onChange={(event) => setGlobalFilter(event.target.value)}
+                            onChange={(event) =>
+                                setGlobalFilter(event.target.value)
+                            }
                             className="w-full pl-8 bg-transparent border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
-                    <div className="flex items-center gap-x-2 md:gap-x-4">
+                    <div className="flex items-center gap-x-1">
                         <DataTableViewOptions table={table} />
                         <Button
                             variant={"secondary"}
@@ -94,7 +96,7 @@ const BranchesTable = () => {
                             className="flex rounded-md justify-center dark:bg-primary items-center md:space-x-2 md:min-w-[7rem]  "
                             onClick={() => setCreateModal(true)}
                         >
-                            Add Branch 
+                            Add Branch
                             <Plus className="w-4 h-4" />
                         </Button>
                     </div>
@@ -106,7 +108,10 @@ const BranchesTable = () => {
                 isLoading={isLoading || isFetching}
                 table={table}
             />
-            <DataTablePagination pageSizes={[20, 40, 60, 80, 100]} table={table} />
+            <DataTablePagination
+                pageSizes={[20, 40, 60, 80, 100]}
+                table={table}
+            />
         </div>
     );
 };

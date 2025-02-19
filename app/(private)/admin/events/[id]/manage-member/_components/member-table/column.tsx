@@ -2,7 +2,18 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
-import { ClipboardPen, Copy, Gift, MenuIcon, Pencil, Send, Trash, Vote } from "lucide-react";
+import {
+    ClipboardPen,
+    Copy,
+    Gift,
+    MenuIcon,
+    Pencil,
+    QrCode,
+    QrCodeIcon,
+    Send,
+    Trash,
+    Vote,
+} from "lucide-react";
 
 import { toast } from "sonner";
 import {
@@ -14,7 +25,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import moment from "moment";
-import { TMemberWithEventElectionId } from "@/types";
+import { TMember, TMemberWithEventElectionId } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { deleteMember, useOtpSend } from "@/hooks/api-hooks/member-api-hook";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
@@ -28,23 +39,71 @@ import AssistClaimSheet from "../../../../_components/assist-claim-sheet";
 import { cn } from "@/lib/utils";
 import useOrigin from "@/hooks/use-origin";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
+import { useInfoModal } from "@/stores/use-info-modal-store";
+import QrViewContent from "@/components/modals/modal-content/qr-view-content";
+import UserAvatar from "@/components/user-avatar";
+
+const ViewMemberQr = ({ member }: { member: TMember }) => {
+    const { onOpen } = useInfoModal();
+
+    return (
+        <Button
+            onClick={() =>
+                onOpen({
+                    title: "Event QRCode",
+                    description: "Available QR Code(s) for this event",
+                    hideConfirm: true,
+                    component: (
+                        <div className="flex lg:flex-row justify-center gap-x-4 items-center px-8 py-4">
+                            <div className="flex flex-col gap-y-2 items-center">
+                                <p className="text-center text-sm">
+                                    {member.firstName} {member.lastName} Pasbook
+                                    QR
+                                </p>
+                                <QrViewContent
+                                    qrClassName="size-[250px] lg:size-[350px]"
+                                    fileName={
+                                        member.passbookNumber + "-pasbook-qr"
+                                    }
+                                    value={member.passbookNumber}
+                                    enableDownload
+                                />
+                            </div>
+                        </div>
+                    ),
+                })
+            }
+            size="icon"
+            variant="ghost"
+        >
+            <QrCodeIcon className="size-6" strokeWidth={1} />
+        </Button>
+    );
+};
 
 const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
     const { data: session } = useSession();
     const origin = useOrigin();
 
-    const isAdminOrRoot = session?.user.role === "admin" || session?.user.role === "root";
+    const isAdminOrRoot =
+        session?.user.role === "admin" || session?.user.role === "root";
 
     const [onOpenModal, setOnOpenModal] = useState(false);
-    const [claimSheet, setClaimSheet] = useState(false)
+    const [claimSheet, setClaimSheet] = useState(false);
     const { onOpen: onOpenConfirmModal } = useConfirmModal();
+    const { onOpen: onInfoModal } = useInfoModal();
 
     // custom no join
     // const { getAuthorization } = useVoterAuthorizationAssist(member.eventId, member.id, (voter) => window.open(`${origin}/events/${member.eventId}/election/vote`));
-    
-    const { election } = member.event
 
-    const { getAuthorization } = useVoterAuthorization(member.eventId, election? election.id : '', member.id, (voter)=> window.open(`/events/${member.eventId}/election/vote`));
+    const { election } = member.event;
+
+    const { getAuthorization } = useVoterAuthorization(
+        member.eventId,
+        election ? election.id : "",
+        member.id,
+        (voter) => window.open(`/events/${member.eventId}/election/vote`)
+    );
 
     const deleteOperation = deleteMember();
 
@@ -72,7 +131,7 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
             />
             <AssistClaimSheet
                 state={claimSheet}
-                onClose={(state)=>setClaimSheet(state)}
+                onClose={(state) => setClaimSheet(state)}
                 member={member}
             />
             <DropdownMenuTrigger asChild>
@@ -118,8 +177,39 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     className="px-2 gap-x-2"
+                    onClick={() =>
+                        onInfoModal({
+                            title: "Event QRCode",
+                            description: "Available QR Code(s) for this event",
+                            hideConfirm: true,
+                            component: (
+                                <div className="flex lg:flex-row justify-center gap-x-4 items-center px-8 py-4">
+                                    <div className="flex flex-col gap-y-2 items-center">
+                                        <p className="text-center text-sm">
+                                            {member.firstName} {member.lastName}{" "}
+                                            Pasbook QR
+                                        </p>
+                                        <QrViewContent
+                                            qrClassName="size-[250px] lg:size-[350px]"
+                                            fileName={
+                                                member.passbookNumber +
+                                                "-pasbook-qr"
+                                            }
+                                            value={member.passbookNumber}
+                                            enableDownload
+                                        />
+                                    </div>
+                                </div>
+                            ),
+                        })
+                    }
+                >
+                    <QrCode strokeWidth={2} className="h-4" /> Show Passbook QR
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    className="px-2 gap-x-2"
                     onClick={() => {
-                        setClaimSheet(true)
+                        setClaimSheet(true);
                     }}
                 >
                     <Gift strokeWidth={2} className="h-4" />
@@ -128,12 +218,48 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                 {!member.registered && (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
-                        onClick={()=> onOpenConfirmModal({
-                            title : "Register Member",
-                            description : "You are about to register this member, registration serves as attendance as well, are you sure?",
-                            onConfirm : () => registerAttendance(),
-                            confirmString : "Register"
-                        })}
+                        onClick={() =>
+                            onOpenConfirmModal({
+                                title: "Register Member",
+                                onConfirm: () => registerAttendance(),
+                                confirmString: "Register",
+                                contentComponent: (
+                                    <div className="flex flex-col items-center gap-y-1">
+                                        <UserAvatar
+                                            className="size-52"
+                                            src={
+                                                member.picture ??
+                                                "/images/default.png"
+                                            }
+                                            fallback={member.firstName.charAt(
+                                                0
+                                            )}
+                                        />
+                                        <p className="text-2xl">
+                                            {member.firstName}{" "}
+                                            {member.middleName}{" "}
+                                            {member.lastName}
+                                        </p>
+                                        <p className="text-muted-foreground text-center min-w-28 border-b-2 text-lg">
+                                            {member.passbookNumber}
+                                        </p>
+                                        <p className="text-center text-muted-foreground text-xs">
+                                            Passbook No.
+                                        </p>
+                                        <p className="text-sm text-muted-foreground mt-4 text-center">
+                                            You are about to register{" "}
+                                            <strong>
+                                                {member.firstName}{" "}
+                                                {member.middleName}{" "}
+                                                {member.lastName}
+                                            </strong>
+                                            , registration serves as attendance
+                                            as well, are you sure?
+                                        </p>
+                                    </div>
+                                ),
+                            })
+                        }
                     >
                         <ClipboardPen strokeWidth={2} className="h-4" />
                         Register Member
@@ -142,14 +268,26 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                 {!member.voted && member.event.election && (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
-                        onClick={()=> onOpenConfirmModal({
-                            title : "Assist Vote",
-                            description : "You are about to assist this member on voting, it will redirect to a new window for voting. Are you sure to assist this member on voting?",
-                            onConfirm : () => {
-                                getAuthorization({ otp : member.voteOtp ?? "", passbookNumber : member.passbookNumber, birthday : member.birthday !== null ? new Date(member.birthday).toISOString() : undefined })
-                            },
-                            confirmString : "Vote"
-                        })}
+                        onClick={() =>
+                            onOpenConfirmModal({
+                                title: "Assist Vote",
+                                description:
+                                    "You are about to assist this member on voting, it will redirect to a new window for voting. Are you sure to assist this member on voting?",
+                                onConfirm: () => {
+                                    getAuthorization({
+                                        otp: member.voteOtp ?? "",
+                                        passbookNumber: member.passbookNumber,
+                                        birthday:
+                                            member.birthday !== null
+                                                ? new Date(
+                                                      member.birthday
+                                                  ).toISOString()
+                                                : undefined,
+                                    });
+                                },
+                                confirmString: "Vote",
+                            })
+                        }
                     >
                         <Vote strokeWidth={2} className="h-4" />
                         Assist Vote
@@ -177,7 +315,7 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                                 onConfirm: () => {
                                     deleteOperation.mutate({
                                         eventId: member.eventId,
-                                        memberId:member.id
+                                        memberId: member.id,
                                     });
                                 },
                             })
@@ -192,8 +330,18 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
     );
 };
 
-const Cell = ({ text,className}: { text: string | null,className?:string }) => {
-    return <p className={`text-[min(14px,2.9vw)] fon-bold uppercase ${className}`}>{text}</p>;
+const Cell = ({
+    text,
+    className,
+}: {
+    text: string | null;
+    className?: string;
+}) => {
+    return (
+        <p className={`text-[min(14px,2.9vw)] fon-bold uppercase ${className}`}>
+            {text}
+        </p>
+    );
 };
 
 const columns: ColumnDef<TMemberWithEventElectionId>[] = [
@@ -236,7 +384,7 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Last Name" />
         ),
-        cell: ({ row }) =>  <Cell text={row.original.lastName}></Cell>,
+        cell: ({ row }) => <Cell text={row.original.lastName}></Cell>,
     },
     {
         accessorKey: "middleName",
@@ -250,16 +398,24 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Passbook N0." />
         ),
-        cell: ({ row }) => (
-            <Cell text={row.original.passbookNumber}></Cell>
+        cell: ({ row }) => <Cell text={row.original.passbookNumber}></Cell>,
+    },
+    {
+        id: "PB QR",
+        accessorKey: "passbookNumber",
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="PB QR." />
         ),
+        cell: ({ row }) => <ViewMemberQr member={row.original} />,
+        enableSorting: false,
+        enableColumnFilter: false,
     },
     {
         accessorKey: "voteOtp",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Vote OTP" />
         ),
-        cell: ({ row }) => <Cell text={row.original.voteOtp }></Cell>,
+        cell: ({ row }) => <Cell text={row.original.voteOtp}></Cell>,
     },
 
     {
@@ -269,7 +425,13 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
             <DataTableColHeader column={column} title="Birthday" />
         ),
         cell: ({ row }) => (
-            <Cell text={!row.original.birthday ? "":moment(row.original.birthday).format("LL")}></Cell>
+            <Cell
+                text={
+                    !row.original.birthday
+                        ? ""
+                        : moment(row.original.birthday).format("LL")
+                }
+            ></Cell>
         ),
     },
     {
@@ -284,16 +446,18 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Email" />
         ),
-        cell: ({ row }) =><Cell text={row.original.emailAddress} className="lowercase"></Cell>,
+        cell: ({ row }) => (
+            <Cell text={row.original.emailAddress} className="lowercase"></Cell>
+        ),
     },
     {
         accessorKey: "gender",
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Gender" />
         ),
-        cell: ({ row }) =><Cell text={row.original.gender}></Cell>,
-        enableHiding:true,
-        enableSorting:false
+        cell: ({ row }) => <Cell text={row.original.gender}></Cell>,
+        enableHiding: true,
+        enableSorting: false,
     },
     {
         accessorKey: "voted",
@@ -303,18 +467,21 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         cell: ({ row }) => (
             <div className="">
                 {row.original.voted ? (
-                    <Badge className={cn("bg-green-500 text-accent border-0")} >
-                    <Cell className="lowercase" text="voted"></Cell>
+                    <Badge className={cn("bg-green-500 text-accent border-0")}>
+                        <Cell className="lowercase" text="voted"></Cell>
                     </Badge>
                 ) : (
-                    <Badge variant={"secondary"} className={cn(" bg-secondary")} >
-                          <Cell className="lowercase" text="Unvoted"></Cell>
-                        </Badge>
+                    <Badge
+                        variant={"secondary"}
+                        className={cn(" bg-secondary")}
+                    >
+                        <Cell className="lowercase" text="Unvoted"></Cell>
+                    </Badge>
                 )}
             </div>
         ),
-        enableHiding:true,
-        enableSorting:false
+        enableHiding: true,
+        enableSorting: false,
     },
     {
         accessorKey: "registered",
@@ -325,15 +492,15 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
             <div className="">
                 {row.original.registered ? (
                     <Badge className="text-primary border-0  bg-primary/40">
-                          <Cell className="lowercase" text="registered"></Cell>
+                        <Cell className="lowercase" text="registered"></Cell>
                     </Badge>
                 ) : (
-                    <Badge  variant={"secondary"}>unregistered</Badge>
+                    <Badge variant={"secondary"}>unregistered</Badge>
                 )}
             </div>
         ),
-        enableHiding:true,
-        enableSorting:false
+        enableHiding: true,
+        enableSorting: false,
     },
 ];
 

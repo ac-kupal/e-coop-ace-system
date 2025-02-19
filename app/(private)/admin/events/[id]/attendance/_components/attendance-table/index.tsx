@@ -16,17 +16,23 @@ import DataTable from "@/components/data-table/data-table";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 
-import { useAttendanceList } from "@/hooks/api-hooks/attendance-api-hooks";
+import {
+    useAttendanceList,
+    useAttendanceStats,
+} from "@/hooks/api-hooks/attendance-api-hooks";
 import { useSession } from "next-auth/react";
 import { userList } from "@/hooks/api-hooks/user-api-hooks";
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-facited-filter";
-import { tableToExcel } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SiMicrosoftexcel } from "react-icons/si";
-import { utils, write, writeFile, writeXLSX } from "xlsx";
+import { utils, writeFile } from "xlsx";
 import useDebounce from "@/hooks/use-debounce";
 import ActionTooltip from "@/components/action-tooltip";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
+import { Progress } from "@/components/ui/progress";
+import LoadingSpinner from "@/components/loading-spinner";
+import { GrRotateRight } from "react-icons/gr";
+import { toast } from "sonner";
 
 const AttendanceTable = ({ eventId }: { eventId: number }) => {
     const tableRef = useRef(null);
@@ -34,8 +40,27 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
     const [globalFilter, setGlobalFilter] = useState("");
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
 
-    const { attendanceList, isLoading, isError, isFetching } =
-        useAttendanceList(eventId);
+    const {
+        data: attendanceList,
+        isLoading,
+        isError,
+        isFetching,
+        refetch: refetchAttendanceList,
+    } = useAttendanceList({ eventId });
+
+    const {
+        data: attendanceStats,
+        isRefetching: isLoadingAttendanceStats,
+        refetch: refetchStats,
+    } = useAttendanceStats({
+        eventId,
+        onError: () => toast.error("Failed to load attendance statistics"),
+    });
+
+    const refetch = () => {
+        refetchStats();
+        refetchAttendanceList();
+    };
 
     const { data: users } = userList();
     const { data: userData } = useSession();
@@ -114,10 +139,10 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
 
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
-            <div className="flex flex-wrap items-center justify-between p-3 rounded-xl gap-y-2 bg-primary dark:border dark:bg-secondary/70 ">
+            <div className="flex flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
                 <div className="flex items-center gap-x-4 text-muted-foreground">
-                    <div className="relative text-white">
-                        <SearchIcon className="absolute w-4 h-auto top-3 left-2" />
+                    <div className="w-full lg:w-fit relative">
+                        <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
                         <Input
                             value={searchVal}
                             ref={onFocusSearch}
@@ -125,7 +150,7 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
                             onChange={(event) =>
                                 setSearchVal(event.target.value)
                             }
-                            className="w-full pl-8 bg-transparent border-white placeholder:text-white/70 border-0 border-b text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
                     {userData && userData.user.role !== "staff" && (
@@ -148,6 +173,37 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
                     )}
                 </div>
                 <div className="flex items-center gap-x-1">
+                    <div className="flex flex-col py-1.5 bg-muted/40 dark:bg-muted rounded-xl space-y-1.5 px-4 items-center gap-x-2">
+                        <span className="text-sm">
+                            {attendanceStats.totalIsRegistered || 0} registered
+                            / {attendanceStats.totalAttendees || 0} Total
+                            Members
+                        </span>
+                        <div className="flex w-full items-center gap-x-3">
+                            {isLoadingAttendanceStats && !attendanceStats ? (
+                                <LoadingSpinner />
+                            ) : (
+                                <span className="text-xs text-primary">
+                                    {(
+                                        (attendanceStats.totalIsRegistered /
+                                            attendanceStats.totalAttendees) *
+                                        100
+                                    ).toLocaleString("en-US", {
+                                        maximumFractionDigits: 1,
+                                    })}{" "}
+                                    %
+                                </span>
+                            )}
+                            <Progress
+                                className="h-1.5 flex-1 bg-popover/80"
+                                value={
+                                    (attendanceStats.totalIsRegistered /
+                                        attendanceStats.totalAttendees) *
+                                    100
+                                }
+                            />
+                        </div>
+                    </div>
                     <div className="">
                         <ActionTooltip content="Scan Passbook Number">
                             <Button
@@ -167,6 +223,19 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
                             </Button>
                         </ActionTooltip>
                     </div>
+                    <Button
+                        variant={"secondary"}
+                        disabled={isFetching}
+                        onClick={() => refetch()}
+                        className="gap-x-2"
+                        size="icon"
+                    >
+                        {isFetching ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <GrRotateRight className="size-4" />
+                        )}
+                    </Button>
                     <DataTableViewOptions table={table} />
                     <Button
                         disabled={isFetching}

@@ -5,6 +5,7 @@ interface IInfoDatas{
     description: string;
     component : React.ReactNode;
     confirmString?: string;
+    hideConfirm? : boolean;
     onConfirm?: () => void;
 }
 

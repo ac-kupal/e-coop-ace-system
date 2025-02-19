@@ -27,9 +27,8 @@ export default function DataTableViewOptions<TData>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
-          size="sm"
-          className={cn("flex h-8 ml-auto gap-x-2", className)}
+          variant="secondary"
+          className={cn("flex ml-auto gap-x-2", className)}
         >
           <Settings2 className="w-4 h-4" />
           <span className="hidden md:block">View</span>

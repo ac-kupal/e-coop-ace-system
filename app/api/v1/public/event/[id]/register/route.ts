@@ -23,12 +23,15 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     passbookNumber,
                 },
             },
+            include: {
+                event: true,
+            },
         });
 
         if (!memberAttendee)
             return NextResponse.json(
                 { message: "Not found, for verification" },
-                { status: 404 },
+                { status: 404 }
             );
 
         // DUE TO CHANGES / REQUEST of client,
@@ -41,11 +44,14 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         // Regardless, it was implemented instead, so I wrap it to skip all member who dont have date
         // of birth so anyone can type any date on registration and the system will let them pass through
-        if (memberAttendee.birthday) {
-            if (!isSameDay(birthday, memberAttendee.birthday))
+        if (
+            memberAttendee.birthday &&
+            memberAttendee.event.requireBirthdayVerification
+        ) {
+            if (!birthday || !isSameDay(birthday, memberAttendee.birthday))
                 return NextResponse.json(
                     { message: "Wrong birthday, please try again" },
-                    { status: 403 },
+                    { status: 403 }
                 );
         }
 
