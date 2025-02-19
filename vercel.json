@@ -1,5 +1,10 @@
 {
     "regions": [
         "hkg1"
-    ]
+    ],
+    "functions": {
+        "api/v1/admin/event/[id]/member/import-member/route.ts": {
+            "maxDuration": 60
+        }
+    }
 }
