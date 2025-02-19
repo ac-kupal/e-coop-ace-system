@@ -53,6 +53,9 @@ const ElectionReports = ({ params, electionName }: TParams) => {
       }
    };
 
+
+   console.log(votes)
+
    return (
       <>
          <div className="flex justify-end gap-x-2">

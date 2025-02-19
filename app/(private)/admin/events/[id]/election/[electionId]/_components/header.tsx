@@ -1,16 +1,19 @@
-import React from 'react'
-
+import { cn } from "@/lib/utils";
+import React from "react";
 
 type Props = {
-   text:string
-}
+  text: string;
+  className?: string;
+};
 
-const Header = ({text}:Props) => {
+const Header = ({ text, className }: Props) => {
   return (
-    <div className='w-full p-2'>
-     <h1 className=' font-medium text-2xl'>{text}</h1>
+    <div
+      className={cn("w-full p-2  flex justify-center items-center ", className)}
+    >
+      <h1 className=" font-bold text-2xl">{text}</h1>
     </div>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
