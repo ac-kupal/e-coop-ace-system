@@ -38,7 +38,7 @@ const page = async ({ params }: TParams) => {
 
   return (
     <div className="w-full lg:w-[1000px] lg:min-w-full ">
-      {Election && <Header text={electionName}></Header>}
+      {Election && <Header className="flex justify-center items-center" text={electionName}></Header>}
       <QuorumSection params={params}></QuorumSection>
       <div className="w-full flex space-x-3 justify-start px-2">
         <div className="flex space-x-2 items-center py-5">
