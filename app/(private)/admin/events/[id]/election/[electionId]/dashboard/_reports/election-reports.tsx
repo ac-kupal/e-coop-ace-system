@@ -42,9 +42,10 @@ const ElectionReports = ({ params, electionName }: TParams) => {
 
   const { votes, isLoading, refetch, isRefetching } = getReportsResults(params);
 
+  if (isLoading) return <Loading></Loading>;
   if (!votes) return <NotFound></NotFound>;
   if (votes.sum === 0) return <NoVoters></NoVoters>;
-  if (isLoading) return <Loading></Loading>;
+
   const exportToExcel = () => {
     if (tableRef.current) {
       tableToExcel(tableRef.current, `${electionName}_reports`);
