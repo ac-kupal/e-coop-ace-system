@@ -1,47 +1,50 @@
 "use client";
+import moment from "moment";
+import { toast } from "sonner";
+import { forwardRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
+
 import {
-    ClipboardPen,
     Copy,
     Gift,
-    MenuIcon,
-    Pencil,
-    QrCode,
-    QrCodeIcon,
     Send,
-    Trash,
     Vote,
+    Trash,
+    QrCode,
+    Pencil,
+    MenuIcon,
+    CopyIcon,
+    QrCodeIcon,
+    ClipboardPen,
 } from "lucide-react";
-
-import { toast } from "sonner";
 import {
     DropdownMenu,
-    DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import moment from "moment";
-import { TMember, TMemberWithEventElectionId } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { deleteMember, useOtpSend } from "@/hooks/api-hooks/member-api-hook";
-import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import UpdateMemberModal from "../modals/update-member-modal";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import UserAvatar from "@/components/user-avatar";
+import ActionTooltip from "@/components/action-tooltip";
 import LoadingSpinner from "@/components/loading-spinner";
-import { useAttendanceRegistration } from "@/hooks/api-hooks/attendance-api-hooks";
+import UpdateMemberModal from "../modals/update-member-modal";
 import AssistClaimSheet from "../../../../_components/assist-claim-sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import QrViewContent from "@/components/modals/modal-content/qr-view-content";
+
 import { cn } from "@/lib/utils";
 import useOrigin from "@/hooks/use-origin";
-import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 import { useInfoModal } from "@/stores/use-info-modal-store";
-import QrViewContent from "@/components/modals/modal-content/qr-view-content";
-import UserAvatar from "@/components/user-avatar";
+import { TMember, TMemberWithEventElectionId } from "@/types";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { deleteMember, useOtpSend } from "@/hooks/api-hooks/member-api-hook";
+import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
+import { useAttendanceRegistration } from "@/hooks/api-hooks/attendance-api-hooks";
 
 const ViewMemberQr = ({ member }: { member: TMember }) => {
     const { onOpen } = useInfoModal();
@@ -330,19 +333,25 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
     );
 };
 
-const Cell = ({
-    text,
-    className,
-}: {
-    text: string | null;
-    className?: string;
-}) => {
+const Cell = forwardRef<
+    HTMLParagraphElement,
+    {
+        text: string | null;
+        className?: string;
+    }
+>(({ text, className, ...other }, ref) => {
     return (
-        <p className={`text-[min(14px,2.9vw)] fon-bold uppercase ${className}`}>
+        <p
+            ref={ref}
+            {...other}
+            className={`text-[min(14px,2.9vw)] fon-bold uppercase ${className}`}
+        >
             {text}
         </p>
     );
-};
+});
+
+Cell.displayName = "Cell";
 
 const columns: ColumnDef<TMemberWithEventElectionId>[] = [
     {
@@ -415,7 +424,32 @@ const columns: ColumnDef<TMemberWithEventElectionId>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="Vote OTP" />
         ),
-        cell: ({ row }) => <Cell text={row.original.voteOtp}></Cell>,
+        cell: ({ row }) => (
+            <div
+                onClick={() => {
+                    navigator.clipboard.writeText(`${row.original.voteOtp}`);
+                    toast.success("Member OTP coppied");
+                }}
+                className="font-mono inline-flex items-center gap-x-2"
+            >
+                <ActionTooltip
+                    content={
+                        <>
+                            Click to Copy Member OTP
+                            <CopyIcon
+                                className="size-4 ml-2 inline"
+                                strokeWidth="1"
+                            />
+                        </>
+                    }
+                >
+                    <Cell
+                        text={row.original.voteOtp}
+                        className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm"
+                    />
+                </ActionTooltip>
+            </div>
+        ),
     },
 
     {
