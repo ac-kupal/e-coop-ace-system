@@ -61,7 +61,7 @@ const page = async ({ params }: TParams) => {
             <h1 className="font-medium">Reports</h1>
           </div>
         </div>
-        <div className="w-full space-y-2 p-2 lg:p-5 xl:p-10 bg-background dark:bg-secondary/20 rounded-xl">
+        <div className="w-full py-2 bg-background dark:bg-secondary/20 rounded-xl">
           <ElectionReports
             electionName={electionName}
             params={params}
