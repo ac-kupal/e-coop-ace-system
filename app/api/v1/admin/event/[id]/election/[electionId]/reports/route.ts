@@ -1,120 +1,125 @@
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/lib/database"
+import db from "@/lib/database";
 import { validateId } from "@/lib/server-utils";
 import { TReportCandidate } from "@/types";
+import { Prisma } from "@prisma/client";
 
+type CandidateWithVotesAndPosition = Prisma.CandidateGetPayload<{
+  include: { votes: true; position: true };
+}>;
 
+type VoteWithCandidateAndAttendee = Prisma.VotesGetPayload<{
+  include: {
+    candidate: { include: { position: true } };
+    attendee: true;
+  };
+}>;
 
 type TParams = {
-          params:{electionId:number,id:number}
-        }  
-export const GET = async (req: NextRequest,{params}:TParams) => {
-         try {
-            const id = Number(params.electionId);
-            validateId(id);
-            const votes = await db.votes.findMany({
-               where: {
-                  electionId: id,
-               },
-               include: {
-                  candidate: {
-                     include: {
-                        position: true,
-                     },
-                  },
-                  attendee: true,
-               },
-            });
-            const uniqueCandidateIds = new Set<number>();
-            const uniqueCandidates = votes.reduce(
-               (unique, vote) => {
-                  const candidateId = vote.candidateId;
-                  if (!uniqueCandidateIds.has(candidateId)) {
-                     uniqueCandidateIds.add(candidateId);
-                     const candidateName = `${vote.candidate.firstName}, ${vote.candidate.lastName} - ${vote.candidate.position.positionName}`;
-                     unique.push({
-                        id:vote.candidate.positionId,
-                        candidateId: candidateId,
-                        candidateName: candidateName,
-                        firstName:vote.candidate.firstName,
-                        lastName:vote.candidate.lastName,
-                        picture:!vote.candidate.picture ? "/images/default-avatar.png" : vote.candidate.picture,
-                        position:vote.candidate.position.positionName
-                     });
-                  }
-                  const sortUnique = unique.sort((a,b)=> a.id - b.id)
-                  return sortUnique
-               },
-               [] as TReportCandidate[]
-            );
-           
-            
+  params: { electionId: number; id: number };
+};
+/**
+ * Utility function to map candidate details.
+ */
+const mapCandidates = (candidates: CandidateWithVotesAndPosition[]) =>
+  candidates.map((candidate) => ({
+    id: candidate.id,
+    candidateId: candidate.id,
+    candidateName: `${candidate.firstName}, ${candidate.lastName}`,
+    firstName: candidate.firstName,
+    lastName: candidate.lastName,
+    picture: candidate.picture ?? "/images/default-avatar.png",
+    position: candidate.position.positionName,
+    votes: candidate.votes.length,
+  }));
+/**
+ * for process votes and structure them per voter.
+ */
+const processVotes = (
+  votes: VoteWithCandidateAndAttendee[],
+  candidatesResult: TReportCandidate[]
+) => {
+  const processedVotes = votes.reduce(
+    (acc, vote) => {
+      const { id: voterId } = vote.attendee;
+      const candidateId = vote.candidateId;
+      const voterName = `${vote.attendee.lastName}, ${vote.attendee.firstName}`;
 
-            const uniqueVotersIds = new Set<string>();
+      const voterIndex = acc.findIndex((v: { id: any }) => v.id === voterId);
+      const candidateIndex = candidatesResult.findIndex(
+        (candidate) => candidate.candidateId === candidateId
+      );
 
-            const modifiedVotes = votes.reduce(
-               (votes, vote) => {
-                  const voterId = vote.attendee.id;
-                  const candidateId = vote.candidateId;
-                  const voterName = `${vote.attendee.lastName}, ${vote.attendee.firstName}`;
+      if (voterIndex === -1) {
+        const voterVotes = new Array(candidatesResult.length).fill(0);
+        if (candidateIndex !== -1) voterVotes[candidateIndex] = 1;
+        acc.push({ id: voterId, voterName, votes: voterVotes });
+      } else if (candidateIndex !== -1) {
+        acc[voterIndex].votes[candidateIndex] += 1;
+      }
 
-                  if (!uniqueVotersIds.has(voterId)) {
-                     uniqueVotersIds.add(voterId);
-                  }
+      return acc;
+    },
+    [] as { id: string; voterName: string; votes: number[] }[]
+  );
 
-                  const voterEntryIndex = votes.findIndex(
-                     (voter) => voter.id === voterId
-                  );
-                  if (voterEntryIndex === -1) {
-                     const voterVotes = new Array(uniqueCandidates.length).fill(
-                        0
-                     ); 
-                     const candidateIndex = uniqueCandidates.findIndex(
-                        (candidate) => candidate.candidateId === candidateId
-                     );
-                     if (candidateIndex !== -1) {
-                        voterVotes[candidateIndex] = 1; 
-                     }
-                     votes.push({
-                        id: voterId,
-                        candidateId: candidateId,
-                        voterName: voterName,
-                        votes: voterVotes,
-                     });
-                  } else {
-                     const candidateIndex = uniqueCandidates.findIndex(
-                        (candidate) => candidate.candidateId === candidateId
-                     );
-                     if (candidateIndex !== -1) {
-                        votes[voterEntryIndex].votes[candidateIndex] = 1;
-                     }
-                  }
+  return processedVotes;
+};
 
-                  return votes;
-               },
-               [] as {
-                  id: string;
-                  candidateId: number;
-                  voterName: string;
-                  votes: number[];
-               }[]
-            );
-            const totalVotesPerCandidate = new Array(
-               uniqueCandidates.length
-            ).fill(0);
-            modifiedVotes.forEach((voter) => {
-               voter.votes.forEach((vote, index) => {
-                  totalVotesPerCandidate[index] += vote;
-               });
-            });
+/**
+ * ✅ Utility function to calculate total votes per candidate.
+ */
+const calculateTotalVotes = (modifiedVotes: any[], candidateCount: number) => {
+  const totalVotes = new Array(candidateCount).fill(0);
+  modifiedVotes.forEach((voter) =>
+    voter.votes.forEach((vote: number, index: number) => {
+      totalVotes[index] += vote;
+    })
+  );
+  return totalVotes;
+};
 
-            const total = totalVotesPerCandidate;
-            const sumOfTotalVotes = total.reduce((sum, votes) => sum + votes, 0);
-            return NextResponse.json({total:total,voters:modifiedVotes,candidates:uniqueCandidates,sum:sumOfTotalVotes});
-         }
-         
-          catch (error) {
-             return routeErrorHandler(error, req);
-          }
-       };
+/**
+ * ✅ Main GET handler for election voting data.
+ */
+export const GET = async (req: NextRequest, { params }: TParams) => {
+  try {
+    const id = Number(params.electionId);
+    validateId(id);
+
+    const [candidates, votes] = await Promise.all([
+      db.candidate.findMany({
+        where: { electionId: id },
+        include: { votes: true, position: true },
+      }),
+      db.votes.findMany({
+        where: { electionId: id },
+        include: {
+          candidate: { include: { position: true } },
+          attendee: true,
+        },
+      }),
+    ]);
+
+    const candidatesResult = mapCandidates(candidates);
+    const modifiedVotes = processVotes(votes, candidatesResult);
+    const totalVotesPerCandidate = calculateTotalVotes(
+      modifiedVotes,
+      candidatesResult.length
+    );
+    const sumOfTotalVotes = totalVotesPerCandidate.reduce(
+      (sum, votes) => sum + votes,
+      0
+    );
+
+    return NextResponse.json({
+      total: totalVotesPerCandidate,
+      voters: modifiedVotes,
+      candidates: candidatesResult,
+      sum: sumOfTotalVotes,
+    });
+  } catch (error) {
+    return routeErrorHandler(error, req);
+  }
+};
