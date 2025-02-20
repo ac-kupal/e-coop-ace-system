@@ -44,7 +44,7 @@ type Props = {
 
 const ElectionSideBar = ({ params }: Props) => {
   return (
-    <div className="flex rounded-xl border-gray-200 dark:border-gray-700  bg-white dark:bg-[#1E1D1E] w-full justify-around">
+    <div className="flex rounded-xl border-gray-200 dark:border-gray-700  bg-muted dark:bg-[#1E1D1E] w-full justify-around">
       {SideBar.map((route: TNavListRoute, i) => (
         <ElectionSideBarItems params={params} route={route} key={i} />
       ))}

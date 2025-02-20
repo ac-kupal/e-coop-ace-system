@@ -23,11 +23,10 @@ const ElectionSideBarItems = ({ route, params }: Props) => {
         className={`flex space-x-0 justify-center lg:justify-start items-center lg:space-x-2 
                          ${
                            isCurrentPath
-                             ? " bg-gradient-to-b to-[#1e1d1e00] from-primary/70 text-green-900 shadow-lg hover:text-gray-900 dark:bg-gradient-to-b dark:to-[#1E1D1E] py-3  dark:from-primary/60  dark:text-white font-bold"
-                             : " text-muted-foreground  hover:bg-gradient-to-l hover:from-primary/70 hover:text-bold hover:to-[#1e1d1e00] hover:to-90% hover:hover:text-gray-900 text-gray-800 "
+                             ? " text-green-900  hover:text-gray-900 py-3  dark:text-white font-bold"
+                             : " text-muted-foreground  hover:text-bold  text-gray-800 "
                          }
-                      lg:px-5 w-16 py-0 lg:py-2 lg:w-fit ease-in-out duration-300 hover:text-primary dark:hover:bg-gradient-to-b
-                       dark:hover:to-[#1E1D1E] dark:hover:from-primary/60 dark:hover:text-primary  shadow-sm  rounded-xl`}
+                      lg:px-5 w-16 hover:scale-105 py-0 lg:py-2 lg:w-fit ease-in-out duration-300 hover:text-primary   rounded-xl`}
       >
         <div
           className={`${isCurrentPath ? "dark:text-primary text-green-900" : " "} dark:hover:text-primary`}

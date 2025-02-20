@@ -31,7 +31,7 @@ const EventLayout = async ({ children, params }: Props) => {
     return (
         <div className="font-poppins pt-2 lg:px-7 space-y-2 lg:space-y-4 h-fit overflow-hidden">
             <div className="w-full px-2 lg:p-2 flex items-center justify-between">
-                <EventHeader></EventHeader>
+                <EventHeader params={params}></EventHeader>
                 <BackButton></BackButton>
             </div>
             <div className="p-2 w-full rounded-2xl flex flex-col lg:flex-row space-x-0 space-y-1 lg:space-x-16 lg:space-y-0  justify-start shadow-md bg-background dark:bg-secondary/30">
