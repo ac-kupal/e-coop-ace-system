@@ -1,10 +1,5 @@
 {
     "regions": [
         "hkg1"
-    ],
-    "functions": {
-        "api/v1/admin/event/[id]/member/import-member": {
-            "maxDuration": 60
-        }
-    }
+    ]
 }
