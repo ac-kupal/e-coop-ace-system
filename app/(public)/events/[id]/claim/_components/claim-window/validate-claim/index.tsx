@@ -142,14 +142,7 @@ const ValidateClaim = ({ eventId }: Props) => {
                                                 </div>
                                             </>
                                         )}
-                                    />{" "}
-                                    {/*
-                                    <Input
-                                        disabled={disabled}
-                                        placeholder="6 Digit OTP"
-                                        className="text-2xl px-4 py-6 text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/30"
-                                        {...field}
-                                    /> */}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
