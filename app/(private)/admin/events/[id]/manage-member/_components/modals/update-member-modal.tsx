@@ -85,7 +85,6 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
    const uploadImage = onUploadImage();
 
    const onSubmit = async (formValues: createTMember) => {
-      console.log(formValues)
       try {
          if (!imageFile) {
             updateMemberMutation.mutate({

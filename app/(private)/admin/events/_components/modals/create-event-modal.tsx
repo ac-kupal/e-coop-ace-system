@@ -36,7 +36,7 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { EventType, Role } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { useCreateEvent } from "@/hooks/api-hooks/event-api-hooks";
@@ -103,9 +103,6 @@ const CreateEventModal = ({ state, onClose, onCancel, user}: Props) => {
 
 
    const onSubmit = async (formValues: EventSchemaType) => {
-      console.log(formValues)
-      console.log(eventForm.getValues("branchId"))
-
       try {
             if(!imageFile){
                createEvent.mutate({

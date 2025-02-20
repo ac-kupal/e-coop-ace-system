@@ -37,8 +37,6 @@ const Election = ({ params, user }: Props) => {
 
    const isStaff = user.role === Role.staff;
    
-   console.log(elections.event.date)
-
    return (
       <div className="space-y-2 relative ">
          {isLive && (
