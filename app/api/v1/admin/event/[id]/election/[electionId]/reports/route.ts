@@ -102,7 +102,21 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
       }),
     ]);
 
-    const candidatesResult = mapCandidates(candidates);
+    const candidatesByPosition = candidates.reduce(
+      (acc, candidate) => {
+        const positionName = candidate.position.positionName;
+        if (!acc[positionName]) {
+          acc[positionName] = [];
+        }
+        acc[positionName].push(candidate);
+        return acc;
+      },
+      {} as Record<string, CandidateWithVotesAndPosition[]>
+    );
+
+    const groupedCandidatesArray = Object.values(candidatesByPosition).flat();
+
+    const candidatesResult = mapCandidates(groupedCandidatesArray);
     const modifiedVotes = processVotes(votes, candidatesResult);
     const totalVotesPerCandidate = calculateTotalVotes(
       modifiedVotes,

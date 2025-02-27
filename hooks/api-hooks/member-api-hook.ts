@@ -262,6 +262,7 @@ export const useOtpSend = (eventId: number, passbookNumber: string) => {
                     `/api/v1/admin/event/${eventId}/otp/specific-send`,
                     { passbookNumber }
                 );
+                console.log("request", request);
                 toast.success("OTP has been sent");
                 return request.data;
             } catch (e) {
