@@ -92,6 +92,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
       db.candidate.findMany({
         where: { electionId: id },
         include: { votes: true, position: true },
+        orderBy: { id: "asc" },
       }),
       db.votes.findMany({
         where: { electionId: id },
