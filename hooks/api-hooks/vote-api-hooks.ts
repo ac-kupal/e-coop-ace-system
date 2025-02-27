@@ -18,7 +18,7 @@ export const getPositionVotesTotal = ( params: { id: number; electionId: number}
                  throw handleAxiosErrorMessage(e);
               }
            },
-           refetchInterval: 1 * 60 * 1000
+           refetchInterval: 1 * 5 * 1000
         });
         return {votes:data,isError,isLoading} 
      };
@@ -39,7 +39,7 @@ export const getReportsResults = ( params: { id: number; electionId: number}) =>
                throw handleAxiosErrorMessage(e);
             }
          },
-         refetchInterval: 1 * 60 * 1000
+         refetchInterval: 1 * 5 * 1000
       });
       return {votes:data,isError,isLoading, refetch, isRefetching} 
    };

@@ -292,7 +292,7 @@ export const getMembersQuorum = (id:number) => {
                 throw handleAxiosErrorMessage(e);
             }
         },
-        refetchInterval: 1 * 30 * 1000
+        refetchInterval: 1 * 5 * 1000
     });
     return {members:data,isLoading,isError}
 };
