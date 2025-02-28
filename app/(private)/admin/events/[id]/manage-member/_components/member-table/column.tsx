@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { forwardRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 
 import {
@@ -245,7 +245,12 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                                             {member.lastName}
                                         </p>
                                         <p className="text-sm mt-2">
-                                            {member.birthday ? format(member.birthday, "MMMM d, yyyy") : 'no birthday defined'}
+                                            {member.birthday
+                                                ? format(
+                                                      member.birthday,
+                                                      "MMMM d, yyyy"
+                                                  )
+                                                : "no birthday defined"}
                                         </p>
                                         <p className="text-muted-foreground text-center min-w-28 border-b-2 text-lg">
                                             {member.passbookNumber}
@@ -356,6 +361,26 @@ const Cell = forwardRef<
 });
 
 Cell.displayName = "Cell";
+
+export const MembersCustomGlobalFilter: FilterFn<TMemberWithEventElectionId> = (
+    row,
+    columnId,
+    filterValue
+) => {
+    if (!filterValue) return true;
+
+    const cellValue = row.getValue(columnId);
+    const lowerFilter = filterValue.toLowerCase();
+
+    if (["lastName", "firstName", "middleName"].includes(columnId)) {
+        const { lastName, firstName, middleName } = row.original;
+        const fullName =
+            `${lastName} ${firstName} ${middleName} ${lastName}, ${firstName} ${middleName} ${firstName} ${lastName} ${firstName} ${middleName} ${lastName}`.toUpperCase();
+        return fullName.includes(String(filterValue).toUpperCase());
+    }
+
+    return String(cellValue).toLowerCase().includes(lowerFilter);
+};
 
 const columns: ColumnDef<TMemberWithEventElectionId>[] = [
     {

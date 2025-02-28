@@ -4,20 +4,27 @@ import moment from "moment";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { TCreateMember, TMailSendObject, TMember, TMemberAttendeesMinimalInfo, TMemberWithEventElectionId, TUpdateMember } from "@/types";
+import {
+    TUpdateMember,
+    TCreateMember,
+    TMailSendObject,
+    TMemberAttendeesMinimalInfo,
+    TMemberWithEventElectionId,
+} from "@/types";
+import { useRouter } from "next/navigation";
 import { handleAxiosErrorMessage } from "@/utils";
 import useSkippedStore from "@/stores/skipped-members-store";
-import { useRouter } from "next/navigation";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 
 export const getAllEventMembers = (eventId: number) => {
-    const members = useQuery<TMemberWithEventElectionId[], string>({
+    return useQuery<TMemberWithEventElectionId[], string>({
         queryKey: ["all-event-members-list-query"],
         queryFn: async () => {
             try {
                 const response = await axios.get(
                     `/api/v1/admin/event/${eventId}/member`
                 );
+
                 return response.data;
             } catch (e) {
                 throw handleAxiosErrorMessage(e);
@@ -25,15 +32,18 @@ export const getAllEventMembers = (eventId: number) => {
         },
         initialData: [],
     });
-    return members;
 };
 
-export const FilteredEventMembersForCandidateSelection = (eventId: number,electionId:number) => {
+export const FilteredEventMembersForCandidateSelection = (
+    eventId: number,
+    electionId: number
+) => {
     const members = useQuery<TMemberWithEventElectionId[], string>({
         queryKey: ["membersOnCandidate-list-query"],
         queryFn: async () => {
             try {
-                const response = await axios.get(`/api/v1/admin/event/${eventId}/election/${electionId}/select-candidate`
+                const response = await axios.get(
+                    `/api/v1/admin/event/${eventId}/election/${electionId}/select-candidate`
                 );
                 return response.data;
             } catch (e) {
@@ -45,12 +55,15 @@ export const FilteredEventMembersForCandidateSelection = (eventId: number,electi
     return members;
 };
 
-
 export const deleteMember = () => {
     const queryClient = useQueryClient();
-    const deleteMemberMutation = useMutation<any, Error, { eventId: number,memberId:string }>({
+    const deleteMemberMutation = useMutation<
+        any,
+        Error,
+        { eventId: number; memberId: string }
+    >({
         mutationKey: ["delete-member-query"],
-        mutationFn: async ({ eventId,memberId }) => {
+        mutationFn: async ({ eventId, memberId }) => {
             try {
                 const response = await axios.delete(
                     `/api/v1/admin/event/${eventId}/member/${memberId}`
@@ -71,101 +84,29 @@ export const deleteMember = () => {
 
 type Props = {
     onCancelandReset: () => void;
-
 };
 
 export const createMember = ({ onCancelandReset }: Props) => {
     const queryClient = useQueryClient();
-    const addMember = useMutation<any, Error, { member: TCreateMember,eventId:number }>({
-        mutationKey: ["create-member-query"],
-        mutationFn: async ({ member,eventId }) => {
-            try {
-                const newBirthday = moment(member.birthday).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                );
-                const newMember = { ...member, birthday: !member.birthday ? undefined : newBirthday };
-                const response = await axios.post(`/api/v1/admin/event/${eventId}/member/`, newMember);
-                return response.data;
-            } catch (e) {
-                const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage, {
-                    action: {
-                        label: "try agian",
-                        onClick: () => addMember.mutate({ member,eventId }),
-                    },
-                });
-                throw errorMessage;
-            }
-        },
-        onSuccess:()=>{
-            queryClient.invalidateQueries({
-                queryKey: ["all-event-members-list-query"],
-            });
-            toast.success("Member added successfully");
-            onCancelandReset();
-        }
-    });
-
-    return addMember;
-};
-
-export const updateMember = ({ onCancelandReset }: Props) => {
-    const queryClient = useQueryClient();
-    const router = useRouter()
-    const updateMember = useMutation<Error, any, { member: TUpdateMember, memberId: string, eventId:number }
-    >({
-        mutationKey: ["update-member-query"],
-        mutationFn: async ({ member, memberId, eventId }) => {
-            try {
-                 const date = new Date(!member.birthday ? new Date(): member.birthday);
-                 const newBirthday = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
-                 const newMember = {...member, birthday:newBirthday}
-                 const response = await axios.patch(`/api/v1/admin/event/${eventId}/member/${memberId}`,newMember);
-                 return response.data;
-            } catch (e) {
-                const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage, {
-                    action: {
-                        label: "try agian",
-                        onClick: () =>
-                            updateMember.mutate({ member, memberId,eventId }),
-                    },
-                });
-                throw errorMessage;
-            }
-        },
-        onSuccess:()=>{
-            queryClient.invalidateQueries({
-                queryKey: ["all-event-members-list-query"],
-            });
-            toast.success("Member updated successfully");
-            onCancelandReset();
-            router.refresh()
-        }
-    });
-
-    return updateMember;
-};
-
-type createManyMemberProps = {
-    onCancelandReset: () => void;
-    onOpenSkippedMember: () => void;
-};
-
-export const createManyMember = ({ onCancelandReset,onOpenSkippedMember }:  createManyMemberProps) => {
-    const {setSkippedMembers} = useSkippedStore()
-
-    const queryClient = useQueryClient();
     const addMember = useMutation<
         any,
         Error,
-        { member: TCreateMember[] | unknown; eventId: number }
+        { member: TCreateMember; eventId: number }
     >({
         mutationKey: ["create-member-query"],
         mutationFn: async ({ member, eventId }) => {
             try {
-                const response = await axios.post( `/api/v1/admin/event/${eventId}/member/import-member`,member);
-               
+                const newBirthday = moment(member.birthday).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                );
+                const newMember = {
+                    ...member,
+                    birthday: !member.birthday ? undefined : newBirthday,
+                };
+                const response = await axios.post(
+                    `/api/v1/admin/event/${eventId}/member/`,
+                    newMember
+                );
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
@@ -178,44 +119,143 @@ export const createManyMember = ({ onCancelandReset,onOpenSkippedMember }:  crea
                 throw errorMessage;
             }
         },
-        onSuccess:(data)=>{
-            const skippedMembers = data.skippedMembers
-            const newMembers = data.newMembers
-            const modifiedMember = skippedMembers.map((member:any) => {
-                return {
-                        passbookNumber:member.passbookNumber,
-                        firstName:member.firstName,
-                        middleName:member.middleName,
-                        lastName:member.lastName,
-                        gender:member.gender,
-                        birthday:new Date(member.birthday),
-                        contact:member.contact,
-                        emailAddress:member.emailAddress,
-                        }
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["all-event-members-list-query"],
             });
-            if(skippedMembers.length > 0){
+            toast.success("Member added successfully");
+            onCancelandReset();
+        },
+    });
+
+    return addMember;
+};
+
+export const updateMember = ({ onCancelandReset }: Props) => {
+    const queryClient = useQueryClient();
+    const router = useRouter();
+    const updateMember = useMutation<
+        Error,
+        any,
+        { member: TUpdateMember; memberId: string; eventId: number }
+    >({
+        mutationKey: ["update-member-query"],
+        mutationFn: async ({ member, memberId, eventId }) => {
+            try {
+                const date = new Date(
+                    !member.birthday ? new Date() : member.birthday
+                );
+                const newBirthday = new Date(
+                    date.getTime() - date.getTimezoneOffset() * 60000
+                );
+                const newMember = { ...member, birthday: newBirthday };
+                const response = await axios.patch(
+                    `/api/v1/admin/event/${eventId}/member/${memberId}`,
+                    newMember
+                );
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action: {
+                        label: "try agian",
+                        onClick: () =>
+                            updateMember.mutate({ member, memberId, eventId }),
+                    },
+                });
+                throw errorMessage;
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["all-event-members-list-query"],
+            });
+            toast.success("Member updated successfully");
+            onCancelandReset();
+            router.refresh();
+        },
+    });
+
+    return updateMember;
+};
+
+type createManyMemberProps = {
+    onCancelandReset: () => void;
+    onOpenSkippedMember: () => void;
+};
+
+export const createManyMember = ({
+    onCancelandReset,
+    onOpenSkippedMember,
+}: createManyMemberProps) => {
+    const { setSkippedMembers } = useSkippedStore();
+
+    const queryClient = useQueryClient();
+    const addMember = useMutation<
+        any,
+        Error,
+        { member: TCreateMember[] | unknown; eventId: number }
+    >({
+        mutationKey: ["create-member-query"],
+        mutationFn: async ({ member, eventId }) => {
+            try {
+                const response = await axios.post(
+                    `/api/v1/admin/event/${eventId}/member/import-member`,
+                    member
+                );
+
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action: {
+                        label: "try agian",
+                        onClick: () => addMember.mutate({ member, eventId }),
+                    },
+                });
+                throw errorMessage;
+            }
+        },
+        onSuccess: (data) => {
+            const skippedMembers = data.skippedMembers;
+            const newMembers = data.newMembers;
+            const modifiedMember = skippedMembers.map((member: any) => {
+                return {
+                    passbookNumber: member.passbookNumber,
+                    firstName: member.firstName,
+                    middleName: member.middleName,
+                    lastName: member.lastName,
+                    gender: member.gender,
+                    birthday: new Date(member.birthday),
+                    contact: member.contact,
+                    emailAddress: member.emailAddress,
+                };
+            });
+            if (skippedMembers.length > 0) {
                 onOpenSkippedMember();
-                setSkippedMembers(modifiedMember)
+                setSkippedMembers(modifiedMember);
                 queryClient.invalidateQueries({
                     queryKey: ["all-event-members-list-query"],
                 });
                 toast.warning(`${skippedMembers.length} Duplicate Found! `);
                 onCancelandReset();
-            }  
-            if(newMembers.length > 0){
+            }
+            if (newMembers.length > 0) {
                 queryClient.invalidateQueries({
                     queryKey: ["all-event-members-list-query"],
-                });  
+                });
                 setTimeout(() => {
-                    toast.success(`New ${newMembers.length} Members Added successfully`);
+                    toast.success(
+                        `New ${newMembers.length} Members Added successfully`
+                    );
                 }, 1000);
                 onCancelandReset();
-            }else{
+            } else {
                 setTimeout(() => {
                     toast.info(`No new members added!`);
                 }, 3000);
-            }    
-        }
+            }
+        },
     });
 
     return addMember;
@@ -226,10 +266,7 @@ export const useBroadcastOTP = (eventId: number) => {
         data: broadcastData,
         isPending: isBroadcasting,
         mutate: broadcastOTP,
-    } = useMutation<
-        TMailSendObject,
-        string
-    >({
+    } = useMutation<TMailSendObject, string>({
         mutationKey: [`broadcast-otp-${eventId}`],
         mutationFn: async () => {
             try {
@@ -277,29 +314,45 @@ export const useOtpSend = (eventId: number, passbookNumber: string) => {
 };
 
 type quorumtype = {
-    totalAttendees: number,
-    totalIsRegistered: number
-    totalMembersVoted:number
-}
+    totalAttendees: number;
+    totalIsRegistered: number;
+    totalMembersVoted: number;
+};
 
-export const getMembersQuorum = (id:number) => {
-    const {data,isLoading,isError} = useQuery<quorumtype>({
+export const getMembersQuorum = (id: number) => {
+    const { data, isLoading, isError } = useQuery<quorumtype>({
         queryKey: ["get-quorum-list-query"],
         queryFn: async () => {
             try {
-                const response = await axios.get(`/api/v1/admin/event/${id}/member/quorum`);
+                const response = await axios.get(
+                    `/api/v1/admin/event/${id}/member/quorum`
+                );
                 return response.data;
             } catch (e) {
                 throw handleAxiosErrorMessage(e);
             }
         },
-        refetchInterval: 1 * 5 * 1000
+        refetchInterval: 1 * 5 * 1000,
     });
-    return {members:data,isLoading,isError}
+    return { members: data, isLoading, isError };
 };
 
-export const useVoterAuthorizationAssist = ( eventId: number, voterId: string, onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void) => {
-    const { data: authenticatedVoter, isPending, mutate: getAuthorization, isError, error, } = useMutation< TMemberAttendeesMinimalInfo, string, z.infer<typeof voterVerificationFormSchema>>({
+export const useVoterAuthorizationAssist = (
+    eventId: number,
+    voterId: string,
+    onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void
+) => {
+    const {
+        data: authenticatedVoter,
+        isPending,
+        mutate: getAuthorization,
+        isError,
+        error,
+    } = useMutation<
+        TMemberAttendeesMinimalInfo,
+        string,
+        z.infer<typeof voterVerificationFormSchema>
+    >({
         mutationKey: ["authorize-voter", voterId],
         mutationFn: async (data) => {
             try {

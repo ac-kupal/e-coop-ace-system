@@ -22,7 +22,7 @@ import {
     PersonStandingIcon,
 } from "lucide-react";
 
-import columns from "./column";
+import columns, { MembersCustomGlobalFilter } from "./column";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ActionTooltip from "@/components/action-tooltip";
@@ -35,11 +35,12 @@ import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 
-import { cn } from "@/lib/utils";
 import {
     useBroadcastOTP,
     getAllEventMembers,
 } from "@/hooks/api-hooks/member-api-hook";
+
+import { cn } from "@/lib/utils";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 
@@ -75,6 +76,7 @@ const MemberTable = ({ id, user }: Props) => {
             pagination: { pageIndex: 0, pageSize: 20 },
         },
         onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: MembersCustomGlobalFilter,
     });
 
     useEffect(() => {
