@@ -33,6 +33,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                     lastName: true,
                     contact: true,
                     picture: true,
+                    birthday: true,
                     passbookNumber: true,
                     registered: true,
                     voted: true,

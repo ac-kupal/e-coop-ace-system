@@ -9,44 +9,47 @@ import { createPublicClaimAuthorizationSchema } from "@/validation-schema/incent
 type TParams = { params: { id: number } };
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
-  try {
-    const { id: eventId } = eventIdParamSchema.parse(params);
-    const { passbookNumber, otp } = createPublicClaimAuthorizationSchema.parse(
-      await req.json(),
-    );
+    try {
+        const { id: eventId } = eventIdParamSchema.parse(params);
+        const { passbookNumber, otp } =
+            createPublicClaimAuthorizationSchema.parse(await req.json());
 
-    const member = await db.eventAttendees.findUnique({
-      where: {
-        eventId_passbookNumber: { eventId, passbookNumber },
-        voteOtp: otp,
-      },
-      select: {
-        id: true,
-        firstName: true,
-        middleName: true,
-        lastName: true,
-        contact: true,
-        picture: true,
-        passbookNumber: true,
-        registered: true,
-        voted: true,
-      },
-    });
+        const member = await db.eventAttendees.findUnique({
+            where: {
+                eventId_passbookNumber: { eventId, passbookNumber },
+                voteOtp: otp,
+            },
+            select: {
+                id: true,
+                firstName: true,
+                middleName: true,
+                lastName: true,
+                contact: true,
+                birthday: true,
+                picture: true,
+                passbookNumber: true,
+                registered: true,
+                voted: true,
+            },
+        });
 
-    if (!member)
-      return NextResponse.json({ message: "Invalid OTP" }, { status: 404 });
+        if (!member)
+            return NextResponse.json(
+                { message: "Invalid OTP" },
+                { status: 404 }
+            );
 
-    const response = NextResponse.json(member);
-    createClaimAuth(response, eventId, member);
+        const response = NextResponse.json(member);
+        createClaimAuth(response, eventId, member);
 
-    response.cookies.set("recent-user", member.passbookNumber, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: true,
-    });
+        response.cookies.set("recent-user", member.passbookNumber, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: true,
+        });
 
-    return response;
-  } catch (e) {
-    return routeErrorHandler(e, req);
-  }
+        return response;
+    } catch (e) {
+        return routeErrorHandler(e, req);
+    }
 };

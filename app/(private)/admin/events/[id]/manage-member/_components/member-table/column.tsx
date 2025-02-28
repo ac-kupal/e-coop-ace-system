@@ -1,6 +1,7 @@
 "use client";
 import moment from "moment";
 import { toast } from "sonner";
+import { format } from "date-fns";
 import { forwardRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -242,6 +243,9 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                                             {member.firstName}{" "}
                                             {member.middleName}{" "}
                                             {member.lastName}
+                                        </p>
+                                        <p className="text-sm mt-2">
+                                            {member.birthday ? format(member.birthday, "MMMM d, yyyy") : 'no birthday defined'}
                                         </p>
                                         <p className="text-muted-foreground text-center min-w-28 border-b-2 text-lg">
                                             {member.passbookNumber}

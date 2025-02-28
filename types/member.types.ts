@@ -1,4 +1,3 @@
-import { updateMemberSchema } from "@/validation-schema/member";
 import { $Enums, EventAttendees } from "@prisma/client";
 
 export type TCreateMember = {

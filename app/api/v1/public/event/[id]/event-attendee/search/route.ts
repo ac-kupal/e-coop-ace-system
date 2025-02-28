@@ -27,6 +27,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     middleName: true,
                     lastName: true,
                     contact: true,
+                    birthday: true,
                     picture: true,
                     registered: true,
                     voted: true,
@@ -37,7 +38,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 },
             });
         } else if (nameSearch && nameSearch.length >= 1) {
-            const [lastName, firstName] = nameSearch.split(", ")
+            const [lastName, firstName] = nameSearch.split(", ");
             result = await db.eventAttendees.findMany({
                 select: {
                     id: true,
@@ -47,19 +48,28 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     lastName: true,
                     contact: true,
                     picture: true,
+                    birthday: true,
                     registered: true,
                     voted: true,
                 },
                 where: {
                     eventId,
                     AND: [
-                        { firstName: { contains : firstName , mode: "insensitive" } },
-                        { lastName: { equals: lastName, mode: "insensitive" } }
-                    ]
+                        {
+                            firstName: {
+                                contains: firstName,
+                                mode: "insensitive",
+                            },
+                        },
+                        { lastName: { equals: lastName, mode: "insensitive" } },
+                    ],
                 },
             });
-        }else{
-            return NextResponse.json({ message : "passbook or name search was not provided"}, { status : 400 })
+        } else {
+            return NextResponse.json(
+                { message: "passbook or name search was not provided" },
+                { status: 400 }
+            );
         }
 
         if (result.length === 0)

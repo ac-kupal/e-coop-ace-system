@@ -1,11 +1,11 @@
-import db from "@/lib/database";
+import { isSameDay } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
+import db from "@/lib/database";
+import { TMemberAttendeesMinimalInfo } from "@/types";
+import { eventIdSchema } from "@/validation-schema/commons";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { attendeeRegisterSchema } from "@/validation-schema/event-registration-voting";
-import { eventIdSchema } from "@/validation-schema/commons";
-import { isSameDay } from "date-fns";
-import { TMemberAttendeesMinimalInfo } from "@/types";
 
 type TParams = { params: { id: number } };
 
@@ -65,6 +65,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     lastName: true,
                     contact: true,
                     picture: true,
+                    birthday : true,
                     registered: true,
                     voted: true,
                 },

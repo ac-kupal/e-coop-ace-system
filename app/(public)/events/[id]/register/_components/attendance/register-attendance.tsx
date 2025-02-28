@@ -25,9 +25,10 @@ import { attendeeRegisterFormSchema } from "@/validation-schema/event-registrati
 type Props = {
     event: TEvent;
     member: TMemberAttendeesMinimalInfo;
+    onUnselect?: () => void;
 };
 
-const RegisterAttendance = ({ event, member }: Props) => {
+const RegisterAttendance = ({ event, member, onUnselect }: Props) => {
     const router = useRouter();
 
     const { registeredMember, isPending, register, isError, error } =
@@ -41,7 +42,9 @@ const RegisterAttendance = ({ event, member }: Props) => {
         resolver: zodResolver(attendeeRegisterFormSchema),
         defaultValues: {
             passbookNumber: member.passbookNumber,
-            birthday: event.requireBirthdayVerification ? "01/01/1950" : undefined,
+            birthday: event.requireBirthdayVerification
+                ? "01/01/1950"
+                : undefined,
         },
     });
 
@@ -112,6 +115,14 @@ const RegisterAttendance = ({ event, member }: Props) => {
                                 "Register"
                             )}
                         </Button>
+                        {onUnselect && (
+                            <p
+                                onClick={onUnselect}
+                                className="cursor-pointer text-sm underline-offset-8 font-normal hover:underline text-center text-muted-foreground hover:text-foreground duration-300 ease-out"
+                            >
+                                Not you? Search member again
+                            </p>
+                        )}
                     </form>
                 </Form>
             </div>

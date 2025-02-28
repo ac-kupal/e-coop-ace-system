@@ -1,17 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import MemberSearch from "@/components/member-search";
 import MemberInfoDisplay from "../../../_components/member-info-display";
 
 import RegisterAttendance from "./register-attendance";
-import { useRegisterMember } from "@/hooks/public-api-hooks/use-member-api";
 import { TEventWithElection, TMemberAttendeesMinimalInfo } from "@/types";
-import LoadingSpinner from "@/components/loading-spinner";
-import ErrorAlert from "@/components/error-alert/error-alert";
 
 type Props = {
     eventId: number;
@@ -40,7 +36,11 @@ const Attendance = ({ eventId, event }: Props) => {
                         <Button>Go Back to Event</Button>
                     </Link>
                 ) : (
-                    <RegisterAttendance event={event} member={member} />
+                    <RegisterAttendance
+                        event={event}
+                        member={member}
+                        onUnselect={() => setMember(null)}
+                    />
                 )}
             </div>
         </div>

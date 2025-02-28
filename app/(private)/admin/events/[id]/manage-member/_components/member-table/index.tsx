@@ -1,48 +1,47 @@
 "use client";
+import {
+    useReactTable,
+    getCoreRowModel,
+    getSortedRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+} from "@tanstack/react-table";
+import { user } from "next-auth";
+import { Role } from "@prisma/client";
+import { GrRotateRight } from "react-icons/gr";
+import useDebounce from "@/hooks/use-debounce";
 import React, { useEffect, useRef, useState } from "react";
 
 import {
-    Mails,
-    PersonStandingIcon,
     Plus,
-    ScanLine,
-    SearchIcon,
     Send,
     Users,
+    Mails,
+    ScanLine,
+    SearchIcon,
+    PersonStandingIcon,
 } from "lucide-react";
 
 import columns from "./column";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ActionTooltip from "@/components/action-tooltip";
 import ImportFileModal from "../modals/import-file-modal";
 import LoadingSpinner from "@/components/loading-spinner";
 import DataTable from "@/components/data-table/data-table";
 import CreateMemberModal from "../modals/create-member-modal";
-import SearchInput from "@/components/data-table/table-search-input";
+import SkippedMemberModal from "../modals/skipped-member-modal";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
-import {
-    getAllEventMembers,
-    useBroadcastOTP,
-} from "@/hooks/api-hooks/member-api-hook";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
-import {
-    useReactTable,
-    getCoreRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
-} from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
+import {
+    useBroadcastOTP,
+    getAllEventMembers,
+} from "@/hooks/api-hooks/member-api-hook";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
-import SkippedMemberModal from "../modals/skipped-member-modal";
-import { Input } from "@/components/ui/input";
-import { user } from "next-auth";
-import { Role } from "@prisma/client";
-import useDebounce from "@/hooks/use-debounce";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { GrRotateRight } from "react-icons/gr";
 
 type Props = {
     id: number;
