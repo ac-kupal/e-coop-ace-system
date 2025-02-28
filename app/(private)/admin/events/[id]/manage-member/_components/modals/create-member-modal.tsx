@@ -82,7 +82,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
 
     const createMemberMutation = createMember({ onCancelandReset });
 
-    const uploadImage = onUploadImage();
+    const uploadImage = onUploadImage({ withExtName: false });
 
     const onSubmit = async (formValues: createTMember) => {
         try {

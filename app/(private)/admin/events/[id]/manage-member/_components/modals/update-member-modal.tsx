@@ -101,7 +101,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
 
     const updateMemberMutation = updateMember({ onCancelandReset });
 
-    const uploadImage = onUploadImage();
+    const uploadImage = onUploadImage({ withExtName: false });
 
     const onSubmit = async (formValues: createTMember) => {
         try {
