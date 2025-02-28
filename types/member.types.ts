@@ -6,12 +6,12 @@ export type TCreateMember = {
     middleName?: string;
     lastName: string;
     gender: $Enums.gender;
-    birthday?: Date | null;
+    birthday?: Date | undefined | null | string;
     contact?: string;
     picture?: string | null;
-    eventId?:number;
-    emailAddress?:string | null;
-}
+    eventId?: number;
+    emailAddress?: string | null;
+};
 
 export type TCreateManyMember = {
     passbookNumber: string;
@@ -22,10 +22,10 @@ export type TCreateManyMember = {
     birthday: Date | null;
     contact: string | null;
     picture: string | null;
-    eventId?:number;
-    emailAddress:string | null;
-    createdBy:number,
-}
+    eventId?: number;
+    emailAddress: string | null;
+    createdBy: number;
+};
 export type TSkippedMembers = {
     passbookNumber: string;
     firstName: string;
@@ -34,27 +34,27 @@ export type TSkippedMembers = {
     gender: $Enums.gender;
     birthday: Date | undefined;
     contact: string | undefined;
-    emailAddress:string | undefined;
-}
+    emailAddress: string | undefined;
+};
 export type TUpdateMember = {
     passbookNumber: string;
     firstName: string;
     middleName?: string;
     lastName: string;
     gender: $Enums.gender;
-    birthday?: Date;
+    birthday?: Date | undefined | string;
     contact?: string;
     picture: string | null;
-    eventId?:number;
-    emailAddress?:string;
-}
+    eventId?: number;
+    emailAddress?: string | null;
+};
 
-export  type TMember = EventAttendees
+export type TMember = EventAttendees;
 
 export type TMemberWithEventElectionId = EventAttendees & {
     event: {
         election: {
             id: number;
         } | null;
-    }
-}
+    };
+};

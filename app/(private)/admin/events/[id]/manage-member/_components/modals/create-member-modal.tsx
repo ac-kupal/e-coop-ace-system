@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import { Input } from "@/components/ui/input";
@@ -31,7 +30,6 @@ import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
-import { v4 } from "uuid";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
 import { createMember } from "@/hooks/api-hooks/member-api-hook";
 import InputMask from "react-input-mask";
@@ -57,8 +55,8 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
         firstName: "",
         middleName: "",
         lastName: "",
-        gender: undefined,
-        birthday: undefined,
+        gender: gender.Male,
+        birthday: "",
         contact: "",
         emailAddress: "",
         picture: imageFile,
@@ -96,7 +94,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                 });
             } else {
                 const image = await uploadImage.mutateAsync({
-                    fileName: `${formValues.passbookNumber}`,
+                    fileName: `${formValues.passbookNumber.toUpperCase()}`,
                     folderGroup: "member",
                     file: formValues.picture,
                 });
@@ -217,11 +215,11 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                                                 <FormLabel className="flex justify-between">
                                                     <h1>Birthday</h1>{" "}
                                                     <span className="text-[12px] italic text-muted-foreground">
-                                                        mm/dd/yyyy
+                                                        yyyy/mm/dd
                                                     </span>
                                                 </FormLabel>
                                                 <InputMask
-                                                    mask="99/99/9999"
+                                                    mask="9999/99/99"
                                                     ref={inputRef}
                                                     value={field.value as any}
                                                     onChange={field.onChange}

@@ -96,12 +96,9 @@ export const createMember = ({ onCancelandReset }: Props) => {
         mutationKey: ["create-member-query"],
         mutationFn: async ({ member, eventId }) => {
             try {
-                const newBirthday = moment(member.birthday).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                );
                 const newMember = {
                     ...member,
-                    birthday: !member.birthday ? undefined : newBirthday,
+                    birthday: !member.birthday ? undefined : member.birthday,
                 };
                 const response = await axios.post(
                     `/api/v1/admin/event/${eventId}/member/`,
@@ -142,16 +139,9 @@ export const updateMember = ({ onCancelandReset }: Props) => {
         mutationKey: ["update-member-query"],
         mutationFn: async ({ member, memberId, eventId }) => {
             try {
-                const date = new Date(
-                    !member.birthday ? new Date() : member.birthday
-                );
-                const newBirthday = new Date(
-                    date.getTime() - date.getTimezoneOffset() * 60000
-                );
-                const newMember = { ...member, birthday: newBirthday };
                 const response = await axios.patch(
                     `/api/v1/admin/event/${eventId}/member/${memberId}`,
-                    newMember
+                    member
                 );
                 return response.data;
             } catch (e) {

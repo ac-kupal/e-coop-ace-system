@@ -23,12 +23,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { gender } from "@prisma/client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
-import { v4 } from "uuid";
 import { updateMemberWithUploadSchema } from "@/validation-schema/member";
 import { updateMember } from "@/hooks/api-hooks/member-api-hook";
 import { TMember, TUpdateMember } from "@/types";
@@ -116,7 +115,7 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                 });
             } else {
                 const image = await uploadImage.mutateAsync({
-                    fileName: `${formValues.passbookNumber}`,
+                    fileName: `${formValues.passbookNumber.toUpperCase()}`,
                     folderGroup: "member",
                     file: formValues.picture,
                 });
@@ -245,7 +244,13 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                                 mask="9999/99/99"
                                                 ref={inputRef}
                                                 value={field.value as any}
-                                                onChange={field.onChange}
+                                                onChange={(some) => {
+                                                    console.log(
+                                                        "Triggere",
+                                                        some.target.value
+                                                    );
+                                                    field.onChange(some);
+                                                }}
                                                 placeholder="input birthday"
                                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             />

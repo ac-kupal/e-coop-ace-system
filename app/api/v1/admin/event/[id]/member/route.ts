@@ -40,17 +40,15 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
 export const POST = async (req: NextRequest) => {
     try {
         const data = await req.json();
-        const isBirthday = data.birthday === undefined;
         const user = await currentUserOrThrowAuthError();
 
         const memberData = {
             ...data,
             createdBy: user.id,
             voteOtp: generateOTP(6),
-            birthday: isBirthday ? null : newDate(data.birthday),
             picture: data.picture
                 ? data.picture
-                : generateUserProfileS3URL(data.passbookNumber),
+                : generateUserProfileS3URL(data.passbookNumber.toUpperCase()),
         };
 
         createMemberWithUploadSchema.parse(memberData);
