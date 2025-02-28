@@ -85,12 +85,12 @@ export const searchParamsEntries = (searchParams: URLSearchParams) => {
 };
 
 export const ExcelDateToJSDate = (date: string) => {
-    if (date === undefined) return null;
+    if (date === undefined) return undefined;
 
     const numericDate = parseFloat(date);
 
     if (isNaN(numericDate) || numericDate < -657434 || numericDate > 2958465) {
-        return null;
+        return undefined;
     }
 
     return new Date(Math.round((numericDate - 25569) * 864e5));

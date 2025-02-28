@@ -2,6 +2,8 @@ import z from "zod"
 
 export const folderGroupSchema = z.enum(["user", "coop", "branch", "election-candidates","event","member"])
 
+export type TFolderGroupSchema = z.infer<typeof folderGroupSchema>
+
 export const uploadSchema = z.object({
     file : z.any().refine((file: File | undefined | null) => file !== undefined && file !== null, {
         message: "File is required",
