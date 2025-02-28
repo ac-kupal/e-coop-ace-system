@@ -88,7 +88,8 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                 createMemberMutation.mutate({
                     member: {
                         ...formValues,
-                        picture: "/images/default.png",
+                        picture:
+                            formValues.passbookNumber ?? "/images/default.png",
                     },
                     eventId,
                 });

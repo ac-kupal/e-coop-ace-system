@@ -46,9 +46,12 @@ export const POST = async (req: NextRequest) => {
             ...data,
             createdBy: user.id,
             voteOtp: generateOTP(6),
-            picture: data.picture
-                ? data.picture
-                : generateUserProfileS3URL(data.passbookNumber.toUpperCase()),
+            picture:
+                data.picture && data.picture.startsWith("https://")
+                    ? data.picture
+                    : generateUserProfileS3URL(
+                          data.passbookNumber.toUpperCase()
+                      ),
         };
 
         createMemberWithUploadSchema.parse(memberData);
