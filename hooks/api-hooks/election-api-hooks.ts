@@ -66,7 +66,8 @@ export const  promptElectionStatus = ({params}:TParams) =>{
 
 export const getElectionWithPositionAndCandidates = ({params}:TParams) => {
     const { data, isLoading, error} = useQuery<TElectionWithPositionsAndCandidates, any>({
-       queryKey: ["get-election-query"],
+      queryKey: ["get-election-query", params?.id, params?.electionId],
+      enabled: !!params,
        queryFn: async () => {
           try {
              const response = await axios.get(`/api/v1/admin/event/${params.id}/election/${params.electionId}`);

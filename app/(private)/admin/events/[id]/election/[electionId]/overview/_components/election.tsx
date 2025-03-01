@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
 import { Accessibility, Users } from "lucide-react";
 import Header from "../../_components/header";
@@ -11,27 +11,34 @@ import { Candidates } from "./candidates";
 import { Positions } from "./positions";
 import { Role } from "@prisma/client";
 import { user } from "next-auth";
+import { toast } from "sonner";
 
 type Props = {
-  params: { id: number; electionId: number };
+  params?: { id: number; electionId: number };
   user: user;
 };
 
 const Election = ({ params, user }: Props) => {
-  const { elections, isLoading } = getElectionWithPositionAndCandidates({
+  if (!params) return <NotFound />;
+
+  const { elections, isLoading, error } = getElectionWithPositionAndCandidates({
     params,
   });
+  const isStaff = user.role === Role.staff;
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   if (isLoading) return <Loading />;
 
-  if (!elections) return <NotFound></NotFound>;
-  if (!elections.candidates) return <NotFound></NotFound>;
-
-  const isStaff = user.role === Role.staff;
+  if (!elections) return <NotFound />;
 
   return (
     <div className="space-y-2 relative">
-      <div className="flex text-white w-full space-x-2 items-center justify-between  p-2">
+      <div className="flex text-white w-full space-x-2 items-center justify-between p-2">
         <Header text="Overview" />
         {!isStaff && (
           <ElectionSwitch
