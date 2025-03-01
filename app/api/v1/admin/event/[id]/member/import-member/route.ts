@@ -1,12 +1,13 @@
 import { gender } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
 import db from "@/lib/database";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { createManySchema } from "@/validation-schema/member";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { ExcelDateToJSDate, generateOTP, validateId } from "@/lib/server-utils";
 import { generateUserProfileS3URL } from "@/lib/aws-s3";
+
+const BATCH_SIZE = 500; // Process members in batches of 500 to avoid timeout
 
 type MemberData = {
     firstName: string;
@@ -42,41 +43,34 @@ const mapAndFilterDuplicates = (
     user: { id: number },
     id: number
 ): FilteredMembers => {
-    const modifiedMembersData: MemberData[] = membersData.map(
-        (
-            member: Omit<MemberData, "registered"> & {
-                registered: string | boolean;
-            }
-        ) => {
-            const PBNo = member.passbookNumber
-                ? String(member.passbookNumber)
-                : generateOTP(6);
+    const modifiedMembersData: MemberData[] = membersData.map((member) => {
+        const PBNo = member.passbookNumber
+            ? String(member.passbookNumber)
+            : generateOTP(6);
 
-            return {
-                ...member,
-                firstName: member.firstName ?? "",
-                lastName: member.lastName ?? "",
-                middleName: member.middleName ? String(member.middleName) : "",
-                gender:
-                    (member.gender as string) === "M" ||
-                    member.gender?.toLowerCase() === "male"
-                        ? "Male"
-                        : "Female",
-                passbookNumber: PBNo,
-                createdBy: user.id,
-                birthday: member.birthday
-                    ? ExcelDateToJSDate(member.birthday as unknown as string)
-                    : undefined,
-                eventId: id,
-
-                emailAddress: member.emailAddress ?? "",
-                contact: member.contact ? String(member.contact) : "",
-                voteOtp: generateOTP(6),
-                picture: generateUserProfileS3URL(PBNo.toUpperCase()),
-                registered: parseRegistered(member.registered),
-            };
-        }
-    );
+        return {
+            ...member,
+            firstName: member.firstName ?? "",
+            lastName: member.lastName ?? "",
+            middleName: member.middleName ? String(member.middleName) : "",
+            gender:
+                (member.gender as string) === "M" ||
+                member.gender?.toLowerCase() === "male"
+                    ? "Male"
+                    : "Female",
+            passbookNumber: PBNo,
+            createdBy: user.id,
+            birthday: member.birthday
+                ? ExcelDateToJSDate(member.birthday as unknown as string)
+                : undefined,
+            eventId: id,
+            emailAddress: member.emailAddress ?? "",
+            contact: member.contact ? String(member.contact) : "",
+            voteOtp: generateOTP(6),
+            picture: generateUserProfileS3URL(PBNo.toUpperCase()),
+            registered: parseRegistered(member.registered),
+        };
+    });
 
     const passbookMap = new Map<string | undefined, boolean>();
     const duplicates: MemberData[] = [];
@@ -104,25 +98,30 @@ const fetchOldMembers = async (id: number) => {
         where: {
             eventId: id,
         },
+        select: { passbookNumber: true },
     });
 };
 
 const filterUniqueMembers = (newMembers: MemberData[], oldMembers: any[]) => {
-    const filteredMembers = newMembers.filter((newMember) => {
-        return !oldMembers.some(
-            (oldMember: any) =>
-                oldMember.passbookNumber === newMember.passbookNumber
-        );
-    });
+    const oldPassbookNumbers = new Set(oldMembers.map(m => m.passbookNumber));
 
-    const skippedMembers = newMembers.filter((newMember) => {
-        return oldMembers.some(
-            (oldMember: any) =>
-                oldMember.passbookNumber === newMember.passbookNumber
-        );
-    });
+    const filteredMembers = newMembers.filter(
+        (newMember) => !oldPassbookNumbers.has(newMember.passbookNumber)
+    );
+
+    const skippedMembers = newMembers.filter(
+        (newMember) => oldPassbookNumbers.has(newMember.passbookNumber)
+    );
 
     return { filteredMembers, skippedMembers };
+};
+
+const chunkArray = (array: any[], size: number) => {
+    const chunkedArr = [];
+    for (let i = 0; i < array.length; i += size) {
+        chunkedArr.push(array.slice(i, i + size));
+    }
+    return chunkedArr;
 };
 
 export const POST = async (
@@ -130,6 +129,8 @@ export const POST = async (
     { params }: { params: { id: number } }
 ) => {
     try {
+        console.time("Total Processing Time");
+
         const id = Number(params.id);
         validateId(id);
         const user = await currentUserOrThrowAuthError();
@@ -146,14 +147,21 @@ export const POST = async (
             oldMembers
         );
 
-        filteredMembers.forEach((member: MemberData) => {
-            createManySchema.parse(member);
-        });
+        // **Chunk members into batches**
+        const batches = chunkArray(filteredMembers, BATCH_SIZE);
+        console.log(`Processing ${filteredMembers.length} members in ${batches.length} batches`);
 
-        await db.eventAttendees.createMany({
-            data: filteredMembers,
-            skipDuplicates: true,
-        });
+        // **Insert batches concurrently**
+        const batchPromises = batches.map((batch: any) => 
+            db.eventAttendees.createMany({
+                data: batch,
+                skipDuplicates: true,
+            })
+        );
+
+        await Promise.allSettled(batchPromises);
+
+        console.timeEnd("Total Processing Time");
 
         const Members = {
             duplicationOnFirstImport: duplicatesOnNewImport,
