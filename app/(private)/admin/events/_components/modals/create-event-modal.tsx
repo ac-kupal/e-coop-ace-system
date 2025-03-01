@@ -1,5 +1,5 @@
 "use client";
-import {  useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { CalendarIcon, Loader2 } from "lucide-react";
@@ -20,14 +20,8 @@ import {
 } from "@/components/ui/form";
 
 import { createEventWithElectionWithUploadSchema } from "@/validation-schema/event";
-import {
-   Popover,
-   PopoverContent,
-   PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import {
    Select,
    SelectContent,
@@ -36,13 +30,14 @@ import {
    SelectValue,
 } from "@/components/ui/select";
 import { EventType, Role } from "@prisma/client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
 import { useCreateEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
 import ImagePick from "@/components/image-pick";
 import { v4 } from "uuid";
+import InputMask from "react-input-mask";
 import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
 import { user } from "next-auth";
 
@@ -50,21 +45,20 @@ type Props = {
    state: boolean;
    onClose: (state: boolean) => void;
    onCancel?: () => void;
-   user:user;
+   user: user;
 };
 export type EventSchemaType = z.infer<
    ReturnType<typeof createEventWithElectionWithUploadSchema>
 >;
 
-const CreateEventModal = ({ state, onClose, onCancel, user}: Props) => {
-
+const CreateEventModal = ({ state, onClose, onCancel, user }: Props) => {
    const [isElection, setIsElection] = useState(false);
+   const inputRef = useRef(null);
 
    // Create the schema
    const EventSchema = createEventWithElectionWithUploadSchema(isElection);
-   
-    const { data: branches, isLoading: branchLoading } = branchList(user);
 
+   const { data: branches, isLoading: branchLoading } = branchList(user);
 
    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
       initialImageURL: "/images/default.png",
@@ -101,28 +95,33 @@ const CreateEventModal = ({ state, onClose, onCancel, user}: Props) => {
 
    const uploadImage = onUploadImage();
 
-
    const onSubmit = async (formValues: EventSchemaType) => {
       try {
-            if(!imageFile){
-               createEvent.mutate({
-                  ...formValues,
-                  coverImage: "/images/default.png" ,
-                  branchId:user.role === Role.admin ? user.branchId : formValues.branchId
-               });
-            }else{
-               const image = await uploadImage.mutateAsync({
-                  fileName: `${v4()}`,
-                  folderGroup: "event",
-                  file: formValues.coverImage,
-               });
-               createEvent.mutate({
-                  ...formValues,
-                  coverImage: !image ? "/images/default.png" : image,
-                  branchId:user.role === Role.admin ? user.branchId : formValues.branchId
-               });
-            }
-          resetPicker()
+         if (!imageFile) {
+            createEvent.mutate({
+               ...formValues,
+               coverImage: "/images/default.png",
+               branchId:
+                  user.role === Role.admin
+                     ? user.branchId
+                     : formValues.branchId,
+            });
+         } else {
+            const image = await uploadImage.mutateAsync({
+               fileName: `${v4()}`,
+               folderGroup: "event",
+               file: formValues.coverImage,
+            });
+            createEvent.mutate({
+               ...formValues,
+               coverImage: !image ? "/images/default.png" : image,
+               branchId:
+                  user.role === Role.admin
+                     ? user.branchId
+                     : formValues.branchId,
+            });
+         }
+         resetPicker();
       } catch (error) {
          console.log(error);
       }
@@ -130,7 +129,6 @@ const CreateEventModal = ({ state, onClose, onCancel, user}: Props) => {
 
    const isLoading = createEvent.isPending;
    const isUploading = uploadImage.isPending;
-
 
    return (
       <Dialog
@@ -155,226 +153,204 @@ const CreateEventModal = ({ state, onClose, onCancel, user}: Props) => {
                   className="flex flex-col space-y-3 w-full overflow-auto overflow-y-auto"
                >
                   <div className="flex flex-col px-2 lg:flex-row lg:space-x-5">
-                  <div className="w-full  space-y-2 lg:space-y-5 ">
-                     <FormField
-                        control={eventForm.control}
-                        name="title"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>Event Name</FormLabel>
-                              <FormControl>
-                                 <Input
-                                    placeholder="event name"
-                                    className="placeholder:text-foreground/40"
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                     <FormField
-                        control={eventForm.control}
-                        name="description"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>Event Description</FormLabel>
-                              <FormControl>
-                                 <Input
-                                    placeholder="short description of the event"
-                                    className="placeholder:text-foreground/40"
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                     <FormField
-                        control={eventForm.control}
-                        name="location"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>Event Address</FormLabel>
-                              <FormControl>
-                                 <Input
-                                    placeholder="address of the Event"
-                                    className="placeholder:text-foreground/40"
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                     <FormField
-                        control={eventForm.control}
-                        name="date"
-                        render={({ field }) => (
-                           <FormItem className="flex flex-col">
-                              <FormLabel>Date of Event</FormLabel>
-                              <Popover>
-                                 <PopoverTrigger asChild>
-                                    <FormControl>
-                                       <Button
-                                          variant={"outline"}
-                                          className={cn(
-                                             "w-[240px] pl-3 text-left font-normal",
-                                             !field.value &&
-                                                "text-muted-foreground"
-                                          )}
-                                       >
-                                          {field.value ? (
-                                             format(field.value, "PPP")
-                                          ) : (
-                                             <span>Pick a date</span>
-                                          )}
-                                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                       </Button>
-                                    </FormControl>
-                                 </PopoverTrigger>
-                                 <PopoverContent
-                                    className="w-auto p-0"
-                                    align="start"
-                                 >
-                                    <Calendar
-                                       mode="single"
-                                       selected={field.value}
-                                       onSelect={field.onChange}
-                                       captionLayout="dropdown-buttons"
-                                       disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
-                                       fromYear={1900}
-                                       toYear={new Date().getFullYear()}
-                                       initialFocus
-                                    />
-                                 </PopoverContent>
-                              </Popover>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                       <FormField
-                            control={eventForm.control}
-                            name="branchId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Branch</FormLabel>
-                                    <Select
-                                        disabled={
-                                            branchLoading ||
-                                            !([Role.root, Role.coop_root] as Role[]).includes(
-                                                user.role,
-                                            )
-                                        }
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value.toString()}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a branch" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {branches.map((branch) => (
-                                                <SelectItem
-                                                    key={branch.id}
-                                                    value={branch.id.toString()}
-                                                >
-                                                    {branch.branchName}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                  </div>
-                  <div className="w-full space-y-2 lg:space-y-5 ">
-                     <FormField
-                        control={eventForm.control}
-                        name="category"
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>category </FormLabel>
-                              <Select
-                                 onValueChange={(newValue: EventType) => {
-                                    field.onChange(newValue);
-                                    if (newValue === EventType.election) {
-                                       setIsElection(true);
-                                    } else {
-                                       setIsElection(false);
-                                       eventForm.setValue(
-                                          "electionName",
-                                          undefined
-                                       );
-                                    }
-                                 }}
-                                 defaultValue={field.value}
-                              >
-                                 <FormControl>
-                                    <SelectTrigger>
-                                       <SelectValue placeholder="Select a catergory" />
-                                    </SelectTrigger>
-                                 </FormControl>
-                                 <SelectContent>
-                                    <SelectItem value={EventType.election}>
-                                       {EventType.election}
-                                    </SelectItem>
-                                    <SelectItem value={EventType.event}>
-                                       {EventType.event}
-                                    </SelectItem>
-                                 </SelectContent>
-                              </Select>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                     <FormField
-                        control={eventForm.control}
-                        name="electionName"
-                        render={({ field }) => (
-                           <FormItem className="">
-                              <FormLabel>Election Name</FormLabel>
-                              <FormControl>
-                                 <Input
-                                    disabled={!isElection}
-                                    placeholder="Election name"
-                                    className="placeholder:text-foreground/40"
-                                    {...field}
-                                 />
-                              </FormControl>
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-                     <FormField
-                        control={eventForm.control}
-                        name="coverImage"
-                        render={({ field }) => {
-                           return (
+                     <div className="w-full  space-y-2 lg:space-y-5 ">
+                        <FormField
+                           control={eventForm.control}
+                           name="title"
+                           render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>Cover</FormLabel>
+                                 <FormLabel>Event Name</FormLabel>
                                  <FormControl>
-                                    <>
-                                       <ImagePick
-                                          className="flex flex-col items-center gap-y-4"
-                                          url={imageURL}
-                                          onChange={async (e) => {
-                                             field.onChange(
-                                                await onSelectImage(e)
-                                             );
-                                          }}
-                                       />
-                                    </>
+                                    <Input
+                                       placeholder="event name"
+                                       className="placeholder:text-foreground/40"
+                                       {...field}
+                                    />
                                  </FormControl>
                                  <FormMessage />
                               </FormItem>
-                           );
-                        }}
-                     />
-                     
-                  </div>
+                           )}
+                        />
+                        <FormField
+                           control={eventForm.control}
+                           name="description"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>Event Description</FormLabel>
+                                 <FormControl>
+                                    <Input
+                                       placeholder="short description of the event"
+                                       className="placeholder:text-foreground/40"
+                                       {...field}
+                                    />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                        <FormField
+                           control={eventForm.control}
+                           name="location"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>Event Address</FormLabel>
+                                 <FormControl>
+                                    <Input
+                                       placeholder="address of the Event"
+                                       className="placeholder:text-foreground/40"
+                                       {...field}
+                                    />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                        <FormField
+                           control={eventForm.control}
+                           name="date"
+                           render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                 <FormLabel className="flex justify-between">
+                                    <h1>Date of Event</h1>{" "}
+                                    <span className="text-[12px] italic text-muted-foreground">
+                                       yyyy/mm/dd
+                                    </span>
+                                 </FormLabel>
+                                 <InputMask
+                                    mask="9999/99/99"
+                                    ref={inputRef}
+                                    value={field.value as any}
+                                    onChange={(some) => {
+                                       field.onChange(some);
+                                    }}
+                                    placeholder="Input Date of Event"
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                 />
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                        <FormField
+                           control={eventForm.control}
+                           name="branchId"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>Branch</FormLabel>
+                                 <Select
+                                    disabled={
+                                       branchLoading ||
+                                       !(
+                                          [Role.root, Role.coop_root] as Role[]
+                                       ).includes(user.role)
+                                    }
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value.toString()}
+                                 >
+                                    <FormControl>
+                                       <SelectTrigger>
+                                          <SelectValue placeholder="Select a branch" />
+                                       </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                       {branches.map((branch) => (
+                                          <SelectItem
+                                             key={branch.id}
+                                             value={branch.id.toString()}
+                                          >
+                                             {branch.branchName}
+                                          </SelectItem>
+                                       ))}
+                                    </SelectContent>
+                                 </Select>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                     </div>
+                     <div className="w-full space-y-2 lg:space-y-5 ">
+                        <FormField
+                           control={eventForm.control}
+                           name="category"
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>category </FormLabel>
+                                 <Select
+                                    onValueChange={(newValue: EventType) => {
+                                       field.onChange(newValue);
+                                       if (newValue === EventType.election) {
+                                          setIsElection(true);
+                                       } else {
+                                          setIsElection(false);
+                                          eventForm.setValue(
+                                             "electionName",
+                                             undefined
+                                          );
+                                       }
+                                    }}
+                                    defaultValue={field.value}
+                                 >
+                                    <FormControl>
+                                       <SelectTrigger>
+                                          <SelectValue placeholder="Select a catergory" />
+                                       </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                       <SelectItem value={EventType.election}>
+                                          {EventType.election}
+                                       </SelectItem>
+                                       <SelectItem value={EventType.event}>
+                                          {EventType.event}
+                                       </SelectItem>
+                                    </SelectContent>
+                                 </Select>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                        <FormField
+                           control={eventForm.control}
+                           name="electionName"
+                           render={({ field }) => (
+                              <FormItem className="">
+                                 <FormLabel>Election Name</FormLabel>
+                                 <FormControl>
+                                    <Input
+                                       disabled={!isElection}
+                                       placeholder="Election name"
+                                       className="placeholder:text-foreground/40"
+                                       {...field}
+                                    />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                        <FormField
+                           control={eventForm.control}
+                           name="coverImage"
+                           render={({ field }) => {
+                              return (
+                                 <FormItem>
+                                    <FormLabel>Cover</FormLabel>
+                                    <FormControl>
+                                       <>
+                                          <ImagePick
+                                             className="flex flex-col items-center gap-y-4"
+                                             url={imageURL}
+                                             onChange={async (e) => {
+                                                field.onChange(
+                                                   await onSelectImage(e)
+                                                );
+                                             }}
+                                          />
+                                       </>
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              );
+                           }}
+                        />
+                     </div>
                   </div>
                   <Separator className="bg-muted/70" />
                   <div className="flex justify-end gap-x-2">
