@@ -1,6 +1,7 @@
-import s3Client from "@/lib/aws-s3";
-import { TFolderUploadGroups } from "@/types";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+
+import { TFolderUploadGroups } from "@/types";
+import s3Client, { getS3BaseURL } from "@/lib/aws-s3";
 
 export const uploadFile = async (
     file: Buffer,
@@ -20,6 +21,5 @@ export const uploadFile = async (
     const command = new PutObjectCommand(params);
     await s3Client.send(command);
 
-    const constructedURL = `https://${params.Bucket}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${params.Key}`;
-    return constructedURL;
+    return `${getS3BaseURL()}${params.Key}`;
 };

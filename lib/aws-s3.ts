@@ -14,13 +14,15 @@ const s3Client = new S3Client({
     },
 });
 
-export const getS3BaseURL = (bucketName: TFolderGroupSchema) => {
-    const buildUrl = `https://${S3_BUCKET_NAME}.s3.${S3_REGION}.amazonaws.com/${bucketName}/`;
+export const getS3BaseURL = (
+    bucketName: TFolderGroupSchema = "" as TFolderGroupSchema
+) => {
+    const buildUrl = `https://${S3_BUCKET_NAME}.s3.${S3_REGION}.amazonaws.com/${bucketName}`;
     return buildUrl;
 };
 
 export const generateUserProfileS3URL = (pbNumber: string) => {
-    return `${getS3BaseURL("member")}${pbNumber}`;
+    return `${getS3BaseURL("member")}/${pbNumber}`;
 };
 
 export default s3Client;
