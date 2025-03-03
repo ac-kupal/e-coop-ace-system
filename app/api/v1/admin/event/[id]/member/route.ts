@@ -75,25 +75,33 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
             throw new Error("Invalid data format, expected an array.");
         }
 
-        const updates = data.map((member: {passbookNumber: string, eventId:String}) => ({
-            where: {
-                eventId_passbookNumber: {
-                    eventId,
-                    passbookNumber: member.passbookNumber.toUpperCase(),
+        const batchSize = 500; 
+        const updatedMembers = [];
+
+        for (let i = 0; i < data.length; i += batchSize) {
+            const batch = data.slice(i, i + batchSize);
+
+            const updates = batch.map((member: { passbookNumber: string; eventId: string }) => ({
+                where: {
+                    eventId_passbookNumber: {
+                        eventId,
+                        passbookNumber: member.passbookNumber.toUpperCase(),
+                    },
                 },
-            },
-            data: {
-                picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
-            },
-        }));
+                data: {
+                    picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
+                },
+            }));
 
-        const updatedMembers = await db.$transaction(
-            updates.map((update) => db.eventAttendees.update(update))
-        );
+            const batchResults = await db.$transaction(
+                updates.map((update) => db.eventAttendees.update(update))
+            );
 
-        return NextResponse.json(updatedMembers);
+            updatedMembers.push(...batchResults);
+        }
+
+        return NextResponse.json(updatedMembers); 
     } catch (e) {
         return routeErrorHandler(e, req);
     }
 };
-
