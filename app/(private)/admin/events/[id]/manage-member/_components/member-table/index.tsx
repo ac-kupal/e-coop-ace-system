@@ -40,6 +40,7 @@ import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-
 import {
     useBroadcastOTP,
     getAllEventMembers,
+    useUpdateEventAttendees,
 } from "@/hooks/api-hooks/member-api-hook";
 
 import { cn } from "@/lib/utils";
@@ -100,12 +101,27 @@ const MemberTable = ({ id, user }: Props) => {
     }, []);
 
     const debouncedValue = useDebounce<string>(searchVal, 500);
-
+    
     useEffect(() => {
         setGlobalFilter(debouncedValue);
     }, [debouncedValue, setGlobalFilter]);
 
     const isStaff = user.role === Role.staff;
+
+    const { mutate, isPending: isRefetchingUpdateMembersPicture } =  useUpdateEventAttendees();
+
+    const membersData = data.map((member) => ({
+        passbookNumber: member.passbookNumber,
+        firstName: member.firstName,
+        middleName: member.middleName ?? undefined,
+        lastName: member.lastName,
+        gender: member.gender,
+        birthday: member.birthday ?? undefined,
+        contact: member.contact ?? undefined,
+        picture: member.picture,
+        eventId: member.eventId,
+        emailAddress: member.emailAddress,
+    }));
 
     if (data === undefined)
         return <h1 className=" animate-pulse">Loading...</h1>;
@@ -118,7 +134,7 @@ const MemberTable = ({ id, user }: Props) => {
                 open={exportPbQrs}
                 onOpenChange={(val) => setExportPbQrs(val)}
             />
-            <div className="flex flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
+            <div className="flex hiiden flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
                 <CreateMemberModal
                     eventId={id}
                     state={createMember}
@@ -179,12 +195,15 @@ const MemberTable = ({ id, user }: Props) => {
                             />
                             <Button
                                 variant={"secondary"}
-                                disabled={isFetching}
-                                onClick={() => refetch()}
+                                disabled={isFetching || isRefetchingUpdateMembersPicture}
+                                onClick={() => {
+                                    mutate({ id, members: membersData })
+                                    refetch()
+                                }}
                                 className="gap-x-2"
                                 size="icon"
                             >
-                                {isFetching ? (
+                                {isFetching || isRefetchingUpdateMembersPicture ?  (
                                     <LoadingSpinner />
                                 ) : (
                                     <GrRotateRight className="size-4" />
@@ -245,7 +264,7 @@ const MemberTable = ({ id, user }: Props) => {
                                     </Button>
                                 </ActionTooltip>
                             )}
-                            {!isStaff && (
+                             {!isStaff && (
                                 <ActionTooltip
                                     side="top"
                                     align="center"
