@@ -90,12 +90,16 @@ export const PATCH = async (
       const user = await currentUserOrThrowAuthError();
 
       const missingPictureMembers = await db.eventAttendees.findMany({
-         where: {
+        where: {
             eventId: id,
-            OR: [{ picture: null }, { picture: "" }],
-         },
-         select: { passbookNumber: true, eventId: true },
-      });
+            OR: [
+                { picture: null }, 
+                { picture: "" },    
+                { picture: { not: { startsWith: "https://" } } }
+            ],
+        },
+        select: { passbookNumber: true, eventId: true, picture: true },
+     });
 
       if (missingPictureMembers.length === 0) {
          return NextResponse.json({
@@ -115,9 +119,9 @@ export const PATCH = async (
             },
          },
          data: {
-            picture: generateUserProfileS3URL(
-               member.passbookNumber.toUpperCase()
-            ),
+            picture:member.picture && member.picture.startsWith("https://")
+            ? member.picture
+            : generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
          },
       }));
 

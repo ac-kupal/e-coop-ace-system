@@ -377,6 +377,11 @@ export const useUpdateEventAttendees = () => {
        mutationFn: async ({ id }: TUpdateMembers) => {
           try {
                const response =  await axios.patch(`/api/v1/admin/event/${id}/member`);
+               const hasUpdates = response.data.totalUpdated > 0
+               if(hasUpdates){
+                  toast.success(response.data.message);
+               }
+               toast.message(response.data.message)
                return response.data
           } catch (e) {
              const errorMessage = handleAxiosErrorMessage(e);
@@ -385,9 +390,6 @@ export const useUpdateEventAttendees = () => {
              });
              throw errorMessage;
           }
-       },
-       onSuccess: () => {
-          toast.success("Member Picture Sync Completed");
        },
     });
  };
