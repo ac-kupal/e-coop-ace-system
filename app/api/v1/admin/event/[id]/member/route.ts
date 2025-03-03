@@ -75,7 +75,7 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
             throw new Error("Invalid data format, expected an array.");
         }
 
-        const updates = data.map((member: TMember) => ({
+        const updates = data.map((member: {passbookNumber: string, eventId:String}) => ({
             where: {
                 eventId_passbookNumber: {
                     eventId,

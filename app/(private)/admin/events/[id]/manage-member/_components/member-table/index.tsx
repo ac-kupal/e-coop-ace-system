@@ -112,15 +112,7 @@ const MemberTable = ({ id, user }: Props) => {
 
     const membersData = data.map((member) => ({
         passbookNumber: member.passbookNumber,
-        firstName: member.firstName,
-        middleName: member.middleName ?? undefined,
-        lastName: member.lastName,
-        gender: member.gender,
-        birthday: member.birthday ?? undefined,
-        contact: member.contact ?? undefined,
-        picture: member.picture,
-        eventId: member.eventId,
-        emailAddress: member.emailAddress,
+        eventId: member.eventId.toString(),
     }));
 
     if (data === undefined)
