@@ -374,13 +374,10 @@ interface TUpdateMembers {
 export const useUpdateEventAttendees = () => {
     return useMutation<void, string, TUpdateMembers>({
        mutationKey: ["update-event-attendees"],
-       mutationFn: async ({ id, members }: TUpdateMembers) => {
+       mutationFn: async ({ id }: TUpdateMembers) => {
           try {
-             const batchSize = 500; 
-             for (let i = 0; i < members.length; i += batchSize) {
-                const batch = members.slice(i, i + batchSize);
-                await axios.patch(`/api/v1/admin/event/${id}/member`, batch);
-             }
+               const response =  await axios.patch(`/api/v1/admin/event/${id}/member`);
+               return response.data
           } catch (e) {
              const errorMessage = handleAxiosErrorMessage(e);
              toast.error(errorMessage, {

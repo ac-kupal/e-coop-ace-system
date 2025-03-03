@@ -81,7 +81,6 @@ export const PATCH = async (
         validateId(id);
         const user = await currentUserOrThrowAuthError();
 
-        // Fetch existing members directly from DB
         const existingMembers = await db.eventAttendees.findMany({
             where: { eventId: id },
             select: { passbookNumber: true, eventId: true },
@@ -103,7 +102,7 @@ export const PATCH = async (
             },
         }));
 
-        const BATCH_SIZE = 250; // Smaller batch size to speed up execution
+        const BATCH_SIZE = 100; // Smaller batch size to speed up execution
         const batches = chunkMemberData(updates, BATCH_SIZE);
 
         // ✅ Use Streaming Response
