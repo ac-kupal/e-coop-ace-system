@@ -26,7 +26,7 @@ const AttendanceQuorum = ({ eventId }: Props) => {
         });
 
     return (
-        <Card className="w-fit flex-auto relative">
+        <Card className="w-full md:w-fit flex-auto relative">
             <div className="flex p-4 space-x-2  items-center py-2">
                 <div className="p-1 dark:bg-[#c5a522] bg-[#e7c127] rounded-sm">
                     <Sigma className="size-5 text-slate-200" />
@@ -42,14 +42,15 @@ const AttendanceQuorum = ({ eventId }: Props) => {
                             <LoadingSpinner className="size-6 text-muted-foreground absolute top-4 right-4" />
                         </>
                     ) : attendanceStats ? (
-                        <h1 className="font-bold text-3xl text-primary">
+                        <h1 className="font-bold text-xl xl:text-3xl text-primary">
                             {attendanceStats.totalAttendees > 0
                                 ? (
                                       (attendanceStats.totalIsRegistered /
                                           attendanceStats.totalAttendees) *
                                       100
                                   ).toLocaleString("en-US", {
-                                      maximumFractionDigits: 1,
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
                                   })
                                 : "0"}{" "}
                             %

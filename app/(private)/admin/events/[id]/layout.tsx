@@ -32,11 +32,11 @@ const EventLayout = async ({ children, params }: Props) => {
     return (
         <div className="font-poppins pt-2 lg:px-7 space-y-2 lg:space-y-4 h-fit overflow-hidden">
             <div className="w-full px-2 lg:p-2 flex items-center justify-between">
-                <EventHeader params={params}></EventHeader>
+                <EventHeader params={params} />
                 <BackButton />
             </div>
-            <div className="p-2 w-full rounded-2xl flex flex-col lg:flex-row space-x-0 space-y-1 lg:space-x-16 lg:space-y-0 justify-between shadow-md bg-background dark:bg-secondary/30">
-                <div className="flex gap-x-4 text-2xl">
+            <div className="p-2 w-full rounded-2xl flex flex-col md:flex-row gap-x-2 gap-y-3 lg:space-x-16 justify-between shadow-md bg-background dark:bg-secondary/30">
+                <div className="flex flex-row gap-x-4 gap-y-1 text-base flex-wrap 2xl:text-lg">
                     <div className="flex space-x-2 items-center ">
                         <div className="p-1">
                             <CalendarCheck className="size-4 md:size-5 lg:size-6 text-primary" />
