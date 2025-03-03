@@ -64,7 +64,13 @@ export const POST = async (req: NextRequest) => {
     }
 };
 
-const chunkMemberData = (array: { where: { eventId_passbookNumber: { eventId: number; passbookNumber: string; }; }; data: { picture: string; }; }[], size: number) => {
+const chunkMemberData = (
+    array: { 
+        where: { eventId_passbookNumber: { eventId: number; passbookNumber: string } };
+        data: { picture: string };
+    }[],
+    size: number
+) => {
     const chunkedArr = [];
     for (let i = 0; i < array.length; i += size) {
         chunkedArr.push(array.slice(i, i + size));
@@ -72,12 +78,13 @@ const chunkMemberData = (array: { where: { eventId_passbookNumber: { eventId: nu
     return chunkedArr;
 };
 
-
 export const PATCH = async (
     req: NextRequest,
     { params }: { params: { id: number } }
 ) => {
     try {
+        const startTime = performance.now();
+
         const id = Number(params.id);
         validateId(id);
         const user = await currentUserOrThrowAuthError();
@@ -103,26 +110,29 @@ export const PATCH = async (
             },
         }));
 
-        const BATCH_SIZE = 100; // Smaller batch size to speed up execution
+        const BATCH_SIZE = 100; 
         const batches = chunkMemberData(updates, BATCH_SIZE);
 
-        // ✅ Use Streaming Response
-        const stream = new TransformStream();
-        const writer = stream.writable.getWriter();
-        const encoder = new TextEncoder();
+        console.log(`Processing ${updates.length} members in ${batches.length} batches`);
 
-        writer.write(encoder.encode(`Processing ${updates.length} members...\n`));
+        // ✅ Run batches in parallel instead of sequentially
+        const batchPromises = batches.map((batch) =>
+            db.$transaction(batch.map((update) => db.eventAttendees.update(update)))
+        );
 
-        for (const batch of batches) {
-            await db.$transaction(batch.map((update) => db.eventAttendees.update(update)));
-            writer.write(encoder.encode(`Batch processed: ${batch.length} members\n`));
-        }
+        const results = await Promise.allSettled(batchPromises);
 
-        writer.write(encoder.encode(`Update complete\n`));
-        writer.close();
+        const successfulUpdates = results
+            .filter((res) => res.status === "fulfilled")
+            .map((res) => (res as PromiseFulfilledResult<any>).value)
+            .flat();
 
-        return new Response(stream.readable, {
-            headers: { "Content-Type": "text/plain" },
+        const endTime = performance.now();
+        console.log(`Execution Time: ${(endTime - startTime) / 1000} seconds`);
+
+        return NextResponse.json({
+            updatedMembers: successfulUpdates.slice(0, 5),
+            totalUpdated: successfulUpdates.length,
         });
     } catch (e) {
         return routeErrorHandler(e, req);
