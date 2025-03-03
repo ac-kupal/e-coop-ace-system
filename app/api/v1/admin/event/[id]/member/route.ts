@@ -8,7 +8,7 @@ import { generateOTP, newDate, validateId } from "@/lib/server-utils";
 import { eventIdSchema } from "@/validation-schema/commons";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
-import { TMember } from "@/types";
+export const maxDuration = 300;
 
 type TParams = { params: { id: number } };
 
@@ -71,6 +71,7 @@ const chunkMemberData = (array: { where: { eventId_passbookNumber: { eventId: nu
     }
     return chunkedArr;
 };
+
 
 export const PATCH = async (
     req: NextRequest,
