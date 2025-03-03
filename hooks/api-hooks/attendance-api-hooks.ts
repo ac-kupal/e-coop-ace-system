@@ -1,3 +1,4 @@
+import z from "zod";
 import axios from "axios";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,27 +9,19 @@ import {
     TMemberAttendeesWithRegistrationAssistance,
 } from "@/types";
 import { IQueryHook } from "./types";
+import { adminRegisterMemberSchema } from "@/validation-schema/event";
 
-export const useAttendanceRegistration = (
-    eventId: number | string,
-    passbookNumber: string
-) => {
+export const useAttendanceRegistration = (eventId: number | string) => {
     const queryClient = useQueryClient();
-
-    const {
-        isPending: registerPending,
-        isError: isRegisterError,
-        error: registerError,
-        mutate: registerAttendance,
-    } = useMutation<any, string>({
-        mutationKey: [`attendance-registration-${passbookNumber}`],
-        mutationFn: async () => {
+    return useMutation<any, string, z.infer<typeof adminRegisterMemberSchema>>({
+        mutationKey: [`attendance-registration`],
+        mutationFn: async (data) => {
             try {
                 const request = await axios.post(
                     `/api/v1/admin/event/${eventId}/attendance-registration`,
-                    { passbookNumber }
+                    data
                 );
-                toast.success("Member registered");
+                toast.success(`Member ${data.operation}`);
                 queryClient.invalidateQueries({
                     queryKey: ["all-attendance-list-query"],
                 });
@@ -43,13 +36,6 @@ export const useAttendanceRegistration = (
             }
         },
     });
-
-    return {
-        registerPending,
-        isRegisterError,
-        registerError,
-        registerAttendance,
-    };
 };
 
 export const useAttendanceList = ({

@@ -46,6 +46,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { IoMdPhotos } from "react-icons/io";
 
 type Props = {
     id: number;
@@ -101,26 +102,19 @@ const MemberTable = ({ id, user }: Props) => {
     }, []);
 
     const debouncedValue = useDebounce<string>(searchVal, 500);
-    
+
     useEffect(() => {
         setGlobalFilter(debouncedValue);
     }, [debouncedValue, setGlobalFilter]);
 
     const isStaff = user.role === Role.staff;
 
-    const { mutate, isPending: isRefetchingUpdateMembersPicture } =  useUpdateEventAttendees();
+    const { mutate, isPending: isRefetchingUpdateMembersPicture } =
+        useUpdateEventAttendees();
 
     const membersData = data.map((member) => ({
         passbookNumber: member.passbookNumber,
-        firstName: member.firstName,
-        middleName: member.middleName ?? undefined,
-        lastName: member.lastName,
-        gender: member.gender,
-        birthday: member.birthday ?? undefined,
-        contact: member.contact ?? undefined,
-        picture: member.picture,
-        eventId: member.eventId,
-        emailAddress: member.emailAddress,
+        eventId: member.eventId.toString(),
     }));
 
     if (data === undefined)
@@ -165,7 +159,7 @@ const MemberTable = ({ id, user }: Props) => {
                             className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
-                    <div className="overflow-x-scroll max-w-full lg:max-w-none thin-scroll">
+                    <div className="overflow-x-scroll max-w-full lg:max-w-none thin-scroll pb-1">
                         <div className="flex w-fit items-center space-x-1 flex-auto md:justify-end justify-evenly">
                             <div className="">
                                 <ActionTooltip content="Scan Passbook Number">
@@ -195,20 +189,54 @@ const MemberTable = ({ id, user }: Props) => {
                             />
                             <Button
                                 variant={"secondary"}
-                                disabled={isFetching || isRefetchingUpdateMembersPicture}
-                                onClick={() => {
-                                    mutate({ id, members: membersData })
-                                    refetch()
-                                }}
+                                disabled={isFetching}
+                                onClick={() => refetch()}
                                 className="gap-x-2"
                                 size="icon"
                             >
-                                {isFetching || isRefetchingUpdateMembersPicture ?  (
+                                {isFetching ? (
                                     <LoadingSpinner />
                                 ) : (
                                     <GrRotateRight className="size-4" />
                                 )}
                             </Button>
+                            {!isStaff && (
+                                <ActionTooltip
+                                    side="top"
+                                    align="center"
+                                    content={
+                                        <div className="flex items-center gap-x-2">
+                                            <Users className="size-4" />
+                                            Sync member&apos;s pictures from
+                                            database
+                                        </div>
+                                    }
+                                >
+                                    <Button
+                                        size="sm"
+                                        className={cn(
+                                            "flex-none flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                        )}
+                                        onClick={() => {
+                                            mutate({
+                                                id: id,
+                                                members: membersData,
+                                            });
+                                        }}
+                                    >
+                                        <p>
+                                            <span className="hidden lg:inline-block">
+                                                Sync Member&apos;s Pictures
+                                            </span>
+                                        </p>
+                                        {isRefetchingUpdateMembersPicture ? (
+                                            <LoadingSpinner className="dark:text-black text-white " />
+                                        ) : (
+                                            <IoMdPhotos />
+                                        )}
+                                    </Button>
+                                </ActionTooltip>
+                            )}
                             <Button
                                 size="sm"
                                 className={cn(
@@ -222,6 +250,7 @@ const MemberTable = ({ id, user }: Props) => {
                                     Export PB QR
                                 </p>
                             </Button>
+
                             {!isStaff && (
                                 <ActionTooltip
                                     side="top"
@@ -264,7 +293,7 @@ const MemberTable = ({ id, user }: Props) => {
                                     </Button>
                                 </ActionTooltip>
                             )}
-                             {!isStaff && (
+                            {!isStaff && (
                                 <ActionTooltip
                                     side="top"
                                     align="center"

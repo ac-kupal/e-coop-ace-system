@@ -12,13 +12,14 @@ import {
     Gift,
     Send,
     Vote,
+    XIcon,
     Trash,
     QrCode,
     Pencil,
-    MenuIcon,
     CopyIcon,
     QrCodeIcon,
     ClipboardPen,
+    MenuIcon,
 } from "lucide-react";
 import {
     DropdownMenu,
@@ -116,10 +117,8 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
         member.passbookNumber
     );
 
-    const { registerAttendance, registerPending } = useAttendanceRegistration(
-        member.eventId,
-        member.passbookNumber
-    );
+    const { mutate: registerAttendance, isPending: registerPending } =
+        useAttendanceRegistration(member.eventId);
 
     const isLoading = isSendingOtp || registerPending;
 
@@ -219,13 +218,17 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                     <Gift strokeWidth={2} className="h-4" />
                     Incentive Claims
                 </DropdownMenuItem>
-                {!member.registered && (
+                {!member.registered ? (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
                         onClick={() =>
                             onOpenConfirmModal({
                                 title: "Register Member",
-                                onConfirm: () => registerAttendance(),
+                                onConfirm: () =>
+                                    registerAttendance({
+                                        operation: "register",
+                                        passbookNumber: member.passbookNumber,
+                                    }),
                                 confirmString: "Register",
                                 contentComponent: (
                                     <div className="flex flex-col items-center gap-y-1">
@@ -275,6 +278,67 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                     >
                         <ClipboardPen strokeWidth={2} className="h-4" />
                         Register Member
+                    </DropdownMenuItem>
+                ) : (
+                    <DropdownMenuItem
+                        className="px-2 gap-x-2"
+                        onClick={() =>
+                            onOpenConfirmModal({
+                                title: "Register Member",
+                                onConfirm: () =>
+                                    registerAttendance({
+                                        operation: "unregister",
+                                        passbookNumber: member.passbookNumber,
+                                    }),
+                                confirmString: "Unregister",
+                                contentComponent: (
+                                    <div className="flex flex-col items-center gap-y-1">
+                                        <UserAvatar
+                                            className="size-52"
+                                            src={
+                                                member.picture ??
+                                                "/images/default.png"
+                                            }
+                                            fallback={member.firstName.charAt(
+                                                0
+                                            )}
+                                        />
+                                        <p className="text-2xl">
+                                            {member.firstName}{" "}
+                                            {member.middleName}{" "}
+                                            {member.lastName}
+                                        </p>
+                                        <p className="text-sm mt-2">
+                                            {member.birthday
+                                                ? format(
+                                                      member.birthday,
+                                                      "MMMM d, yyyy"
+                                                  )
+                                                : "no birthday defined"}
+                                        </p>
+                                        <p className="text-muted-foreground text-center min-w-28 border-b-2 text-lg">
+                                            {member.passbookNumber}
+                                        </p>
+                                        <p className="text-center text-muted-foreground text-xs">
+                                            Passbook No.
+                                        </p>
+                                        <p className="text-sm text-muted-foreground mt-4 text-center">
+                                            You are about to unregister{" "}
+                                            <strong>
+                                                {member.firstName}{" "}
+                                                {member.middleName}{" "}
+                                                {member.lastName}
+                                            </strong>
+                                            , are you sure to unregister this
+                                            member?
+                                        </p>
+                                    </div>
+                                ),
+                            })
+                        }
+                    >
+                        <XIcon className="h-4" />
+                        Unregister
                     </DropdownMenuItem>
                 )}
                 {!member.voted && member.event.election && (
