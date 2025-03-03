@@ -75,7 +75,7 @@ const mapAndFilterDuplicates = (
             emailAddress: member.emailAddress ?? "",
             contact: member.contact ? String(member.contact) : "",
             voteOtp: generateOTP(6),
-            picture: "",
+            picture: generateUserProfileS3URL(PBNo.toUpperCase()),
             registered: parseRegistered(member.registered),
         };
     });
