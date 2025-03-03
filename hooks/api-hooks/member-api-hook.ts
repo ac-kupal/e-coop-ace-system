@@ -379,8 +379,6 @@ export const useUpdateEventAttendees = () => {
         mutationFn: async ({ id, members }) => {
             try {
                 const response = await axios.patch(`/api/v1/admin/event/${id}/member`, members);
-
-                console.log(response)
                 return response.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);

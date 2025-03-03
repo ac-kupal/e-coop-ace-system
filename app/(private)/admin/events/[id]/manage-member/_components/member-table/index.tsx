@@ -1,10 +1,10 @@
 "use client";
 import {
-   useReactTable,
-   getCoreRowModel,
-   getSortedRowModel,
-   getFilteredRowModel,
-   getPaginationRowModel,
+    useReactTable,
+    getCoreRowModel,
+    getSortedRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
 } from "@tanstack/react-table";
 import { user } from "next-auth";
 import { Role } from "@prisma/client";
@@ -13,331 +13,338 @@ import useDebounce from "@/hooks/use-debounce";
 import React, { useEffect, useRef, useState } from "react";
 
 import {
-   Plus,
-   Send,
-   Users,
-   Mails,
-   ScanLine,
-   SearchIcon,
-   PersonStandingIcon,
+    Plus,
+    Send,
+    Users,
+    Mails,
+    QrCode,
+    ScanLine,
+    SearchIcon,
+    PersonStandingIcon,
 } from "lucide-react";
 
-import columns, { MembersCustomGlobalFilter } from "./column";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ActionTooltip from "@/components/action-tooltip";
 import ImportFileModal from "../modals/import-file-modal";
 import LoadingSpinner from "@/components/loading-spinner";
 import DataTable from "@/components/data-table/data-table";
+import columns, { MembersCustomGlobalFilter } from "./column";
 import CreateMemberModal from "../modals/create-member-modal";
 import SkippedMemberModal from "../modals/skipped-member-modal";
+import BulkExportPbQrModal from "../modals/bulk-export-pb-qr-modal";
 import DataTablePagination from "@/components/data-table/data-table-pagination";
 import DataTableViewOptions from "@/components/data-table/data-table-view-options";
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 
 import {
-   useBroadcastOTP,
-   getAllEventMembers,
-   useUpdateEventAttendees,
+    useBroadcastOTP,
+    getAllEventMembers,
+    useUpdateEventAttendees,
 } from "@/hooks/api-hooks/member-api-hook";
 
 import { cn } from "@/lib/utils";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { TMember } from "@/types";
-import { IoMdPhotos } from "react-icons/io";
 
 type Props = {
-   id: number;
-   user: user;
+    id: number;
+    user: user;
 };
 
 const MemberTable = ({ id, user }: Props) => {
-   const onFocusSearch = useRef<HTMLInputElement | null>(null);
-   const [searchVal, setSearchVal] = useState("");
-   const [createMember, setCreateMember] = useState(false);
-   const [onImportModal, setOnImportModal] = useState(false);
-   const [globalFilter, setGlobalFilter] = useState<string>("");
-   const [onSkippedMemberModal, setOnSkippedMemberModal] = useState(false);
-   const { onOpenQR } = useQrReaderModal();
-   const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
-   const { data, isError, isLoading, isFetching, refetch } =
-      getAllEventMembers(id);
-   const { onOpen } = useConfirmModal();
+    const onFocusSearch = useRef<HTMLInputElement | null>(null);
+    const [exportPbQrs, setExportPbQrs] = useState(false);
+    const [searchVal, setSearchVal] = useState("");
+    const [createMember, setCreateMember] = useState(false);
+    const [onImportModal, setOnImportModal] = useState(false);
+    const [globalFilter, setGlobalFilter] = useState<string>("");
+    const [onSkippedMemberModal, setOnSkippedMemberModal] = useState(false);
+    const { onOpenQR } = useQrReaderModal();
+    const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
+    const { data, isError, isLoading, isFetching, refetch } =
+        getAllEventMembers(id);
+    const { onOpen } = useConfirmModal();
 
-   const table = useReactTable({
-      data,
-      columns,
-      getCoreRowModel: getCoreRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
-      state: {
-         globalFilter,
-      },
-      initialState: {
-         pagination: { pageIndex: 0, pageSize: 20 },
-      },
-      onGlobalFilterChange: setGlobalFilter,
-      globalFilterFn: MembersCustomGlobalFilter,
-   });
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        state: {
+            globalFilter,
+        },
+        initialState: {
+            pagination: { pageIndex: 0, pageSize: 20 },
+        },
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: MembersCustomGlobalFilter,
+    });
 
-   useEffect(() => {
-      const shortCutCommand = (event: KeyboardEvent) => {
-         if (
-            (event.ctrlKey && event.key === "k") ||
-            (event.altKey && event.key === "k") ||
-            (event.metaKey && event.key === "k")
-         ) {
-            event.preventDefault();
-            onFocusSearch.current?.focus();
-         }
-      };
-      window.addEventListener("keydown", shortCutCommand);
-      return () => {
-         window.removeEventListener("keydown", shortCutCommand);
-      };
-   }, []);
+    useEffect(() => {
+        const shortCutCommand = (event: KeyboardEvent) => {
+            if (
+                (event.ctrlKey && event.key === "k") ||
+                (event.altKey && event.key === "k") ||
+                (event.metaKey && event.key === "k")
+            ) {
+                event.preventDefault();
+                onFocusSearch.current?.focus();
+            }
+        };
+        window.addEventListener("keydown", shortCutCommand);
+        return () => {
+            window.removeEventListener("keydown", shortCutCommand);
+        };
+    }, []);
 
-   const debouncedValue = useDebounce<string>(searchVal, 500);
+    const debouncedValue = useDebounce<string>(searchVal, 500);
+    
+    useEffect(() => {
+        setGlobalFilter(debouncedValue);
+    }, [debouncedValue, setGlobalFilter]);
 
-   useEffect(() => {
-      setGlobalFilter(debouncedValue);
-   }, [debouncedValue, setGlobalFilter]);
+    const isStaff = user.role === Role.staff;
 
-   const isStaff = user.role === Role.staff;
-   const { mutate, isPending: isLoadingUpdatingMembers } =
-      useUpdateEventAttendees();
+    const { mutate, isPending: isRefetchingUpdateMembersPicture } =  useUpdateEventAttendees();
 
-   const membersData = data.map((member) => ({
-      passbookNumber: member.passbookNumber,
-      firstName: member.firstName,
-      middleName: member.middleName ?? undefined,
-      lastName: member.lastName,
-      gender: member.gender,
-      birthday: member.birthday ?? undefined,
-      contact: member.contact ?? undefined,
-      picture: member.picture,
-      eventId: member.eventId,
-      emailAddress: member.emailAddress,
-   }));
+    const membersData = data.map((member) => ({
+        passbookNumber: member.passbookNumber,
+        firstName: member.firstName,
+        middleName: member.middleName ?? undefined,
+        lastName: member.lastName,
+        gender: member.gender,
+        birthday: member.birthday ?? undefined,
+        contact: member.contact ?? undefined,
+        picture: member.picture,
+        eventId: member.eventId,
+        emailAddress: member.emailAddress,
+    }));
 
-   if (data === undefined)
-      return <h1 className=" animate-pulse">Loading...</h1>;
+    if (data === undefined)
+        return <h1 className=" animate-pulse">Loading...</h1>;
 
-   return (
-      <div className="lg:space-y-5 space-y-2 min-h-[65vh]">
-         <div className="flex flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
-            <CreateMemberModal
-               eventId={id}
-               state={createMember}
-               onClose={(state) => setCreateMember(state)}
+    return (
+        <div className="lg:space-y-5 space-y-2 min-h-[65vh]">
+            <BulkExportPbQrModal
+                eventId={id}
+                members={data}
+                open={exportPbQrs}
+                onOpenChange={(val) => setExportPbQrs(val)}
             />
-            <ImportFileModal
-               id={id}
-               onOpenSkippedModal={(state) => setOnSkippedMemberModal(state)}
-               state={onImportModal}
-               onClose={(state) => setOnImportModal(state)}
-            />
-            <SkippedMemberModal
-               state={onSkippedMemberModal}
-               onClose={(state) => setOnSkippedMemberModal(state)}
-            />
-            <div className="flex lg:space-y-2 flex-col lg:flex-row lg:justify-between overflow-auto flex-wrap space-y-2 relative w-full items-center gap-x-4 text-muted-foreground">
-               <div className="w-full lg:w-fit relative">
-                  <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
-                  <Input
-                     value={searchVal}
-                     ref={onFocusSearch}
-                     placeholder="Search..."
-                     onChange={(event) => setSearchVal(event.target.value)}
-                     className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
-               </div>
-               <div className="flex items-center space-x-1  md:justify-start justify-evenly w-full lg:w-fit">
-                  <div className="">
-                     <ActionTooltip content="Scan Passbook Number">
-                        <Button
-                           variant="secondary"
-                           size="sm"
-                           className="cursor-pointer  "
-                           onClick={() =>
-                              onOpenQR({
-                                 onScan: (val) => {
-                                    if (val.length === 0) return;
-                                    setSearchVal(val[0].rawValue);
-                                 },
-                              })
-                           }
-                        >
-                           <ScanLine className="size-4" />
-                        </Button>
-                     </ActionTooltip>
-                  </div>
-                  <DataTableViewOptions className="h-10" table={table} />
-                  <Button
-                     variant={"secondary"}
-                     disabled={isFetching}
-                     onClick={() => refetch()}
-                     className="gap-x-2"
-                     size="icon"
-                  >
-                     {isFetching ? (
-                        <LoadingSpinner />
-                     ) : (
-                        <GrRotateRight className="size-4" />
-                     )}
-                  </Button>
-                  {!isStaff && (
-                     <ActionTooltip
-                        side="top"
-                        align="center"
-                        content={
-                           <div className="flex items-center gap-x-2">
-                              <Mails className="size-4" /> Send OTP to all
-                              members via email address.
-                           </div>
-                        }
-                     >
-                        <Button
-                           size="sm"
-                           className={cn(
-                              "flex  gap-x-2 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                           )}
-                           disabled={isBroadcasting}
-                           onClick={() => {
-                              onOpen({
-                                 title: "Bulk OPT Sending",
-                                 description:
-                                    "You are about to send all members an OTP. Are you sure?",
-                                 onConfirm: () => broadcastOTP(),
-                              });
-                           }}
-                        >
-                           {" "}
-                           <p>
-                              Send all{" "}
-                              <span className="hidden lg:inline-block">
-                                 OTP
-                              </span>
-                           </p>
-                           {isBroadcasting ? (
-                              <LoadingSpinner />
-                           ) : (
-                              <Send className="w-4 h-4" />
-                           )}
-                        </Button>
-                     </ActionTooltip>
-                  )}
-
-                  {!isStaff && (
-                     <ActionTooltip
-                        side="top"
-                        align="center"
-                        content={
-                           <div className="flex items-center gap-x-2">
-                              <IoMdPhotos />
-                              <p>Sync Members Picture</p>
-                           </div>
-                        }
-                     >
-                        <Button
-                           size="sm"
-                           className={cn(
-                              "flex  gap-x-2 rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                           )}
-                           disabled={isLoadingUpdatingMembers}
-                           onClick={() => mutate({ id, members: membersData })}
-                        >
-                           {" "}
-                           <p className="text-xs flex justify-center items-center gap-x-2">
-                              {isLoadingUpdatingMembers
-                                 ? "Updating..."
-                                 : "Sync Pictures"}
-                              <IoMdPhotos />
-                           </p>
-                        </Button>
-                     </ActionTooltip>
-                  )}
-                  {!isStaff && (
-                     <ActionTooltip
-                        side="top"
-                        align="center"
-                        content={
-                           <div className="flex items-center gap-x-2">
-                              <PersonStandingIcon className="size-4" /> Add
-                              Specific Members.
-                           </div>
-                        }
-                     >
-                        <Button
-                           size="sm"
-                           className={cn(
-                              "flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                           )}
-                           onClick={() => {
-                              setCreateMember(true);
-                           }}
-                        >
-                           <p>
-                              Add{" "}
-                              <span className="hidden lg:inline-block">
-                                 Member
-                              </span>
-                           </p>
-                           <Plus className="w-4 h-4" />
-                        </Button>
-                     </ActionTooltip>
-                  )}
-                  {!isStaff && (
-                     <ActionTooltip
-                        side="top"
-                        align="center"
-                        content={
-                           <div className="flex items-center gap-x-2">
-                              <Users className="size-4" /> Bulk Creation.
-                           </div>
-                        }
-                     >
-                        <Button
-                           size="sm"
-                           className={cn(
-                              "flex-none flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                           )}
-                           onClick={() => {
-                              setOnImportModal(true);
-                           }}
-                        >
-                           <p>
-                              csv{" "}
-                              <span className="hidden lg:inline-block">
-                                 import
-                              </span>
-                           </p>
-                           <Plus className="w-4 h-4" />
-                        </Button>
-                     </ActionTooltip>
-                  )}
-               </div>
+            <div className="flex hiiden flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
+                <CreateMemberModal
+                    eventId={id}
+                    state={createMember}
+                    onClose={(state) => setCreateMember(state)}
+                />
+                <ImportFileModal
+                    id={id}
+                    onOpenSkippedModal={(state) =>
+                        setOnSkippedMemberModal(state)
+                    }
+                    state={onImportModal}
+                    onClose={(state) => setOnImportModal(state)}
+                />
+                <SkippedMemberModal
+                    state={onSkippedMemberModal}
+                    onClose={(state) => setOnSkippedMemberModal(state)}
+                />
+                <div className="flex lg:space-y-2 flex-col lg:flex-row lg:justify-between space-y-2 relative w-full items-center gap-x-4 text-muted-foreground">
+                    <div className="w-full lg:w-fit relative">
+                        <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
+                        <Input
+                            value={searchVal}
+                            ref={onFocusSearch}
+                            placeholder="Search..."
+                            onChange={(event) =>
+                                setSearchVal(event.target.value)
+                            }
+                            className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        />
+                    </div>
+                    <div className="overflow-x-scroll max-w-full lg:max-w-none thin-scroll">
+                        <div className="flex w-fit items-center space-x-1 flex-auto md:justify-end justify-evenly">
+                            <div className="">
+                                <ActionTooltip content="Scan Passbook Number">
+                                    <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        className="cursor-pointer  "
+                                        onClick={() =>
+                                            onOpenQR({
+                                                onScan: (val) => {
+                                                    if (val.length === 0)
+                                                        return;
+                                                    setSearchVal(
+                                                        val[0].rawValue
+                                                    );
+                                                },
+                                            })
+                                        }
+                                    >
+                                        <ScanLine className="size-4" />
+                                    </Button>
+                                </ActionTooltip>
+                            </div>
+                            <DataTableViewOptions
+                                className="h-10"
+                                table={table}
+                            />
+                            <Button
+                                variant={"secondary"}
+                                disabled={isFetching || isRefetchingUpdateMembersPicture}
+                                onClick={() => {
+                                    mutate({ id, members: membersData })
+                                    refetch()
+                                }}
+                                className="gap-x-2"
+                                size="icon"
+                            >
+                                {isFetching || isRefetchingUpdateMembersPicture ?  (
+                                    <LoadingSpinner />
+                                ) : (
+                                    <GrRotateRight className="size-4" />
+                                )}
+                            </Button>
+                            <Button
+                                size="sm"
+                                className={cn(
+                                    "flex  gap-x-2  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                )}
+                                disabled={isBroadcasting}
+                                onClick={() => setExportPbQrs(true)}
+                            >
+                                <p>
+                                    <QrCode className="size-4 mr-1 inline" />
+                                    Export PB QR
+                                </p>
+                            </Button>
+                            {!isStaff && (
+                                <ActionTooltip
+                                    side="top"
+                                    align="center"
+                                    content={
+                                        <div className="flex items-center gap-x-2">
+                                            <Mails className="size-4" /> Send
+                                            OTP to all members via email
+                                            address.
+                                        </div>
+                                    }
+                                >
+                                    <Button
+                                        size="sm"
+                                        className={cn(
+                                            "flex  gap-x-2  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                        )}
+                                        disabled={isBroadcasting}
+                                        onClick={() => {
+                                            onOpen({
+                                                title: "Bulk OPT Sending",
+                                                description:
+                                                    "You are about to send all members an OTP. Are you sure?",
+                                                onConfirm: () => broadcastOTP(),
+                                            });
+                                        }}
+                                    >
+                                        {" "}
+                                        <p>
+                                            Send all{" "}
+                                            <span className="hidden lg:inline-block">
+                                                OTP
+                                            </span>
+                                        </p>
+                                        {isBroadcasting ? (
+                                            <LoadingSpinner />
+                                        ) : (
+                                            <Send className="w-4 h-4" />
+                                        )}
+                                    </Button>
+                                </ActionTooltip>
+                            )}
+                             {!isStaff && (
+                                <ActionTooltip
+                                    side="top"
+                                    align="center"
+                                    content={
+                                        <div className="flex items-center gap-x-2">
+                                            <PersonStandingIcon className="size-4" />{" "}
+                                            Add Specific Members.
+                                        </div>
+                                    }
+                                >
+                                    <Button
+                                        size="sm"
+                                        className={cn(
+                                            "flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                        )}
+                                        onClick={() => {
+                                            setCreateMember(true);
+                                        }}
+                                    >
+                                        <p>
+                                            Add{" "}
+                                            <span className="hidden lg:inline-block">
+                                                Member
+                                            </span>
+                                        </p>
+                                        <Plus className="w-4 h-4" />
+                                    </Button>
+                                </ActionTooltip>
+                            )}
+                            {!isStaff && (
+                                <ActionTooltip
+                                    side="top"
+                                    align="center"
+                                    content={
+                                        <div className="flex items-center gap-x-2">
+                                            <Users className="size-4" /> Bulk
+                                            Creation.
+                                        </div>
+                                    }
+                                >
+                                    <Button
+                                        size="sm"
+                                        className={cn(
+                                            "flex-none flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                        )}
+                                        onClick={() => {
+                                            setOnImportModal(true);
+                                        }}
+                                    >
+                                        <p>
+                                            csv{" "}
+                                            <span className="hidden lg:inline-block">
+                                                import
+                                            </span>
+                                        </p>
+                                        <Plus className="w-4 h-4" />
+                                    </Button>
+                                </ActionTooltip>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
-         </div>
-         <DataTable
-            className="py-5 overflow-y-auto min-h-[65vh] overflow-auto overscroll-y-none flex-1 bg-background dark:bg-secondary/30 rounded-2xl"
-            isError={isError}
-            isLoading={isLoading || isFetching}
-            table={table}
-         />
-         <div className="lg:hidden ">
-            <DataTableBasicPagination2 table={table} />
-         </div>
-         <div className="hidden lg:block">
-            <DataTablePagination
-               pageSizes={[20, 40, 60, 80, 100]}
-               table={table}
+            <DataTable
+                className="py-5 overflow-y-auto min-h-[65vh] overflow-auto overscroll-y-none flex-1 bg-background dark:bg-secondary/30 rounded-2xl"
+                isError={isError}
+                isLoading={isLoading || isFetching}
+                table={table}
             />
-         </div>
-      </div>
-   );
+            <div className="lg:hidden ">
+                <DataTableBasicPagination2 table={table} />
+            </div>
+            <div className="hidden lg:block">
+                <DataTablePagination
+                    pageSizes={[20, 40, 60, 80, 100]}
+                    table={table}
+                />
+            </div>
+        </div>
+    );
 };
 
 export default MemberTable;
