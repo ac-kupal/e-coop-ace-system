@@ -46,6 +46,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { IoMdPhotos } from "react-icons/io";
 
 type Props = {
     id: number;
@@ -187,20 +188,49 @@ const MemberTable = ({ id, user }: Props) => {
                             />
                             <Button
                                 variant={"secondary"}
-                                disabled={isFetching || isRefetchingUpdateMembersPicture}
-                                onClick={() => {
-                                    mutate({ id, members: membersData })
-                                    refetch()
-                                }}
+                                disabled={isFetching}
+                                onClick={() => refetch()}
                                 className="gap-x-2"
                                 size="icon"
                             >
-                                {isFetching || isRefetchingUpdateMembersPicture ?  (
+                                {isFetching ?  (
                                     <LoadingSpinner />
                                 ) : (
                                     <GrRotateRight className="size-4" />
                                 )}
                             </Button>
+                            {!isStaff && (
+                                <ActionTooltip
+                                    side="top"
+                                    align="center"
+                                    content={
+                                        <div className="flex items-center gap-x-2">
+                                            <Users className="size-4" />Sync member's pictures from database
+                                        </div>
+                                    }
+                                >
+                                    <Button
+                                        size="sm"
+                                        className={cn(
+                                            "flex-none flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                        )}
+                                        onClick={() => {
+                                            mutate({ id: id, members: membersData})
+                                        }}
+                                    >
+                                        <p>
+                                            <span className="hidden lg:inline-block">
+                                                 Sync Member's Pictures 
+                                            </span>
+                                        </p>
+                                        {isRefetchingUpdateMembersPicture ? (
+                                             <LoadingSpinner className="dark:text-black text-white " />
+                                          ) : (
+                                            <IoMdPhotos />
+                                         )}
+                                    </Button>
+                                </ActionTooltip>
+                            )}
                             <Button
                                 size="sm"
                                 className={cn(
@@ -214,6 +244,7 @@ const MemberTable = ({ id, user }: Props) => {
                                     Export PB QR
                                 </p>
                             </Button>
+                      
                             {!isStaff && (
                                 <ActionTooltip
                                     side="top"
@@ -316,6 +347,7 @@ const MemberTable = ({ id, user }: Props) => {
                                     </Button>
                                 </ActionTooltip>
                             )}
+                             
                         </div>
                     </div>
                 </div>
