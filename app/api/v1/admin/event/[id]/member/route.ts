@@ -70,25 +70,25 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
         const data = await req.json();
         const eventId = Number(params.id);
         validateId(eventId);
-        
+
         if (!Array.isArray(data)) {
             throw new Error("Invalid data format, expected an array.");
-        }   
+        }
 
-        const updatedMembers = await Promise.all(
-            data.map(async (member: TMember) => {
-                return db.eventAttendees.update({
-                    where: {
-                        eventId_passbookNumber: {
-                            eventId: eventId,
-                            passbookNumber: member.passbookNumber.toUpperCase(),
-                        },
-                    },
-                    data: {
-                        picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
-                    },
-                });
-            })
+        const updates = data.map((member: TMember) => ({
+            where: {
+                eventId_passbookNumber: {
+                    eventId,
+                    passbookNumber: member.passbookNumber.toUpperCase(),
+                },
+            },
+            data: {
+                picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
+            },
+        }));
+
+        const updatedMembers = await db.$transaction(
+            updates.map((update) => db.eventAttendees.update(update))
         );
 
         return NextResponse.json(updatedMembers);
@@ -96,3 +96,4 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
         return routeErrorHandler(e, req);
     }
 };
+
