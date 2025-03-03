@@ -102,9 +102,9 @@ export const PATCH = async (
      });
 
       if (missingPictureMembers.length === 0) {
-         return NextResponse.json({
-            message: "All members already have pictures. No updates needed.",
-         });
+        return NextResponse.json({
+            message: "All members' pictures are synced to the database. No updates were made.",
+        });
       }
 
       console.log(
@@ -149,7 +149,7 @@ export const PATCH = async (
       return NextResponse.json({
          updatedMembers: successfulUpdates.slice(0, 5),
          totalUpdated: successfulUpdates.length,
-         message: `Updated ${successfulUpdates.length} members missing pictures.`,
+         message: `Updated ${successfulUpdates.length} members pictures.`,
       });
    } catch (e) {
       return routeErrorHandler(e, req);
