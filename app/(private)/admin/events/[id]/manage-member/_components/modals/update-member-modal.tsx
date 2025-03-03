@@ -237,11 +237,11 @@ const UpdateMemberModal = ({ member, state, onClose, onCancel }: Props) => {
                                             <FormLabel className="flex justify-between">
                                                 <h1>Birthday</h1>{" "}
                                                 <span className="text-[12px] italic text-muted-foreground">
-                                                    yyyy/mm/dd
+                                                    mm/dd/yyyy
                                                 </span>
                                             </FormLabel>
                                             <InputMask
-                                                mask="9999/99/99"
+                                                mask="99/99/9999"
                                                 ref={inputRef}
                                                 value={field.value as any}
                                                 onChange={(some) => {
