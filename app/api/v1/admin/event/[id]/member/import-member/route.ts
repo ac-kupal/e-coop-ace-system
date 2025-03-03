@@ -8,6 +8,8 @@ import { routeErrorHandler } from "@/errors/route-error-handler";
 import { ExcelDateToJSDate, generateOTP, validateId } from "@/lib/server-utils";
 import { generateUserProfileS3URL } from "@/lib/aws-s3";
 
+export const maxDuration = 300;
+
 type MemberData = {
     firstName: string;
     lastName: string;

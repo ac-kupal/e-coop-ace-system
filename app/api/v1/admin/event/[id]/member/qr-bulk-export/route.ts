@@ -9,7 +9,7 @@ import { uploadFile } from "@/services/s3-upload";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { eventPbBulkExportRequestSchema } from "@/types/qr-pb-bulk-export";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 type TParams = { params: { id: number } };
 
