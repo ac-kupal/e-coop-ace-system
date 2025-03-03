@@ -77,25 +77,20 @@ export const PATCH = async (
     { params }: { params: { id: number } }
 ) => {
     try {
-        const startTime = performance.now(); // Start timing
-
         const id = Number(params.id);
         validateId(id);
         const user = await currentUserOrThrowAuthError();
 
-        // ✅ STEP 1: Fetch all existing members from the database (No need to send in the request)
+        // Fetch existing members directly from DB
         const existingMembers = await db.eventAttendees.findMany({
             where: { eventId: id },
-            select: { passbookNumber: true, eventId: true }, // Only fetch what is needed
+            select: { passbookNumber: true, eventId: true },
         });
-
-        console.log(`Fetched ${existingMembers.length} members from DB`);
 
         if (existingMembers.length === 0) {
             return NextResponse.json({ message: "No members found for update." });
         }
 
-        // ✅ STEP 2: Prepare data for update
         const updates = existingMembers.map((member) => ({
             where: {
                 eventId_passbookNumber: {
@@ -108,29 +103,26 @@ export const PATCH = async (
             },
         }));
 
-        // ✅ STEP 3: Process updates in batches
-        const BATCH_SIZE = 500; // Adjust batch size as needed
+        const BATCH_SIZE = 250; // Smaller batch size to speed up execution
         const batches = chunkMemberData(updates, BATCH_SIZE);
 
-        console.log(`Processing ${updates.length} members in ${batches.length} batches`);
+        // ✅ Use Streaming Response
+        const stream = new TransformStream();
+        const writer = stream.writable.getWriter();
+        const encoder = new TextEncoder();
 
-        const batchPromises = batches.map((batch) =>
-            db.$transaction(batch.map((update) => db.eventAttendees.update(update)))
-        );
+        writer.write(encoder.encode(`Processing ${updates.length} members...\n`));
 
-        const results = await Promise.allSettled(batchPromises);
+        for (const batch of batches) {
+            await db.$transaction(batch.map((update) => db.eventAttendees.update(update)));
+            writer.write(encoder.encode(`Batch processed: ${batch.length} members\n`));
+        }
 
-        const successfulUpdates = results
-            .filter((res) => res.status === "fulfilled")
-            .map((res) => (res as PromiseFulfilledResult<any>).value)
-            .flat();
+        writer.write(encoder.encode(`Update complete\n`));
+        writer.close();
 
-        const endTime = performance.now();
-        console.log(`Execution Time: ${(endTime - startTime) / 1000} seconds`);
-
-        return NextResponse.json({
-            updatedMembers: successfulUpdates.slice(0, 5),
-            totalUpdated: successfulUpdates.length,
+        return new Response(stream.readable, {
+            headers: { "Content-Type": "text/plain" },
         });
     } catch (e) {
         return routeErrorHandler(e, req);
