@@ -64,7 +64,7 @@ export const POST = async (req: NextRequest) => {
     }
 };
 
-const chunkMemberData = (array: {passbookNumber:string, eventId:string}[], size: number) => {
+const chunkMemberData = (array: { where: { eventId_passbookNumber: { eventId: number; passbookNumber: string; }; }; data: { picture: string; }; }[], size: number) => {
     const chunkedArr = [];
     for (let i = 0; i < array.length; i += size) {
         chunkedArr.push(array.slice(i, i + size));
@@ -82,33 +82,40 @@ export const PATCH = async (
         const id = Number(params.id);
         validateId(id);
         const user = await currentUserOrThrowAuthError();
-        const membersData = await req.json();
 
-        if (!Array.isArray(membersData)) {
-            throw new Error("Invalid data format, expected an array.");
+        // ✅ STEP 1: Fetch all existing members from the database (No need to send in the request)
+        const existingMembers = await db.eventAttendees.findMany({
+            where: { eventId: id },
+            select: { passbookNumber: true, eventId: true }, // Only fetch what is needed
+        });
+
+        console.log(`Fetched ${existingMembers.length} members from DB`);
+
+        if (existingMembers.length === 0) {
+            return NextResponse.json({ message: "No members found for update." });
         }
 
-        const BATCH_SIZE = 500; // Adjust batch size as needed
-        const batches = chunkMemberData(membersData, BATCH_SIZE);
+        // ✅ STEP 2: Prepare data for update
+        const updates = existingMembers.map((member) => ({
+            where: {
+                eventId_passbookNumber: {
+                    eventId: member.eventId,
+                    passbookNumber: member.passbookNumber.toUpperCase(),
+                },
+            },
+            data: {
+                picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
+            },
+        }));
 
-        console.log(`Processing ${membersData.length} members in ${batches.length} batches`);
+        // ✅ STEP 3: Process updates in batches
+        const BATCH_SIZE = 500; // Adjust batch size as needed
+        const batches = chunkMemberData(updates, BATCH_SIZE);
+
+        console.log(`Processing ${updates.length} members in ${batches.length} batches`);
 
         const batchPromises = batches.map((batch) =>
-            db.$transaction(
-                batch.map((member) =>
-                    db.eventAttendees.update({
-                        where: {
-                            eventId_passbookNumber: {
-                                eventId: id,
-                                passbookNumber: member.passbookNumber.toUpperCase(),
-                            },
-                        },
-                        data: {
-                            picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
-                        },
-                    })
-                )
-            )
+            db.$transaction(batch.map((update) => db.eventAttendees.update(update)))
         );
 
         const results = await Promise.allSettled(batchPromises);
@@ -118,11 +125,15 @@ export const PATCH = async (
             .map((res) => (res as PromiseFulfilledResult<any>).value)
             .flat();
 
-        const endTime = performance.now(); // End timing
+        const endTime = performance.now();
         console.log(`Execution Time: ${(endTime - startTime) / 1000} seconds`);
 
-        return NextResponse.json({ updatedMembers: successfulUpdates.slice(0, 5) });
+        return NextResponse.json({
+            updatedMembers: successfulUpdates.slice(0, 5),
+            totalUpdated: successfulUpdates.length,
+        });
     } catch (e) {
         return routeErrorHandler(e, req);
     }
 };
+
