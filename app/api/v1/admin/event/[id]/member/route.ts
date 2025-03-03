@@ -64,43 +64,64 @@ export const POST = async (req: NextRequest) => {
     }
 };
 
+const chunkMemberData = (array: {passbookNumber:string, eventId:string}[], size: number) => {
+    const chunkedArr = [];
+    for (let i = 0; i < array.length; i += size) {
+        chunkedArr.push(array.slice(i, i + size));
+    }
+    return chunkedArr;
+};
 
-export const PATCH = async (req: NextRequest, { params }: TParams) => {
+export const PATCH = async (
+    req: NextRequest,
+    { params }: { params: { id: number } }
+) => {
     try {
-        const data = await req.json();
-        const eventId = Number(params.id);
-        validateId(eventId);
+        const startTime = performance.now(); // Start timing
 
-        if (!Array.isArray(data)) {
+        const id = Number(params.id);
+        validateId(id);
+        const user = await currentUserOrThrowAuthError();
+        const membersData = await req.json();
+
+        if (!Array.isArray(membersData)) {
             throw new Error("Invalid data format, expected an array.");
         }
 
-        const batchSize = 500; 
-        const updatedMembers = [];
+        const BATCH_SIZE = 500; // Adjust batch size as needed
+        const batches = chunkMemberData(membersData, BATCH_SIZE);
 
-        for (let i = 0; i < data.length; i += batchSize) {
-            const batch = data.slice(i, i + batchSize);
+        console.log(`Processing ${membersData.length} members in ${batches.length} batches`);
 
-            const updates = batch.map((member: { passbookNumber: string; eventId: string }) => ({
-                where: {
-                    eventId_passbookNumber: {
-                        eventId,
-                        passbookNumber: member.passbookNumber.toUpperCase(),
-                    },
-                },
-                data: {
-                    picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
-                },
-            }));
+        const batchPromises = batches.map((batch) =>
+            db.$transaction(
+                batch.map((member) =>
+                    db.eventAttendees.update({
+                        where: {
+                            eventId_passbookNumber: {
+                                eventId: id,
+                                passbookNumber: member.passbookNumber.toUpperCase(),
+                            },
+                        },
+                        data: {
+                            picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
+                        },
+                    })
+                )
+            )
+        );
 
-            const batchResults = await db.$transaction(
-                updates.map((update) => db.eventAttendees.update(update))
-            );
+        const results = await Promise.allSettled(batchPromises);
 
-            updatedMembers.push(...batchResults);
-        }
+        const successfulUpdates = results
+            .filter((res) => res.status === "fulfilled")
+            .map((res) => (res as PromiseFulfilledResult<any>).value)
+            .flat();
 
-        return NextResponse.json(updatedMembers); 
+        const endTime = performance.now(); // End timing
+        console.log(`Execution Time: ${(endTime - startTime) / 1000} seconds`);
+
+        return NextResponse.json({ updatedMembers: successfulUpdates.slice(0, 5) });
     } catch (e) {
         return routeErrorHandler(e, req);
     }
