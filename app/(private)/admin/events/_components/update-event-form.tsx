@@ -50,12 +50,13 @@ interface Props {
 }
 
 const UpdateEventForm = ({ defaultValues, eventId, ...other }: Props) => {
-    const { imageURL, imageFile, onSelectImage, resetPicker } = useImagePick({
+    const { imageURL, imageFile, onSelectImage } = useImagePick({
         initialImageURL: !defaultValues?.coverImage
             ? "/images/default.png"
             : defaultValues.coverImage,
         maxOptimizedSizeMB: 1,
         maxWidthOrHeight: 800,
+        maxPictureSizeMb : 50
     });
 
     const { mutateAsync: uploadImage, isPending: isUploadingImage } =
