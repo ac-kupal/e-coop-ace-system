@@ -17,24 +17,29 @@ const MemberInfoDisplay = ({ member }: Props) => {
                 src={member.picture ?? "/images/default-avatar.png"}
                 fallback={member.firstName}
             />
-            <div className="sapce-y-2 md:space-y-4 text-lg md:text-xl p-4 lg:text-5xl">
-                <p>
-                    <span className="text-muted-foreground mr-6">Name :</span>
-                    {`${member.firstName} ${member.middleName ?? ""} ${member.lastName}`}
-                </p>
-                <p>
-                    <span className="text-muted-foreground mr-6">
-                        PB No &nbsp;:
-                    </span>
-                    {`${member.passbookNumber}`}
-                </p>
-                <p>
-                    <span className="text-muted-foreground mr-6">
-                        Birth Date &nbsp;:
-                    </span>
-                    {`${member.birthday ? format(member.birthday, "MMMM d, yyyy") : "No Birthdate"}`}
-                </p>
-                <div className="flex items-center gap-x-2">
+            <div className="space-y-2 md:space-y-4 text-xl p-4 lg:text-4xl">
+                <div className="flex flex-col gap-y-0.5 justify-center text-center">
+                    <p className="border-b border-muted-foreground/40 dark:border-muted pb-2">
+                        {`${member.firstName} ${member.middleName ?? ""} ${member.lastName}`}{" "}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Name</p>
+                </div>
+                <div className="flex flex-col gap-y-0.5 justify-center text-center">
+                    <p className="border-b border-muted-foreground/40 dark:border-muted pb-2">
+                        {`${member.passbookNumber}`}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                        {" "}
+                        PB.No / ID.No
+                    </p>
+                </div>
+                <div className="flex flex-col gap-y-0.5 justify-center text-center">
+                    <p className="border-b border-muted-foreground/40 dark:border-muted pb-2">
+                        {`${member.birthday ? format(member.birthday, "MMMM d, yyyy") : "No Birthdate"}`}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Birthdate</p>
+                </div>
+                <div className="flex items-center justify-center w-full gap-x-2">
                     {member.registered && (
                         <p className="text-green-400">REGISTERED</p>
                     )}

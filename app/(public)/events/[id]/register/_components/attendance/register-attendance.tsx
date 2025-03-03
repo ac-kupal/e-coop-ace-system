@@ -118,7 +118,7 @@ const RegisterAttendance = ({ event, member, onUnselect }: Props) => {
                         {onUnselect && (
                             <p
                                 onClick={onUnselect}
-                                className="cursor-pointer text-sm underline-offset-8 font-normal hover:underline text-center text-muted-foreground hover:text-foreground duration-300 ease-out"
+                                className="cursor-pointer text-xs underline-offset-8 font-normal hover:underline text-center text-muted-foreground hover:text-foreground duration-300 ease-out"
                             >
                                 Not you? Search member again
                             </p>
