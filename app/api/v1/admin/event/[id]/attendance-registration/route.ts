@@ -1,36 +1,46 @@
-import db from "@/lib/database"
+import db from "@/lib/database";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { eventIdSchema } from "@/validation-schema/commons";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { eventIdSchema, passbookNumberSchema } from "@/validation-schema/commons";
+import { adminRegisterMemberSchema } from "@/validation-schema/event";
 
-type TParams = { params : { id : number }}
+type TParams = { params: { id: number } };
 
-export const POST = async (req : NextRequest, { params } : TParams) => {
-    try{
+export const POST = async (req: NextRequest, { params }: TParams) => {
+    try {
         const eventId = eventIdSchema.parse(params.id);
         const currentUser = await currentUserOrThrowAuthError();
 
-        const passbookNumber = passbookNumberSchema.parse((await req.json()).passbookNumber)
+        const { passbookNumber, operation } =
+            await adminRegisterMemberSchema.parseAsync(await req.json());
 
-        const updateMemberAttendee = await db.eventAttendees.update({
-            where : { eventId_passbookNumber : { 
-                eventId, 
-                passbookNumber
-            }},
-            data : {
-                registered : true,
-                registrationAssistId : currentUser.id
-            }
-        })
+        await db.eventAttendees.update({
+            where: {
+                eventId_passbookNumber: {
+                    eventId,
+                    passbookNumber,
+                },
+            },
+            data: {
+                registered: operation === "register" ? true : false,
+                registrationAssistId: currentUser.id,
+            },
+        });
 
         return NextResponse.json("Attendance Registered");
-    }catch(e){
-        if(e instanceof Prisma.PrismaClientKnownRequestError)
-            if(e.code === "P2025") 
-                return NextResponse.json({ message : "The member you are trying to register doesn't exist."}, { status : 400 })
-        return routeErrorHandler(e, req)
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError)
+            if (e.code === "P2025")
+                return NextResponse.json(
+                    {
+                        message:
+                            "The member you are trying to register doesn't exist.",
+                    },
+                    { status: 400 }
+                );
+        return routeErrorHandler(e, req);
     }
-}
+};

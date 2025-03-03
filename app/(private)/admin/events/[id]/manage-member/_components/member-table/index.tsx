@@ -102,14 +102,15 @@ const MemberTable = ({ id, user }: Props) => {
     }, []);
 
     const debouncedValue = useDebounce<string>(searchVal, 500);
-    
+
     useEffect(() => {
         setGlobalFilter(debouncedValue);
     }, [debouncedValue, setGlobalFilter]);
 
     const isStaff = user.role === Role.staff;
 
-    const { mutate, isPending: isRefetchingUpdateMembersPicture } =  useUpdateEventAttendees();
+    const { mutate, isPending: isRefetchingUpdateMembersPicture } =
+        useUpdateEventAttendees();
 
     const membersData = data.map((member) => ({
         passbookNumber: member.passbookNumber,
@@ -158,7 +159,7 @@ const MemberTable = ({ id, user }: Props) => {
                             className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                     </div>
-                    <div className="overflow-x-scroll max-w-full lg:max-w-none thin-scroll">
+                    <div className="overflow-x-scroll max-w-full lg:max-w-none thin-scroll pb-1">
                         <div className="flex w-fit items-center space-x-1 flex-auto md:justify-end justify-evenly">
                             <div className="">
                                 <ActionTooltip content="Scan Passbook Number">
@@ -193,7 +194,7 @@ const MemberTable = ({ id, user }: Props) => {
                                 className="gap-x-2"
                                 size="icon"
                             >
-                                {isFetching ?  (
+                                {isFetching ? (
                                     <LoadingSpinner />
                                 ) : (
                                     <GrRotateRight className="size-4" />
@@ -205,7 +206,9 @@ const MemberTable = ({ id, user }: Props) => {
                                     align="center"
                                     content={
                                         <div className="flex items-center gap-x-2">
-                                            <Users className="size-4" />Sync member's pictures from database
+                                            <Users className="size-4" />
+                                            Sync member&apos;s pictures from
+                                            database
                                         </div>
                                     }
                                 >
@@ -215,19 +218,22 @@ const MemberTable = ({ id, user }: Props) => {
                                             "flex-none flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                                         )}
                                         onClick={() => {
-                                            mutate({ id: id, members: membersData})
+                                            mutate({
+                                                id: id,
+                                                members: membersData,
+                                            });
                                         }}
                                     >
                                         <p>
                                             <span className="hidden lg:inline-block">
-                                                 Sync Member's Pictures 
+                                                Sync Member&apos;s Pictures
                                             </span>
                                         </p>
                                         {isRefetchingUpdateMembersPicture ? (
-                                             <LoadingSpinner className="dark:text-black text-white " />
-                                          ) : (
+                                            <LoadingSpinner className="dark:text-black text-white " />
+                                        ) : (
                                             <IoMdPhotos />
-                                         )}
+                                        )}
                                     </Button>
                                 </ActionTooltip>
                             )}
@@ -244,7 +250,7 @@ const MemberTable = ({ id, user }: Props) => {
                                     Export PB QR
                                 </p>
                             </Button>
-                      
+
                             {!isStaff && (
                                 <ActionTooltip
                                     side="top"
@@ -287,7 +293,7 @@ const MemberTable = ({ id, user }: Props) => {
                                     </Button>
                                 </ActionTooltip>
                             )}
-                             {!isStaff && (
+                            {!isStaff && (
                                 <ActionTooltip
                                     side="top"
                                     align="center"
@@ -347,7 +353,6 @@ const MemberTable = ({ id, user }: Props) => {
                                     </Button>
                                 </ActionTooltip>
                             )}
-                             
                         </div>
                     </div>
                 </div>

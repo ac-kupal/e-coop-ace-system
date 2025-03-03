@@ -1,6 +1,8 @@
 import { EventType } from "@prisma/client";
 import z from "zod";
 import { memberSearchOptionEnums } from "./event-settings";
+import { eventIdParamSchema } from "./api-params";
+import { passbookNumberSchema } from "./commons";
 
 const commonFieldErrors = {
     required_error: "This field is required",
@@ -10,6 +12,11 @@ const commonFieldErrors = {
 const commonFieldErrorsMinimum = {
     required_error: "Field must contain at least 1 character(s)",
 };
+
+export const adminRegisterMemberSchema = z.object({
+    passbookNumber: passbookNumberSchema,
+    operation: z.enum(["register", "unregister"]).default("register"),
+});
 
 export const createEventSchema = z.object({
     title: z
