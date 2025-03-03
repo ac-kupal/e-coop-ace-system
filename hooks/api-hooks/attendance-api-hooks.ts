@@ -106,5 +106,6 @@ export const useAttendanceStats = ({
             totalAttendees: 0,
             totalIsRegistered: 0,
         },
+        refetchInterval: 5 * 1000,
     });
 };
