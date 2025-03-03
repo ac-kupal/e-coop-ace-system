@@ -23,6 +23,7 @@ const Attendance = ({ eventId, event }: Props) => {
         return (
             <MemberSearch
                 eventId={eventId}
+                enableRecentMember={false}
                 onFound={(member) => setMember(member)}
             />
         );

@@ -31,10 +31,16 @@ import { usePublicGetEventById } from "@/hooks/public-api-hooks/use-events-api";
 type Props = {
     eventId: number;
     disableQr?: boolean;
+    enableRecentMember?: boolean;
     onFound: (member: TMemberAttendeesMinimalInfo) => void;
 };
 
-const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
+const MemberSearch = ({
+    eventId,
+    disableQr = false,
+    enableRecentMember = true,
+    onFound,
+}: Props) => {
     const [searchMode, setSearchMode] =
         useState<MemberSearchMode>("ByPassbook");
     const { searchResults, searchMember, isPending, isError, error, reset } =
@@ -67,10 +73,12 @@ const MemberSearch = ({ eventId, onFound, disableQr = false }: Props) => {
 
     return (
         <div className="flex flex-col items-center gap-y-4">
-            <RecentMember
-                eventId={eventId}
-                onSelect={(member) => onFound(member)}
-            />
+            {enableRecentMember && (
+                <RecentMember
+                    eventId={eventId}
+                    onSelect={(member) => onFound(member)}
+                />
+            )}
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit((pbForm) =>
