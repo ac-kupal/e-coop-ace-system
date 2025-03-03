@@ -13,129 +13,143 @@ export const maxDuration = 300;
 type TParams = { params: { id: number } };
 
 export const GET = async (req: NextRequest, { params }: TParams) => {
-    try {
-        const eventId = eventIdSchema.parse(params.id);
-        
-        const eventAttendees = await db.eventAttendees.findMany({
-            where: { eventId },
-            include: {
-                event: {
-                    select: {
-                        election: {
-                            select: {
-                                id: true,
-                            },
-                        },
-                    },
-                },
+   try {
+      const eventId = eventIdSchema.parse(params.id);
+
+      const eventAttendees = await db.eventAttendees.findMany({
+         where: { eventId },
+         include: {
+            event: {
+               select: {
+                  election: {
+                     select: {
+                        id: true,
+                     },
+                  },
+               },
             },
-            orderBy: [{ createdAt: "desc" }, { updatedAt: "desc" }],
-        });
-        return NextResponse.json(eventAttendees);
-    } catch (e) {
-        routeErrorHandler(e, req);
-    }
+         },
+         orderBy: [{ createdAt: "desc" }, { updatedAt: "desc" }],
+      });
+      return NextResponse.json(eventAttendees);
+   } catch (e) {
+      routeErrorHandler(e, req);
+   }
 };
 
 export const POST = async (req: NextRequest) => {
-    try {
-        const data = await req.json();
-        const user = await currentUserOrThrowAuthError();
+   try {
+      const data = await req.json();
+      const user = await currentUserOrThrowAuthError();
 
-        const memberData = {
-            ...data,
-            createdBy: user.id,
-            voteOtp: generateOTP(6),
-            picture:
-                data.picture && data.picture.startsWith("https://")
-                    ? data.picture
-                    : generateUserProfileS3URL(
-                          data.passbookNumber.toUpperCase()
-                      ),
-        };
+      const memberData = {
+         ...data,
+         createdBy: user.id,
+         voteOtp: generateOTP(6),
+         picture:
+            data.picture && data.picture.startsWith("https://")
+               ? data.picture
+               : generateUserProfileS3URL(data.passbookNumber.toUpperCase()),
+      };
 
-        createMemberWithUploadSchema.parse(memberData);
+      createMemberWithUploadSchema.parse(memberData);
 
-        const newMember = await db.eventAttendees.create({ data: memberData });
+      const newMember = await db.eventAttendees.create({ data: memberData });
 
-        return NextResponse.json(newMember);
-    } catch (e) {
-        return routeErrorHandler(e, req);
-    }
+      return NextResponse.json(newMember);
+   } catch (e) {
+      return routeErrorHandler(e, req);
+   }
 };
 
 const chunkMemberData = (
-    array: { 
-        where: { eventId_passbookNumber: { eventId: number; passbookNumber: string } };
-        data: { picture: string };
-    }[],
-    size: number
+   array: {
+      where: {
+         eventId_passbookNumber: { eventId: number; passbookNumber: string };
+      };
+      data: { picture: string };
+   }[],
+   size: number
 ) => {
-    const chunkedArr = [];
-    for (let i = 0; i < array.length; i += size) {
-        chunkedArr.push(array.slice(i, i + size));
-    }
-    return chunkedArr;
+   const chunkedArr = [];
+   for (let i = 0; i < array.length; i += size) {
+      chunkedArr.push(array.slice(i, i + size));
+   }
+   return chunkedArr;
 };
 
 export const PATCH = async (
-    req: NextRequest,
-    { params }: { params: { id: number } }
+   req: NextRequest,
+   { params }: { params: { id: number } }
 ) => {
-    try {
-        const startTime = performance.now();
+   try {
+      const startTime = performance.now();
 
-        const id = Number(params.id);
-        validateId(id);
-        const user = await currentUserOrThrowAuthError();
+      const id = Number(params.id);
+      validateId(id);
+      const user = await currentUserOrThrowAuthError();
 
-        const existingMembers = await db.eventAttendees.findMany({
-            where: { eventId: id },
-            select: { passbookNumber: true, eventId: true },
-        });
+      const missingPictureMembers = await db.eventAttendees.findMany({
+         where: {
+            eventId: id,
+            OR: [{ picture: null }, { picture: "" }],
+         },
+         select: { passbookNumber: true, eventId: true },
+      });
 
-        if (existingMembers.length === 0) {
-            return NextResponse.json({ message: "No members found for update." });
-        }
+      if (missingPictureMembers.length === 0) {
+         return NextResponse.json({
+            message: "All members already have pictures. No updates needed.",
+         });
+      }
 
-        const updates = existingMembers.map((member) => ({
-            where: {
-                eventId_passbookNumber: {
-                    eventId: member.eventId,
-                    passbookNumber: member.passbookNumber.toUpperCase(),
-                },
+      console.log(
+         `Found ${missingPictureMembers.length} members without pictures`
+      );
+
+      const updates = missingPictureMembers.map((member) => ({
+         where: {
+            eventId_passbookNumber: {
+               eventId: member.eventId,
+               passbookNumber: member.passbookNumber.toUpperCase(),
             },
-            data: {
-                picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
-            },
-        }));
+         },
+         data: {
+            picture: generateUserProfileS3URL(
+               member.passbookNumber.toUpperCase()
+            ),
+         },
+      }));
 
-        const BATCH_SIZE = 100; 
-        const batches = chunkMemberData(updates, BATCH_SIZE);
+      const BATCH_SIZE = 100;
+      const batches = chunkMemberData(updates, BATCH_SIZE);
 
-        console.log(`Processing ${updates.length} members in ${batches.length} batches`);
+      console.log(
+         `Processing ${updates.length} members in ${batches.length} batches`
+      );
 
-        // ✅ Run batches in parallel instead of sequentially
-        const batchPromises = batches.map((batch) =>
-            db.$transaction(batch.map((update) => db.eventAttendees.update(update)))
-        );
+      const batchPromises = batches.map((batch) =>
+         db.$transaction(
+            batch.map((update) => db.eventAttendees.update(update))
+         )
+      );
 
-        const results = await Promise.allSettled(batchPromises);
+      const results = await Promise.allSettled(batchPromises);
 
-        const successfulUpdates = results
-            .filter((res) => res.status === "fulfilled")
-            .map((res) => (res as PromiseFulfilledResult<any>).value)
-            .flat();
+      const successfulUpdates = results
+         .filter((res) => res.status === "fulfilled")
+         .map((res) => (res as PromiseFulfilledResult<any>).value)
+         .flat();
 
-        const endTime = performance.now();
-        console.log(`Execution Time: ${(endTime - startTime) / 1000} seconds`);
+      const endTime = performance.now();
+      console.log(`Execution Time: ${(endTime - startTime) / 1000} seconds`);
 
-        return NextResponse.json({
-            updatedMembers: successfulUpdates.slice(0, 5),
-            totalUpdated: successfulUpdates.length,
-        });
-    } catch (e) {
-        return routeErrorHandler(e, req);
-    }
+      return NextResponse.json({
+         updatedMembers: successfulUpdates.slice(0, 5),
+         totalUpdated: successfulUpdates.length,
+         message: `Updated ${successfulUpdates.length} members missing pictures.`,
+      });
+   } catch (e) {
+      return routeErrorHandler(e, req);
+   }
 };
-
