@@ -131,6 +131,7 @@ model Event {
     coop   Coop @relation(fields: [coopId], references: [id], onDelete: Cascade)
 
     // Event Settings
+    isRegistrationOpen          Boolean          @default(false)
     registrationOnEvent         Boolean          @default(true)
     defaultMemberSearchMode     MemberSearchMode @default(ByPassbook)
     requireBirthdayVerification Boolean          @default(false)
