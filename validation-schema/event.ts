@@ -55,6 +55,12 @@ export const updateEventSchema = z.object({
     location: z.string().min(1, "Event location is required"),
     coverImage: z.any().optional(),
 
+    isRegistrationOpen: z
+        .boolean({
+            invalid_type_error: "invalid registration open tatus",
+        })
+        .default(false),
+
     requireBirthdayVerification: z
         .boolean({
             invalid_type_error: "invalid event settings",

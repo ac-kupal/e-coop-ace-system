@@ -11,7 +11,7 @@ import { useEvent } from "@/hooks/public-api-hooks/use-events-api";
 type Props = { eventId: number };
 
 const RegisterHome = ({ eventId }: Props) => {
-    const { event, isLoading } = useEvent(eventId);
+    const { event, isLoading } = useEvent(eventId, 5 * 1000);
 
     if (isLoading) return <LoadingSpinner className="fixed top-1/2 left-1/2" />;
     if (!event) return <InvalidPrompt message="Event Not Found" />;
@@ -28,6 +28,9 @@ const RegisterHome = ({ eventId }: Props) => {
         return (
             <InvalidPrompt message="This event registration is not yet open" />
         );
+
+    if (!event.isRegistrationOpen)
+        return <InvalidPrompt message="This event registration is not open" />;
 
     return (
         <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">

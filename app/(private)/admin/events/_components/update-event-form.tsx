@@ -6,9 +6,9 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IoIosPower as PowerIcon } from "react-icons/io";
 import { QrCode, CalendarIcon, UserRoundSearch, Cake } from "lucide-react";
 
-import { TEventWithElection } from "@/types";
 import {
     Form,
     FormItem,
@@ -36,6 +36,7 @@ import { updateEventSchema } from "@/validation-schema/event";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import { cn } from "@/lib/utils";
+import { TEventWithElection } from "@/types";
 import useImagePick from "@/hooks/use-image-pick";
 import { useUpdateEventSettings } from "@/hooks/api-hooks/use-events";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
@@ -56,7 +57,7 @@ const UpdateEventForm = ({ defaultValues, eventId, ...other }: Props) => {
             : defaultValues.coverImage,
         maxOptimizedSizeMB: 1,
         maxWidthOrHeight: 800,
-        maxPictureSizeMb : 50
+        maxPictureSizeMb: 50,
     });
 
     const { mutateAsync: uploadImage, isPending: isUploadingImage } =
@@ -204,7 +205,6 @@ const UpdateEventForm = ({ defaultValues, eventId, ...other }: Props) => {
                                     </FormItem>
                                 )}
                             />
-
                             <FormField
                                 name="description"
                                 control={form.control}
@@ -260,6 +260,99 @@ const UpdateEventForm = ({ defaultValues, eventId, ...other }: Props) => {
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="isRegistrationOpen"
+                                    render={({ field }) => {
+                                        const radioValue = field.value
+                                            ? "true"
+                                            : "false";
+                                        return (
+                                            <FormItem className="flex flex-col">
+                                                <FormLabel>
+                                                    Registration Status
+                                                </FormLabel>
+                                                <FormDescription className="text-xs text-muted-foreground">
+                                                    Set registration status to
+                                                    start or end registration.
+                                                    This will override the
+                                                    settings below.
+                                                </FormDescription>
+                                                <FormControl>
+                                                    <RadioGroup
+                                                        onValueChange={(
+                                                            value
+                                                        ) =>
+                                                            field.onChange(
+                                                                value === "true"
+                                                            )
+                                                        }
+                                                        value={radioValue}
+                                                        className="gap-2 flex flex-row"
+                                                    >
+                                                        <div className="relative flex w-full items-start gap-2 rounded-lg border border-input p-4 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-secondary/80 ease-in-out duration-300 hover:bg-secondary/60">
+                                                            <RadioGroupItem
+                                                                value="true"
+                                                                id="isRegistrationOpen-true"
+                                                                aria-describedby="registrationOnEvent-true-description"
+                                                                className="order-1 after:absolute after:inset-0"
+                                                            />
+                                                            <div className="grow space-y-4">
+                                                                <Label htmlFor="isRegistrationOpen-true">
+                                                                    <PowerIcon
+                                                                        className={cn(
+                                                                            "inline size-6 mr-2 text-muted-foreground/40",
+                                                                            field.value &&
+                                                                                "text-primary animate-pulse"
+                                                                        )}
+                                                                    />
+                                                                    Open
+                                                                </Label>
+                                                                <p
+                                                                    id="isRegistrationOpen-true-description"
+                                                                    className="text-xs text-muted-foreground"
+                                                                >
+                                                                    System will
+                                                                    accept
+                                                                    registration
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="relative flex w-full items-start gap-2 rounded-lg border border-muted hover:border-destructive p-4 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-destructive has-[[data-state=checked]]:bg-destructive/10 ease-in-out duration-300 hover:bg-secondary/60">
+                                                            <RadioGroupItem
+                                                                value="false"
+                                                                id="isRegistrationOpen-false"
+                                                                aria-describedby="registrationOnEvent-false-description"
+                                                                className="order-1 after:absolute after:inset-0"
+                                                            />
+                                                            <div className="grow space-y-4">
+                                                                <Label htmlFor="isRegistrationOpen-true">
+                                                                    <PowerIcon
+                                                                        className={cn(
+                                                                            "inline size-6 mr-2 text-muted-foreground/40",
+                                                                            field.value ===
+                                                                                false &&
+                                                                                "text-destructive"
+                                                                        )}
+                                                                    />
+                                                                    Ended
+                                                                </Label>
+                                                                <p
+                                                                    id="isRegistrationOpen-true-description"
+                                                                    className="text-xs text-muted-foreground"
+                                                                >
+                                                                    No member
+                                                                    can register
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </RadioGroup>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        );
+                                    }}
+                                />
                                 <FormField
                                     control={form.control}
                                     name="registrationOnEvent"

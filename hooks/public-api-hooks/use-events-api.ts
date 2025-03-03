@@ -33,7 +33,7 @@ export const useEventList = () => {
     return { eventList, isFetching, isLoading };
 };
 
-export const useEvent = (eventId: number) => {
+export const useEvent = (eventId: number, interval: number = 2 * 60 * 1000) => {
     const {
         data: event,
         refetch,
@@ -55,7 +55,7 @@ export const useEvent = (eventId: number) => {
                 throw errorMessage;
             }
         },
-        refetchInterval: 2 * 60 * 1000,
+        refetchInterval: interval,
     });
 
     return { event, isFetching, isLoading };

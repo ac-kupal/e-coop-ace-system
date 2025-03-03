@@ -2,16 +2,18 @@
 import React from "react";
 import { toast } from "sonner";
 import { Sigma } from "lucide-react";
+import { IoIosPower as PowerIcon } from "react-icons/io";
+
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 import {
-    Card,
-    CardTitle,
-    CardHeader,
-    CardContent,
-    CardDescription,
-} from "@/components/ui/card";
-
+    useGetEventById,
+    useUpdateEventRegistrationStatus,
+} from "@/hooks/api-hooks/use-events";
 import { useAttendanceStats } from "@/hooks/api-hooks/attendance-api-hooks";
+import ActionTooltip from "@/components/action-tooltip";
+import { cn } from "@/lib/utils";
 import LoadingSpinner from "@/components/loading-spinner";
 
 interface Props {
@@ -19,6 +21,16 @@ interface Props {
 }
 
 const AttendanceQuorum = ({ eventId }: Props) => {
+    const { data: event, isFetching } = useGetEventById({ eventId });
+
+    const { mutate: toggleRegistrationOpen, isPending } =
+        useUpdateEventRegistrationStatus({
+            eventId,
+            onSuccess: () =>
+                toast.success("Event registration status was updated."),
+            onError: () => toast.success("Failed to update event status"),
+        });
+
     const { data: attendanceStats, isRefetching: isLoadingAttendanceStats } =
         useAttendanceStats({
             eventId,
@@ -33,33 +45,63 @@ const AttendanceQuorum = ({ eventId }: Props) => {
                 </div>
                 <h1 className="font-medium">Quorum</h1>
             </div>
+            <ActionTooltip
+                content={
+                    event?.isRegistrationOpen
+                        ? "End Registration"
+                        : "Reopen Registration"
+                }
+            >
+                <Button
+                    size="sm"
+                    variant={
+                        event?.isRegistrationOpen ? "secondary" : "destructive"
+                    }
+                    onClick={() =>
+                        toggleRegistrationOpen({
+                            isRegistrationOpen: !event?.isRegistrationOpen,
+                        })
+                    }
+                    className={cn(
+                        "size-fit p-2 border absolute font-normal group right-2 rounded-xl top-2",
+                        event?.isRegistrationOpen
+                            ? "text-primary hover:bg-primary/10 hover:text-primary"
+                            : "text-destructive-foreground bg-destructive/30 hover:bg-destructive/40"
+                    )}
+                >
+                    <PowerIcon
+                        className={cn(
+                            "size-4 mr-2 text-foreground",
+                            event?.isRegistrationOpen
+                                ? "animate-pulse text-primary"
+                                : "text-muted-foreground/40 group-hover:text-destructive-foreground"
+                        )}
+                    />
+                    {isFetching || isPending ? (
+                        <LoadingSpinner />
+                    ) : event?.isRegistrationOpen ? (
+                        "End Registration"
+                    ) : (
+                        "Open Registration"
+                    )}
+                </Button>
+            </ActionTooltip>
             <CardContent className="space-y-2">
                 <div className="flex items-center gap-x-4">
                     <h1>Total Attendance</h1>
-                    {!attendanceStats && isLoadingAttendanceStats ? (
-                        <>
-                            <p className="text-muted-foreground">...</p>
-                            <LoadingSpinner className="size-6 text-muted-foreground absolute top-4 right-4" />
-                        </>
-                    ) : attendanceStats ? (
-                        <h1 className="font-bold text-xl xl:text-3xl text-primary">
-                            {attendanceStats.totalAttendees > 0
-                                ? (
-                                      (attendanceStats.totalIsRegistered /
-                                          attendanceStats.totalAttendees) *
-                                      100
-                                  ).toLocaleString("en-US", {
-                                      minimumFractionDigits: 2,
-                                      maximumFractionDigits: 2,
-                                  })
-                                : "0"}{" "}
-                            %
-                        </h1>
-                    ) : (
-                        <span className="text-3xl text-muted-foreground">
-                            ...
-                        </span>
-                    )}
+                    <h1 className="font-bold text-xl xl:text-3xl text-primary">
+                        {attendanceStats.totalAttendees > 0
+                            ? (
+                                  (attendanceStats.totalIsRegistered /
+                                      attendanceStats.totalAttendees) *
+                                  100
+                              ).toLocaleString("en-US", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                              })
+                            : "0"}{" "}
+                        %
+                    </h1>
                 </div>
 
                 <CardDescription className="text-md">
