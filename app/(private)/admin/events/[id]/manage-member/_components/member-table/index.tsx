@@ -1,10 +1,10 @@
 "use client";
 import {
-    useReactTable,
-    getCoreRowModel,
-    getSortedRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
+   useReactTable,
+   getCoreRowModel,
+   getSortedRowModel,
+   getFilteredRowModel,
+   getPaginationRowModel,
 } from "@tanstack/react-table";
 import { user } from "next-auth";
 import { Role } from "@prisma/client";
@@ -13,14 +13,14 @@ import useDebounce from "@/hooks/use-debounce";
 import React, { useEffect, useRef, useState } from "react";
 
 import {
-    Plus,
-    Send,
-    Users,
-    Mails,
+   Plus,
+   Send,
+   Users,
+   Mails,
     QrCode,
-    ScanLine,
-    SearchIcon,
-    PersonStandingIcon,
+   ScanLine,
+   SearchIcon,
+   PersonStandingIcon,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -38,77 +38,95 @@ import DataTableViewOptions from "@/components/data-table/data-table-view-option
 import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-pagination-2";
 
 import {
-    useBroadcastOTP,
-    getAllEventMembers,
+   useBroadcastOTP,
+   getAllEventMembers,
+   useUpdateEventAttendees,
 } from "@/hooks/api-hooks/member-api-hook";
 
 import { cn } from "@/lib/utils";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { TMember } from "@/types";
+import { IoMdPhotos } from "react-icons/io";
 
 type Props = {
-    id: number;
-    user: user;
+   id: number;
+   user: user;
 };
 
 const MemberTable = ({ id, user }: Props) => {
-    const onFocusSearch = useRef<HTMLInputElement | null>(null);
+   const onFocusSearch = useRef<HTMLInputElement | null>(null);
     const [exportPbQrs, setExportPbQrs] = useState(false);
-    const [searchVal, setSearchVal] = useState("");
-    const [createMember, setCreateMember] = useState(false);
-    const [onImportModal, setOnImportModal] = useState(false);
-    const [globalFilter, setGlobalFilter] = useState<string>("");
-    const [onSkippedMemberModal, setOnSkippedMemberModal] = useState(false);
-    const { onOpenQR } = useQrReaderModal();
-    const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
-    const { data, isError, isLoading, isFetching, refetch } =
-        getAllEventMembers(id);
-    const { onOpen } = useConfirmModal();
+   const [searchVal, setSearchVal] = useState("");
+   const [createMember, setCreateMember] = useState(false);
+   const [onImportModal, setOnImportModal] = useState(false);
+   const [globalFilter, setGlobalFilter] = useState<string>("");
+   const [onSkippedMemberModal, setOnSkippedMemberModal] = useState(false);
+   const { onOpenQR } = useQrReaderModal();
+   const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
+   const { data, isError, isLoading, isFetching, refetch } =
+      getAllEventMembers(id);
+   const { onOpen } = useConfirmModal();
 
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            globalFilter,
-        },
-        initialState: {
-            pagination: { pageIndex: 0, pageSize: 20 },
-        },
-        onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: MembersCustomGlobalFilter,
-    });
+   const table = useReactTable({
+      data,
+      columns,
+      getCoreRowModel: getCoreRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      state: {
+         globalFilter,
+      },
+      initialState: {
+         pagination: { pageIndex: 0, pageSize: 20 },
+      },
+      onGlobalFilterChange: setGlobalFilter,
+      globalFilterFn: MembersCustomGlobalFilter,
+   });
 
-    useEffect(() => {
-        const shortCutCommand = (event: KeyboardEvent) => {
-            if (
-                (event.ctrlKey && event.key === "k") ||
-                (event.altKey && event.key === "k") ||
-                (event.metaKey && event.key === "k")
-            ) {
-                event.preventDefault();
-                onFocusSearch.current?.focus();
-            }
-        };
-        window.addEventListener("keydown", shortCutCommand);
-        return () => {
-            window.removeEventListener("keydown", shortCutCommand);
-        };
-    }, []);
+   useEffect(() => {
+      const shortCutCommand = (event: KeyboardEvent) => {
+         if (
+            (event.ctrlKey && event.key === "k") ||
+            (event.altKey && event.key === "k") ||
+            (event.metaKey && event.key === "k")
+         ) {
+            event.preventDefault();
+            onFocusSearch.current?.focus();
+         }
+      };
+      window.addEventListener("keydown", shortCutCommand);
+      return () => {
+         window.removeEventListener("keydown", shortCutCommand);
+      };
+   }, []);
 
-    const debouncedValue = useDebounce<string>(searchVal, 500);
+   const debouncedValue = useDebounce<string>(searchVal, 500);
 
-    useEffect(() => {
-        setGlobalFilter(debouncedValue);
-    }, [debouncedValue, setGlobalFilter]);
+   useEffect(() => {
+      setGlobalFilter(debouncedValue);
+   }, [debouncedValue, setGlobalFilter]);
 
-    const isStaff = user.role === Role.staff;
+   const isStaff = user.role === Role.staff;
+   const { mutate, isPending: isLoadingUpdatingMembers } =
+      useUpdateEventAttendees();
 
-    if (data === undefined)
-        return <h1 className=" animate-pulse">Loading...</h1>;
+   const membersData = data.map((member) => ({
+      passbookNumber: member.passbookNumber,
+      firstName: member.firstName,
+      middleName: member.middleName ?? undefined,
+      lastName: member.lastName,
+      gender: member.gender,
+      birthday: member.birthday ?? undefined,
+      contact: member.contact ?? undefined,
+      picture: member.picture,
+      eventId: member.eventId,
+      emailAddress: member.emailAddress,
+   }));
+
+   if (data === undefined)
+      return <h1 className=" animate-pulse">Loading...</h1>;
 
     return (
         <div className="lg:space-y-5 space-y-2 min-h-[65vh]">

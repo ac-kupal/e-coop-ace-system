@@ -10,6 +10,7 @@ import {
     TMailSendObject,
     TMemberAttendeesMinimalInfo,
     TMemberWithEventElectionId,
+    TMember,
 } from "@/types";
 import { useRouter } from "next/navigation";
 import { handleAxiosErrorMessage } from "@/utils";
@@ -354,6 +355,7 @@ export const useVoterAuthorizationAssist = (
                 onAuthorize(request.data);
                 return request.data;
             } catch (e) {
+                console.log('error',e )
                 const errorMessage = handleAxiosErrorMessage(e);
                 toast.error(errorMessage);
                 throw errorMessage;
@@ -362,4 +364,34 @@ export const useVoterAuthorizationAssist = (
     });
 
     return { authenticatedVoter, isPending, getAuthorization, isError, error };
+};
+
+
+
+interface TUpdateMembers {
+    id: number;
+    members: TUpdateMember[];
+}
+
+export const useUpdateEventAttendees = () => {
+    return useMutation<void, string, TUpdateMembers>({
+        mutationKey: ['update-event-attendees'],
+        mutationFn: async ({ id, members }) => {
+            try {
+                const response = await axios.patch(`/api/v1/admin/event/${id}/member`, members);
+
+                console.log(response)
+                return response.data;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                toast.error(errorMessage, {
+                    action: { label: 'Try again', onClick: () => location.reload() },
+                });
+                throw errorMessage;
+            }
+        },
+        onSuccess:()=>{
+            toast.success("Member Picture Sync")
+        }
+    });
 };
