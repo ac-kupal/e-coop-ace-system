@@ -380,8 +380,9 @@ export const useUpdateEventAttendees = () => {
                const hasUpdates = response.data.totalUpdated > 0
                if(hasUpdates){
                   toast.success(response.data.message);
+               }else{
+                  toast.message(response.data.message)
                }
-               toast.message(response.data.message)
                return response.data
           } catch (e) {
              const errorMessage = handleAxiosErrorMessage(e);

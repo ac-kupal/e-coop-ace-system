@@ -119,9 +119,7 @@ export const PATCH = async (
             },
          },
          data: {
-            picture:member.picture && member.picture.startsWith("https://")
-            ? member.picture
-            : generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
+            picture: generateUserProfileS3URL(member.passbookNumber.toUpperCase()),
          },
       }));
 
