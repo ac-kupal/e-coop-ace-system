@@ -4,17 +4,17 @@ import { toast } from "sonner";
 import { Sigma } from "lucide-react";
 import { IoIosPower as PowerIcon } from "react-icons/io";
 
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ActionTooltip from "@/components/action-tooltip";
+import LoadingSpinner from "@/components/loading-spinner";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 
+import { cn } from "@/lib/utils";
 import {
     useGetEventById,
     useUpdateEventRegistrationStatus,
 } from "@/hooks/api-hooks/use-events";
 import { useAttendanceStats } from "@/hooks/api-hooks/attendance-api-hooks";
-import ActionTooltip from "@/components/action-tooltip";
-import { cn } from "@/lib/utils";
-import LoadingSpinner from "@/components/loading-spinner";
 
 interface Props {
     eventId: number;
@@ -31,14 +31,13 @@ const AttendanceQuorum = ({ eventId }: Props) => {
             onError: () => toast.success("Failed to update event status"),
         });
 
-    const { data: attendanceStats, isRefetching: isLoadingAttendanceStats } =
-        useAttendanceStats({
-            eventId,
-            onError: () => toast.error("Failed to load event stats"),
-        });
+    const { data: attendanceStats } = useAttendanceStats({
+        eventId,
+        onError: () => toast.error("Failed to load event stats"),
+    });
 
     return (
-        <Card className="w-full md:w-fit flex-auto relative">
+        <Card className="w-full shrink-0 min-w-[400px] md:w-fit flex-auto relative">
             <div className="flex p-4 space-x-2  items-center py-2">
                 <div className="p-1 dark:bg-[#c5a522] bg-[#e7c127] rounded-sm">
                     <Sigma className="size-5 text-slate-200" />

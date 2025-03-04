@@ -35,7 +35,7 @@ const EventLayout = async ({ children, params }: Props) => {
                 <EventHeader params={params} />
                 <BackButton />
             </div>
-            <div className="p-2 w-full rounded-2xl flex flex-col md:flex-row gap-x-2 gap-y-3 lg:space-x-16 justify-between shadow-md bg-background dark:bg-secondary/30">
+            <div className="p-2 w-full rounded-2xl flex flex-col md:flex-row gap-x-2 gap-y-1 md:justify-between shadow-md bg-background dark:bg-secondary/30">
                 <div className="flex flex-row gap-x-4 gap-y-1 text-base flex-wrap 2xl:text-lg">
                     <div className="flex space-x-2 items-center ">
                         <div className="p-1">
