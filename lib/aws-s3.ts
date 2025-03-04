@@ -22,7 +22,7 @@ export const getS3BaseURL = (
 };
 
 export const generateUserProfileS3URL = (pbNumber: string) => {
-    return `${getS3BaseURL("member")}/${pbNumber}`;
+    return `${getS3BaseURL("member")}/${pbNumber}.webp`;
 };
 
 export default s3Client;
