@@ -99,18 +99,31 @@ const Actions = ({
                     Copy event ID
                 </DropdownMenuItem>
                 {event.election && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => {
+                            router.push(
+                                `/admin/events/${event.id}/election/${event.election?.id}/overview`
+                            );
+                        }}
+                        className="px-2 gap-x-2"
+                    >
+                        <Users strokeWidth={2} className="h-4" />
+                        event election
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={() => {
                             if (!event.election) return null;
                             router.push(
-                                `/admin/events/${event.id}/election/${event.election.id}/overview`
+                                `/admin/events/${event.id}/manage-member`
                             );
                         }}
                         className="px-2 gap-x-2"
                     >
                         <Target strokeWidth={2} className="h-4" />
-                        view Election
+                        manage 
                     </DropdownMenuItem>
+                    </>
                 )}
                 {event.election === null ? (
                     <DropdownMenuItem
@@ -356,7 +369,7 @@ const columns: ColumnDef<TEventWithElectionWithCoopWithBranch>[] = [
             <div className="flex justify-end">
                 {row.original.election ? (
                     <Link
-                        href={`/admin/events/${row.original.id}/election/${row.original.election.id}/overview`}
+                        href={`/admin/events/${row.original.id}/manage-member`}
                     >
                         <Button size="sm" className=" rounded-xl h-8">
                             Manage Election

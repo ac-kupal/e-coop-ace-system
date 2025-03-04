@@ -366,22 +366,17 @@ export const useVoterAuthorizationAssist = (
    return { authenticatedVoter, isPending, getAuthorization, isError, error };
 };
 
-interface TUpdateMembers {
-   id: number;
-   members: { passbookNumber: string; eventId: string }[]
-}
-
 export const useUpdateEventAttendees = () => {
-    return useMutation<void, string, TUpdateMembers>({
+    return useMutation<void, string, { id: number } >({
        mutationKey: ["update-event-attendees"],
-       mutationFn: async ({ id }: TUpdateMembers) => {
+       mutationFn: async ({ id }: { id: number }) => {
           try {
                const response =  await axios.patch(`/api/v1/admin/event/${id}/member`);
-               const hasUpdates = response.data.totalUpdated > 0
+               const hasUpdates = response.data.totalUpdated > 0;
                if(hasUpdates){
                   toast.success(response.data.message);
                }else{
-                  toast.message(response.data.message)
+                  toast.message(response.data.message);
                }
                return response.data
           } catch (e) {

@@ -120,11 +120,6 @@ const MemberTable = ({ id, user, event }: Props) => {
         isPending: isPendingUpdateMembersPicture,
     } = useUpdateEventAttendees();
 
-    const membersData = data.map((member) => ({
-        passbookNumber: member.passbookNumber,
-        eventId: member.eventId.toString(),
-    }));
-
     const memberTableIsEmpty = data.length === 0;
 
     if (data === undefined)
@@ -234,7 +229,6 @@ const MemberTable = ({ id, user, event }: Props) => {
                                         onClick={() => {
                                             mutate({
                                                 id: id,
-                                                members: membersData,
                                             });
                                         }}
                                     >

@@ -104,14 +104,14 @@ const ElectionReports = ({ params, electionName }: TParams) => {
             </TableRow>
 
             <TableRow className="bg-secondary hover:bg-secondary border-0">
-              <TableCell className="w-[25%] text-center font-bold uppercase text-muted-foreground">
+              <TableCell className="w-[30%] min-w-[300px] text-center font-bold uppercase text-muted-foreground">
                 Voters
               </TableCell>
               {votes?.candidates?.map((candidate) => {
                 return (
                   <TableCell
                     key={candidate.candidateId}
-                    className="text-[13px] w-24 text-white font-medium cursor-pointer"
+                    className="text-[13px] w-24 text-white font-medium cursor-pointer overflow-auto"
                   >
                     <Popover>
                       <PopoverTrigger>
@@ -178,27 +178,16 @@ const ElectionReports = ({ params, electionName }: TParams) => {
             </TableRow>
           </TableHeader>
         </Table>
-        <div className="max-h-[50vh] overflow-auto">
+        <div className="max-h-[50vh] overflow-auto border">
           <Table
             className=" bg-transparent hover:bg-transparent max-h-[50vh] overflow-auto "
             ref={tableRef}
           >
-            <TableHeader className=""></TableHeader>
             <TableBody className="border">
-              <TableRow className="border-0">
-                {/* <TableCell
-                           colSpan={votes.candidates.length + 1}
-                           className="text-center font-bold"
-                        >
-                           <div className="w-full flex-row flex justify-between">
-                              <p className=" uppercase">voters</p>
-                           </div>
-                        </TableCell> */}
-              </TableRow>
               {votes?.voters.map((voter) => {
                 return (
-                  <TableRow key={voter.id}>
-                    <TableCell className={cn("!w-[26%] bg-secondary/50")}>
+                  <TableRow key={voter.id} className="" >
+                    <TableCell className={cn(" w-[30%] !min-w-[300px] overflow-auto bg-secondary/50")}>
                       {voter.voterName}
                     </TableCell>
                     {voter.votes.map((vote, idx) => {
@@ -219,8 +208,8 @@ const ElectionReports = ({ params, electionName }: TParams) => {
         </div>
         <Table>
           <TableFooter>
-            <TableRow className="bg-secondary">
-              <TableCell className={cn("font-bold !w-[26%] bg-primary")}>
+            <TableRow className="bg-secondary ">
+              <TableCell className={cn("font-bold w-[30%] min-w-[300px] bg-primary overflow-auto")}>
                 Total
               </TableCell>
               {votes?.total.map((total, idx) => {
