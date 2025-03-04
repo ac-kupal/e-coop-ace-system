@@ -65,7 +65,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     lastName: true,
                     contact: true,
                     picture: true,
-                    birthday : true,
+                    birthday: true,
                     registered: true,
                     voted: true,
                 },
@@ -77,6 +77,8 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 },
                 data: {
                     registered: true,
+                    registeredAt: new Date(),
+                    registrationAssistId: null,
                 },
             });
 

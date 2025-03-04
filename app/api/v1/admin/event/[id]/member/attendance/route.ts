@@ -12,7 +12,14 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
         const eventId = eventIdSchema.parse(params.id);
         const currentUser = await currentUserOrThrowAuthError();
 
-        const where = currentUser.role !== "staff" ? { eventId, registered: true } : { eventId, registered: true, registrationAssistId : currentUser.id };
+        const where =
+            currentUser.role !== "staff"
+                ? { eventId, registered: true }
+                : {
+                      eventId,
+                      registered: true,
+                      registrationAssistId: currentUser.id,
+                  };
 
         const eventAttendees = await db.eventAttendees.findMany({
             where,

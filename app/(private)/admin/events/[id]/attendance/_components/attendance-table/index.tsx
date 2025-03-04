@@ -33,6 +33,7 @@ import { Progress } from "@/components/ui/progress";
 import LoadingSpinner from "@/components/loading-spinner";
 import { GrRotateRight } from "react-icons/gr";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 const AttendanceTable = ({ eventId }: { eventId: number }) => {
     const tableRef = useRef(null);
@@ -42,8 +43,8 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
 
     const {
         data: attendanceList,
-        isLoading,
         isError,
+        isLoading,
         isFetching,
         refetch: refetchAttendanceList,
     } = useAttendanceList({ eventId });
@@ -123,12 +124,26 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
     }, []);
 
     const exportToExcel = () => {
+        console.log(
+            attendanceList,
+            attendanceList.map((t) =>
+                format(t.registeredAt ?? new Date(), "MMMM")
+            )
+        );
         const modifiedAttendance = attendanceList.map((attendance) => {
             return {
-                pbno: attendance.passbookNumber,
-                firstname: attendance.firstName,
-                lastname: attendance.lastName,
-                sex: attendance.gender,
+                "PASSBOOK NO/ID": attendance.passbookNumber,
+                FIRSTNAME: attendance.firstName,
+                LASTNAME: attendance.lastName,
+                SEX: attendance.gender,
+                "REGISTRATION TYPE": attendance.registrationAssistId
+                    ? "Staff/Admin"
+                    : "Self Registered",
+                "ASSISTED BY ": `${attendance.registeredBy?.name ?? ""} - ${attendance.registeredBy?.email ?? ""}`,
+                "REGISTRATION DATE":
+                    attendance.registeredAt !== null
+                        ? format(attendance.registeredAt, "MMMM dd yyyy")
+                        : "unknown",
             };
         });
         var wb = utils.book_new();
@@ -139,115 +154,125 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
 
     return (
         <div className="flex flex-1 flex-col  gap-y-5 ">
-            <div className="flex flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
-                <div className="flex items-center gap-x-4 text-muted-foreground">
-                    <div className="w-full lg:w-fit relative">
-                        <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
-                        <Input
-                            value={searchVal}
-                            ref={onFocusSearch}
-                            placeholder="Search..."
-                            onChange={(event) =>
-                                setSearchVal(event.target.value)
-                            }
-                            className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        />
-                    </div>
-                    {userData && userData.user.role !== "staff" && (
-                        <DataTableFacetedFilter
-                            options={[
-                                ...myFilter,
-                                ...users
-                                    .filter(
-                                        (user) => user.id !== userData.user.id
-                                    )
-                                    .map((user) => ({
-                                        label: user.name,
-                                        value: user.id.toString(),
-                                        icon: User,
-                                    })),
-                            ]}
-                            column={table.getColumn("registered by")}
-                            title="Registered by"
-                        />
-                    )}
-                </div>
-                <div className="flex items-center gap-x-1">
-                    <div className="flex flex-col py-1.5 bg-muted/40 dark:bg-muted rounded-xl space-y-1.5 px-4 items-center gap-x-2">
-                        <span className="text-sm">
-                            {attendanceStats.totalIsRegistered || 0} registered
-                            / {attendanceStats.totalAttendees || 0} Total
-                            Members
-                        </span>
-                        <div className="flex w-full items-center gap-x-3">
-                            {isLoadingAttendanceStats && !attendanceStats ? (
-                                <LoadingSpinner />
-                            ) : (
-                                <span className="text-xs text-primary">
-                                    {(
-                                        (attendanceStats.totalIsRegistered /
-                                            attendanceStats.totalAttendees) *
-                                        100
-                                    ).toLocaleString("en-US", {
-                                        maximumFractionDigits: 1,
-                                    })}{" "}
-                                    %
-                                </span>
-                            )}
-                            <Progress
-                                className="h-1.5 flex-1 bg-popover/80"
-                                value={
-                                    (attendanceStats.totalIsRegistered /
-                                        attendanceStats.totalAttendees) *
-                                    100
+            <div className="flex hiiden flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
+                <div className="flex lg:space-y-2 flex-col lg:flex-row lg:justify-between space-y-2 relative w-full items-center gap-x-4 text-muted-foreground">
+                    <div className="flex lg:w-fit items-center gap-x-4 text-muted-foreground">
+                        <div className="w-full lg:w-fit relative">
+                            <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
+                            <Input
+                                value={searchVal}
+                                ref={onFocusSearch}
+                                placeholder="Search..."
+                                onChange={(event) =>
+                                    setSearchVal(event.target.value)
                                 }
+                                className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
                         </div>
-                    </div>
-                    <div className="">
-                        <ActionTooltip content="Scan Passbook Number">
-                            <Button
-                                variant="secondary"
-                                size="sm"
-                                className="cursor-pointer  "
-                                onClick={() =>
-                                    onOpenQR({
-                                        onScan: (val) => {
-                                            if (val.length === 0) return;
-                                            setSearchVal(val[0].rawValue);
-                                        },
-                                    })
-                                }
-                            >
-                                <ScanLine className="size-4" />
-                            </Button>
-                        </ActionTooltip>
-                    </div>
-                    <Button
-                        variant={"secondary"}
-                        disabled={isFetching}
-                        onClick={() => refetch()}
-                        className="gap-x-2"
-                        size="icon"
-                    >
-                        {isFetching ? (
-                            <LoadingSpinner />
-                        ) : (
-                            <GrRotateRight className="size-4" />
+                        {userData && userData.user.role !== "staff" && (
+                            <DataTableFacetedFilter
+                                options={[
+                                    ...myFilter,
+                                    ...users
+                                        .filter(
+                                            (user) =>
+                                                user.id !== userData.user.id
+                                        )
+                                        .map((user) => ({
+                                            label: user.name,
+                                            value: user.id.toString(),
+                                            icon: User,
+                                        })),
+                                ]}
+                                column={table.getColumn("registered by")}
+                                title="Registered by"
+                            />
                         )}
-                    </Button>
-                    <DataTableViewOptions table={table} />
-                    <Button
-                        disabled={isFetching}
-                        className="gap-x-2"
-                        onClick={() => {
-                            exportToExcel();
-                            // const wb = utils.table_to_book(tableRef.current);
-                            // writeFile(wb, `${electionName}_reports.xlsx`);
-                        }}
-                    >
-                        <SiMicrosoftexcel className="size-4" /> Export
-                    </Button>
+                    </div>
+                    <div className="overflow-x-scroll max-w-full lg:max-w-none thin-scroll">
+                        <div className="flex w-fit items-center space-x-1 flex-auto md:justify-end justify-evenly">
+                            <div className="flex flex-col py-1.5 bg-muted/40 dark:bg-muted rounded-xl space-y-1.5 px-4 items-center gap-x-2">
+                                <span className="text-sm">
+                                    {attendanceStats.totalIsRegistered || 0}{" "}
+                                    registered /{" "}
+                                    {attendanceStats.totalAttendees || 0} Total
+                                    Members
+                                </span>
+                                <div className="flex w-full min-w-[300px] items-center gap-x-3">
+                                    {isLoadingAttendanceStats &&
+                                    !attendanceStats ? (
+                                        <LoadingSpinner />
+                                    ) : (
+                                        <span className="text-xs text-primary">
+                                            {(
+                                                (attendanceStats.totalIsRegistered /
+                                                    attendanceStats.totalAttendees) *
+                                                100
+                                            ).toLocaleString("en-US", {
+                                                maximumFractionDigits: 1,
+                                            })}{" "}
+                                            %
+                                        </span>
+                                    )}
+                                    <Progress
+                                        className="h-1.5 flex-1 bg-popover/80"
+                                        value={
+                                            (attendanceStats.totalIsRegistered /
+                                                attendanceStats.totalAttendees) *
+                                            100
+                                        }
+                                    />
+                                </div>
+                            </div>
+                            <div className="">
+                                <ActionTooltip content="Scan Passbook Number">
+                                    <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        className="cursor-pointer  "
+                                        onClick={() =>
+                                            onOpenQR({
+                                                onScan: (val) => {
+                                                    if (val.length === 0)
+                                                        return;
+                                                    setSearchVal(
+                                                        val[0].rawValue
+                                                    );
+                                                },
+                                            })
+                                        }
+                                    >
+                                        <ScanLine className="size-4" />
+                                    </Button>
+                                </ActionTooltip>
+                            </div>
+                            <Button
+                                variant={"secondary"}
+                                disabled={isFetching}
+                                onClick={() => refetch()}
+                                className="gap-x-2"
+                                size="icon"
+                            >
+                                {isFetching ? (
+                                    <LoadingSpinner />
+                                ) : (
+                                    <GrRotateRight className="size-4" />
+                                )}
+                            </Button>
+                            <DataTableViewOptions table={table} />
+                            <Button
+                                disabled={isFetching}
+                                className="gap-x-2 text-primary-foreground"
+                                onClick={() => {
+                                    exportToExcel();
+                                    // const wb = utils.table_to_book(tableRef.current);
+                                    // writeFile(wb, `${electionName}_reports.xlsx`);
+                                }}
+                            >
+                                <SiMicrosoftexcel className="size-4" /> Export
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <DataTable

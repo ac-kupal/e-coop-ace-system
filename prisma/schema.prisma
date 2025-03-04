@@ -175,9 +175,10 @@ model EventAttendees {
     eventId Int
     event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-    registered Boolean @default(false)
-    voted      Boolean @default(false)
-    voteOtp    String?
+    registered   Boolean   @default(false)
+    registeredAt DateTime?
+    voted        Boolean   @default(false)
+    voteOtp      String?
 
     registrationAssistId Int?
     registeredBy         User? @relation(fields: [registrationAssistId], references: [id], onDelete: SetNull)

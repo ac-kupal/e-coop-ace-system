@@ -253,28 +253,34 @@ const Actions = ({
                                                 0
                                             )}
                                         />
-                                        <p className="text-2xl">
+                                        <p className="text-2xl border-b">
                                             {member.firstName}{" "}
                                             {member.middleName}{" "}
                                             {member.lastName}
+                                        </p>{" "}
+                                        <p className="text-center text-muted-foreground text-xs">
+                                            Name
                                         </p>
-                                        <p className="text-sm mt-2">
+                                        <p className="mt-4 text-center min-w-28 border-b-2 text-xl">
+                                            {member.passbookNumber}
+                                        </p>
+                                        <p className="text-center text-muted-foreground text-xs">
+                                            PB/ID
+                                        </p>
+                                        <p className="text-lg mt-2 border-b-2">
                                             {member.birthday
                                                 ? format(
                                                       member.birthday,
                                                       "MMMM d, yyyy"
                                                   )
                                                 : "no birthday defined"}
-                                        </p>
-                                        <p className="text-muted-foreground text-center min-w-28 border-b-2 text-lg">
-                                            {member.passbookNumber}
-                                        </p>
+                                        </p>{" "}
                                         <p className="text-center text-muted-foreground text-xs">
-                                            Passbook No.
+                                            Birth Date.
                                         </p>
                                         <p className="text-sm text-muted-foreground mt-4 text-center">
                                             You are about to register{" "}
-                                            <strong>
+                                            <strong className="text-foreground">
                                                 {member.firstName}{" "}
                                                 {member.middleName}{" "}
                                                 {member.lastName}
@@ -293,7 +299,7 @@ const Actions = ({
                 ) : (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
-                        disabled={!event.isRegistrationOpen}
+                        disabled={!event.isRegistrationOpen || member.voted}
                         onClick={() =>
                             onOpenConfirmModal({
                                 title: "Register Member",
@@ -315,28 +321,34 @@ const Actions = ({
                                                 0
                                             )}
                                         />
-                                        <p className="text-2xl">
+                                        <p className="text-2xl border-b">
                                             {member.firstName}{" "}
                                             {member.middleName}{" "}
                                             {member.lastName}
+                                        </p>{" "}
+                                        <p className="text-center text-muted-foreground text-xs">
+                                            Name
                                         </p>
-                                        <p className="text-sm mt-2">
+                                        <p className="mt-4 text-center min-w-28 border-b-2 text-xl">
+                                            {member.passbookNumber}
+                                        </p>
+                                        <p className="text-center text-muted-foreground text-xs">
+                                            PB/ID
+                                        </p>
+                                        <p className="text-lg mt-2 border-b-2">
                                             {member.birthday
                                                 ? format(
                                                       member.birthday,
                                                       "MMMM d, yyyy"
                                                   )
                                                 : "no birthday defined"}
-                                        </p>
-                                        <p className="text-muted-foreground text-center min-w-28 border-b-2 text-lg">
-                                            {member.passbookNumber}
-                                        </p>
+                                        </p>{" "}
                                         <p className="text-center text-muted-foreground text-xs">
-                                            Passbook No.
+                                            Birth Date.
                                         </p>
                                         <p className="text-sm text-muted-foreground mt-4 text-center">
                                             You are about to unregister{" "}
-                                            <strong>
+                                            <strong className="text-foreground">
                                                 {member.firstName}{" "}
                                                 {member.middleName}{" "}
                                                 {member.lastName}
@@ -493,7 +505,10 @@ const columns = ({
                                 {row.original.firstName.charAt(0).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
-                        <Cell text={row.original.firstName}></Cell>
+                        <Cell
+                            className="whitespace-nowrap"
+                            text={row.original.firstName}
+                        ></Cell>
                     </div>
                 );
             },
@@ -517,7 +532,33 @@ const columns = ({
             header: ({ column }) => (
                 <DataTableColHeader column={column} title="Passbook N0." />
             ),
-            cell: ({ row }) => <Cell text={row.original.passbookNumber}></Cell>,
+            cell: ({ row }) => (
+                <div
+                    onClick={() => {
+                        navigator.clipboard
+                            .writeText(`${row.original.passbookNumber}`)
+                            .then(() => toast.success("Member PB/ID coppied"));
+                    }}
+                    className="font-mono inline-flex items-center gap-x-2"
+                >
+                    <ActionTooltip
+                        content={
+                            <>
+                                Click to Copy Member PB/ID
+                                <CopyIcon
+                                    className="size-4 ml-2 inline"
+                                    strokeWidth="1"
+                                />
+                            </>
+                        }
+                    >
+                        <Cell
+                            text={row.original.passbookNumber}
+                            className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm"
+                        />
+                    </ActionTooltip>
+                </div>
+            ),
         },
         {
             id: "PB QR",
@@ -537,10 +578,9 @@ const columns = ({
             cell: ({ row }) => (
                 <div
                     onClick={() => {
-                        navigator.clipboard.writeText(
-                            `${row.original.voteOtp}`
-                        );
-                        toast.success("Member OTP coppied");
+                        navigator.clipboard
+                            .writeText(`${row.original.voteOtp}`)
+                            .then(() => toast.success("Member OTP coppied"));
                     }}
                     className="font-mono inline-flex items-center gap-x-2"
                 >
@@ -572,6 +612,7 @@ const columns = ({
             ),
             cell: ({ row }) => (
                 <Cell
+                    className="whitespace-nowrap"
                     text={
                         !row.original.birthday
                             ? ""

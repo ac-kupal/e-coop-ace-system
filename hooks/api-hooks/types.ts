@@ -1,6 +1,7 @@
 export interface IQueryHook<T = unknown, E = unknown>
     extends IAPICallback<T, E> {
     enable?: boolean;
+    refetchInterval? : number
 }
 
 export interface IMutationHook<T = unknown, E = unknown>

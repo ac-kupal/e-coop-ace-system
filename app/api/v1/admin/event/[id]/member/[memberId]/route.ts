@@ -1,9 +1,11 @@
-import { routeErrorHandler } from "@/errors/route-error-handler";
-import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { createMemberWithUploadSchema } from "@/validation-schema/member";
 import { NextRequest, NextResponse } from "next/server";
+
 import db from "@/lib/database";
 import { generateUserProfileS3URL } from "@/lib/aws-s3";
+import { currentUserOrThrowAuthError } from "@/lib/auth";
+import { routeErrorHandler } from "@/errors/route-error-handler";
+import { createMemberWithUploadSchema } from "@/validation-schema/member";
+
 type TParams = { params: { id: number; memberId: string } };
 
 export const DELETE = async function name(

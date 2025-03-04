@@ -26,7 +26,9 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
             },
             data: {
                 registered: operation === "register" ? true : false,
-                registrationAssistId: currentUser.id,
+                registeredAt: operation === "register" ? new Date() : null,
+                registrationAssistId:
+                    operation === "register" ? currentUser.id : null,
             },
         });
 

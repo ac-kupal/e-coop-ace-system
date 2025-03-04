@@ -2,27 +2,23 @@
 import { toast } from "sonner";
 import { ColumnDef } from "@tanstack/react-table";
 
-import {
-    Copy,
-    MenuIcon,
-    MonitorSmartphone,
-    TabletSmartphone,
-} from "lucide-react";
+import { Copy, MenuIcon, TabletSmartphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
 import {
     DropdownMenu,
-    DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
+    DropdownMenuContent,
     DropdownMenuTrigger,
+    DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 import { TMemberAttendeesWithRegistrationAssistance } from "@/types";
 import UserAvatar from "@/components/user-avatar";
+import { format } from "date-fns";
 
 const Actions = ({
     member,
@@ -96,7 +92,7 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
                             {row.original.firstName.charAt(0).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
-                    <h1 className="font-medium">{row.original.firstName}</h1>
+                    <h1 className="font-medium whitespace-nowrap">{row.original.firstName}</h1>
                 </div>
             );
         },
@@ -126,7 +122,7 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
             />
         ),
         cell: ({ row }) => (
-            <div className="flex gap-x-2 items-center justify-center">
+            <div className="flex gap-x-2 min-w-[200px] items-center justify-center">
                 {row.original.registeredBy ? (
                     <div className="px-2 text-sm py-1 flex items-center justify-center gap-x-2 rounded-full bg-secondary text-[#457f5a] dark:text-[#68ca93]">
                         <UserAvatar
@@ -148,9 +144,10 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
             </div>
         ),
         filterFn: (row, id, value) => {
-            if(row.original.registeredBy) return value.includes(row.original.registeredBy.id.toString())
+            if (row.original.registeredBy)
+                return value.includes(row.original.registeredBy.id.toString());
             return false;
-        }
+        },
     },
     {
         accessorKey: "contact",
@@ -158,6 +155,26 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
             <DataTableColHeader column={column} title="contact" />
         ),
         cell: ({ row }) => <div className="">{row.original.contact}</div>,
+    },
+    {
+        accessorKey: "registeredAt",
+        header: ({ column }) => (
+            <DataTableColHeader
+                column={column}
+                title="Registration/Attendance Date"
+            />
+        ),
+        cell: ({
+            row: {
+                original: { registeredAt },
+            },
+        }) => (
+            <div className="">
+                {registeredAt
+                    ? format(registeredAt, "MMMM d, yyyy 'at' h:mm a")
+                    : "invalid date time"}
+            </div>
+        ),
     },
     {
         accessorKey: "emailAddress",
