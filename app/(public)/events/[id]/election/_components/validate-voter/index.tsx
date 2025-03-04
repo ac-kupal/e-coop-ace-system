@@ -23,6 +23,7 @@ const ValidateVoter = ({ electionWithEvent }: Props) => {
     if (!voter)
         return (
             <MemberSearch
+                reason="voting"
                 eventId={electionWithEvent.eventId}
                 onFound={(member) => setVoter(member)}
             />
@@ -30,7 +31,10 @@ const ValidateVoter = ({ electionWithEvent }: Props) => {
 
     return (
         <div className="flex flex-col px-8 gap-y-2 lg:gap-y-16">
-            <MemberInfoDisplay member={voter} />
+            <MemberInfoDisplay
+                member={voter}
+                hideBirthday={electionWithEvent.allowBirthdayVerification}
+            />
             <div className="flex flex-col items-center">
                 {voter.voted ? (
                     <div className="flex flex-col items-center gap-y-4">
@@ -48,6 +52,7 @@ const ValidateVoter = ({ electionWithEvent }: Props) => {
                 ) : (
                     <AuthorizeVoter
                         voter={voter}
+                        onUnselect={() => setVoter(null)}
                         electionWithEvent={electionWithEvent}
                         onAuthorize={() => {
                             router.push(

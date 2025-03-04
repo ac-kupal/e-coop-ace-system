@@ -1,4 +1,5 @@
 import z from "zod";
+import { useEffect } from "react";
 import { OTPInput } from "input-otp";
 import { useForm } from "react-hook-form";
 import ReactInputMask from "react-input-mask";
@@ -12,26 +13,30 @@ import ErrorAlert from "@/components/error-alert/error-alert";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 import {
     Form,
-    FormControl,
-    FormField,
     FormItem,
+    FormField,
     FormLabel,
+    FormControl,
     FormMessage,
 } from "@/components/ui/form";
 
 import { cn } from "@/lib/utils";
 import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
-import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
 
 type Props = {
     voter: TMemberAttendeesMinimalInfo;
     electionWithEvent: TElectionWithEvent;
+    onUnselect? : () => void;
     onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void;
 };
 
-const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
+const AuthorizeVoter = ({
+    voter,
+    electionWithEvent,
+    onUnselect,
+    onAuthorize,
+}: Props) => {
     type TForm = z.infer<typeof voterVerificationFormSchema>;
 
     const form = useForm<TForm>({
@@ -85,6 +90,7 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                                             {...field}
                                             autoFocus
                                             maxLength={6}
+                                            disabled={disabled}
                                             onComplete={() => {
                                                 if (
                                                     !electionWithEvent.allowBirthdayVerification
@@ -187,6 +193,14 @@ const AuthorizeVoter = ({ voter, electionWithEvent, onAuthorize }: Props) => {
                                 "Vote"
                             )}
                         </Button>
+                        {onUnselect && (
+                            <p
+                                onClick={onUnselect}
+                                className="cursor-pointer text-xs underline-offset-8 font-normal hover:underline text-center text-muted-foreground hover:text-foreground duration-300 ease-out"
+                            >
+                                Not you? Search member again
+                            </p>
+                        )}
                     </form>
                 </Form>
             </div>

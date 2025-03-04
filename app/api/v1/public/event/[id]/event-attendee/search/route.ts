@@ -10,13 +10,34 @@ type TParams = { params: { id: number } };
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
-        const { id: eventId } = eventIdParamSchema.parse(params);
+        const { id: eventId } = await eventIdParamSchema.parseAsync(params);
 
-        const { passbookNumber, nameSearch } = memberAttendeeSearchSchema.parse(
-            await req.json()
-        );
+        const { passbookNumber, nameSearch, reason } =
+            memberAttendeeSearchSchema.parse(await req.json());
+
+        const event = await db.event.findUnique({
+            where: { id: eventId },
+            include: { election: true },
+        });
+
+        if (!event)
+            throw new Error(
+                "Event does not exist, that's why we can't search member"
+            );
 
         let result: TMemberAttendeesMinimalInfo[] = [];
+
+        let includeBday = true;
+
+        if (reason === "registration")
+            includeBday = event.requireBirthdayVerification
+                ? false
+                : includeBday;
+
+        if (reason === "voting")
+            includeBday = event.election?.allowBirthdayVerification
+                ? false
+                : true;
 
         if (passbookNumber && passbookNumber.length >= 1) {
             result = await db.eventAttendees.findMany({
@@ -27,7 +48,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     middleName: true,
                     lastName: true,
                     contact: true,
-                    birthday: true,
+                    birthday: includeBday,
                     picture: true,
                     registered: true,
                     voted: true,
@@ -48,7 +69,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     lastName: true,
                     contact: true,
                     picture: true,
-                    birthday: true,
+                    birthday: includeBday,
                     registered: true,
                     voted: true,
                 },

@@ -1,18 +1,26 @@
+import z from "zod";
 import React from "react";
 
 import { Button } from "../ui/button";
 import UserAvatar from "../user-avatar";
-import { useRecentMember } from "@/hooks/public-api-hooks/use-member-api";
-import { TMemberAttendeesMinimalInfo } from "@/types";
 import { Separator } from "../ui/separator";
+
+import { TMemberAttendeesMinimalInfo } from "@/types";
+import { useRecentMember } from "@/hooks/public-api-hooks/use-member-api";
+import { memberAttendeeSearchSchema } from "@/validation-schema/event-registration-voting";
 
 type Props = {
     eventId: number;
+    reason?: z.infer<typeof memberAttendeeSearchSchema>["reason"];
     onSelect: (member: TMemberAttendeesMinimalInfo) => void;
 };
 
-const RecentMember = ({ eventId, onSelect }: Props) => {
-    const { member, isLoading } = useRecentMember(eventId);
+const RecentMember = ({
+    eventId,
+    reason = "registration",
+    onSelect,
+}: Props) => {
+    const { member, isLoading } = useRecentMember(eventId, reason);
 
     if (!member || isLoading) return null;
 
@@ -32,7 +40,9 @@ const RecentMember = ({ eventId, onSelect }: Props) => {
                     <div className="flex flex-col">
                         <p>{`${member.firstName} ${member.lastName}`}</p>
                         <p className="text-sm inline-flex">
-                            <span className="text-foreground/60">Passbook :&nbsp;</span>
+                            <span className="text-foreground/60">
+                                Passbook :&nbsp;
+                            </span>
                             <span>{member.passbookNumber}</span>
                         </p>
                     </div>

@@ -79,7 +79,12 @@ export const useRegisterMember = (
     return { registeredMember, isPending, register, isError, error };
 };
 
-export const useRecentMember = (eventId: number) => {
+export const useRecentMember = (
+    eventId: number,
+    reason: z.infer<
+        typeof memberAttendeeSearchSchema
+    >["reason"] = "registration"
+) => {
     const { data: member, isLoading } = useQuery<
         TMemberAttendeesMinimalInfo,
         string
@@ -88,7 +93,7 @@ export const useRecentMember = (eventId: number) => {
         queryFn: async () => {
             try {
                 const request = await axios.get(
-                    `/api/v1/public/event/${eventId}/event-attendee/recent`
+                    `/api/v1/public/event/${eventId}/event-attendee/recent?reason=${reason}`
                 );
                 return request.data;
             } catch (e) {

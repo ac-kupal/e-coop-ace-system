@@ -43,7 +43,7 @@ const RegisterAttendance = ({ event, member, onUnselect }: Props) => {
         defaultValues: {
             passbookNumber: member.passbookNumber,
             birthday: event.requireBirthdayVerification
-                ? "01/01/1950"
+                ? ""
                 : undefined,
         },
     });
@@ -64,14 +64,6 @@ const RegisterAttendance = ({ event, member, onUnselect }: Props) => {
                     >
                         {event.requireBirthdayVerification && (
                             <>
-                                <p className="text-sm lg:text-base text-center text-foreground/60">
-                                    Please input your birth date so we can
-                                    verify if it is you.
-                                </p>
-                                <div className="flex items-center justify-center w-full overflow-clip gap-x-4">
-                                    <Separator className="w-1/2" /> or{" "}
-                                    <Separator className="w-1/2" />
-                                </div>
                                 <FormField
                                     control={form.control}
                                     name="birthday"
@@ -96,6 +88,10 @@ const RegisterAttendance = ({ event, member, onUnselect }: Props) => {
                                         </FormItem>
                                     )}
                                 />
+                                <p className="text-sm lg:text-base text-center text-foreground/60">
+                                    Please input your birth date for
+                                    verification
+                                </p>
                             </>
                         )}
                         {isError && error && (

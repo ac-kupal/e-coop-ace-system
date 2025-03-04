@@ -1,15 +1,15 @@
 import db from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
+import { TMemberAttendeesMinimalInfo } from "@/types";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { eventIdParamSchema } from "@/validation-schema/api-params";
-import { TMemberAttendeesMinimalInfo } from "@/types";
 
 type TParams = { params: { id: number } };
 
 export const GET = async (req: NextRequest, { params }: TParams) => {
     try {
-        const { id: eventId } = eventIdParamSchema.parse(params);
+        const { id: eventId } = await eventIdParamSchema.parseAsync(params);
         const recentPb = req.cookies.get("recent-user")?.value;
 
         if (!recentPb)
@@ -17,6 +17,33 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 { message: "No recent user" },
                 { status: 400 }
             );
+
+        const { searchParams } = new URL(req.url);
+        const reason =
+            (searchParams.get("reason") as "registration" | "voting") ??
+            "registration";
+
+        const event = await db.event.findUnique({
+            where: { id: eventId },
+            include: { election: true },
+        });
+
+        if (!event)
+            throw new Error(
+                "Event does not exist, that's why we can't search member"
+            );
+
+        let includeBday = true;
+
+        if (reason === "registration")
+            includeBday = event.requireBirthdayVerification
+                ? false
+                : includeBday;
+
+        if (reason === "voting")
+            includeBday = event.election?.allowBirthdayVerification
+                ? false
+                : true;
 
         const member: TMemberAttendeesMinimalInfo | null =
             await db.eventAttendees.findUnique({
@@ -33,7 +60,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                     lastName: true,
                     contact: true,
                     picture: true,
-                    birthday: true,
+                    birthday: includeBday,
                     passbookNumber: true,
                     registered: true,
                     voted: true,

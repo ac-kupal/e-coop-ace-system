@@ -6,10 +6,11 @@ import UserAvatar from "@/components/user-avatar";
 import { TMemberAttendeesMinimalInfo } from "@/types";
 
 type Props = {
+    hideBirthday?: boolean;
     member: TMemberAttendeesMinimalInfo;
 };
 
-const MemberInfoDisplay = ({ member }: Props) => {
+const MemberInfoDisplay = ({ member, hideBirthday = false }: Props) => {
     return (
         <div className="flex flex-col items-center lg:flex-row lg:items-center gap-y-1 lg:gap-y-8 lg:gap-x-4">
             <UserAvatar
@@ -33,12 +34,16 @@ const MemberInfoDisplay = ({ member }: Props) => {
                         PB.No / ID.No
                     </p>
                 </div>
-                <div className="flex flex-col gap-y-0.5 justify-center text-center">
-                    <p className="border-b border-muted-foreground/40 dark:border-muted pb-2">
-                        {`${member.birthday ? format(member.birthday, "MMMM d, yyyy") : "No Birthdate"}`}
-                    </p>
-                    <p className="text-xs text-muted-foreground">Birthdate</p>
-                </div>
+                {!hideBirthday && (
+                    <div className="flex flex-col gap-y-0.5 justify-center text-center">
+                        <p className="border-b border-muted-foreground/40 dark:border-muted pb-2">
+                            {`${member.birthday ? format(member.birthday, "MMMM d, yyyy") : "No Birthdate"}`}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                            Birthdate
+                        </p>
+                    </div>
+                )}
                 <div className="flex items-center justify-center w-full gap-x-2">
                     {member.registered && (
                         <p className="text-green-400">REGISTERED</p>

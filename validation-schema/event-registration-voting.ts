@@ -1,8 +1,18 @@
 import z from "zod";
-import { otpSchema, eventIdSchema, validateBirthDay, electionIdParamSchema, passbookNumberSchema, validateBirthdayString } from "./commons"
+import {
+    otpSchema,
+    eventIdSchema,
+    validateBirthDay,
+    electionIdParamSchema,
+    passbookNumberSchema,
+    validateBirthdayString,
+} from "./commons";
 
 // for event registration verification api
-export const nameSearchSchema = z.string({ required_error : "name is required", invalid_type_error : "invalid name search type"})
+export const nameSearchSchema = z.string({
+    required_error: "name is required",
+    invalid_type_error: "invalid name search type",
+});
 
 export const attendeeParamsSchema = z.object({
     id: eventIdSchema,
@@ -23,17 +33,24 @@ export const attendeeRegisterSchema = z.object({
 // for event registration for form schema
 export const attendeeRegisterFormSchema = z.object({
     passbookNumber: passbookNumberSchema,
-    birthday: z.string().refine((value) => {
-        return /^(0[1-9]|1[0-2])(\/|-)(0[1-9]|1\d|2\d|3[01])(\/|-)(\d{4})$/.test(
-            value
-        );
-    }, "Invalid date format").optional(),
+    birthday: z
+        .string()
+        .refine((value) => {
+            return /^(0[1-9]|1[0-2])(\/|-)(0[1-9]|1\d|2\d|3[01])(\/|-)(\d{4})$/.test(
+                value
+            );
+        }, "Invalid date format")
+        .optional(),
 });
 
 export const memberAttendeeSearchSchema = z.object({
-    passbookNumber : z.string({invalid_type_error: "invalid passbook number",required_error: "passbook number is required"}),
-    nameSearch : nameSearchSchema
-})
+    passbookNumber: z.string({
+        invalid_type_error: "invalid passbook number",
+        required_error: "passbook number is required",
+    }),
+    nameSearch: nameSearchSchema,
+    reason: z.enum(["registration", "voting"]).default("registration"),
+});
 
 // for params
 export const eventElectionParamsSchema = z.object({
@@ -60,8 +77,8 @@ export const voterVerificationSchema = z.object({
 export const voterVerificationFormSchema = z.object({
     passbookNumber: passbookNumberSchema,
     otp: otpSchema,
-    birthday : validateBirthdayString.optional()
-})
+    birthday: validateBirthdayString.optional(),
+});
 
 // for voter registration
 export const voterRegistrationVerification = z.object({});

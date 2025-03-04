@@ -32,12 +32,14 @@ type Props = {
     eventId: number;
     disableQr?: boolean;
     enableRecentMember?: boolean;
+    reason?: z.infer<typeof memberAttendeeSearchSchema>["reason"];
     onFound: (member: TMemberAttendeesMinimalInfo) => void;
 };
 
 const MemberSearch = ({
     eventId,
     disableQr = false,
+    reason = "registration",
     enableRecentMember = true,
     onFound,
 }: Props) => {
@@ -75,6 +77,7 @@ const MemberSearch = ({
         <div className="flex flex-col items-center gap-y-4">
             {enableRecentMember && (
                 <RecentMember
+                    reason={reason}
                     eventId={eventId}
                     onSelect={(member) => onFound(member)}
                 />
@@ -210,6 +213,7 @@ const MemberSearch = ({
                                     searchMember({
                                         passbookNumber: rawValue,
                                         nameSearch: "",
+                                        reason,
                                     });
                                 }}
                                 components={{

@@ -42,7 +42,11 @@ import QrViewContent from "@/components/modals/modal-content/qr-view-content";
 import { cn } from "@/lib/utils";
 import useOrigin from "@/hooks/use-origin";
 import { useInfoModal } from "@/stores/use-info-modal-store";
-import { TMember, TMemberWithEventElectionId } from "@/types";
+import {
+    TEventWithElection,
+    TMember,
+    TMemberWithEventElectionId,
+} from "@/types";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { deleteMember, useOtpSend } from "@/hooks/api-hooks/member-api-hook";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
@@ -86,7 +90,13 @@ const ViewMemberQr = ({ member }: { member: TMember }) => {
     );
 };
 
-const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
+const Actions = ({
+    member,
+    event,
+}: {
+    member: TMemberWithEventElectionId;
+    event: TEventWithElection;
+}) => {
     const { data: session } = useSession();
     const origin = useOrigin();
 
@@ -221,6 +231,7 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                 {!member.registered ? (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
+                        disabled={!event.isRegistrationOpen}
                         onClick={() =>
                             onOpenConfirmModal({
                                 title: "Register Member",
@@ -282,6 +293,7 @@ const Actions = ({ member }: { member: TMemberWithEventElectionId }) => {
                 ) : (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
+                        disabled={!event.isRegistrationOpen}
                         onClick={() =>
                             onOpenConfirmModal({
                                 title: "Register Member",
@@ -446,189 +458,205 @@ export const MembersCustomGlobalFilter: FilterFn<TMemberWithEventElectionId> = (
     return String(cellValue).toLowerCase().includes(lowerFilter);
 };
 
-const columns: ColumnDef<TMemberWithEventElectionId>[] = [
-    {
-        id: "actions",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Actions" />
-        ),
-        cell: ({ row }) => (
-            <div className="flex justify-start">
-                <Actions member={row.original} />
-            </div>
-        ),
-    },
-    {
-        accessorKey: "firstName",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="First Name" />
-        ),
-        cell: ({ row }) => {
-            const img =
-                row.original.picture === null
-                    ? "/images/default.png"
-                    : row.original.picture;
-            return (
-                <div className="flex items-center space-x-2">
-                    <Avatar>
-                        <AvatarImage src={img} />
-                        <AvatarFallback className="bg-primary text-accent">
-                            {row.original.firstName.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
-                    <Cell text={row.original.firstName}></Cell>
+const columns = ({
+    event,
+}: {
+    event: TEventWithElection;
+}): ColumnDef<TMemberWithEventElectionId>[] => {
+    return [
+        {
+            id: "actions",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Actions" />
+            ),
+            cell: ({ row }) => (
+                <div className="flex justify-start">
+                    <Actions event={event} member={row.original} />
                 </div>
-            );
+            ),
         },
-    },
-    {
-        accessorKey: "lastName",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Last Name" />
-        ),
-        cell: ({ row }) => <Cell text={row.original.lastName}></Cell>,
-    },
-    {
-        accessorKey: "middleName",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Middle" />
-        ),
-        cell: ({ row }) => <Cell text={row.original.middleName}></Cell>,
-    },
-    {
-        accessorKey: "passbookNumber",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Passbook N0." />
-        ),
-        cell: ({ row }) => <Cell text={row.original.passbookNumber}></Cell>,
-    },
-    {
-        id: "PB QR",
-        accessorKey: "passbookNumber",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="PB QR." />
-        ),
-        cell: ({ row }) => <ViewMemberQr member={row.original} />,
-        enableSorting: false,
-        enableColumnFilter: false,
-    },
-    {
-        accessorKey: "voteOtp",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Vote OTP" />
-        ),
-        cell: ({ row }) => (
-            <div
-                onClick={() => {
-                    navigator.clipboard.writeText(`${row.original.voteOtp}`);
-                    toast.success("Member OTP coppied");
-                }}
-                className="font-mono inline-flex items-center gap-x-2"
-            >
-                <ActionTooltip
-                    content={
-                        <>
-                            Click to Copy Member OTP
-                            <CopyIcon
-                                className="size-4 ml-2 inline"
-                                strokeWidth="1"
-                            />
-                        </>
-                    }
+        {
+            accessorKey: "firstName",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="First Name" />
+            ),
+            cell: ({ row }) => {
+                const img =
+                    row.original.picture === null
+                        ? "/images/default.png"
+                        : row.original.picture;
+                return (
+                    <div className="flex items-center space-x-2">
+                        <Avatar>
+                            <AvatarImage src={img} />
+                            <AvatarFallback className="bg-primary text-accent">
+                                {row.original.firstName.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                        </Avatar>
+                        <Cell text={row.original.firstName}></Cell>
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: "lastName",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Last Name" />
+            ),
+            cell: ({ row }) => <Cell text={row.original.lastName}></Cell>,
+        },
+        {
+            accessorKey: "middleName",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Middle" />
+            ),
+            cell: ({ row }) => <Cell text={row.original.middleName}></Cell>,
+        },
+        {
+            accessorKey: "passbookNumber",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Passbook N0." />
+            ),
+            cell: ({ row }) => <Cell text={row.original.passbookNumber}></Cell>,
+        },
+        {
+            id: "PB QR",
+            accessorKey: "passbookNumber",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="PB QR." />
+            ),
+            cell: ({ row }) => <ViewMemberQr member={row.original} />,
+            enableSorting: false,
+            enableColumnFilter: false,
+        },
+        {
+            accessorKey: "voteOtp",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Vote OTP" />
+            ),
+            cell: ({ row }) => (
+                <div
+                    onClick={() => {
+                        navigator.clipboard.writeText(
+                            `${row.original.voteOtp}`
+                        );
+                        toast.success("Member OTP coppied");
+                    }}
+                    className="font-mono inline-flex items-center gap-x-2"
                 >
-                    <Cell
-                        text={row.original.voteOtp}
-                        className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm"
-                    />
-                </ActionTooltip>
-            </div>
-        ),
-    },
-
-    {
-        accessorKey: "birthday",
-        enableHiding: true,
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Birthday" />
-        ),
-        cell: ({ row }) => (
-            <Cell
-                text={
-                    !row.original.birthday
-                        ? ""
-                        : moment(row.original.birthday).format("LL")
-                }
-            ></Cell>
-        ),
-    },
-    {
-        accessorKey: "contact",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Contact" />
-        ),
-        cell: ({ row }) => <Cell text={row.original.contact}></Cell>,
-    },
-    {
-        accessorKey: "emailAddress",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Email" />
-        ),
-        cell: ({ row }) => (
-            <Cell text={row.original.emailAddress} className="lowercase"></Cell>
-        ),
-    },
-    {
-        accessorKey: "gender",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Gender" />
-        ),
-        cell: ({ row }) => <Cell text={row.original.gender}></Cell>,
-        enableHiding: true,
-        enableSorting: false,
-    },
-    {
-        accessorKey: "voted",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Voted" />
-        ),
-        cell: ({ row }) => (
-            <div className="">
-                {row.original.voted ? (
-                    <Badge className={cn("bg-green-500 text-accent border-0")}>
-                        <Cell className="lowercase" text="voted"></Cell>
-                    </Badge>
-                ) : (
-                    <Badge
-                        variant={"secondary"}
-                        className={cn(" bg-secondary")}
+                    <ActionTooltip
+                        content={
+                            <>
+                                Click to Copy Member OTP
+                                <CopyIcon
+                                    className="size-4 ml-2 inline"
+                                    strokeWidth="1"
+                                />
+                            </>
+                        }
                     >
-                        <Cell className="lowercase" text="Unvoted"></Cell>
-                    </Badge>
-                )}
-            </div>
-        ),
-        enableHiding: true,
-        enableSorting: false,
-    },
-    {
-        accessorKey: "registered",
-        header: ({ column }) => (
-            <DataTableColHeader column={column} title="Status" />
-        ),
-        cell: ({ row }) => (
-            <div className="">
-                {row.original.registered ? (
-                    <Badge className="text-primary border-0  bg-primary/40">
-                        <Cell className="lowercase" text="registered"></Cell>
-                    </Badge>
-                ) : (
-                    <Badge variant={"secondary"}>unregistered</Badge>
-                )}
-            </div>
-        ),
-        enableHiding: true,
-        enableSorting: false,
-    },
-];
+                        <Cell
+                            text={row.original.voteOtp}
+                            className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm"
+                        />
+                    </ActionTooltip>
+                </div>
+            ),
+        },
+
+        {
+            accessorKey: "birthday",
+            enableHiding: true,
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Birthday" />
+            ),
+            cell: ({ row }) => (
+                <Cell
+                    text={
+                        !row.original.birthday
+                            ? ""
+                            : moment(row.original.birthday).format("LL")
+                    }
+                ></Cell>
+            ),
+        },
+        {
+            accessorKey: "contact",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Contact" />
+            ),
+            cell: ({ row }) => <Cell text={row.original.contact}></Cell>,
+        },
+        {
+            accessorKey: "emailAddress",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Email" />
+            ),
+            cell: ({ row }) => (
+                <Cell
+                    text={row.original.emailAddress}
+                    className="lowercase"
+                ></Cell>
+            ),
+        },
+        {
+            accessorKey: "gender",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Gender" />
+            ),
+            cell: ({ row }) => <Cell text={row.original.gender}></Cell>,
+            enableHiding: true,
+            enableSorting: false,
+        },
+        {
+            accessorKey: "voted",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Voted" />
+            ),
+            cell: ({ row }) => (
+                <div className="">
+                    {row.original.voted ? (
+                        <Badge
+                            className={cn("bg-green-500 text-accent border-0")}
+                        >
+                            <Cell className="lowercase" text="voted"></Cell>
+                        </Badge>
+                    ) : (
+                        <Badge
+                            variant={"secondary"}
+                            className={cn(" bg-secondary")}
+                        >
+                            <Cell className="lowercase" text="Unvoted"></Cell>
+                        </Badge>
+                    )}
+                </div>
+            ),
+            enableHiding: true,
+            enableSorting: false,
+        },
+        {
+            accessorKey: "registered",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Status" />
+            ),
+            cell: ({ row }) => (
+                <div className="">
+                    {row.original.registered ? (
+                        <Badge className="text-primary border-0  bg-primary/40">
+                            <Cell
+                                className="lowercase"
+                                text="registered"
+                            ></Cell>
+                        </Badge>
+                    ) : (
+                        <Badge variant={"secondary"}>unregistered</Badge>
+                    )}
+                </div>
+            ),
+            enableHiding: true,
+            enableSorting: false,
+        },
+    ];
+};
 
 export default columns;
