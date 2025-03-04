@@ -7,12 +7,7 @@ import { handleAxiosErrorMessage } from "@/utils";
 import { IQueryHook } from "../api-hooks/types";
 
 export const useEventList = () => {
-    const {
-        data: eventList,
-        refetch,
-        isFetching,
-        isLoading,
-    } = useQuery<TEvent[], string>({
+    return useQuery<TEvent[], string>({
         queryKey: ["public-event-list"],
         queryFn: async () => {
             try {
@@ -20,17 +15,12 @@ export const useEventList = () => {
                 return request.data;
             } catch (e) {
                 const errorMessage = handleAxiosErrorMessage(e);
-                toast.error(errorMessage, {
-                    action: { label: "try again", onClick: () => refetch() },
-                });
                 throw errorMessage;
             }
         },
         initialData: [],
         refetchInterval: 2 * 60 * 1000,
     });
-
-    return { eventList, isFetching, isLoading };
 };
 
 export const useEvent = (eventId: number, interval: number = 2 * 60 * 1000) => {

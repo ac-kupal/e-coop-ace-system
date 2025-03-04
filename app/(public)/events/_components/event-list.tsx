@@ -1,23 +1,40 @@
 "use client";
 import React from "react";
+import { motion, Variants } from "framer-motion";
 
 import EventCard from "./event-card";
 import LoadingSpinner from "@/components/loading-spinner";
-import { useEventList } from "../../../../hooks/public-api-hooks/use-events-api";
+import { useEventList } from "@/hooks/public-api-hooks/use-events-api";
+
+const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+        },
+    },
+};
 
 const EventList = () => {
-    const { eventList, isFetching, isLoading } = useEventList();
+    const { data: eventList, isFetching, isLoading } = useEventList();
 
     const loading = isFetching || isLoading;
 
     return (
         <>
             {loading && <LoadingSpinner />}
-            <div className="p-4 grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3 justify-center w-full lg:max-w-6xl">
+            <motion.div
+                key={eventList.length}
+                initial="hidden"
+                animate="visible"
+                variants={containerVariants}
+                className="p-4 grid grid-cols-1 px-6 gap-8 md:grid-cols-2 xl:grid-cols-3 justify-center w-full lg:max-w-6xl"
+            >
                 {eventList.map((event) => (
-                    <EventCard event={event} key={event.id} />
+                    <EventCard key={event.id} event={event} />
                 ))}
-            </div>
+            </motion.div>
             {!loading && eventList.length === 0 && (
                 <div className="h-full w-full flex justify-center items-center">
                     <p>There&#39;s no event here yet 🐧</p>
