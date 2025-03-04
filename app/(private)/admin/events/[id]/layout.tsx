@@ -1,7 +1,5 @@
-import moment from "moment";
 import db from "@/lib/database";
 import React, { ReactNode } from "react";
-import { MapPin, CalendarDays, CalendarCheck } from "lucide-react";
 
 import BackButton from "@/components/back";
 import NotFound from "./_components/not-found";
@@ -9,7 +7,7 @@ import EventNav from "./_components/event-nav";
 import EventHeader from "./_components/event-header";
 import { Separator } from "@/components/ui/separator";
 import { eventIdSchema } from "@/validation-schema/commons";
-import AttendanceQuorum from "./_components/attendance-quorum";
+import EventDetailBar from "./_components/event-detail-bar";
 
 type Props = {
     children: ReactNode;
@@ -35,35 +33,7 @@ const EventLayout = async ({ children, params }: Props) => {
                 <EventHeader params={params} />
                 <BackButton />
             </div>
-            <div className="p-2 w-full rounded-2xl flex flex-col md:flex-row gap-x-2 gap-y-1 md:justify-between shadow-md bg-background dark:bg-secondary/30">
-                <div className="flex flex-row gap-x-4 gap-y-1 text-base flex-wrap 2xl:text-lg">
-                    <div className="flex space-x-2 items-center ">
-                        <div className="p-1">
-                            <CalendarCheck className="size-4 md:size-5 lg:size-6 text-primary" />
-                        </div>
-                        <h1 className="font-bold text-black/80  dark:text-white/80">
-                            {event.title}
-                        </h1>
-                    </div>
-                    <div className="flex space-x-2 items-center ">
-                        <div className=" p-1">
-                            <MapPin className="text-yellow-500 size-4 md:size-5 lg:size-6 dark:text-yellow-400 " />
-                        </div>
-                        <h1 className="font-normal text-black/80 dark:text-white/80">
-                            {event.location}
-                        </h1>
-                    </div>
-                    <div className="flex space-x-2 items-center">
-                        <div className="p-1">
-                            <CalendarDays className="size-4 md:size-5 lg:size-6 text-blue-800 dark:text-blue-500" />
-                        </div>
-                        <h1 className="font-normal text-black/80 dark:text-white/80">
-                            {moment(event.date).format("LL")}
-                        </h1>
-                    </div>
-                </div>
-                <AttendanceQuorum eventId={event.id} />
-            </div>
+            <EventDetailBar eventId={event.id} />
             <div className="flex flex-col bg-background rounded-xl min-h-screen shadow-xl dark:bg-secondary/30 py-2  overflow-x-hidden w-full ">
                 <div className="px-2 w-full">
                     <EventNav event={event} />
