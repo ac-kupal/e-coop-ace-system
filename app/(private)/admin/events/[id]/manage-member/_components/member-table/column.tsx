@@ -554,7 +554,7 @@ const columns = ({
                     >
                         <Cell
                             text={row.original.passbookNumber}
-                            className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm"
+                            className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm whitespace-nowrap" 
                         />
                     </ActionTooltip>
                 </div>

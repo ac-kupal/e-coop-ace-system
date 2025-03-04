@@ -1,4 +1,5 @@
 import z from "zod";
+import { motion } from "framer-motion";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MemberSearchMode } from "@prisma/client";
@@ -21,12 +22,12 @@ import {
     FormItem,
     FormMessage,
 } from "@/components/ui/form";
+import RecentMember from "./recent-member";
 
 import { TMemberAttendeesMinimalInfo } from "@/types";
+import { usePublicGetEventById } from "@/hooks/public-api-hooks/use-events-api";
 import { useSearchMemberAttendee } from "@/hooks/public-api-hooks/use-member-api";
 import { memberAttendeeSearchSchema } from "@/validation-schema/event-registration-voting";
-import RecentMember from "./recent-member";
-import { usePublicGetEventById } from "@/hooks/public-api-hooks/use-events-api";
 
 type Props = {
     eventId: number;
@@ -34,6 +35,15 @@ type Props = {
     enableRecentMember?: boolean;
     reason?: z.infer<typeof memberAttendeeSearchSchema>["reason"];
     onFound: (member: TMemberAttendeesMinimalInfo) => void;
+};
+
+const anims = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.4, ease: "easeOut" },
+    },
 };
 
 const MemberSearch = ({
@@ -74,7 +84,12 @@ const MemberSearch = ({
         );
 
     return (
-        <div className="flex flex-col items-center gap-y-4">
+        <motion.div
+            initial="hidden"
+            variants={anims}
+            animate="visible"
+            className="flex flex-col items-center gap-y-4"
+        >
             {enableRecentMember && (
                 <RecentMember
                     reason={reason}
@@ -230,7 +245,7 @@ const MemberSearch = ({
                     )}
                 </form>
             </Form>
-        </div>
+        </motion.div>
     );
 };
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 
 import UserAvatar from "@/components/user-avatar";
 
@@ -10,9 +11,23 @@ type Props = {
     member: TMemberAttendeesMinimalInfo;
 };
 
+const fadeInVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.4, ease: "easeOut" },
+    },
+};
+
 const MemberInfoDisplay = ({ member, hideBirthday = false }: Props) => {
     return (
-        <div className="flex flex-col items-center lg:flex-row lg:items-center gap-y-1 lg:gap-y-8 lg:gap-x-4">
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeInVariants}
+            className="flex flex-col items-center lg:flex-row lg:items-center gap-y-1 lg:gap-y-8 lg:gap-x-4"
+        >
             <UserAvatar
                 className="rounded-xl size-32 lg:size-72"
                 src={member.picture ?? "/images/default-avatar.png"}
@@ -58,7 +73,7 @@ const MemberInfoDisplay = ({ member, hideBirthday = false }: Props) => {
                     )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
