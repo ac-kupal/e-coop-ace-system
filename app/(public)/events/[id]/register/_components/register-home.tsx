@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { isSameDay } from "date-fns";
+import { format, isSameDay } from "date-fns";
 
 import Attendance from "./attendance";
 import InvalidPrompt from "@/components/invalid-prompt";
@@ -22,15 +22,21 @@ const RegisterHome = ({ eventId }: Props) => {
     eventDate.setHours(23, 59, 59, 999);
 
     if (new Date() > eventDate)
-        return <InvalidPrompt message="This event already passed" />;
+        return (
+            <InvalidPrompt
+                message={`This event has already passed.  ${format(event.date, "MMMM dd, yyyy")}.`}
+            />
+        );
 
     if (event.registrationOnEvent === true && !isSameDay(today, event.date))
         return (
-            <InvalidPrompt message="This event registration is not yet open" />
+            <InvalidPrompt
+                message={`Registration will be open in ${format(event.date, "MMMM dd, yyyy")}.`}
+            />
         );
 
     if (!event.isRegistrationOpen)
-        return <InvalidPrompt message="This event registration is not open" />;
+        return <InvalidPrompt message="Event registration has been closed." />;
 
     return (
         <div className="flex flex-col py-20 px-5 gap-y-6 min-h-screen w-full items-center">

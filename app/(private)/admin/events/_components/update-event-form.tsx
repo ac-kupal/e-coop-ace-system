@@ -494,10 +494,8 @@ const UpdateEventForm = ({ defaultValues, eventId, ...other }: Props) => {
                                                                     id={`${id}-description`}
                                                                     className="text-xs font-normal text-muted-foreground"
                                                                 >
-                                                                    Aside from
-                                                                    OTP, members
-                                                                    must verify
-                                                                    their
+                                                                    Members must
+                                                                    verify their
                                                                     birthdate to
                                                                     complete
                                                                     registration.
