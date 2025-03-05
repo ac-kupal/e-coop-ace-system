@@ -172,7 +172,7 @@ const columns: ColumnDef<TMemberAttendeesWithRegistrationAssistance>[] = [
             <div className="">
                 {registeredAt
                     ? format(registeredAt, "MMMM d, yyyy 'at' h:mm a")
-                    : "invalid date time"}
+                    : ""}
             </div>
         ),
     },
