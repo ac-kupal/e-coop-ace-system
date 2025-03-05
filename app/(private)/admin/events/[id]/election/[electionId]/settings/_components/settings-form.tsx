@@ -261,7 +261,7 @@ const SettingsForm = ({ election, params }: Props) => {
                                 </FormLabel>
                                 <div className="flex items-center justify-between w-full pr-5 space-x-2">
                                     <FormLabel className="text-sm text-foreground/60 font-normal">
-                                        Require “Birthday” as optional Member
+                                        Add “Birthday” as optional Member
                                         Verification when voting.
                                     </FormLabel>
                                     <FormControl>
