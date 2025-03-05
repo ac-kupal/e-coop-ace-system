@@ -1,9 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export const POST = async (req:NextRequest)=>{
+export const GET = async () => {
     try {
-       return NextResponse.json({message:"POST - ok"})
+        return NextResponse.json({
+            message: "Waw",
+        });
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        return NextResponse.json({ message: "Server Error" }, { status: 500 });
     }
-}
+};

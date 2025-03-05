@@ -29,7 +29,7 @@ const EventList = () => {
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
-                className="p-4 grid grid-cols-1 px-6 gap-8 md:grid-cols-2 xl:grid-cols-3 justify-center w-full lg:max-w-6xl"
+                className="p-4 grid grid-cols-1 px-6 gap-8 md:grid-cols-2 xl:grid-cols-3 justify-center w-full lg:max-w-6xl min-h-[90vh]"
             >
                 {eventList.map((event) => (
                     <EventCard key={event.id} event={event} />
