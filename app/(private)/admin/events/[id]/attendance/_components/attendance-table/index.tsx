@@ -143,7 +143,7 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
                 "REGISTRATION DATE":
                     attendance.registeredAt !== null
                         ? format(attendance.registeredAt, "MMMM dd yyyy")
-                        : "unknown",
+                        : "",
             };
         });
         var wb = utils.book_new();
