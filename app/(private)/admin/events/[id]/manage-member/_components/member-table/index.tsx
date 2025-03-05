@@ -126,7 +126,7 @@ const MemberTable = ({ id, user, event }: Props) => {
         return <h1 className=" animate-pulse">Loading...</h1>;
 
     return (
-        <div className="lg:space-y-5 space-y-2 min-h-[65vh]">
+        <div className="lg:space-y-5 space-y-2 min-h-[65vh] p-2">
             <BulkExportPbQrModal
                 eventId={id}
                 members={data}
