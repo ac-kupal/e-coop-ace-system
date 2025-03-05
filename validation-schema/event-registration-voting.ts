@@ -70,14 +70,14 @@ export const voterSearchParamSchema = z.object({
 
 export const voterVerificationSchema = z.object({
     passbookNumber: passbookNumberSchema,
-    otp: otpSchema,
+    otp: otpSchema.optional(),
     birthday: validateBirthDay.optional(),
 });
 
 export const voterVerificationFormSchema = z.object({
     passbookNumber: passbookNumberSchema,
     otp: otpSchema,
-    birthday: validateBirthdayString.optional(),
+    birthday: validateBirthdayString,
 });
 
 // for voter registration

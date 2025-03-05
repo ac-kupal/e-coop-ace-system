@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         const { id: eventId, electionId } = eventElectionParamsSchema.parse(params);
         const { otp, birthday, passbookNumber } = voterVerificationSchema.parse(await req.json());
 
-        const election = await db.election.findUnique({where: { eventId, id: electionId } });
+        const election = await db.election.findUnique({ where: { eventId, id: electionId } });
 
         if (election?.status !== "live")
             return NextResponse.json(
@@ -36,7 +36,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         if (!voter)
             return NextResponse.json(
-                { message: "You are not on the list, for verification." },
+                { message: "You are not on the list for verification." },
                 { status: 404 }
             );
 
@@ -45,46 +45,35 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 { message: "You already voted" },
                 { status: 403 }
             );
+        console.log(birthday, otp)
 
-        if (voter.voteOtp == null || voter.voteOtp.toUpperCase() !== otp)
-            return NextResponse.json(
-                { message: "Invalid OTP" },
-                { status: 403 }
-            );
-
-        // DUE TO CHANGES / REQUEST of client,
-        //
-        // 1st feature before was that birthday should be used
-        // as 2nd verification for registration and voting.
-        //
-        // suddenly birthday should be optional said by client so even though the birthday is
-        // STRICTLY required for registration as verification it was implemented instead,
-
-        // And for voting verification birthday is used as 2nd option aside OTP but optional
-        // and can be toggled on election settings to be used as 2nd layer of authorization before
-        // the system give vote authorization
-
-        // Regardless, it was implemented instead, so I wrap it to skip all member who dont have date
-        // of birth even if the elction settings require birthday. 
-        // Therefore even if the election was requiring them to provide bday, those members who dont have birthdate will skip
-        // this step automatically :(
-        if (election.allowBirthdayVerification && voter.birthday !== null) {
-            if (!birthday || !isSameDay(voter.birthday, birthday))
+        if (otp === undefined) {
+            const isBirthdayValid = birthday && voter.birthday && isSameDay(voter.birthday, birthday);
+            if (!isBirthdayValid) {
                 return NextResponse.json(
-                    { message: "Invalid birthdate, please try again" },
+                    { message: "Invalid verification. incorrect Birthday" },
                     { status: 400 }
                 );
+            } 
+        }else {
+            const isOtpValid = otp && otp.length === 6 && otp === voter.voteOtp; 
+            if (!isOtpValid) {
+                return NextResponse.json(
+                    { message: "Invalid verification. incorrect OTP" },
+                    { status: 400 }
+                );
+            } 
         }
 
         if (election.voteEligibility === "REGISTERED" && !voter.registered)
             return NextResponse.json(
-                { message: "Sorry you are not registered" },
+                { message: "Sorry, you are not registered" },
                 { status: 403 }
             );
 
         if (election.voteEligibility === "MARKED_CANVOTE" && !voter.canVote)
             return NextResponse.json(
-                { message: "Sorry you are not marked as 'can vote'" },
+                { message: "Sorry, you are not marked as 'can vote'" },
                 { status: 403 }
             );
 

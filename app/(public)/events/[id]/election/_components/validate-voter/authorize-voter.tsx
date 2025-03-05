@@ -1,5 +1,5 @@
 import z from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { OTPInput } from "input-otp";
 import { useForm } from "react-hook-form";
 import ReactInputMask from "react-input-mask";
@@ -12,200 +12,223 @@ import OtpSlot from "@/components/otp-input/otp-slot";
 import ErrorAlert from "@/components/error-alert/error-alert";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 import {
-    Form,
-    FormItem,
-    FormField,
-    FormLabel,
-    FormControl,
-    FormMessage,
+   Form,
+   FormItem,
+   FormField,
+   FormLabel,
+   FormControl,
+   FormMessage,
 } from "@/components/ui/form";
 
 import { cn } from "@/lib/utils";
 import { TElectionWithEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
-    voter: TMemberAttendeesMinimalInfo;
-    electionWithEvent: TElectionWithEvent;
-    onUnselect? : () => void;
-    onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void;
+   voter: TMemberAttendeesMinimalInfo;
+   electionWithEvent: TElectionWithEvent;
+   onUnselect?: () => void;
+   onAuthorize: (voter: TMemberAttendeesMinimalInfo) => void;
 };
 
 const AuthorizeVoter = ({
-    voter,
-    electionWithEvent,
-    onUnselect,
-    onAuthorize,
+   voter,
+   electionWithEvent,
+   onUnselect,
+   onAuthorize,
 }: Props) => {
-    type TForm = z.infer<typeof voterVerificationFormSchema>;
+   const [isBirthdayVerification, setIsBirthdayVerification] = useState(false);
 
-    const form = useForm<TForm>({
-        resolver: zodResolver(voterVerificationFormSchema),
-        defaultValues: {
-            passbookNumber: voter.passbookNumber,
-            birthday: electionWithEvent.allowBirthdayVerification
-                ? ""
-                : undefined,
-            otp: "",
-        },
-    });
+   type TForm = z.infer<typeof voterVerificationFormSchema>;
 
-    const { authenticatedVoter, getAuthorization, isPending, isError, error } =
-        useVoterAuthorization(
-            electionWithEvent.eventId,
-            electionWithEvent.id,
-            voter.id,
-            onAuthorize
-        );
+   const form = useForm<TForm>({
+      resolver: zodResolver(voterVerificationFormSchema),
+      defaultValues: {
+         passbookNumber: voter.passbookNumber,
+         birthday: electionWithEvent.allowBirthdayVerification ? "" : undefined,
+         otp: "",
+      },
+   });
 
-    useEffect(() => {
-        form.setFocus("otp");
-    }, [form, form.setFocus]);
+   const { authenticatedVoter, getAuthorization, isPending, isError, error } =
+      useVoterAuthorization(
+         electionWithEvent.eventId,
+         electionWithEvent.id,
+         voter.id,
+         onAuthorize
+      );
 
-    const onSubmit = (values: TForm) => {
-        getAuthorization(values);
-    };
+   useEffect(() => {
+      form.setFocus("otp");
+   }, [form, form.setFocus]);
 
-    const disabled = isPending || authenticatedVoter !== undefined;
+   const onSubmit = (values: TForm) => {
+      getAuthorization(values);
+   };
+   const disabled = isPending || authenticatedVoter !== undefined;
 
-    return (
-        <div className="flex flex-col items-center gap-y-4">
-            <p className="text-sm lg:text-base text-center text-foreground/60 pb-4">
-                This step is for verification before we authorize you to vote
-            </p>
-            <div className="space-y-4 max-w-sm">
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-4"
-                    >
+   return (
+      <div className="flex flex-col items-center gap-y-4">
+         <p className="text-sm lg:text-base text-center text-foreground/60 pb-4">
+            This step is for verification before we authorize you to vote
+         </p>
+         <div className="space-y-4 max-w-sm">
+            <Form {...form}>
+               <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+               >
+                  {!isBirthdayVerification ? (
+                     <FormField
+                        control={form.control}
+                        name="otp"
+                        key="otp"
+                        render={({ field }) => (
+                           <FormItem className="gap-y-2">
+                              <p className="text-lg text-center ">OTP</p>
+                              <FormControl>
+                                 <OTPInput
+                                    {...field}
+                                    autoFocus
+                                    maxLength={6}
+                                    disabled={disabled}
+                                    onComplete={() => {
+                                       if (
+                                          !electionWithEvent.allowBirthdayVerification
+                                       )
+                                          onSubmit({
+                                             passbookNumber:
+                                                voter.passbookNumber,
+                                             otp: form.getValues("otp"),
+                                          });
+                                    }}
+                                    inputMode="text"
+                                    pattern="^[a-zA-Z0-9]+$"
+                                    containerClassName="group flex items-center has-[:disabled]:opacity-30"
+                                    render={({ slots }) => (
+                                       <>
+                                          <div className="flex">
+                                             {slots
+                                                .slice(0, 3)
+                                                .map((slot, idx) => (
+                                                   <OtpSlot
+                                                      key={idx}
+                                                      {...slot}
+                                                   />
+                                                ))}
+                                          </div>
+                                          <div className="w-5 mx-2 h-2 bg-secondary rounded-full" />
+                                          <div className="flex">
+                                             {slots
+                                                .slice(3)
+                                                .map((slot, idx) => (
+                                                   <OtpSlot
+                                                      key={idx}
+                                                      {...slot}
+                                                   />
+                                                ))}
+                                          </div>
+                                       </>
+                                    )}
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+                  ) : (
+                     electionWithEvent.allowBirthdayVerification && (
                         <FormField
-                            control={form.control}
-                            name="otp"
-                            render={({ field }) => (
-                                <FormItem className="gap-y-2">
-                                    <p className="text-lg text-center ">OTP</p>
-                                    <FormControl>
-                                        <OTPInput
-                                            {...field}
-                                            autoFocus
-                                            maxLength={6}
-                                            disabled={disabled}
-                                            onComplete={() => {
-                                                if (
-                                                    !electionWithEvent.allowBirthdayVerification
-                                                )
-                                                    onSubmit({
-                                                        passbookNumber:
-                                                            voter.passbookNumber,
-                                                        otp: form.getValues(
-                                                            "otp"
-                                                        ),
-                                                    });
-                                            }}
-                                            inputMode="text"
-                                            pattern="^[a-zA-Z0-9]+$"
-                                            containerClassName="group flex items-center has-[:disabled]:opacity-30"
-                                            render={({ slots }) => (
-                                                <>
-                                                    <div className="flex">
-                                                        {slots
-                                                            .slice(0, 3)
-                                                            .map(
-                                                                (slot, idx) => (
-                                                                    <OtpSlot
-                                                                        key={
-                                                                            idx
-                                                                        }
-                                                                        {...slot}
-                                                                    />
-                                                                )
-                                                            )}
-                                                    </div>
-                                                    <div className="w-5 mx-2 h-2 bg-secondary rounded-full" />
-                                                    <div className="flex">
-                                                        {slots
-                                                            .slice(3)
-                                                            .map(
-                                                                (slot, idx) => (
-                                                                    <OtpSlot
-                                                                        key={
-                                                                            idx
-                                                                        }
-                                                                        {...slot}
-                                                                    />
-                                                                )
-                                                            )}
-                                                    </div>
-                                                </>
-                                            )}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                           control={form.control}
+                           name="birthday"
+                           key="birthday"
+                           render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                 <FormLabel className="flex justify-between">
+                                    <h1>Birthday</h1>{" "}
+                                    <span className="text-[12px] italic text-muted-foreground">
+                                       mm/dd/yyyy
+                                    </span>
+                                 </FormLabel>
+                                 <ReactInputMask
+                                    disabled={disabled}
+                                    {...field}
+                                    mask="99/99/9999"
+                                    placeholder="input birthday"
+                                    className={cn(
+                                       "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                                       "text-xl text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
+                                    )}
+                                 />
+                                 <FormMessage />
+                              </FormItem>
+                           )}
                         />
-                        {electionWithEvent.allowBirthdayVerification && (
-                            <FormField
-                                control={form.control}
-                                name="birthday"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col">
-                                        <FormLabel className="flex justify-between">
-                                            <h1>Birthday</h1>{" "}
-                                            <span className="text-[12px] italic text-muted-foreground">
-                                                mm/dd/yyyy
-                                            </span>
-                                        </FormLabel>
-                                        <ReactInputMask
-                                            disabled={disabled}
-                                            {...field}
-                                            mask="99/99/9999"
-                                            placeholder="input birthday"
-                                            className={cn(
-                                                "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                                                "text-xl text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
-                                            )}
-                                        />
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                     )
+                  )}
+                  {electionWithEvent.allowBirthdayVerification && (
+                     <>
+                        <div className="flex  items-center gap-x-2">
+                           <Separator className="w-fit flex-grow" />
+                           <div>or</div>
+                           <Separator className="w-fit flex-grow" />
+                        </div>
+                        {!isBirthdayVerification ? (
+                           <Button
+                              variant={"outline"}
+                              className="w-full"
+                              onClick={(e) => {
+                                 e.preventDefault();
+                                 setIsBirthdayVerification(
+                                    !isBirthdayVerification
+                                 );
+                              }}
+                           >
+                              Birthday Verification
+                           </Button>
+                        ) : (
+                           <Button
+                              variant={"outline"}
+                              className="w-full"
+                              onClick={(e) => {
+                                 e.preventDefault();
+                                 setIsBirthdayVerification(
+                                    !isBirthdayVerification
+                                 );
+                              }}
+                           >
+                              OPT Verification
+                           </Button>
                         )}
-                        {isError && error && (
-                            <ErrorAlert
-                                title="Voter Check Error"
-                                message={error}
-                            />
-                        )}
-
-                        <Button
-                            disabled={disabled}
-                            className="w-full"
-                            type="submit"
-                        >
-                            {isPending || authenticatedVoter !== undefined ? (
-                                <Loader2
-                                    className="h-3 w-3 animate-spin"
-                                    strokeWidth={1}
-                                />
-                            ) : (
-                                "Vote"
-                            )}
-                        </Button>
-                        {onUnselect && (
-                            <p
-                                onClick={onUnselect}
-                                className="cursor-pointer text-xs underline-offset-8 font-normal hover:underline text-center text-muted-foreground hover:text-foreground duration-300 ease-out"
-                            >
-                                Not you? Search member again
-                            </p>
-                        )}
-                    </form>
-                </Form>
-            </div>
-        </div>
-    );
+                     </>
+                  )}
+                  {isError && error && (
+                     <ErrorAlert title="Voter Check Error" message={error} />
+                  )}
+                  <Button disabled={disabled} className="w-full" type="submit">
+                     {isPending || authenticatedVoter !== undefined ? (
+                        <Loader2
+                           className="h-3 w-3 animate-spin"
+                           strokeWidth={1}
+                        />
+                     ) : (
+                        "Vote"
+                     )}
+                  </Button>
+                  {onUnselect && (
+                     <p
+                        onClick={onUnselect}
+                        className="cursor-pointer text-xs underline-offset-8 font-normal hover:underline text-center text-muted-foreground hover:text-foreground duration-300 ease-out"
+                     >
+                        Not you? Search member again
+                     </p>
+                  )}
+               </form>
+            </Form>
+         </div>
+      </div>
+   );
 };
 
 export default AuthorizeVoter;

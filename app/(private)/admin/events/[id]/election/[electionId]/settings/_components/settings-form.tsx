@@ -257,11 +257,11 @@ const SettingsForm = ({ election, params }: Props) => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Require Birthday Verification
+                                    Allow Birthday Verification
                                 </FormLabel>
                                 <div className="flex items-center justify-between w-full pr-5 space-x-2">
                                     <FormLabel className="text-sm text-foreground/60 font-normal">
-                                        Require “Birthday” as additional Member
+                                        Require “Birthday” as optional Member
                                         Verification when voting.
                                     </FormLabel>
                                     <FormControl>

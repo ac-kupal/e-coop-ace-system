@@ -7,13 +7,17 @@ export const passbookNumberSchema = z
     })
     .min(1, "passbook number must not be empty");
 
-export const otpSchema = z
-    .string({
-        invalid_type_error: "otp must be valid string",
-        required_error: "otp is required",
-    })
-    .min(6, "otp must be minimum of 6 digits")
-    .max(6, "otp must be maximum of 6 digits").transform((val) => val.toUpperCase())
+export const otpSchema = z.preprocess(
+        (val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
+        z.string({
+            invalid_type_error: "otp must be a valid string",
+            required_error: "otp is required",
+        })
+        .min(6, "otp must be a minimum of 6 characters")
+        .max(6, "otp must be a maximum of 6 characters")
+        .transform((val) => val.toUpperCase())
+        .optional()
+);
 
 export const eventIdSchema = z.coerce.number({
     invalid_type_error: "invalid event id",
@@ -40,11 +44,16 @@ export const validateBirthDay = z.coerce.date({
     required_error: "birthday is required for verification",
 });
 
-export const validateBirthdayString = z.string().refine((value) => {
-    return /^(0[1-9]|1[0-2])(\/|-)(0[1-9]|1\d|2\d|3[01])(\/|-)(\d{4})$/.test(
-        value
-    );
-}, "Invalid date format");
+export const validateBirthdayString = z.preprocess(
+    (val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
+    z.string()
+        .refine(
+            (value) =>
+                /^(0[1-9]|1[0-2])(\/|-)(0[1-9]|1\d|2\d|3[01])(\/|-)(\d{4})$/.test(value),
+            "Invalid date format"
+        )
+        .optional()
+);
 
 export const userIdSchema = z.coerce.number({
     invalid_type_error: "user is invalid",
