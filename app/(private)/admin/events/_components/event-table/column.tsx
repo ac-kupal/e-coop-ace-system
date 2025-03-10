@@ -43,6 +43,7 @@ import CopyURL from "@/components/copy-url";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import { Role } from "@prisma/client";
+import { currentUser } from "@/lib/auth";
 
 const Actions = ({
     event,
@@ -100,29 +101,29 @@ const Actions = ({
                 </DropdownMenuItem>
                 {event.election && (
                     <>
-                      <DropdownMenuItem
-                        onClick={() => {
-                            router.push(
-                                `/admin/events/${event.id}/election/${event.election?.id}/overview`
-                            );
-                        }}
-                        className="px-2 gap-x-2"
-                    >
-                        <Users strokeWidth={2} className="h-4" />
-                        event election
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => {
-                            if (!event.election) return null;
-                            router.push(
-                                `/admin/events/${event.id}/manage-member`
-                            );
-                        }}
-                        className="px-2 gap-x-2"
-                    >
-                        <Target strokeWidth={2} className="h-4" />
-                        manage 
-                    </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                router.push(
+                                    `/admin/events/${event.id}/election/${event.election?.id}/overview`
+                                );
+                            }}
+                            className="px-2 gap-x-2"
+                        >
+                            <Users strokeWidth={2} className="h-4" />
+                            event election
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                if (!event.election) return null;
+                                router.push(
+                                    `/admin/events/${event.id}/manage-member`
+                                );
+                            }}
+                            className="px-2 gap-x-2"
+                        >
+                            <Target strokeWidth={2} className="h-4" />
+                            manage
+                        </DropdownMenuItem>
                     </>
                 )}
                 {event.election === null ? (
@@ -150,6 +151,7 @@ const Actions = ({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
+                    disabled={session.data.user.role !== "root"}
                     onClick={() =>
                         onOpenConfirmModal({
                             title: event.deleted
