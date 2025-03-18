@@ -78,7 +78,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                             eventLink: `${process.env.DEPLOYMENT_URL}/events/${event.id}/`,
                             memberName: `${memberAttendee.firstName} ${memberAttendee.lastName}`,
                             eventCoverImage: event.coverImage as "",
-                            ecoopLogo: `${process.env.DEPLOYMENT_URL}/images/ecoop-logo.png`,
+                            ecoopLogo: `${process.env.DEPLOYMENT_URL}/images/coop-logo.png`,
                         },
                     },
                 },

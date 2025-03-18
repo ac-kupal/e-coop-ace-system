@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { routeErrorHandler } from "@/errors/route-error-handler";
-import { ExcelDateToJSDate, generateOTP, validateId } from "@/lib/server-utils";
+import { excelDateToJSDate, generateOTP, validateId } from "@/lib/server-utils";
 import { generateUserProfileS3URL } from "@/lib/aws-s3";
 
 const BATCH_SIZE = 500;
@@ -69,7 +69,7 @@ const mapAndFilterDuplicates = (
             passbookNumber: PBNo,
             createdBy: user.id,
             birthday: member.birthday
-                ? ExcelDateToJSDate(member.birthday as unknown as string)
+                ? excelDateToJSDate(member.birthday as unknown as string)
                 : undefined,
             eventId: id,
             emailAddress: member.emailAddress ?? "",
