@@ -2,6 +2,7 @@ import db from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
 import { sendMail } from "@/lib/mailer";
+import { MailchimpMailer } from "@/lib/mailer/mailchimp";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { eventIdSchema } from "@/validation-schema/commons";
 import { memberEmailSchema } from "@/validation-schema/member";
@@ -63,27 +64,29 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 { status: 400 }
             );
 
-        const mailTask = await sendMail([
-            {
-                subject: "eCoop : Your event OTP",
-                toEmail: validatedEmail.data,
-                template: {
-                    templateFile: "vote-otp.html",
-                    payload: {
-                        iconImage: `${process.env.DEPLOYMENT_URL}/images/vote-otp.png`,
-                        eventTitle: event.title,
-                        otp: memberAttendee.voteOtp as "",
-                        eventLink: `${process.env.DEPLOYMENT_URL}/events/${event.id}/`,
-                        memberName: `${memberAttendee.firstName} ${memberAttendee.firstName}`,
-                        eventCoverImage: event.coverImage as "",
+        const mailTask = await sendMail(
+            [
+                {
+                    subject: "eCoop : Your event OTP",
+                    to: validatedEmail.data,
+                    mailTemplate: {
+                        templateFile: "vote-otp.html",
+                        payload: {
+                            iconImage: `${process.env.DEPLOYMENT_URL}/images/vote-otp.png`,
+                            eventTitle: event.title,
+                            otp: memberAttendee.voteOtp as "",
+                            eventLink: `${process.env.DEPLOYMENT_URL}/events/${event.id}/`,
+                            memberName: `${memberAttendee.firstName} ${memberAttendee.lastName}`,
+                            eventCoverImage: event.coverImage as "",
+                            ecoopLogo: `${process.env.DEPLOYMENT_URL}/images/ecoop-logo.png`,
+                        },
                     },
                 },
-            },
-        ]);
+            ],
+            new MailchimpMailer()
+        );
 
-        console.log('mailTask', mailTask);
-
-        if (mailTask.errorSend) {
+        if (mailTask.errorSend.length > 0) {
             return NextResponse.json(
                 { message: mailTask.errorSend[0].reason ?? "OTP Not Sent" },
                 { status: 400 }

@@ -223,8 +223,9 @@ const MemberTable = ({ id, user, event }: Props) => {
                                             "flex-none flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
                                         )}
                                         disabled={
-                                            isPendingUpdateMembersPicture ||
-                                            memberTableIsEmpty
+                                            true
+                                            // isPendingUpdateMembersPicture ||
+                                            // memberTableIsEmpty
                                         }
                                         onClick={() => {
                                             mutate({
@@ -234,7 +235,7 @@ const MemberTable = ({ id, user, event }: Props) => {
                                     >
                                         <p>
                                             <span className="hidden lg:inline-block">
-                                                Sync Member&apos;s Pictures
+                                                Sync Pictures
                                             </span>
                                         </p>
                                         {isRefetchingUpdateMembersPicture ? (

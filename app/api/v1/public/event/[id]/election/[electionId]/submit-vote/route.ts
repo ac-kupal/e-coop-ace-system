@@ -5,9 +5,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { TVoteAuthorizationPayload } from "@/types";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 
+import { sendMail } from "@/lib/mailer";
+import { MailchimpMailer } from "@/lib/mailer/mailchimp";
 import { memberEmailSchema } from "@/validation-schema/member";
 import { chosenCandidateIds } from "@/validation-schema/election";
-import { sendMail } from "@/lib/mailer";
 
 export const POST = async (req: NextRequest) => {
     try {
@@ -118,6 +119,7 @@ export const POST = async (req: NextRequest) => {
                 participantName: `${firstName} ${lastName}`,
                 eventLink: `${process.env.DEPLOYMENT_URL}/events/${election.event.id}`,
                 voted: "",
+                ecoopLogo: `${process.env.DEPLOYMENT_URL}/images/ecoop-logo.png`,
             };
 
             electionPosition.map((position) => {
@@ -132,17 +134,20 @@ export const POST = async (req: NextRequest) => {
                 });
             });
 
-            await sendMail([
-                {
-                    subject:
-                        "Confirmation: Your Vote has been Successfully Submitted",
-                    toEmail: voter.emailAddress,
-                    template: {
-                        templateFile: "vote-submit.html",
-                        payload,
+            await sendMail(
+                [
+                    {
+                        subject:
+                            "Confirmation: Your Vote has been Successfully Submitted",
+                        to: voter.emailAddress,
+                        mailTemplate: {
+                            templateFile: "vote-submit.html",
+                            payload,
+                        },
                     },
-                },
-            ]);
+                ],
+                new MailchimpMailer()
+            );
         }
 
         const response = NextResponse.json(voterUpdate);
