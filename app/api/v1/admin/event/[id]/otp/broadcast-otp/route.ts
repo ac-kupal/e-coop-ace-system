@@ -11,6 +11,8 @@ import { routeErrorHandler } from "@/errors/route-error-handler";
 
 type TParams = { params: { id: number } };
 
+export const maxDuration = 300;
+
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
         await currentUserOrThrowAuthError();
