@@ -8,6 +8,7 @@ export type TMailTemplate =
               coverImage: string;
               eventLink: string;
               voted: string;
+              ecoopLogo: string;
           };
       }
     | {
@@ -19,16 +20,30 @@ export type TMailTemplate =
               eventTitle: string;
               eventCoverImage: string;
               eventLink: string;
+              ecoopLogo: string;
           };
       };
+
+export interface IMailer {
+    sendMail(
+        sendMailsContent: IFinalSendMail[],
+        fromEmail: string
+    ): Promise<TMailSendObject>;
+}
 
 export type TMailSendObject = {
     successSend: { success: true; to: string }[];
     errorSend: { success: false; to: string; reason: string }[];
 };
 
-export interface ISendMailProps {
+export interface ISendMailRawProps {
     subject: string;
-    toEmail: string;
-    template: TMailTemplate;
+    to: string;
+    mailTemplate: TMailTemplate;
+}
+
+export interface IFinalSendMail {
+    subject: string;
+    to: string;
+    content: string;
 }
