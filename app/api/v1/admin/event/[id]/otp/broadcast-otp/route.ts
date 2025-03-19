@@ -2,7 +2,7 @@ import db from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 
 import { sendMail } from "@/lib/mailer";
-import { ISendMailRawProps } from "@/types";
+import { ISendMailRawProps, TMailErrorSend } from "@/types";
 import { MailchimpMailer } from "@/lib/mailer/mailchimp";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { eventIdSchema } from "@/validation-schema/commons";
@@ -53,12 +53,20 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         const mails: ISendMailRawProps[] = [];
 
+        const invalidMails: TMailErrorSend[] = [];
+
         memberAttendeesList.forEach((member) => {
             const validatedEmail = memberEmailSchema.safeParse(
                 member.emailAddress
             );
 
-            if (!validatedEmail.success) return;
+            if (!validatedEmail.success)
+                return invalidMails.push({
+                    to: member.emailAddress ?? "",
+                    reason: "Invalid Email",
+                    success: false,
+                    reasonDescription: "Member email is invalid",
+                });
 
             mails.push({
                 subject: "eCoop : Your event OTP",
@@ -78,14 +86,15 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
             });
         });
 
-        const mailSendJob = await sendMail(mails, new MailchimpMailer());
+        const { errorSend, successSend } = await sendMail(
+            mails,
+            new MailchimpMailer()
+        );
 
         await db.eventAttendees.updateMany({
             where: {
                 emailAddress: {
-                    in: mailSendJob.successSend.map(
-                        (sendEntry) => sendEntry.to
-                    ),
+                    in: successSend.map((sendEntry) => sendEntry.to),
                 },
                 eventId,
             },
@@ -94,7 +103,10 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
             },
         });
 
-        return NextResponse.json(mailSendJob);
+        return NextResponse.json({
+            successSend,
+            errorSend: [...invalidMails, ...errorSend],
+        });
     } catch (e) {
         return routeErrorHandler(e, req);
     }

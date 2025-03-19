@@ -63,7 +63,7 @@ const MemberTable = ({ id, user, event }: Props) => {
     const [searchVal, setSearchVal] = useState("");
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id, (res) => {
         toast(<DownloadableMailResponse mailResponse={res} />, {
-            duration: 1000 * 15,
+            duration: 1000 * 120,
         });
     });
 
