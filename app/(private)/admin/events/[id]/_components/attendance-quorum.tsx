@@ -37,7 +37,7 @@ const AttendanceQuorum = ({ eventId }: Props) => {
     });
 
     return (
-        <Card className="w-full shrink-0 min-w-[400px] md:w-fit flex-auto relative">
+        <Card className="w-full shrink-0 min-w-[400px] md:max-w-xl flex-auto relative">
             <div className="flex p-4 space-x-2  items-center py-2">
                 <div className="p-1 dark:bg-[#c5a522] bg-[#e7c127] rounded-sm">
                     <Sigma className="size-5 text-slate-200" />
