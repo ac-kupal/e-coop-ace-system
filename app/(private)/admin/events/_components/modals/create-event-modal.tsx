@@ -1,14 +1,20 @@
 "use client";
+import { z } from "zod";
+import { v4 } from "uuid";
+import { user } from "next-auth";
 import { Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { EventType, Role } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import ModalHead from "@/components/modals/modal-head";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-
-import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectItem,
+    SelectValue,
+    SelectContent,
+    SelectTrigger,
+} from "@/components/ui/select";
 import {
     Form,
     FormItem,
@@ -17,28 +23,20 @@ import {
     FormControl,
     FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import ImagePick from "@/components/image-pick";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import ModalHead from "@/components/modals/modal-head";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import { createEventWithElectionWithUploadSchema } from "@/validation-schema/event";
 
 import { cn } from "@/lib/utils";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { EventType, Role } from "@prisma/client";
-import { useRef, useState } from "react";
-import { z } from "zod";
 import useImagePick from "@/hooks/use-image-pick";
+import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
 import { useCreateEvent } from "@/hooks/api-hooks/event-api-hooks";
 import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
-import ImagePick from "@/components/image-pick";
-import { v4 } from "uuid";
-import InputMask from "react-input-mask";
-import { branchList } from "@/hooks/api-hooks/branch-api-hooks";
-import { user } from "next-auth";
 
 type Props = {
     state: boolean;
@@ -46,6 +44,7 @@ type Props = {
     onCancel?: () => void;
     user: user;
 };
+
 export type EventSchemaType = z.infer<
     ReturnType<typeof createEventWithElectionWithUploadSchema>
 >;
@@ -65,28 +64,23 @@ const CreateEventModal = ({ state, onClose, onCancel, user }: Props) => {
         maxWidthOrHeight: 800,
     });
 
-    const defaultValues = {
-        title: "",
-        description: "",
-        location: "",
-        category: EventType.event,
-        date: undefined,
-        electionName: "",
-        coverImage: imageFile,
-        branchId: user.role === Role.admin ? user.branchId : 0,
-        coopId: user.coopId,
-    };
-
     const eventForm = useForm<EventSchemaType>({
         resolver: zodResolver(EventSchema),
-        defaultValues: defaultValues,
+        defaultValues: {
+            title: "",
+            description: "",
+            location: "",
+            category: EventType.event,
+            date: undefined,
+            electionName: "",
+            coverImage: imageFile,
+            branchId: user.role === Role.admin ? user.branchId : 0,
+            coopId: user.coopId,
+        },
     });
 
-    const reset = () => {
-        eventForm.reset(defaultValues);
-    };
     const onCancelandReset = () => {
-        reset();
+        eventForm.reset();
         onClose(false);
     };
 
@@ -134,7 +128,7 @@ const CreateEventModal = ({ state, onClose, onCancel, user }: Props) => {
             open={state}
             onOpenChange={(state) => {
                 onClose(state);
-                reset();
+                eventForm.reset();
             }}
         >
             <DialogContent
@@ -213,19 +207,17 @@ const CreateEventModal = ({ state, onClose, onCancel, user }: Props) => {
                                         <FormItem className="flex flex-col">
                                             <FormLabel className="flex justify-between">
                                                 <h1>Date of Event</h1>{" "}
-                                                <span className="text-[12px] italic text-muted-foreground">
-                                                    yyyy/mm/dd
-                                                </span>
                                             </FormLabel>
-                                            <InputMask
-                                                mask="9999/99/99"
-                                                ref={inputRef}
-                                                value={field.value as any}
-                                                onChange={(some) => {
-                                                    field.onChange(some);
-                                                }}
-                                                placeholder="Input Date of Event"
-                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            <Input
+                                                type="date"
+                                                {...field}
+                                                value={
+                                                    field.value instanceof Date
+                                                        ? field.value
+                                                              .toISOString()
+                                                              .split("T")[0]
+                                                        : field.value
+                                                }
                                             />
                                             <FormMessage />
                                         </FormItem>
@@ -377,7 +369,7 @@ const CreateEventModal = ({ state, onClose, onCancel, user }: Props) => {
                                 disabled={isLoading}
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    reset();
+                                    eventForm.reset();
                                     resetPicker();
                                 }}
                                 variant={"ghost"}

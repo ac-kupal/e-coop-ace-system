@@ -44,17 +44,6 @@ export const validateBirthDay = z.coerce.date({
     required_error: "birthday is required for verification",
 });
 
-export const validateBirthdayString = z.preprocess(
-    (val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
-    z.string()
-        .refine(
-            (value) =>
-                /^(0[1-9]|1[0-2])(\/|-)(0[1-9]|1\d|2\d|3[01])(\/|-)(\d{4})$/.test(value),
-            "Invalid date format"
-        )
-        .optional()
-);
-
 export const userIdSchema = z.coerce.number({
     invalid_type_error: "user is invalid",
     required_error: "user is required",

@@ -5,7 +5,6 @@ import {
     validateBirthDay,
     electionIdParamSchema,
     passbookNumberSchema,
-    validateBirthdayString,
 } from "./commons";
 
 // for event registration verification api
@@ -33,14 +32,7 @@ export const attendeeRegisterSchema = z.object({
 // for event registration for form schema
 export const attendeeRegisterFormSchema = z.object({
     passbookNumber: passbookNumberSchema,
-    birthday: z
-        .string()
-        .refine((value) => {
-            return /^(0[1-9]|1[0-2])(\/|-)(0[1-9]|1\d|2\d|3[01])(\/|-)(\d{4})$/.test(
-                value
-            );
-        }, "Invalid date format")
-        .optional(),
+    birthday: z.coerce.date().optional(),
 });
 
 export const memberAttendeeSearchSchema = z.object({
@@ -77,7 +69,7 @@ export const voterVerificationSchema = z.object({
 export const voterVerificationFormSchema = z.object({
     passbookNumber: passbookNumberSchema,
     otp: otpSchema,
-    birthday: validateBirthdayString,
+    birthday: validateBirthDay.optional(),
 });
 
 // for voter registration

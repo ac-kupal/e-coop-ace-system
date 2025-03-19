@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { generateUserProfileS3URL } from "@/lib/aws-s3";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
-import { generateOTP, newDate, validateId } from "@/lib/server-utils";
+import { generateOTP, validateId } from "@/lib/server-utils";
 
 import { eventIdSchema } from "@/validation-schema/commons";
 import { routeErrorHandler } from "@/errors/route-error-handler";

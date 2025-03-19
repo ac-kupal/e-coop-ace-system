@@ -14,10 +14,15 @@ type TParams = { params: { id: number; passbookNumber: number } };
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
-        const { id: eventId, electionId } = eventElectionParamsSchema.parse(params);
-        const { otp, birthday, passbookNumber } = voterVerificationSchema.parse(await req.json());
+        const { id: eventId, electionId } =
+            eventElectionParamsSchema.parse(params);
+        const { otp, birthday, passbookNumber } = voterVerificationSchema.parse(
+            await req.json()
+        );
 
-        const election = await db.election.findUnique({ where: { eventId, id: electionId } });
+        const election = await db.election.findUnique({
+            where: { eventId, id: electionId },
+        });
 
         if (election?.status !== "live")
             return NextResponse.json(
@@ -45,24 +50,41 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 { message: "You already voted" },
                 { status: 403 }
             );
-        console.log(birthday, otp)
+
+        if (!otp && !birthday)
+            return NextResponse.json(
+                { message: `Invalid verification, please provide OTP ${election.allowBirthdayVerification ? 'or Birthday' : ''}` },
+                { status: 403 }
+            );
 
         if (otp === undefined) {
-            const isBirthdayValid = birthday && voter.birthday && isSameDay(voter.birthday, birthday);
+            if (voter.birthday === null) {
+                return NextResponse.json(
+                    {
+                        message:
+                            "You don't have a birthday defined in our record, use OTP instead, or contact admin/staff.",
+                    },
+                    { status: 400 }
+                );
+            }
+
+            const isBirthdayValid =
+                birthday && isSameDay(voter.birthday, birthday);
+
             if (!isBirthdayValid) {
                 return NextResponse.json(
                     { message: "Invalid verification. incorrect Birthday" },
                     { status: 400 }
                 );
-            } 
-        }else {
-            const isOtpValid = otp && otp.length === 6 && otp === voter.voteOtp; 
+            }
+        } else {
+            const isOtpValid = otp && otp.length === 6 && otp === voter.voteOtp;
             if (!isOtpValid) {
                 return NextResponse.json(
                     { message: "Invalid verification. incorrect OTP" },
                     { status: 400 }
                 );
-            } 
+            }
         }
 
         if (election.voteEligibility === "REGISTERED" && !voter.registered)

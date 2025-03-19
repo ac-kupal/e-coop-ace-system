@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Loader2 } from "lucide-react";
-import ReactInputMask from "react-input-mask";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ErrorAlert from "@/components/error-alert/error-alert";
@@ -21,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { TEvent, TMemberAttendeesMinimalInfo } from "@/types";
 import { useRegisterMember } from "@/hooks/public-api-hooks/use-member-api";
 import { attendeeRegisterFormSchema } from "@/validation-schema/event-registration-voting";
+import { Input } from "@/components/ui/input";
 
 type Props = {
     event: TEvent;
@@ -42,9 +42,7 @@ const RegisterAttendance = ({ event, member, onUnselect }: Props) => {
         resolver: zodResolver(attendeeRegisterFormSchema),
         defaultValues: {
             passbookNumber: member.passbookNumber,
-            birthday: event.requireBirthdayVerification
-                ? ""
-                : undefined,
+            birthday: undefined,
         },
     });
 
@@ -71,18 +69,17 @@ const RegisterAttendance = ({ event, member, onUnselect }: Props) => {
                                         <FormItem className="flex flex-col">
                                             <FormLabel className="flex justify-between">
                                                 <h1>Birthday</h1>{" "}
-                                                <span className="text-[12px] italic text-muted-foreground">
-                                                    mm/dd/yyyy
-                                                </span>
                                             </FormLabel>
-                                            <ReactInputMask
+                                            <Input
+                                                type="date"
                                                 {...field}
-                                                mask="99/99/9999"
-                                                placeholder="input birthday"
-                                                className={cn(
-                                                    "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                                                    "text-xl text-center font-medium placeholder:font-normal placeholder:text-base placeholder:text-foreground/70"
-                                                )}
+                                                value={
+                                                    field.value instanceof Date
+                                                        ? field.value
+                                                              .toISOString()
+                                                              .split("T")[0]
+                                                        : field.value
+                                                }
                                             />
                                             <FormMessage />
                                         </FormItem>

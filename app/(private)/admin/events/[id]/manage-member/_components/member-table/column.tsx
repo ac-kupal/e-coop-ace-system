@@ -1,5 +1,4 @@
 "use client";
-import moment from "moment";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { forwardRef, useState } from "react";
@@ -17,10 +16,10 @@ import {
     QrCode,
     Pencil,
     CopyIcon,
-    QrCodeIcon,
-    ClipboardPen,
     MenuIcon,
     SendIcon,
+    QrCodeIcon,
+    ClipboardPen,
 } from "lucide-react";
 import {
     DropdownMenu,
@@ -41,7 +40,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import QrViewContent from "@/components/modals/modal-content/qr-view-content";
 
 import { cn } from "@/lib/utils";
-import useOrigin from "@/hooks/use-origin";
 import { useInfoModal } from "@/stores/use-info-modal-store";
 import {
     TEventWithElection,
@@ -393,9 +391,7 @@ const Actions = ({
                                         passbookNumber: member.passbookNumber,
                                         birthday:
                                             member.birthday !== null
-                                                ? new Date(
-                                                      member.birthday
-                                                  ).toISOString()
+                                                ? new Date(member.birthday)
                                                 : undefined,
                                     });
                                 },
@@ -712,7 +708,7 @@ const columns = ({
                     text={
                         !row.original.birthday
                             ? ""
-                            : moment(row.original.birthday).format("LL")
+                            : format(row.original.birthday, "PP")
                     }
                 ></Cell>
             ),

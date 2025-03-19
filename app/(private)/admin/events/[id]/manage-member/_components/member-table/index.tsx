@@ -120,11 +120,11 @@ const MemberTable = ({ id, user, event }: Props) => {
 
     const isStaff = user.role === Role.staff;
 
-    const {
-        mutate,
-        isPending: isRefetchingUpdateMembersPicture,
-        isPending: isPendingUpdateMembersPicture,
-    } = useUpdateEventAttendees();
+    // const {
+    //     mutate,
+    //     isPending: isRefetchingUpdateMembersPicture,
+    //     isPending: isPendingUpdateMembersPicture,
+    // } = useUpdateEventAttendees();
 
     if (data === undefined)
         return <h1 className=" animate-pulse">Loading...</h1>;
@@ -215,6 +215,36 @@ const MemberTable = ({ id, user, event }: Props) => {
                                     align="center"
                                     content={
                                         <div className="flex items-center gap-x-2">
+                                            <PersonStandingIcon className="size-4" />{" "}
+                                            Add Specific Members.
+                                        </div>
+                                    }
+                                >
+                                    <Button
+                                        size="sm"
+                                        className={cn(
+                                            "flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
+                                        )}
+                                        onClick={() => {
+                                            setCreateMember(true);
+                                        }}
+                                    >
+                                        <p>
+                                            Add{" "}
+                                            <span className="hidden lg:inline-block">
+                                                Member
+                                            </span>
+                                        </p>
+                                        <Plus className="w-4 h-4" />
+                                    </Button>
+                                </ActionTooltip>
+                            )}
+                            {/* {!isStaff && (
+                                <ActionTooltip
+                                    side="top"
+                                    align="center"
+                                    content={
+                                        <div className="flex items-center gap-x-2">
                                             <Users className="size-4" />
                                             Sync member&apos;s pictures from
                                             database
@@ -249,7 +279,7 @@ const MemberTable = ({ id, user, event }: Props) => {
                                         )}
                                     </Button>
                                 </ActionTooltip>
-                            )}
+                            )} */}
                             <Button
                                 size="sm"
                                 className={cn(
@@ -303,36 +333,6 @@ const MemberTable = ({ id, user, event }: Props) => {
                                         ) : (
                                             <Send className="w-4 h-4" />
                                         )}
-                                    </Button>
-                                </ActionTooltip>
-                            )}
-                            {!isStaff && (
-                                <ActionTooltip
-                                    side="top"
-                                    align="center"
-                                    content={
-                                        <div className="flex items-center gap-x-2">
-                                            <PersonStandingIcon className="size-4" />{" "}
-                                            Add Specific Members.
-                                        </div>
-                                    }
-                                >
-                                    <Button
-                                        size="sm"
-                                        className={cn(
-                                            "flex  rounded-md justify-center items-center md:space-x-2 md:min-w-[7rem]"
-                                        )}
-                                        onClick={() => {
-                                            setCreateMember(true);
-                                        }}
-                                    >
-                                        <p>
-                                            Add{" "}
-                                            <span className="hidden lg:inline-block">
-                                                Member
-                                            </span>
-                                        </p>
-                                        <Plus className="w-4 h-4" />
                                     </Button>
                                 </ActionTooltip>
                             )}

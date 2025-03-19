@@ -1,23 +1,25 @@
 "use client";
-import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
+import Link from "next/link";
+import { toast } from "sonner";
+import { useState } from "react";
+import { format } from "date-fns";
+import { Role } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import {
-    CheckCircle2,
     Copy,
-    Loader2,
-    MenuIcon,
+    Trash,
+    Users,
     Pencil,
     QrCode,
     Target,
+    Loader2,
+    MenuIcon,
     TouchpadOff,
-    Trash,
-    Users,
+    CheckCircle2,
 } from "lucide-react";
 
-import { toast } from "sonner";
-import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,24 +28,23 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import moment from "moment";
-import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import CopyURL from "@/components/copy-url";
+import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table";
 import UpdateEventModal from "../modals/update-event-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import QrViewContent from "@/components/modals/modal-content/qr-view-content";
+import { DataTableColHeader } from "@/components/data-table/data-table-col-header";
+
 import {
     TEventWithElection,
     TEventWithElectionWithCoopWithBranch,
 } from "@/types";
-import Link from "next/link";
-import { useInfoModal } from "@/stores/use-info-modal-store";
-import QrViewContent from "@/components/modals/modal-content/qr-view-content";
 import useOrigin from "@/hooks/use-origin";
-import CopyURL from "@/components/copy-url";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSession } from "next-auth/react";
-import { Role } from "@prisma/client";
-import { currentUser } from "@/lib/auth";
+import { useInfoModal } from "@/stores/use-info-modal-store";
+import { deleteEvent } from "@/hooks/api-hooks/event-api-hooks";
+import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { cn } from "@/lib/utils";
 
 const Actions = ({
     event,
@@ -246,8 +247,8 @@ const ViewEventQr = ({
     );
 };
 
-const Cell = ({ text }: { text: string }) => {
-    return <p className="text-[min(14px,2.9vw)]">{text}</p>;
+const Cell = ({ text, className }: { text: string; className?: string }) => {
+    return <p className={cn("text-[min(14px,2.9vw)]", className)}>{text}</p>;
 };
 
 const columns: ColumnDef<TEventWithElectionWithCoopWithBranch>[] = [
@@ -303,9 +304,7 @@ const columns: ColumnDef<TEventWithElectionWithCoopWithBranch>[] = [
         header: ({ column }) => (
             <DataTableColHeader column={column} title="date" />
         ),
-        cell: ({ row }) => (
-            <Cell text={moment(row.original.date).format("LL")}></Cell>
-        ),
+        cell: ({ row }) => <Cell text={format(row.original.date, "MMM dd, yyyy")} className="text-nowrap"></Cell>,
     },
     {
         accessorKey: "branch",

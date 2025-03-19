@@ -1,39 +1,37 @@
 "use client";
+import { z } from "zod";
+import React from "react";
+import { gender } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Loader2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-
-import { Input } from "@/components/ui/input";
 import {
     Form,
-    FormControl,
-    FormField,
     FormItem,
+    FormField,
     FormLabel,
+    FormControl,
     FormMessage,
 } from "@/components/ui/form";
-
 import {
     Select,
-    SelectContent,
     SelectItem,
-    SelectTrigger,
     SelectValue,
+    SelectContent,
+    SelectTrigger,
 } from "@/components/ui/select";
-import { gender } from "@prisma/client";
-import React, { useRef } from "react";
-import { z } from "zod";
-import useImagePick from "@/hooks/use-image-pick";
-import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import ImagePick from "@/components/image-pick";
-import { createMemberWithUploadSchema } from "@/validation-schema/member";
-import { createMember } from "@/hooks/api-hooks/member-api-hook";
-import InputMask from "react-input-mask";
 import ModalHead from "@/components/modals/modal-head";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+
+import useImagePick from "@/hooks/use-image-pick";
+import { createMember } from "@/hooks/api-hooks/member-api-hook";
+import { onUploadImage } from "@/hooks/api-hooks/image-upload-api-hook";
+import { createMemberWithUploadSchema } from "@/validation-schema/member";
 
 type Props = {
     state: boolean;
@@ -114,8 +112,6 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
     };
     const isLoading = createMemberMutation.isPending;
     const isUploading = uploadImage.isPending;
-
-    const inputRef = useRef(null);
 
     return (
         <Dialog
@@ -215,17 +211,18 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                                             <FormItem className="flex flex-col">
                                                 <FormLabel className="flex justify-between">
                                                     <h1>Birthday</h1>{" "}
-                                                    <span className="text-[12px] italic text-muted-foreground">
-                                                        mm/dd/yyyy
-                                                    </span>
                                                 </FormLabel>
-                                                <InputMask
-                                                    mask="99/99/9999"
-                                                    ref={inputRef}
-                                                    value={field.value as any}
-                                                    onChange={field.onChange}
-                                                    placeholder="input birthday"
-                                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                <Input
+                                                    type="date"
+                                                    {...field}
+                                                    value={
+                                                        field.value instanceof
+                                                        Date
+                                                            ? field.value
+                                                                  .toISOString()
+                                                                  .split("T")[0]
+                                                            : field.value
+                                                    }
                                                 />
                                                 <FormMessage />
                                             </FormItem>

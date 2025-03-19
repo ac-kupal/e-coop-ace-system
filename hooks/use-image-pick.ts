@@ -61,10 +61,9 @@ const useImagePick = ( { maxPictureSizeMb = 2, maxOptimizedSizeMB = 0.5, initial
     const imageURL = useMemo(()=>{
         if(imageFile) return URL.createObjectURL(imageFile) 
         else  return initialImageURL
-    }, [imageFile])
+    }, [imageFile, initialImageURL])
 
     
-
     return { imageFile, imageURL, imageSize, onSelectImage, resetPicker }
 }
 
