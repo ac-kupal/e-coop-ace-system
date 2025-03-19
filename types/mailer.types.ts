@@ -26,7 +26,7 @@ export type TMailTemplate =
 
 export interface IMailer {
     sendMail(
-        sendMailsContent: IFinalSendMail[],
+        sendMailsContent: IFinalSendMail,
         fromEmail: string
     ): Promise<TMailSendObject>;
 }

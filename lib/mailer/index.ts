@@ -12,14 +12,25 @@ import {
     ISendMailRawProps,
 } from "@/types";
 
+const templateCache = new Map<string, handlebars.TemplateDelegate>();
+
 const getEmailTemplate = async ({ templateFile, payload }: TMailTemplate) => {
-    const templateContent = await fs.readFile(
-        path.join(process.cwd(), "public", "email-templates", templateFile),
-        "utf8"
+    if (!templateCache.has(templateFile)) {
+        const templateContent = await fs.readFile(
+            path.join(process.cwd(), "public", "email-templates", templateFile),
+            "utf8"
+        );
+        templateCache.set(templateFile, handlebars.compile(templateContent));
+    }
+    return templateCache.get(templateFile)!(payload);
+};
+
+const CHUNK_SIZE = 500;
+
+const chunkArray = <T>(arr: T[], chunkSize: number): T[][] => {
+    return Array.from({ length: Math.ceil(arr.length / chunkSize) }, (_, i) =>
+        arr.slice(i * chunkSize, i * chunkSize + chunkSize)
     );
-    const template = handlebars.compile(templateContent);
-    const generatedTemplate = template(payload);
-    return generatedTemplate;
 };
 
 export const sendMail = async (
@@ -29,25 +40,40 @@ export const sendMail = async (
     let successSend: { success: true; to: string }[] = [];
     let errorSend: { success: false; to: string; reason: string }[] = [];
 
-    for (const mailContent of sendMailsContent) {
-        const { subject, to, mailTemplate } = mailContent;
-        const content = await getEmailTemplate(mailTemplate);
+    const emailChunks = chunkArray(sendMailsContent, CHUNK_SIZE);
 
-        const preparedMail: IFinalSendMail = {
-            to,
-            subject,
-            content,
-        };
+    for (const chunk of emailChunks) {
+        const emailTasks = chunk.map(async (mailContent) => {
+            const content = await getEmailTemplate(mailContent.mailTemplate);
+            const preparedMail: IFinalSendMail = {
+                to: mailContent.to,
+                subject: mailContent.subject,
+                content,
+            };
 
-        const sendMailResult = await mailer.sendMail(
-            [preparedMail],
-            FROM_EMAIL
-        );
+            return mailer.sendMail(preparedMail, FROM_EMAIL);
+        });
 
-        successSend = successSend.concat(sendMailResult.successSend);
-        errorSend = errorSend.concat(sendMailResult.errorSend);
+        const results = await Promise.allSettled(emailTasks);
+
+        results.forEach((res) => {
+            if (res.status === "fulfilled") {
+                successSend.push(...res.value.successSend);
+                errorSend.push(...res.value.errorSend);
+            } else {
+                errorSend.push({
+                    success: false,
+                    to: "unknown",
+                    reason:
+                        res.reason instanceof Error
+                            ? res.reason.message
+                            : String(res.reason),
+                });
+            }
+        });
     }
 
-    console.log("Mail Task:", { successSend, errorSend });
+    if (process.env.NODE_ENV === "development")
+        console.log("Mail Task:", { successSend, errorSend });
     return { successSend, errorSend };
 };

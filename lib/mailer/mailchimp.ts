@@ -1,6 +1,6 @@
 import mailchimp, {
-    MessagesMessage,
     RejectReason,
+    MessagesMessage,
 } from "@mailchimp/mailchimp_transactional";
 
 import { IFinalSendMail, IMailer, TMailSendObject } from "@/types";
@@ -19,94 +19,79 @@ export class MailchimpMailer implements IMailer {
             case "hard-bounce":
                 return "Invalid email address or the email does not exist";
             case "soft-bounce":
-                return "Recepient's email mailbox possibly full";
+                return "Recipient's email mailbox possibly full";
             default:
                 return "Unknown error sending email";
         }
     }
 
     async sendMail(
-        sendMailsContent: IFinalSendMail[],
+        sendMailsContent: IFinalSendMail,
         fromEmail: string
     ): Promise<TMailSendObject> {
-        let successSend: { success: true; to: string }[] = [];
-        let errorSend: {
-            success: false;
-            to: string;
-            reason: string;
-            reasonDescription?: string;
-        }[] = [];
+        const { subject, to, content } = sendMailsContent;
 
-        await Promise.all(
-            sendMailsContent.map(async (mailContent) => {
-                const { subject, to, content } = mailContent;
+        const message: MessagesMessage = {
+            from_email: fromEmail,
+            to: [{ email: to }],
+            subject,
+            html: content,
+        };
 
-                const message: MessagesMessage = {
-                    from_email: fromEmail,
-                    to: [{ email: to }],
-                    subject,
-                    html: content,
+        try {
+            const sendMailResponse = await this.client.messages.send({
+                message,
+            });
+            const mailStatus = Array.isArray(sendMailResponse)
+                ? sendMailResponse[0]
+                : sendMailResponse;
+
+            if (
+                mailStatus.status === "sent" ||
+                mailStatus.status === "queued" ||
+                mailStatus.status === "scheduled"
+            ) {
+                return {
+                    successSend: [{ success: true, to: mailStatus.email }],
+                    errorSend: [],
                 };
-
-                try {
-                    const sendMailResponse = await this.client.messages.send({
-                        message,
-                    });
-
-                    const responses = Array.isArray(sendMailResponse)
-                        ? sendMailResponse
-                        : [sendMailResponse];
-
-                    responses.forEach((mailStatus) => {
-                        if (
-                            mailStatus.status === "sent" ||
-                            mailStatus.status === "queued" ||
-                            mailStatus.status === "scheduled"
-                        ) {
-                            successSend.push({
-                                success: true,
-                                to: mailStatus.email,
-                            });
-                        } else {
-                            errorSend.push({
-                                success: false,
-                                to: mailContent.to,
-                                reason:
-                                    mailStatus.status?.toString() ??
-                                    "Unknown Error",
-                                reasonDescription:
-                                    mailStatus.status === "rejected"
-                                        ? this.translateReason(
-                                              mailStatus.reject_reason as RejectReason
-                                          )
-                                        : "unkown reason",
-                            });
-                        }
-                    });
-                } catch (error: any) {
-                    console.error(
-                        "[Mailchimp Error] Error sending email:",
-                        error.message
-                    );
-
-                    if (error.response?.data) {
-                        errorSend.push({
+            } else {
+                return {
+                    successSend: [],
+                    errorSend: [
+                        {
                             success: false,
                             to,
-                            reason: JSON.stringify(error.response.data),
-                        });
-                    } else {
-                        errorSend.push({
-                            success: false,
-                            to,
-                            reason: error.message || "Unknown Mailchimp error",
-                            reasonDescription : 'unknown reason'
-                        });
-                    }
-                }
-            })
-        );
+                            reason:
+                                mailStatus.status?.toString() ??
+                                "Unknown Error",
+                            reasonDescription:
+                                mailStatus.status === "rejected"
+                                    ? this.translateReason(
+                                          mailStatus.reject_reason as RejectReason
+                                      )
+                                    : "Unknown reason",
+                        },
+                    ],
+                };
+            }
+        } catch (error: any) {
+            console.error(
+                "[Mailchimp Error] Error sending email:",
+                error.message
+            );
 
-        return { successSend, errorSend };
+            return {
+                successSend: [],
+                errorSend: [
+                    {
+                        success: false,
+                        to,
+                        reason: error.message || "Unknown Mailchimp error",
+                        reasonDescription: "unknown reason",
+                    },
+                ],
+            };
+        }
     }
 }
