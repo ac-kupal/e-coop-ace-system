@@ -89,7 +89,11 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         if (mailTask.errorSend.length > 0) {
             return NextResponse.json(
-                { message: mailTask.errorSend[0].reason ?? "OTP Not Sent" },
+                {
+                    message: mailTask.errorSend[0].reason
+                        ? `${mailTask.errorSend[0].reason} : ${mailTask.errorSend[0].reasonDescription}`
+                        : "OTP Not Sent",
+                },
                 { status: 400 }
             );
         }
