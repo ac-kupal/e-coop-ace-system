@@ -62,7 +62,9 @@ const MemberTable = ({ id, user, event }: Props) => {
     const { onOpenQR } = useQrReaderModal();
     const [searchVal, setSearchVal] = useState("");
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id, (res) => {
-        toast(<DownloadableMailResponse mailResponse={res} />, {});
+        toast(<DownloadableMailResponse mailResponse={res} />, {
+            duration: 1000 * 15,
+        });
     });
 
     const [exportPbQrs, setExportPbQrs] = useState(false);
