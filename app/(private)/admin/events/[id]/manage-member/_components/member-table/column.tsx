@@ -20,6 +20,7 @@ import {
     QrCodeIcon,
     ClipboardPen,
     MenuIcon,
+    SendIcon,
 } from "lucide-react";
 import {
     DropdownMenu,
@@ -51,6 +52,7 @@ import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { deleteMember, useOtpSend } from "@/hooks/api-hooks/member-api-hook";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 import { useAttendanceRegistration } from "@/hooks/api-hooks/attendance-api-hooks";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ViewMemberQr = ({ member }: { member: TMember }) => {
     const { onOpen } = useInfoModal();
@@ -97,8 +99,8 @@ const Actions = ({
     member: TMemberWithEventElectionId;
     event: TEventWithElection;
 }) => {
+    const queryClient = useQueryClient();
     const { data: session } = useSession();
-    const origin = useOrigin();
 
     const isAdminOrRoot =
         session?.user.role === "admin" || session?.user.role === "root";
@@ -122,9 +124,21 @@ const Actions = ({
 
     const deleteOperation = deleteMember();
 
-    const { isSendingOtp, sendOtp } = useOtpSend(
+    const { isPending: isSendingOtp, mutate: sendOtp } = useOtpSend(
         member.eventId,
-        member.passbookNumber
+        member.passbookNumber,
+        (newMemberData) => {
+            queryClient.setQueriesData<TMemberWithEventElectionId[]>(
+                { queryKey: ["all-event-members-list-query"], exact: false },
+                (oldData) => {
+                    if (!oldData) return oldData;
+
+                    return oldData.map((member) =>
+                        member.id === newMemberData.id ? newMemberData : member
+                    );
+                }
+            );
+        }
     );
 
     const { mutate: registerAttendance, isPending: registerPending } =
@@ -430,6 +444,92 @@ const Actions = ({
     );
 };
 
+const SendOtpCell = ({
+    member,
+    event,
+}: {
+    member: TMemberWithEventElectionId;
+    event: TEventWithElection;
+}) => {
+    const { onOpen } = useConfirmModal();
+    const queryClient = useQueryClient();
+
+    const { isPending: isSendingOtp, mutate: sendOtp } = useOtpSend(
+        member.eventId,
+        member.passbookNumber,
+        (newMemberData) => {
+            queryClient.setQueriesData<TMemberWithEventElectionId[]>(
+                { queryKey: ["all-event-members-list-query"], exact: false },
+                (oldData) => {
+                    if (!oldData) return oldData;
+
+                    return oldData.map((member) =>
+                        member.id === newMemberData.id ? newMemberData : member
+                    );
+                }
+            );
+        }
+    );
+
+    const handleSendOtp = () => {
+        if (member.otpSent)
+            return onOpen({
+                title: "Resend OTP",
+                description:
+                    "We already send OTP for this member, Are you sure you want to Resend?",
+                onConfirm: () => sendOtp(),
+                confirmString: "Send",
+            });
+
+        sendOtp();
+    };
+
+    return (
+        <div className="flex items-center gap-x-2">
+            <div
+                onClick={() => {
+                    navigator.clipboard
+                        .writeText(`${member.voteOtp}`)
+                        .then(() => toast.success("Member OTP coppied"));
+                }}
+                className="font-mono inline-flex items-center gap-x-2"
+            >
+                <ActionTooltip
+                    content={
+                        <>
+                            Click to Copy Member OTP
+                            <CopyIcon
+                                className="size-4 ml-2 inline"
+                                strokeWidth="1"
+                            />
+                        </>
+                    }
+                >
+                    <Cell
+                        text={member.voteOtp}
+                        className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm"
+                    />
+                </ActionTooltip>
+            </div>
+            <ActionTooltip content={member.otpSent ? "Resend OTP" : "Send OTP"}>
+                <Button
+                    size="sm"
+                    className="gap-x-1"
+                    variant="secondary"
+                    disabled={isSendingOtp}
+                    onClick={() => handleSendOtp()}
+                >
+                    {isSendingOtp ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <SendIcon className="size-4" />
+                    )}
+                </Button>
+            </ActionTooltip>
+        </div>
+    );
+};
+
 const Cell = forwardRef<
     HTMLParagraphElement,
     {
@@ -554,7 +654,7 @@ const columns = ({
                     >
                         <Cell
                             text={row.original.passbookNumber}
-                            className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm whitespace-nowrap" 
+                            className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm whitespace-nowrap"
                         />
                     </ActionTooltip>
                 </div>
@@ -575,32 +675,28 @@ const columns = ({
             header: ({ column }) => (
                 <DataTableColHeader column={column} title="Vote OTP" />
             ),
-            cell: ({ row }) => (
-                <div
-                    onClick={() => {
-                        navigator.clipboard
-                            .writeText(`${row.original.voteOtp}`)
-                            .then(() => toast.success("Member OTP coppied"));
-                    }}
-                    className="font-mono inline-flex items-center gap-x-2"
-                >
-                    <ActionTooltip
-                        content={
-                            <>
-                                Click to Copy Member OTP
-                                <CopyIcon
-                                    className="size-4 ml-2 inline"
-                                    strokeWidth="1"
-                                />
-                            </>
-                        }
-                    >
-                        <Cell
-                            text={row.original.voteOtp}
-                            className=" px-2.5 py-1.5 cursor-pointer bg-popover rounded-sm"
-                        />
-                    </ActionTooltip>
-                </div>
+            cell: ({ row: { original } }) => (
+                <SendOtpCell member={original} event={event} />
+            ),
+        },
+
+        {
+            accessorKey: "otpSent",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="OTP Sent Date" />
+            ),
+            cell: ({ row: { original: member } }) => (
+                <>
+                    {member.otpSent && (
+                        <span className="text-nowrap text-xs text-muted-foreground">
+                            Sent on{" "}
+                            {format(
+                                member.otpSent,
+                                "MMMM dd, yyyy 'at' hh:mm aa"
+                            )}
+                        </span>
+                    )}
+                </>
             ),
         },
 

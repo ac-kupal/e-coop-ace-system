@@ -31,9 +31,18 @@ export interface IMailer {
     ): Promise<TMailSendObject>;
 }
 
+export type TMailSuccessSend = { success: true; to: string };
+
+export type TMailErrorSend = {
+    success: false;
+    to: string;
+    reason: string;
+    reasonDescription?: string;
+};
+
 export type TMailSendObject = {
-    successSend: { success: true; to: string }[];
-    errorSend: { success: false; to: string; reason: string }[];
+    successSend: TMailSuccessSend[];
+    errorSend: TMailErrorSend[];
 };
 
 export interface ISendMailRawProps {

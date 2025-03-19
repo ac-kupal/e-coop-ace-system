@@ -179,6 +179,7 @@ model EventAttendees {
     registeredAt DateTime?
     voted        Boolean   @default(false)
     voteOtp      String?
+    otpSent      DateTime?
 
     registrationAssistId Int?
     registeredBy         User? @relation(fields: [registrationAssistId], references: [id], onDelete: SetNull)

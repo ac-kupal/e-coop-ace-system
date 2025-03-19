@@ -31,6 +31,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
 
         const memberAttendee = await db.eventAttendees.findUnique({
             select: {
+                id: true,
                 firstName: true,
                 lastName: true,
                 emailAddress: true,
@@ -93,7 +94,23 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
             );
         }
 
-        return NextResponse.json("Sent");
+        const updatedMember = await db.eventAttendees.update({
+            where: { id: memberAttendee.id },
+            data: { otpSent: new Date() },
+            include: {
+                event: {
+                    select: {
+                        election: {
+                            select: {
+                                id: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        return NextResponse.json(updatedMember);
     } catch (e) {
         return routeErrorHandler(e, req);
     }

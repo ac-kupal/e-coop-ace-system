@@ -1,4 +1,7 @@
-import mailchimp, { MessagesMessage } from "@mailchimp/mailchimp_transactional";
+import mailchimp, {
+    MessagesMessage,
+    RejectReason,
+} from "@mailchimp/mailchimp_transactional";
 
 import { IFinalSendMail, IMailer, TMailSendObject } from "@/types";
 
@@ -11,12 +14,28 @@ export class MailchimpMailer implements IMailer {
         this.client = mailchimp(API_KEY);
     }
 
+    translateReason(rejectReason: RejectReason) {
+        switch (rejectReason) {
+            case "hard-bounce":
+                return "Invalid email address or the email does not exist";
+            case "soft-bounce":
+                return "Recepient's email mailbox possibly full";
+            default:
+                return "Unknown error sending email";
+        }
+    }
+
     async sendMail(
         sendMailsContent: IFinalSendMail[],
         fromEmail: string
     ): Promise<TMailSendObject> {
         let successSend: { success: true; to: string }[] = [];
-        let errorSend: { success: false; to: string; reason: string }[] = [];
+        let errorSend: {
+            success: false;
+            to: string;
+            reason: string;
+            reasonDescription?: string;
+        }[] = [];
 
         await Promise.all(
             sendMailsContent.map(async (mailContent) => {
@@ -49,13 +68,18 @@ export class MailchimpMailer implements IMailer {
                                 to: mailStatus.email,
                             });
                         } else {
-                            console.log("ERR: ", mailContent);
                             errorSend.push({
                                 success: false,
                                 to: mailContent.to,
                                 reason:
                                     mailStatus.status?.toString() ??
                                     "Unknown Error",
+                                reasonDescription:
+                                    mailStatus.status === "rejected"
+                                        ? this.translateReason(
+                                              mailStatus.reject_reason as RejectReason
+                                          )
+                                        : "unkown reason",
                             });
                         }
                     });
@@ -76,6 +100,7 @@ export class MailchimpMailer implements IMailer {
                             success: false,
                             to,
                             reason: error.message || "Unknown Mailchimp error",
+                            reasonDescription : 'unknown reason'
                         });
                     }
                 }

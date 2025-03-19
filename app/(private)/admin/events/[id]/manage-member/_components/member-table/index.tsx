@@ -48,6 +48,8 @@ import { cn } from "@/lib/utils";
 import { TEventWithElection } from "@/types";
 import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
+import { toast } from "sonner";
+import DownloadableMailResponse from "./downloadable-mail-response";
 
 type Props = {
     id: number;
@@ -59,7 +61,9 @@ const MemberTable = ({ id, user, event }: Props) => {
     const { onOpen } = useConfirmModal();
     const { onOpenQR } = useQrReaderModal();
     const [searchVal, setSearchVal] = useState("");
-    const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id);
+    const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id, (res) => {
+        toast(<DownloadableMailResponse mailResponse={res} />);
+    });
 
     const [exportPbQrs, setExportPbQrs] = useState(false);
     const onFocusSearch = useRef<HTMLInputElement | null>(null);
@@ -119,8 +123,6 @@ const MemberTable = ({ id, user, event }: Props) => {
         isPending: isRefetchingUpdateMembersPicture,
         isPending: isPendingUpdateMembersPicture,
     } = useUpdateEventAttendees();
-
-    const memberTableIsEmpty = data.length === 0;
 
     if (data === undefined)
         return <h1 className=" animate-pulse">Loading...</h1>;

@@ -57,6 +57,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
             const validatedEmail = memberEmailSchema.safeParse(
                 member.emailAddress
             );
+
             if (!validatedEmail.success) return;
 
             mails.push({
@@ -71,13 +72,27 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                         eventLink: `${process.env.DEPLOYMENT_URL}/events/${event.id}/`,
                         memberName: `${member.firstName} ${member.lastName}`,
                         eventCoverImage: event.coverImage as "",
-                        ecoopLogo : `${process.env.DEPLOYMENT_URL}/images/coop-logo.png`
+                        ecoopLogo: `${process.env.DEPLOYMENT_URL}/images/coop-logo.png`,
                     },
                 },
             });
         });
 
         const mailSendJob = await sendMail(mails, new MailchimpMailer());
+
+        await db.eventAttendees.updateMany({
+            where: {
+                emailAddress: {
+                    in: mailSendJob.successSend.map(
+                        (sendEntry) => sendEntry.to
+                    ),
+                },
+                eventId,
+            },
+            data: {
+                otpSent: new Date(),
+            },
+        });
 
         return NextResponse.json(mailSendJob);
     } catch (e) {
