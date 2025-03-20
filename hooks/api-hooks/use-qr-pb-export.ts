@@ -12,9 +12,9 @@ import { handleAxiosErrorMessage } from "@/utils";
 export const useEventQrPbExport = ({
     enable,
     eventId,
-    batchId,
-    options,
-    passbookNumbers,
+    batch,
+    dimension,
+    showPbNumberText,
     onError,
     onSuccess,
 }: {
@@ -22,20 +22,16 @@ export const useEventQrPbExport = ({
 } & IEventPbBulkExportRequest &
     IQueryHook<IEventPbBulkExportResponse | undefined, string>) => {
     return useQuery<IEventPbBulkExportResponse | undefined, string>({
-        queryKey: ["qr-bulk-download", eventId, batchId],
+        queryKey: ["qr-bulk-download", eventId, batch],
         queryFn: async () => {
             try {
                 const url = qs.stringifyUrl(
                     {
                         url: `/api/v1/admin/event/${eventId}/member/qr-bulk-export`,
                         query: {
-                            options: btoa(
-                                JSON.stringify({
-                                    batchId,
-                                    passbookNumbers,
-                                    options,
-                                })
-                            ),
+                            batch,
+                            dimension,
+                            showPbNumberText
                         },
                     },
                     { skipNull: true }

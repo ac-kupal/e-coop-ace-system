@@ -8,7 +8,6 @@ import {
 } from "@tanstack/react-table";
 import { user } from "next-auth";
 import { Role } from "@prisma/client";
-import { IoMdPhotos } from "react-icons/io";
 import { GrRotateRight } from "react-icons/gr";
 import useDebounce from "@/hooks/use-debounce";
 import React, { useRef, useMemo, useState, useEffect } from "react";
@@ -40,8 +39,7 @@ import DataTableBasicPagination2 from "@/components/data-table/data-table-basic-
 
 import {
     useBroadcastOTP,
-    getAllEventMembers,
-    useUpdateEventAttendees,
+    useEventMembers,
 } from "@/hooks/api-hooks/member-api-hook";
 
 import { cn } from "@/lib/utils";
@@ -50,6 +48,7 @@ import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { toast } from "sonner";
 import DownloadableMailResponse from "./downloadable-mail-response";
+import { PB_QR_EXPORT_BATCH_SIZE } from "@/constants";
 
 type Props = {
     id: number;
@@ -57,10 +56,37 @@ type Props = {
     event: TEventWithElection;
 };
 
+interface SearchInputProps {
+    value?: string;
+    onChange: (val?: string) => void;
+}
+
+const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
+    ({ value, onChange }, ref) => {
+        const [val, setVal] = useState(value);
+        const debouncedValue = useDebounce(val, 500);
+
+        useEffect(() => {
+            onChange?.(debouncedValue);
+        }, [debouncedValue, onChange]);
+
+        return (
+            <Input
+                ref={ref}
+                value={val}
+                placeholder="Search..."
+                onChange={(event) => setVal(event.target.value)}
+                className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+        );
+    }
+);
+
+SearchInput.displayName = "SearchInput";
+
 const MemberTable = ({ id, user, event }: Props) => {
     const { onOpen } = useConfirmModal();
     const { onOpenQR } = useQrReaderModal();
-    const [searchVal, setSearchVal] = useState("");
     const { broadcastOTP, isBroadcasting } = useBroadcastOTP(id, (res) => {
         toast(<DownloadableMailResponse mailResponse={res} />, {
             duration: 1000 * 120,
@@ -73,9 +99,9 @@ const MemberTable = ({ id, user, event }: Props) => {
     const [onImportModal, setOnImportModal] = useState(false);
     const [globalFilter, setGlobalFilter] = useState<string>("");
     const [onSkippedMemberModal, setOnSkippedMemberModal] = useState(false);
-    const { data, isError, isLoading, isFetching, refetch } =
-        getAllEventMembers(id);
 
+    const { data, isError, isLoading, isFetching, refetch } =
+        useEventMembers(id);
     const memoizedColumns = useMemo(() => columns({ event }), [event]);
 
     const table = useReactTable({
@@ -112,19 +138,7 @@ const MemberTable = ({ id, user, event }: Props) => {
         };
     }, []);
 
-    const debouncedValue = useDebounce<string>(searchVal, 500);
-
-    useEffect(() => {
-        setGlobalFilter(debouncedValue);
-    }, [debouncedValue, setGlobalFilter]);
-
     const isStaff = user.role === Role.staff;
-
-    // const {
-    //     mutate,
-    //     isPending: isRefetchingUpdateMembersPicture,
-    //     isPending: isPendingUpdateMembersPicture,
-    // } = useUpdateEventAttendees();
 
     if (data === undefined)
         return <h1 className=" animate-pulse">Loading...</h1>;
@@ -133,8 +147,8 @@ const MemberTable = ({ id, user, event }: Props) => {
         <div className="lg:space-y-5 space-y-2 min-h-[65vh] p-2">
             <BulkExportPbQrModal
                 eventId={id}
-                members={data}
                 open={exportPbQrs}
+                totalMembers={data.length}
                 onOpenChange={(val) => setExportPbQrs(val)}
             />
             <div className="flex hiiden flex-wrap items-center p-2 justify-between rounded-t-xl gap-y-2 rounded border-b bg-background dark:border dark:bg-secondary/70 ">
@@ -158,14 +172,10 @@ const MemberTable = ({ id, user, event }: Props) => {
                 <div className="flex lg:space-y-2 flex-col lg:flex-row lg:justify-between space-y-2 relative w-full items-center gap-x-4 text-muted-foreground">
                     <div className="w-full lg:w-fit relative">
                         <SearchIcon className="absolute w-4 h-auto top-3 text-muted-foreground left-2" />
-                        <Input
-                            value={searchVal}
+                        <SearchInput
                             ref={onFocusSearch}
-                            placeholder="Search..."
-                            onChange={(event) =>
-                                setSearchVal(event.target.value)
-                            }
-                            className="w-full pl-8 bg-popover text-muted-foreground placeholder:text-muted-foreground placeholder:text-[min(14px,3vw)] text-sm md:text-base ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            value={globalFilter}
+                            onChange={(val) => setGlobalFilter(val ?? "")}
                         />
                     </div>
                     <div className="overflow-x-scroll max-w-full lg:max-w-none thin-scroll">
@@ -181,7 +191,7 @@ const MemberTable = ({ id, user, event }: Props) => {
                                                 onScan: (val) => {
                                                     if (val.length === 0)
                                                         return;
-                                                    setSearchVal(
+                                                    setGlobalFilter(
                                                         val[0].rawValue
                                                     );
                                                 },

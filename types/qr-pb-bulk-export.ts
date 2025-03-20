@@ -1,16 +1,9 @@
 import z from "zod";
 
 export const eventPbBulkExportRequestSchema = z.object({
-    batchId: z.coerce.number(),
-    passbookNumbers: z.array(z.string().min(1), {
-        required_error: "passbookNumbers is required and must be an array",
-    }),
-    options: z
-        .object({
-            dimension: z.number().min(100).max(1000).default(500).optional(),
-            showPbNumberText: z.boolean().default(false).optional(),
-        })
-        .optional(),
+    batch: z.coerce.number(),
+    dimension: z.coerce.number().min(100).max(1000).default(500).optional(),
+    showPbNumberText: z.coerce.boolean().default(false).optional(),
 });
 
 export interface IEventPbBulkExportRequest

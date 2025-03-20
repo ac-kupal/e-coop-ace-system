@@ -93,7 +93,7 @@ const CreateMemberModal = ({ eventId, state, onClose, onCancel }: Props) => {
                 });
             } else {
                 const image = await uploadImage.mutateAsync({
-                    fileName: `${formValues.passbookNumber.toUpperCase()}`,
+                    fileName: `${formValues.passbookNumber.toUpperCase()}.webp`,
                     folderGroup: "member",
                     file: formValues.picture,
                 });

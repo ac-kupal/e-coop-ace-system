@@ -1,39 +1,54 @@
 import sharp from "sharp";
 import QRCode from "qrcode";
+import qs from "query-string";
 import archiver from "archiver";
 import { PassThrough } from "stream";
 import { NextRequest, NextResponse } from "next/server";
 
-import { TFolderUploadGroups } from "@/types";
+import db from "@/lib/database";
 import { uploadFile } from "@/services/s3-upload";
+import { PB_QR_EXPORT_BATCH_SIZE } from "@/constants";
 import { routeErrorHandler } from "@/errors/route-error-handler";
+import { eventIdParamSchema } from "@/validation-schema/api-params";
+
+import { TFolderUploadGroups } from "@/types";
 import { eventPbBulkExportRequestSchema } from "@/types/qr-pb-bulk-export";
 
 export const maxDuration = 300;
 
 type TParams = { params: { id: number } };
 
-const generateQRWithTextPNG = async (
-    passbookNumber: string,
-    dimension: number,
-    showPbNumberText: boolean
-) => {
-    if (!showPbNumberText) {
-        return QRCode.toBuffer(passbookNumber, { width: dimension, margin: 1 });
-    }
-
+const generateQRWithTextPNG = async ({
+    passbookNumber,
+    dimension,
+    showPbNumberText,
+    fullName,
+}: {
+    passbookNumber: string;
+    dimension: number;
+    showPbNumberText: boolean;
+    fullName?: string;
+}) => {
     const qrBuffer = await QRCode.toBuffer(passbookNumber, {
         width: dimension,
         margin: 1,
     });
 
-    const textHeight = 60;
+    if (!showPbNumberText) return qrBuffer;
+
+    const lineHeight = 20;
+    const textHeight = fullName ? lineHeight * 2 : lineHeight;
     const finalHeight = dimension + textHeight;
 
     const textOverlay = Buffer.from(
         `<svg width="${dimension}" height="${textHeight}" xmlns="http://www.w3.org/2000/svg">
             <rect width="${dimension}" height="${textHeight}" fill="white"/>
-            <text x="50%" y="50%" font-size="36" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="black">${passbookNumber}</text>
+            <text x="50%" y="${lineHeight / 2}" font-size="16" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="black">${passbookNumber}</text>
+            ${
+                fullName
+                    ? `<text x="50%" y="${lineHeight * 1.5}" font-size="14" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="black">${fullName}</text>`
+                    : ""
+            }
         </svg>`
     );
 
@@ -55,49 +70,48 @@ const generateQRWithTextPNG = async (
 
 export const GET = async (req: NextRequest, { params }: TParams) => {
     try {
-        const searchParams = new URL(req.url).searchParams;
-        const base64Options = searchParams.get("options") ?? "";
-        const decodedString = Buffer.from(base64Options, "base64").toString(
-            "utf-8"
-        );
+        const { id: eventId } = await eventIdParamSchema.parseAsync(params);
+        const { query } = qs.parseUrl(req.url);
 
-        const { passbookNumbers, batchId, options } =
-            await eventPbBulkExportRequestSchema.parseAsync(
-                JSON.parse(decodedString)
-            );
+        const { batch, dimension, showPbNumberText } =
+            await eventPbBulkExportRequestSchema.parseAsync(query);
+
+        const passbookNumbers = await db.eventAttendees.findMany({
+            where: { eventId },
+            select: {
+                firstName: true,
+                middleName: true,
+                lastName: true,
+                passbookNumber: true,
+            },
+            orderBy: [{ createdAt: "desc" }, { updatedAt: "desc" }],
+            take: PB_QR_EXPORT_BATCH_SIZE,
+            skip: (batch - 1) * PB_QR_EXPORT_BATCH_SIZE,
+        });
 
         const zipStream = new PassThrough();
         const archive = archiver("zip", { zlib: { level: 9 } });
 
         archive.pipe(zipStream);
 
-        for (const passbookNumber of passbookNumbers) {
-            const qrBuffer = await generateQRWithTextPNG(
-                passbookNumber,
-                options?.dimension ?? 300,
-                options?.showPbNumberText ?? false
-            );
-            archive.append(qrBuffer, { name: `${passbookNumber}.png` });
-        }
+        const qrPromises = passbookNumbers.map(
+            ({ passbookNumber, firstName, lastName, middleName }) =>
+                generateQRWithTextPNG({
+                    passbookNumber,
+                    dimension: dimension ?? 320,
+                    showPbNumberText: showPbNumberText ?? false,
+                    fullName: `${firstName} ${lastName} ${middleName}`,
+                }).then((qrBuffer) => {
+                    archive.append(qrBuffer, { name: `${passbookNumber}.png` });
+                })
+        );
 
+        await Promise.all(qrPromises);
         await archive.finalize();
 
-        const chunks: Uint8Array[] = [];
-
-        await new Promise<void>((resolve, reject) => {
-            zipStream.on("data", (chunk: Buffer) =>
-                chunks.push(new Uint8Array(chunk))
-            );
-            zipStream.on("end", resolve);
-            zipStream.on("error", reject);
-        });
-
-        const zipBuffer = Buffer.concat(chunks);
-        const zipFileName = `Event_${params.id}_PB_QRCode_Batch_${batchId}.zip`;
-
         const fileUrl = await uploadFile(
-            zipBuffer,
-            zipFileName,
+            zipStream,
+            `Event_${params.id}_PB_QRCode_Batch_${batch}.zip`,
             "downloadables" as TFolderUploadGroups,
             "application/zip"
         );

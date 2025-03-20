@@ -17,7 +17,7 @@ import { handleAxiosErrorMessage } from "@/utils";
 import useSkippedStore from "@/stores/skipped-members-store";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
 
-export const getAllEventMembers = (eventId: number) => {
+export const useEventMembers = (eventId: number) => {
     return useQuery<TMemberWithEventElectionId[], string>({
         queryKey: ["all-event-members-list-query"],
         queryFn: async () => {

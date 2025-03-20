@@ -99,7 +99,7 @@ const UpdateMemberForm = ({
                 });
             } else {
                 const image = await uploadImage.mutateAsync({
-                    fileName: `${formValues.passbookNumber.toUpperCase()}`,
+                    fileName: `${formValues.passbookNumber.toUpperCase()}.webp`,
                     folderGroup: "member",
                     file: formValues.picture,
                 });
