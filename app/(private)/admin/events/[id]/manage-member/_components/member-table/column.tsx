@@ -21,6 +21,7 @@ import {
     QrCodeIcon,
     ClipboardPen,
 } from "lucide-react";
+import { SiAnswer as AnswerIcon } from "react-icons/si";
 import {
     DropdownMenu,
     DropdownMenuItem,
@@ -47,10 +48,15 @@ import {
     TMemberWithEventElectionId,
 } from "@/types";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
-import { deleteMember, useOtpSend } from "@/hooks/api-hooks/member-api-hook";
+import {
+    deleteMember,
+    useOtpSend,
+    useUpdateEventAttendeeSurveyed,
+} from "@/hooks/api-hooks/member-api-hook";
 import { useVoterAuthorization } from "@/hooks/public-api-hooks/use-vote-api";
 import { useAttendanceRegistration } from "@/hooks/api-hooks/attendance-api-hooks";
 import { useQueryClient } from "@tanstack/react-query";
+import { title } from "process";
 
 const ViewMemberQr = ({ member }: { member: TMember }) => {
     const { onOpen } = useInfoModal();
@@ -138,6 +144,29 @@ const Actions = ({
             );
         }
     );
+
+    const { mutate: toggleSurveyed, isPending } =
+        useUpdateEventAttendeeSurveyed({
+            eventId: event.id,
+            eventAttendeeId: member.id,
+            onSuccess: (newMemberData) => {
+                queryClient.setQueriesData<TMemberWithEventElectionId[]>(
+                    {
+                        queryKey: ["all-event-members-list-query"],
+                        exact: false,
+                    },
+                    (oldData) => {
+                        if (!oldData) return oldData;
+
+                        return oldData.map((member) =>
+                            member.id === newMemberData.id
+                                ? newMemberData
+                                : member
+                        );
+                    }
+                );
+            },
+        });
 
     const { mutate: registerAttendance, isPending: registerPending } =
         useAttendanceRegistration(member.eventId);
@@ -403,6 +432,24 @@ const Actions = ({
                         Assist Vote
                     </DropdownMenuItem>
                 )}
+                <DropdownMenuItem
+                    className="px-2 gap-x-2"
+                    onClick={() =>
+                        onOpenConfirmModal({
+                            title: "Toggle Survey",
+                            description: member.surveyed
+                                ? "This member has been surveyed, do you want to mak as not surveyed?"
+                                : "Are you sure to mark this member as surveyed?",
+                            onConfirm: () =>
+                                toggleSurveyed({
+                                    surveyed: !member.surveyed,
+                                }),
+                        })
+                    }
+                >
+                    <AnswerIcon strokeWidth={2} className="h-4 ml-1 mr-1.5" />{" "}
+                    {member.surveyed ? "Unsurveyed" : "Surveyed"}
+                </DropdownMenuItem>
                 {isAdminOrRoot && (
                     <DropdownMenuItem
                         className="px-2 gap-x-2"
@@ -783,6 +830,33 @@ const columns = ({
                         </Badge>
                     ) : (
                         <Badge variant={"secondary"}>unregistered</Badge>
+                    )}
+                </div>
+            ),
+            enableHiding: true,
+            enableSorting: false,
+        },
+        {
+            accessorKey: "surveyed",
+            header: ({ column }) => (
+                <DataTableColHeader column={column} title="Surveyed" />
+            ),
+            cell: ({ row }) => (
+                <div className="text-nowrap">
+                    {row.original.surveyed ? (
+                        <Badge className="text-primary border-0  bg-primary/40">
+                            <Cell
+                                className="lowercase"
+                                text="Surveyed"
+                            ></Cell>
+                        </Badge>
+                    ) : (
+                        <Badge
+                            variant={"secondary"}
+                            className={cn(" bg-secondary")}
+                        >
+                            <Cell className="lowercase" text="" />
+                        </Badge>
                     )}
                 </div>
             ),

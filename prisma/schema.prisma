@@ -180,6 +180,7 @@ model EventAttendees {
     voted        Boolean   @default(false)
     voteOtp      String?
     otpSent      DateTime?
+    surveyed     Boolean?  @default(false)
 
     registrationAssistId Int?
     registeredBy         User? @relation(fields: [registrationAssistId], references: [id], onDelete: SetNull)
@@ -297,6 +298,7 @@ enum ClaimRequirements {
     REGISTERED
     VOTED
     REGISTERED_VOTED
+    REGISTERED_SURVEYED
 }
 
 model Incentives {

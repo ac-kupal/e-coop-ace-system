@@ -12,6 +12,7 @@ export type TMemberAttendeesMinimalInfo = {
     contact: string | null;
     picture: string | null;
     birthday: Date | null;
+    surveyed: boolean | null;
     passbookNumber: string;
     registered: boolean;
     voted: boolean;

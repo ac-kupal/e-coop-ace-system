@@ -168,3 +168,7 @@ export const memberIdSchema = z.string({
     invalid_type_error: "member id type is invalid",
     required_error: "member id is required",
 });
+
+export const memberToggleSurveyedSchema = z.object({
+    surveyed: z.coerce.boolean().default(false),
+});

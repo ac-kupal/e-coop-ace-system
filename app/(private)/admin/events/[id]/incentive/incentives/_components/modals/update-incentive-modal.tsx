@@ -134,6 +134,7 @@ const UpdateIncentiveModal = ({ state, onClose, incentive, onCreate }: Props) =>
                                             <SelectItem value={ClaimRequirements.REGISTERED}>{ClaimRequirements.REGISTERED}</SelectItem>
                                             <SelectItem value={ClaimRequirements.VOTED}>{ClaimRequirements.VOTED}</SelectItem>
                                             <SelectItem value={ClaimRequirements.REGISTERED_VOTED}>{ClaimRequirements.REGISTERED_VOTED}</SelectItem>
+                                            <SelectItem value={ClaimRequirements.REGISTERED_SURVEYED}>{ClaimRequirements.REGISTERED_SURVEYED}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormDescription>Only member who satisfy this requirement can claim</FormDescription>

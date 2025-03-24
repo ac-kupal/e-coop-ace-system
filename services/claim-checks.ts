@@ -6,9 +6,10 @@ export const isSatisfiedClaimRequirements = (requirement : ClaimRequirements, me
     // if(requirement === "REGISTERED" && !member.registered) return false;
     // if(requirement === "VOTED" && !member.voted) return false;
 
-    if(requirement === ClaimRequirements.REGISTERED_VOTED && member.registered && member.voted) return true;
-    if(requirement === ClaimRequirements.REGISTERED && member.registered) return true; 
     if(requirement === ClaimRequirements.VOTED && member.voted) return true;
+    if(requirement === ClaimRequirements.REGISTERED && member.registered) return true; 
+    if(requirement === ClaimRequirements.REGISTERED_VOTED && member.registered && member.voted) return true;
+    if(requirement === ClaimRequirements.REGISTERED_SURVEYED && member.registered && member.surveyed) return true;
     
     return false;
 }

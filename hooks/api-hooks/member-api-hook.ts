@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation";
 import { handleAxiosErrorMessage } from "@/utils";
 import useSkippedStore from "@/stores/skipped-members-store";
 import { voterVerificationFormSchema } from "@/validation-schema/event-registration-voting";
+import { IAPICallback } from "./types";
+import { memberToggleSurveyedSchema } from "@/validation-schema/member";
 
 export const useEventMembers = (eventId: number) => {
     return useQuery<TMemberWithEventElectionId[], string>({
@@ -391,6 +393,45 @@ export const useUpdateEventAttendees = () => {
                         onClick: () => location.reload(),
                     },
                 });
+                throw errorMessage;
+            }
+        },
+    });
+};
+
+export const useUpdateEventAttendeeSurveyed = ({
+    eventId,
+    eventAttendeeId,
+    onSuccess,
+    onError,
+}: { eventId: number; eventAttendeeId: string } & IAPICallback<
+    TMemberWithEventElectionId,
+    string
+>) => {
+    return useMutation<
+        TMemberWithEventElectionId,
+        string,
+        z.infer<typeof memberToggleSurveyedSchema>
+    >({
+        mutationKey: [
+            eventId,
+            "event-attendees",
+            eventAttendeeId,
+            "toggle-survey",
+        ],
+        mutationFn: async (data) => {
+            try {
+                const res = await axios.patch(
+                    `/api/v1/admin/event/${eventId}/member/${eventAttendeeId}/toggle-survey`,
+                    data
+                );
+                toast.success(data.surveyed ? "Member surveyed" : "Member unsurveyed");
+                onSuccess?.(res.data);
+                return res.data as TMemberWithEventElectionId;
+            } catch (e) {
+                const errorMessage = handleAxiosErrorMessage(e);
+                onError?.(errorMessage);
+                toast.error(errorMessage);
                 throw errorMessage;
             }
         },
