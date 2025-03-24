@@ -52,6 +52,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     picture: true,
                     registered: true,
                     voted: true,
+                    surveyed: true,
                 },
                 where: {
                     eventId,
@@ -72,6 +73,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     birthday: includeBday,
                     registered: true,
                     voted: true,
+                    surveyed: true,
                 },
                 where: {
                     eventId,

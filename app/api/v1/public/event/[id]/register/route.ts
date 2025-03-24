@@ -68,6 +68,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                     birthday: true,
                     registered: true,
                     voted: true,
+                    surveyed: true,
                 },
                 where: {
                     eventId_passbookNumber: {

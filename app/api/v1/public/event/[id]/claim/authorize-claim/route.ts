@@ -29,6 +29,7 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 picture: true,
                 passbookNumber: true,
                 registered: true,
+                surveyed : true,
                 voted: true,
             },
         });

@@ -64,6 +64,7 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                     passbookNumber: true,
                     registered: true,
                     voted: true,
+                    surveyed: true,
                 },
             });
 
