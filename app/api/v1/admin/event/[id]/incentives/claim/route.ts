@@ -15,25 +15,36 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
         const currentUser = await currentUserOrThrowAuthError();
 
         const assignedIncentivesToMe = await db.incentiveAssigned.findMany({
-            select : {
-                incentiveId : true,
+            select: {
+                incentiveId: true,
             },
-            where : {
+            where: {
                 eventId,
-                userId : currentUser.id
-            }
-        })
+                userId: currentUser.id,
+            },
+        });
 
-        const where = currentUser.role === "staff" ? { 
-            eventId,
-            AND : [
-                { OR : [
-                    { assistedById : currentUser.id },
-                    { assistedById : { equals : null }}
-                ] },
-                { incentiveId : { in : assignedIncentivesToMe.map((incentive)=> incentive.incentiveId) }}
-            ]
-         } : { eventId }
+        const where =
+            currentUser.role === "staff"
+                ? {
+                      eventId,
+                      AND: [
+                          {
+                              OR: [
+                                  { assistedById: currentUser.id },
+                                  { assistedById: { equals: null } },
+                              ],
+                          },
+                          {
+                              incentiveId: {
+                                  in: assignedIncentivesToMe.map(
+                                      (incentive) => incentive.incentiveId
+                                  ),
+                              },
+                          },
+                      ],
+                  }
+                : { eventId };
 
         const claimMasterList = await db.incentiveClaims.findMany({
             where,
@@ -42,8 +53,8 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                 eventId: true,
                 createdAt: true,
                 eventAttendeeId: true,
-                claimedOnline : true,
-                releasedAt : true,
+                claimedOnline: true,
+                releasedAt: true,
                 eventAttendee: {
                     select: {
                         passbookNumber: true,
@@ -52,11 +63,11 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
                         registered: true,
                     },
                 },
-                incentive : {
-                    select : {
-                        id : true,
-                        itemName : true,
-                    }
+                incentive: {
+                    select: {
+                        id: true,
+                        itemName: true,
+                    },
                 },
                 assistedBy: {
                     select: {
@@ -77,20 +88,24 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
-        const { id: eventId } = eventIdParamSchema.parse(params);
+        const { id: eventId } = await eventIdParamSchema.parseAsync(params);
         const currentUser = await currentUserOrThrowAuthError();
 
         const { claims } = createAssistedClaimSchema.parse(await req.json());
 
         const createAssistClaims = await db.incentiveClaims.createMany({
-            data: 
-            claims.map((claimEntry) => ({
+            data: claims.map((claimEntry) => ({
                 ...claimEntry,
                 eventId,
                 assistedById: currentUser.id,
                 createdBy: currentUser.id,
-                releasedAt : new Date(),
-            }))
+                releasedAt: new Date(),
+            })),
+        });
+
+        await db.event.update({
+            where: { id: eventId },
+            data: { subUpdatedAt: new Date() },
         });
 
         return NextResponse.json(createAssistClaims);

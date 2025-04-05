@@ -1,7 +1,7 @@
 "use client";
 import { user } from "next-auth";
 import { useSession } from "next-auth/react";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
     getCoreRowModel,
     getFilteredRowModel,
@@ -34,6 +34,7 @@ import { useClaimsMasterList } from "@/hooks/api-hooks/incentive-api-hooks";
 import LoadingSpinner from "@/components/loading-spinner";
 import { GrRotateRight } from "react-icons/gr";
 import { Button } from "@/components/ui/button";
+import { useOnEventSubDataUpdate } from "@/hooks/use-event-update-poller";
 
 const claimFromFilter: FacetedOptionType[] = [
     {
@@ -84,6 +85,9 @@ const ClaimListTable = ({ eventId, currentUser }: Props) => {
         isError,
         isLoading,
     } = useClaimsMasterList({ eventId });
+
+    const handleEventHasSubChange = useCallback(() => refetch(), [refetch]);
+    useOnEventSubDataUpdate({ eventId, onChange: handleEventHasSubChange });
 
     const table = useReactTable({
         data: claimList,

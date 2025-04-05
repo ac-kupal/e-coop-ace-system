@@ -42,7 +42,10 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
 
         const updatedSettings = await db.event.update({
             where: { id },
-            data: newSettings,
+            data: {
+                ...newSettings,
+                subUpdatedAt: new Date(),
+            },
             include: {
                 election: true,
             },

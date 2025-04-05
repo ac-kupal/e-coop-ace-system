@@ -272,7 +272,7 @@ export const updateAssignedQuantity = (
 };
 
 export const useAssignedIncentiveToMe = (eventId: number, enabled: boolean) => {
-    const { data: assignedToMe, isFetching: isLoadingAssignedToMe } = useQuery<
+    return useQuery<
         TIncentiveAssignedToMe[],
         string
     >({
@@ -292,8 +292,6 @@ export const useAssignedIncentiveToMe = (eventId: number, enabled: boolean) => {
         initialData: [],
         enabled,
     });
-
-    return { assignedToMe, isLoadingAssignedToMe };
 };
 
 export const useMemberClaimsWithAssistanceList = (
@@ -301,10 +299,7 @@ export const useMemberClaimsWithAssistanceList = (
     memberId: string,
     enabled: boolean
 ) => {
-    const { data: memberClaims, isPending: isLoadingMemberClaims } = useQuery<
-        TIncentiveClaimsWithIncentiveAndClaimAssistance[],
-        string
-    >({
+    return useQuery<TIncentiveClaimsWithIncentiveAndClaimAssistance[], string>({
         queryKey: [`incentive-claims-member-${memberId}`],
         queryFn: async () => {
             try {
@@ -321,19 +316,13 @@ export const useMemberClaimsWithAssistanceList = (
         initialData: [],
         enabled,
     });
-
-    return { memberClaims, isLoadingMemberClaims };
 };
 
 export const useCreateClaimAssistance = (
     eventId: number,
     onCreate: () => void
 ) => {
-    const {
-        data: savedEntry,
-        mutate: saveClaimEntries,
-        isPending: isSavingClaim,
-    } = useMutation<any, string, z.infer<typeof createAssistedClaimSchema>>({
+    return useMutation<any, string, z.infer<typeof createAssistedClaimSchema>>({
         mutationKey: ["create-assist-claim"],
         mutationFn: async (data) => {
             try {
@@ -351,8 +340,6 @@ export const useCreateClaimAssistance = (
             }
         },
     });
-
-    return { savedEntry, saveClaimEntries, isSavingClaim };
 };
 
 export const useClaimsMasterList = ({

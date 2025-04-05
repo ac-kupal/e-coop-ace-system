@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     getCoreRowModel,
     getFilteredRowModel,
@@ -34,6 +34,7 @@ import LoadingSpinner from "@/components/loading-spinner";
 import { GrRotateRight } from "react-icons/gr";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { useOnEventSubDataUpdate } from "@/hooks/use-event-update-poller";
 
 const AttendanceTable = ({ eventId }: { eventId: number }) => {
     const tableRef = useRef(null);
@@ -62,6 +63,13 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
         refetchStats();
         refetchAttendanceList();
     };
+
+    const handleEventHasSubChange = useCallback(
+        () => refetchAttendanceList(),
+        [refetchAttendanceList]
+    );
+
+    useOnEventSubDataUpdate({ eventId, onChange: handleEventHasSubChange });
 
     const { data: users } = userList();
     const { data: userData } = useSession();

@@ -1,6 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { Loader2 } from "lucide-react";
 
@@ -11,6 +11,7 @@ import NotAllowed from "../../../_components/not-allowed";
 import { isAllowed } from "@/lib/utils";
 import { TPositionWithEventID } from "@/types";
 import { getElectionWithPositionAndCandidates } from "@/hooks/api-hooks/election-api-hooks";
+import { useOnEventSubDataUpdate } from "@/hooks/use-event-update-poller";
 
 type Props = {
     params: { id: number; electionId: number };
@@ -19,10 +20,16 @@ type Props = {
 const Page = ({ params }: Props) => {
     const { data: sessionData, status } = useSession();
     const [data, setData] = useState<TPositionWithEventID[]>([]);
-    const { elections, isLoading, error } =
+    const { elections, isLoading, error, refetch } =
         getElectionWithPositionAndCandidates({
             params,
         });
+
+    const handleEventHasSubChange = useCallback(() => refetch(), [refetch]);
+    useOnEventSubDataUpdate({
+        eventId: params.id,
+        onChange: handleEventHasSubChange,
+    });
 
     useEffect(() => {
         if (elections && elections.positions) {

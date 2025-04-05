@@ -5,6 +5,7 @@ import { generateUserProfileS3URL } from "@/lib/aws-s3";
 import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
+import { eventIdParamSchema } from "@/validation-schema/api-params";
 
 type TParams = { params: { id: number; memberId: string } };
 
@@ -13,10 +14,17 @@ export const DELETE = async function name(
     { params }: TParams
 ) {
     try {
+        const { id: eventId } = await eventIdParamSchema.parseAsync(params);
         const memberId = params.memberId;
         const deletePosition = await db.eventAttendees.delete({
             where: { id: memberId },
         });
+
+        await db.event.update({
+            where: { id: eventId },
+            data: { subUpdatedAt: new Date() },
+        });
+
         return NextResponse.json(deletePosition);
     } catch (error) {
         return routeErrorHandler(error, req);

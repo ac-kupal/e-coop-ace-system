@@ -88,7 +88,14 @@ export const POST = async (req: NextRequest) => {
             }),
             db.eventAttendees.update({
                 where: { id: attendeeId },
-                data: { voted: true },
+                data: {
+                    voted: true,
+                    event: {
+                        update: {
+                            subUpdatedAt: new Date(),
+                        },
+                    },
+                },
                 select: {
                     id: true,
                     firstName: true,

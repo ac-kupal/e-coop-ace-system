@@ -1,5 +1,5 @@
 import z from "zod";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import IncentiveAssigned from "./incentive-assigned";
 import {
@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import UserAvatar from "@/components/user-avatar";
+import { useOnEventSubDataUpdate } from "@/hooks/use-event-update-poller";
 
 type Props = {
     state: boolean;
@@ -36,14 +37,33 @@ const AssistClaimSheet = ({ state, onClose, member }: Props) => {
     const queryClient = useQueryClient();
     const [newEntries, setNewEntries] = useState<TCreateClaimEntry[]>([]);
 
-    const { saveClaimEntries, isSavingClaim } = useCreateClaimAssistance( member.eventId, () => {
-        setNewEntries([])
-        queryClient.invalidateQueries({ queryKey : [`incentive-claims-member-${member.id}`]})
-    });
-    const { memberClaims, isLoadingMemberClaims } = useMemberClaimsWithAssistanceList(member.eventId, member.id, state);
+    const { data: saveClaimEntries, isPending: isSavingClaim } =
+        useCreateClaimAssistance(member.eventId, () => {
+            setNewEntries([]);
+            queryClient.invalidateQueries({
+                queryKey: [`incentive-claims-member-${member.id}`],
+            });
+        });
+    const {
+        data: memberClaims,
+        isPending: isLoadingMemberClaims,
+        refetch,
+    } = useMemberClaimsWithAssistanceList(member.eventId, member.id, state);
 
-    const onAdd = (newEntry: TCreateClaimEntry) => setNewEntries((prev) => [...prev, newEntry]);
-    const onRemove = (removeEntryId: number) => setNewEntries((prev) => prev.filter((entries) => entries.incentiveId !== removeEntryId));
+    const handleEventHasSubChange = useCallback(() => {
+        refetch();
+    }, [refetch]);
+    useOnEventSubDataUpdate({
+        eventId: member.eventId,
+        onChange: handleEventHasSubChange,
+    });
+
+    const onAdd = (newEntry: TCreateClaimEntry) =>
+        setNewEntries((prev) => [...prev, newEntry]);
+    const onRemove = (removeEntryId: number) =>
+        setNewEntries((prev) =>
+            prev.filter((entries) => entries.incentiveId !== removeEntryId)
+        );
 
     const disableBtns = newEntries.length === 0 || isSavingClaim;
 
@@ -51,29 +71,39 @@ const AssistClaimSheet = ({ state, onClose, member }: Props) => {
         <Sheet open={state} onOpenChange={onClose}>
             <SheetContent className="border-none w-full max-w-[98vw] flex flex-col h-screen lg:max-w-[40vw]">
                 <SheetHeader>
-                    <SheetTitle className="text-center">Incentive Claim Sheet</SheetTitle>
+                    <SheetTitle className="text-center">
+                        Incentive Claim Sheet
+                    </SheetTitle>
                     <SheetDescription className="text-center">
                         You are assisting this member to claim incentive
                     </SheetDescription>
                     <div className="flex flex-col items-center gap-y-4">
-                        <UserAvatar className="size-24 lg:size-32" src={member.picture as ""} fallback={`${member.firstName.charAt(0)}${member.lastName.charAt(0)}`} />
+                        <UserAvatar
+                            className="size-24 lg:size-32"
+                            src={member.picture as ""}
+                            fallback={`${member.firstName.charAt(0)}${member.lastName.charAt(0)}`}
+                        />
                         <p className="text-lg font-medium">{`${member.firstName} ${member.lastName}`}</p>
                     </div>
                 </SheetHeader>
                 <div className="flex flex-col gap-y-4 w-full px-2 pt-8 flex-1 overflow-y-scroll thin-scroll">
-                    { isLoadingMemberClaims ? <LoadingSpinner className="mx-auto" /> : <IncentiveAssigned
-                        member={member}
-                        onAdd={onAdd}
-                        onRemove={onRemove}
-                        newClaimEntries={newEntries.map(
-                            (entry) => entry.incentiveId
-                        )}
-                        claimedIncentiveIds={memberClaims.map(
-                            (claims) => claims.incentiveId
-                        )}
-                        state={state}
-                        eventId={member.eventId}
-                    />}
+                    {isLoadingMemberClaims ? (
+                        <LoadingSpinner className="mx-auto" />
+                    ) : (
+                        <IncentiveAssigned
+                            member={member}
+                            onAdd={onAdd}
+                            onRemove={onRemove}
+                            newClaimEntries={newEntries.map(
+                                (entry) => entry.incentiveId
+                            )}
+                            claimedIncentiveIds={memberClaims.map(
+                                (claims) => claims.incentiveId
+                            )}
+                            state={state}
+                            eventId={member.eventId}
+                        />
+                    )}
                     <div
                         className={cn(
                             "flex gap-x-2 justify-end duration-150 ease-out opacity-0",

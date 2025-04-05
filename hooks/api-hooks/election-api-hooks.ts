@@ -65,7 +65,7 @@ export const  promptElectionStatus = ({params}:TParams) =>{
 }
 
 export const getElectionWithPositionAndCandidates = ({params}:TParams) => {
-    const { data, isLoading, error} = useQuery<TElectionWithPositionsAndCandidates, any>({
+    const { data, isLoading, error, refetch} = useQuery<TElectionWithPositionsAndCandidates, any>({
       queryKey: ["get-election-query", params?.id, params?.electionId],
       enabled: !!params,
        queryFn: async () => {
@@ -78,7 +78,7 @@ export const getElectionWithPositionAndCandidates = ({params}:TParams) => {
           }
        },
     });
-    return { elections: data , isLoading, error };
+    return { elections: data , isLoading, error, refetch };
 };
 
 

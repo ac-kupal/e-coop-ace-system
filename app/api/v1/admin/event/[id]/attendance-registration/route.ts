@@ -17,19 +17,26 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         const { passbookNumber, operation } =
             await adminRegisterMemberSchema.parseAsync(await req.json());
 
-        await db.eventAttendees.update({
-            where: {
-                eventId_passbookNumber: {
-                    eventId,
-                    passbookNumber,
+        await db.$transaction(async (dbCtx) => {
+            await dbCtx.eventAttendees.update({
+                where: {
+                    eventId_passbookNumber: {
+                        eventId,
+                        passbookNumber,
+                    },
                 },
-            },
-            data: {
-                registered: operation === "register" ? true : false,
-                registeredAt: operation === "register" ? new Date() : null,
-                registrationAssistId:
-                    operation === "register" ? currentUser.id : null,
-            },
+                data: {
+                    registered: operation === "register" ? true : false,
+                    registeredAt: operation === "register" ? new Date() : null,
+                    registrationAssistId:
+                        operation === "register" ? currentUser.id : null,
+                },
+            });
+
+            await dbCtx.event.update({
+                where: { id: eventId },
+                data: { subUpdatedAt: new Date() },
+            });
         });
 
         return NextResponse.json("Attendance Registered");

@@ -20,28 +20,28 @@ export const GET = async (req: NextRequest, { params }: TParams) => {
             where: { eventId },
             include: {
                 _count: {
-                    select: { 
-                        claimed: { 
-                            where : {
-                                releasedAt : { not : null }
-                            }
-                        }, 
-                        assigned: true 
+                    select: {
+                        claimed: {
+                            where: {
+                                releasedAt: { not: null },
+                            },
+                        },
+                        assigned: true,
                     },
                 },
                 assigned: includeAssignees
                     ? {
-                        include: {
-                            user: {
-                                select: {
-                                    id: true,
-                                    picture: true,
-                                    name: true,
-                                    email: true,
-                                },
-                            },
-                        },
-                    }
+                          include: {
+                              user: {
+                                  select: {
+                                      id: true,
+                                      picture: true,
+                                      name: true,
+                                      email: true,
+                                  },
+                              },
+                          },
+                      }
                     : false,
             },
             orderBy: {
@@ -68,6 +68,13 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 ...validatedData,
                 eventId,
                 createdBy: user.id,
+            },
+        });
+
+        await db.event.update({
+            where: { id: eventId },
+            data: {
+                subUpdatedAt: new Date(),
             },
         });
 

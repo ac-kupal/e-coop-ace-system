@@ -83,6 +83,13 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
                 },
             });
 
+        await db.event.update({
+            where: { id: eventId },
+            data: {
+                subUpdatedAt: new Date(),
+            },
+        });
+
         const response = NextResponse.json(registered);
 
         response.cookies.set("recent-user", registered.passbookNumber, {

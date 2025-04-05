@@ -20,6 +20,8 @@ export const DELETE = async ( req : NextRequest , { params } : TParams) => {
             }
         })
 
+
+
         return NextResponse.json(deletedClaim)
     }catch(e){
         return routeErrorHandler(e, req)

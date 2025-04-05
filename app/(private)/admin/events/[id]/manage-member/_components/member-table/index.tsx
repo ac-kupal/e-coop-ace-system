@@ -10,7 +10,13 @@ import { user } from "next-auth";
 import { Role } from "@prisma/client";
 import { GrRotateRight } from "react-icons/gr";
 import useDebounce from "@/hooks/use-debounce";
-import React, { useRef, useMemo, useState, useEffect } from "react";
+import React, {
+    useRef,
+    useMemo,
+    useState,
+    useEffect,
+    useCallback,
+} from "react";
 
 import {
     Plus,
@@ -48,7 +54,7 @@ import { useQrReaderModal } from "@/stores/use-qr-scanner";
 import { useConfirmModal } from "@/stores/use-confirm-modal-store";
 import { toast } from "sonner";
 import DownloadableMailResponse from "./downloadable-mail-response";
-import { PB_QR_EXPORT_BATCH_SIZE } from "@/constants";
+import { useOnEventSubDataUpdate } from "@/hooks/use-event-update-poller";
 
 type Props = {
     id: number;
@@ -102,6 +108,10 @@ const MemberTable = ({ id, user, event }: Props) => {
 
     const { data, isError, isLoading, isFetching, refetch } =
         useEventMembers(id);
+
+    const handleEventHasSubChange = useCallback(() => refetch(), [refetch]);
+    useOnEventSubDataUpdate({ eventId: id, onChange: handleEventHasSubChange });
+
     const memoizedColumns = useMemo(() => columns({ event }), [event]);
 
     const table = useReactTable({

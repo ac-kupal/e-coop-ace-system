@@ -9,52 +9,68 @@ import { eventAndIncentiveParamSchema } from "@/validation-schema/api-params";
 type TParams = { params: { id: number; incentiveId: number } };
 
 export const PATCH = async (req: NextRequest, { params }: TParams) => {
-  try {
-    const user = await currentUserOrThrowAuthError();
-    const { id: eventId, incentiveId } = eventAndIncentiveParamSchema.parse(params);
-    
-    const unparsedData = await req.json();
-    const data = updateIncentiveSchema.parse(unparsedData);
+    try {
+        const user = await currentUserOrThrowAuthError();
+        const { id: eventId, incentiveId } =
+            eventAndIncentiveParamSchema.parse(params);
 
-    const updatedIncentives = await db.incentives.update({
-      where: { eventId, id: incentiveId },
-      data: {
-        ...data,
-        updatedBy: user.id,
-      },
-    });
+        const unparsedData = await req.json();
+        const data = updateIncentiveSchema.parse(unparsedData);
 
-    return NextResponse.json(updatedIncentives);
-  } catch (e) {
-    return routeErrorHandler(e, req);
-  }
+        const updatedIncentives = await db.incentives.update({
+            where: { eventId, id: incentiveId },
+            data: {
+                ...data,
+                updatedBy: user.id,
+                event: {
+                    update: {
+                        subUpdatedAt: new Date(),
+                    },
+                },
+            },
+        });
+
+        return NextResponse.json(updatedIncentives);
+    } catch (e) {
+        return routeErrorHandler(e, req);
+    }
 };
 
 export const DELETE = async (req: NextRequest, { params }: TParams) => {
-  try {
-    await currentUserOrThrowAuthError();
-    const { id: eventId, incentiveId } = eventAndIncentiveParamSchema.parse(params);
+    try {
+        await currentUserOrThrowAuthError();
+        const { id: eventId, incentiveId } =
+            eventAndIncentiveParamSchema.parse(params);
 
-    const incentive = await db.incentives.findUnique({
-      where: {
-        id: incentiveId,
-        eventId,
-        claimed: {
-          none: {},
-        },
-      },
-    });
+        const incentive = await db.incentives.findUnique({
+            where: {
+                id: incentiveId,
+                eventId,
+                claimed: {
+                    none: {},
+                },
+            },
+        });
 
-    if (!incentive)
-      return NextResponse.json(
-        { message: "This incentive are not removable anymore" },
-        { status: 403 },
-      );
+        if (!incentive)
+            return NextResponse.json(
+                { message: "This incentive are not removable anymore" },
+                { status: 403 }
+            );
 
-    const deletedIncentive = await db.incentives.delete({ where : { id : incentiveId } })
+        await db.incentives.delete({
+            where: { id: incentiveId },
+        });
 
-    return NextResponse.json("Incentive deleted");
-  } catch (e) {
-    return routeErrorHandler(e, req);
-  }
+        await db.event.update({
+            where: { id: eventId },
+            data: {
+                subUpdatedAt: new Date(),
+            },
+        });
+
+        return NextResponse.json("Incentive deleted");
+    } catch (e) {
+        return routeErrorHandler(e, req);
+    }
 };

@@ -13,28 +13,42 @@ export const POST = async (req: NextRequest, { params }: TParams) => {
         const { id: eventId } = eventIdParamSchema.parse(params);
         const data = createIncentiveClaimPublic.parse(await req.json());
 
-        const { attendeeId, passbookNumber } = await validateClaimAuth(req, eventId)
+        const { attendeeId, passbookNumber } = await validateClaimAuth(
+            req,
+            eventId
+        );
 
         const member = await db.eventAttendees.findUnique({
             where: {
-                id : attendeeId,
+                id: attendeeId,
                 eventId_passbookNumber: {
-                    eventId, 
-                    passbookNumber
+                    eventId,
+                    passbookNumber,
                 },
             },
         });
 
-        if (!member) 
-            return NextResponse.json( { message: "We could not find you in event member list, please check the passbook number & otp you provide",}, { status: 404 });
+        if (!member)
+            return NextResponse.json(
+                {
+                    message:
+                        "We could not find you in event member list, please check the passbook number & otp you provide",
+                },
+                { status: 404 }
+            );
 
-        const createClaims = await db.incentiveClaims.create({
+        await db.incentiveClaims.create({
             data: {
                 ...data,
-                claimedOnline : true,
+                claimedOnline: true,
                 eventAttendeeId: member.id,
-                eventId
+                eventId,
             },
+        });
+
+        await db.event.update({
+            where: { id: eventId },
+            data: { subUpdatedAt: new Date() },
         });
 
         return NextResponse.json("Claimed!");

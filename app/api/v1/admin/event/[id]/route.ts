@@ -25,6 +25,7 @@ export const PATCH = async (req: NextRequest, { params }: TParams) => {
                 updatedBy: user.id,
                 coverImage: data.coverImage,
                 branchId: data.branchId,
+                subUpdatedAt : new Date()
             },
         });
 
@@ -51,6 +52,7 @@ export const DELETE = async (req: NextRequest, { params }: TParams) => {
             data: {
                 deleted: true,
                 deletedBy: user.id,
+                subUpdatedAt : new Date()
             },
         });
         return NextResponse.json(softDelete);

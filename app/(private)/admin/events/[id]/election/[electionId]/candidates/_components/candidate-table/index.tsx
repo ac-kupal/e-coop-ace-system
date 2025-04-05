@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Plus, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/data-table/data-table";
@@ -21,6 +21,7 @@ import { TCandidatewithPositionwithEventId, TPosition } from "@/types";
 import { toast } from "sonner";
 import { FilteredEventMembersForCandidateSelection } from "@/hooks/api-hooks/member-api-hook";
 import { Card } from "@/components/ui/card";
+import { useOnEventSubDataUpdate } from "@/hooks/use-event-update-poller";
 
 type Props = {
     params: { id: number; electionId: number };
@@ -32,10 +33,14 @@ const CandidateTable = ({ data, positions, params }: Props) => {
     const [globalFilter, setGlobalFilter] = useState<string>("");
     const [createPosition, setCreatePosition] = useState(false);
 
-    const { data: Members } = FilteredEventMembersForCandidateSelection(
-        params.id,
-        params.electionId
-    );
+    const { data: Members, refetch } =
+        FilteredEventMembersForCandidateSelection(params.id, params.electionId);
+
+    const handleEventHasSubChange = useCallback(() => refetch(), [refetch]);
+    useOnEventSubDataUpdate({
+        eventId: params.id,
+        onChange: handleEventHasSubChange,
+    });
 
     const table = useReactTable({
         data,

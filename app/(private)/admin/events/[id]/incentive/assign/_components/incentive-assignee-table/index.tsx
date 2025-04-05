@@ -1,6 +1,6 @@
 "use client";
 import { user } from "next-auth";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
     getCoreRowModel,
     getFilteredRowModel,
@@ -23,6 +23,7 @@ import { useIncentiveListAssignee } from "@/hooks/api-hooks/incentive-api-hooks"
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/loading-spinner";
 import { GrRotateRight } from "react-icons/gr";
+import { useOnEventSubDataUpdate } from "@/hooks/use-event-update-poller";
 
 const IncentiveAssigneeTable = ({
     eventId,
@@ -49,6 +50,9 @@ const IncentiveAssigneeTable = ({
         useIncentiveListAssignee({
             eventId,
         });
+
+    const handleEventHasSubChange = useCallback(() => refetch(), [refetch]);
+    useOnEventSubDataUpdate({ eventId, onChange: handleEventHasSubChange });
 
     const table = useReactTable({
         data,

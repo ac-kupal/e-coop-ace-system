@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     getCoreRowModel,
     getFilteredRowModel,
@@ -21,6 +21,7 @@ import DataTableViewOptions from "@/components/data-table/data-table-view-option
 import { useINcentiveeList } from "@/hooks/api-hooks/incentive-api-hooks";
 import LoadingSpinner from "@/components/loading-spinner";
 import { GrRotateRight } from "react-icons/gr";
+import { useOnEventSubDataUpdate } from "@/hooks/use-event-update-poller";
 
 const IncentivesTable = ({ eventId }: { eventId: number }) => {
     const [createModal, setCreateModal] = useState(false);
@@ -30,6 +31,12 @@ const IncentivesTable = ({ eventId }: { eventId: number }) => {
     const { data, isFetching, isLoading, isError, refetch } = useINcentiveeList(
         { eventId }
     );
+
+    const handleEventHasSubChange = useCallback(() => refetch(), [refetch]);
+    useOnEventSubDataUpdate({
+        eventId: eventId,
+        onChange: handleEventHasSubChange,
+    });
 
     const table = useReactTable({
         data,
