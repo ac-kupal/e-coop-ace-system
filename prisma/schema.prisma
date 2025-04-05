@@ -144,8 +144,9 @@ model Event {
 
     election Election?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+    subUpdatedAt DateTime?
 
     incentiveAssigned IncentiveAssigned[]
     attendees         EventAttendees[]
