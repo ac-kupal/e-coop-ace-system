@@ -46,7 +46,9 @@ const Actions = ({ user }: { user: TUserWBranchCoop }) => {
         user.id !== session.data?.user.id
     )
         return (
-            <span className="text-xs text-foreground/40 italic">not allowed</span>
+            <span className="text-xs text-foreground/40 italic">
+                not allowed
+            </span>
         );
 
     return (
@@ -118,7 +120,11 @@ const columns: ColumnDef<TUserWBranchCoop>[] = [
         id: "actions",
         enableHiding: false,
         header: ({ column }) => (
-            <DataTableColHeader column={column} title="Actions" className="w-fit" />
+            <DataTableColHeader
+                column={column}
+                title="Actions"
+                className="w-fit"
+            />
         ),
         cell: ({ row }) => (
             <div className="flex">
@@ -128,7 +134,9 @@ const columns: ColumnDef<TUserWBranchCoop>[] = [
     },
     {
         accessorKey: "id",
-        header: ({ column }) => <DataTableColHeader column={column} title="ID" />,
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="ID" />
+        ),
         cell: ({ row }) => (
             <div className="font-medium uppercase">{row.original.id}</div>
         ),
@@ -137,9 +145,11 @@ const columns: ColumnDef<TUserWBranchCoop>[] = [
     },
     {
         accessorKey: "name",
-        header: ({ column }) => <DataTableColHeader column={column} title="name" />,
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="name" />
+        ),
         cell: ({ row }) => (
-            <div className="flex gap-x-2 items-center">
+            <div className="flex gap-x-2 items-center text-nowrap">
                 <UserAvatar
                     className="size-8"
                     src={row.original.picture ?? "/images/default.png"}
@@ -158,7 +168,9 @@ const columns: ColumnDef<TUserWBranchCoop>[] = [
     },
     {
         accessorKey: "role",
-        header: ({ column }) => <DataTableColHeader column={column} title="Role" />,
+        header: ({ column }) => (
+            <DataTableColHeader column={column} title="Role" />
+        ),
         cell: ({ row }) => (
             <div className="space-x-1">
                 <span className="bg-secondary text-foreground/70 p-1 rounded-md">
@@ -177,15 +189,20 @@ const columns: ColumnDef<TUserWBranchCoop>[] = [
             <div className="flex gap-x-2 items-center">
                 <UserAvatar
                     className="hidden lg:block size-8"
-                    src={row.original.branch.branchPicture ?? "/images/default.png"}
+                    src={
+                        row.original.branch.branchPicture ??
+                        "/images/default.png"
+                    }
                     fallback={row.original.branch.branchName.substring(
                         0,
                         row.original.branch.branchName.length >= 2
                             ? 2
-                            : row.original.branch.branchName.length,
+                            : row.original.branch.branchName.length
                     )}
                 />
-                {row.original.branch.branchName}
+                <span className="text-nowrap">
+                    {row.original.branch.branchName}
+                </span>
             </div>
         ),
     },
@@ -195,7 +212,7 @@ const columns: ColumnDef<TUserWBranchCoop>[] = [
             <DataTableColHeader column={column} title="Cooperative" />
         ),
         cell: ({ row }) => (
-            <div className="flex gap-x-2 items-center">
+            <div className="flex gap-x-2 items-center text-nowrap">
                 <UserAvatar
                     className="hidden lg:block size-8"
                     src={row.original.coop.coopLogo ?? "/images/default.png"}
@@ -203,7 +220,7 @@ const columns: ColumnDef<TUserWBranchCoop>[] = [
                         0,
                         row.original.coop.coopName.length >= 2
                             ? 2
-                            : row.original.coop.coopName.length,
+                            : row.original.coop.coopName.length
                     )}
                 />
                 {row.original.coop.coopName}

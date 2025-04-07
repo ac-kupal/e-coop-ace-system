@@ -37,7 +37,7 @@ const AssistClaimSheet = ({ state, onClose, member }: Props) => {
     const queryClient = useQueryClient();
     const [newEntries, setNewEntries] = useState<TCreateClaimEntry[]>([]);
 
-    const { data: saveClaimEntries, isPending: isSavingClaim } =
+    const { mutate: saveClaimEntries, isPending: isSavingClaim } =
         useCreateClaimAssistance(member.eventId, () => {
             setNewEntries([]);
             queryClient.invalidateQueries({
