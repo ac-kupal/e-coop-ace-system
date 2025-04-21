@@ -1,10 +1,9 @@
 "use client";
 import { user } from "next-auth";
-import React, { useRef, useState } from "react";
-
 import { FaFilter } from "react-icons/fa";
 import { GrRotateRight } from "react-icons/gr";
-import { SiMicrosoftexcel } from "react-icons/si";
+import React, { useRef, useState } from "react";
+import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
 
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -67,7 +66,7 @@ const ReportHome = ({ eventId, currentUser }: Props) => {
                         </Button>
                     }
                     <Button onClick={() => exportToExcel()} className="gap-x-2 text-white dark:text-primary-foreground">
-                        <SiMicrosoftexcel className="size-4" /> Export
+                        <PiMicrosoftExcelLogoFill className="size-4" /> Export
                     </Button>
                 </div>
             </div>

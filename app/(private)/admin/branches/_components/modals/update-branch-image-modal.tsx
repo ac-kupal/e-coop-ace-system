@@ -68,11 +68,13 @@ const UpdateBranchImageModal = ({ state, branch, close }: Props) => {
                         Cancel
                     </Button>
                     <Button disabled={disabled} onClick={()=> {
+                        if(imageFile !== null) {
                             startUpload({
                                 fileName : `branch-${branch.id}`,
                                 folderGroup : "branch",
                                 file : imageFile
                             })
+                        }
                         }}>
                         {isLoading ? (
                             <Loader2

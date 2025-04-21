@@ -24,7 +24,7 @@ import { useSession } from "next-auth/react";
 import { userList } from "@/hooks/api-hooks/user-api-hooks";
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-facited-filter";
 import { Button } from "@/components/ui/button";
-import { SiMicrosoftexcel } from "react-icons/si";
+import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
 import { utils, writeFile } from "xlsx";
 import useDebounce from "@/hooks/use-debounce";
 import ActionTooltip from "@/components/action-tooltip";
@@ -277,7 +277,7 @@ const AttendanceTable = ({ eventId }: { eventId: number }) => {
                                     // writeFile(wb, `${electionName}_reports.xlsx`);
                                 }}
                             >
-                                <SiMicrosoftexcel className="size-4" /> Export
+                                <PiMicrosoftExcelLogoFill className="size-4" /> Export
                             </Button>
                         </div>
                     </div>

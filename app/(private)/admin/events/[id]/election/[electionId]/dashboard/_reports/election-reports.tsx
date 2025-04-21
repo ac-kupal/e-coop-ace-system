@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SiMicrosoftexcel } from "react-icons/si";
+import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
 import { GrRotateRight } from "react-icons/gr";
 import { cn, tableToExcel } from "@/lib/utils";
 import {
@@ -83,7 +83,7 @@ const ElectionReports = ({ params, electionName }: TParams) => {
             exportToExcel();
           }}
         >
-          <SiMicrosoftexcel className="size-4" /> Export
+          <PiMicrosoftExcelLogoFill className="size-4" /> Export
         </Button>
       </div>
       <Separator />
