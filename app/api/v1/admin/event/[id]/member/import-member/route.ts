@@ -5,10 +5,11 @@ import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { excelDateToJSDate, generateOTP, validateId } from "@/lib/server-utils";
 import { generateUserProfileS3URL } from "@/lib/aws-s3";
+import { FUNCTION_DURATION } from "@/constants"
 
+export const maxDuration = FUNCTION_DURATION;
 const BATCH_SIZE = 500;
 
-export const maxDuration = 300;
 type MemberData = {
     firstName: string;
     lastName: string;

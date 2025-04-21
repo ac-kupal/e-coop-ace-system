@@ -14,7 +14,9 @@ import { eventIdParamSchema } from "@/validation-schema/api-params";
 import { TFolderUploadGroups } from "@/types";
 import { eventPbBulkExportRequestSchema } from "@/types/qr-pb-bulk-export";
 
-export const maxDuration = 300;
+import { FUNCTION_DURATION } from "@/constants"
+
+export const maxDuration = FUNCTION_DURATION;
 
 type TParams = { params: { id: number } };
 

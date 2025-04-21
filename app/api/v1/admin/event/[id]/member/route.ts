@@ -8,7 +8,9 @@ import { generateOTP, validateId } from "@/lib/server-utils";
 import { eventIdSchema } from "@/validation-schema/commons";
 import { routeErrorHandler } from "@/errors/route-error-handler";
 import { createMemberWithUploadSchema } from "@/validation-schema/member";
-export const maxDuration = 300;
+import { FUNCTION_DURATION } from "@/constants"
+
+export const maxDuration = FUNCTION_DURATION;
 
 type TParams = { params: { id: number } };
 

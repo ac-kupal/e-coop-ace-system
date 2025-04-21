@@ -8,10 +8,11 @@ import { currentUserOrThrowAuthError } from "@/lib/auth";
 import { eventIdSchema } from "@/validation-schema/commons";
 import { memberEmailSchema } from "@/validation-schema/member";
 import { routeErrorHandler } from "@/errors/route-error-handler";
+import { FUNCTION_DURATION } from "@/constants";
 
 type TParams = { params: { id: number } };
 
-export const maxDuration = 300;
+export const maxDuration = FUNCTION_DURATION;
 
 export const POST = async (req: NextRequest, { params }: TParams) => {
     try {
